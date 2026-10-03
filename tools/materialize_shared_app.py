@@ -21,7 +21,7 @@ def shared_files() -> list[tuple[Path, Path]]:
         if not root.is_dir():
             raise ValueError(f"shared application directory is missing: {root}")
         return [(source, source.relative_to(root)) for source in sorted(root.rglob("*"))
-                if source.is_file() and source.name != "BUILD.bazel"
+                if (source.is_file() or source.is_symlink()) and source.name != "BUILD.bazel"
                 and source.relative_to(root).parts[0] != "datadog"]
     config = "--config=" + os.environ.get("DATADOG_BAZEL_CONFIG", "local")
     listing = subprocess.check_output(
@@ -50,8 +50,17 @@ def materialize(files: list[tuple[Path, Path]], overlay: Path, output: Path) -> 
     for source, relative in files:
         target = output / relative
         target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(source, target)
-    shutil.copytree(overlay, output, dirs_exist_ok=True)
+        shutil.copy2(source, target, follow_symlinks=False)
+    # Overlay entries own their paths. Clear type conflicts and links before
+    # copying, so replacing a shared link never writes through to its target.
+    for source in sorted(overlay.rglob("*"), key=lambda path: len(path.parts)):
+        target = output / source.relative_to(overlay)
+        if target.is_symlink() or source.is_symlink() or source.is_dir() != target.is_dir():
+            if target.is_dir() and not target.is_symlink():
+                shutil.rmtree(target)
+            elif target.exists() or target.is_symlink():
+                target.unlink()
+    shutil.copytree(overlay, output, dirs_exist_ok=True, symlinks=True)
     if not (output / "Dockerfile").is_file():
         raise ValueError("fixture overlay has no Dockerfile")
 

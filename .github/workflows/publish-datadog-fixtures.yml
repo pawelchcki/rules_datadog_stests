@@ -7,6 +7,7 @@ on:
       - fixtures/agents/datadog-ruby/**
       - fixtures/apps/go/realworld-gin/**
       - tools/build_datadog_fixtures.sh
+      - tools/context_tree.py
       - tools/local_oci_repository.py
       - tools/materialize_shared_app.py
       - MODULE.bazel
