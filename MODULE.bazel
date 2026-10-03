@@ -8,17 +8,14 @@ bazel_dep(name = "rules_python", version = "1.8.0")
 bazel_dep(name = "platforms", version = "1.1.0")
 bazel_dep(name = "package_metadata", version = "0.0.7")
 bazel_dep(name = "aspect_bazel_lib", version = "2.21.1")
-# Pin the infrastructure; the small compatibility patch exposes shared probe
-# sources. Drop the patch when the infrastructure split is published and pinned.
+# Pin the shared infrastructure and cache-safe OCI materializer from the split.
 git_override(
     module_name = "rules_stests",
     remote = "https://github.com/pawelchcki/rules_stests.git",
-    commit = "11b5e4768eb63f3b7328b742278e90fcaa30b8a6",
-    patches = ["//third_party:rules_stests.patch"],
-    patch_strip = 1,
+    commit = "7958ee822daeaba400b3b26bfab371c9fea015d1",
 )
 images = use_extension("//bazel:oci_deps.bzl", "oci_deps")
-use_repo(images, "datadog_python", "datadog_python_linux_amd64", "datadog_ruby", "datadog_ruby_linux_amd64", "falcon_realworld", "falcon_realworld_linux_amd64", "gin_datadog_realworld", "gin_datadog_realworld_linux_amd64")
+use_repo(images, "datadog_python", "datadog_python_linux_amd64", "datadog_ruby", "datadog_ruby_linux_amd64", "gin_datadog_realworld", "gin_datadog_realworld_linux_amd64")
 http_file = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
 http_file(
     name = "datadog_system_tests_headers",

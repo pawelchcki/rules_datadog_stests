@@ -36,8 +36,10 @@ mapfile -t image_flags < "$images/bazel.flags"
 bazel_args=(--config="${DATADOG_BAZEL_CONFIG:-local}")
 if [[ "${DATADOG_BAZEL_CONFIG:-local}" == local ]]; then
   bazel_args+=(--jobs=4 --local_test_jobs=4)
+  test_download_outputs=all
 else
   bazel_args+=(--spawn_strategy=remote,local)
+  test_download_outputs=minimal
 fi
 profiles=(
   //corpus:python-aiohttp-datadog-v4-14-0-v04
@@ -57,8 +59,9 @@ bazel build "${bazel_args[@]}" --remote_download_outputs=toplevel \
 
 # Remote tests expose test.log under minimal downloading; the explicit regex
 # fetches the complete validator and undeclared-output trees used as evidence.
+# Local cached OCI inputs need eager materialization to preserve directory aliases.
 test_download_args=(
-  --remote_download_outputs=minimal
+  --remote_download_outputs="$test_download_outputs"
   "--remote_download_regex=$downloaded_evidence_regex"
 )
 

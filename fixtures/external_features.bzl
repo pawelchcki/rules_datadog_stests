@@ -23,7 +23,7 @@ _LOCAL_DATADOG_APPS = ["rails", "falcon", "gin"]
 def _datadog_fixture(app):
     if app == "falcon":
         return struct(
-            rootfs = "//harness:falcon_rootfs",
+            rootfs = "@rules_stests//harness:falcon_rootfs",
             runtime = "ruby",
             command = ["bin/server", "--host", "127.0.0.1", "--port", "$${PORT}"],
             injection = datadog_ruby_injection(),
