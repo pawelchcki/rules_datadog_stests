@@ -58,12 +58,6 @@ corpus_service(
     tags = ["manual"],
 )
 
-oci_rootfs(
-    name = "falcon_rootfs",
-    image = "@falcon_realworld_linux_amd64",
-    single_payload = True,
-    tags = ["manual"],
-)
 
 oci_rootfs(
     name = "gin_datadog_rootfs",

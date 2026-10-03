@@ -9,20 +9,18 @@ trap 'rm -rf -- "$staging"' EXIT
 
 # Check every payload before the first registry write. Publication preserves
 # the OCI manifest digest, and the subsequent pulls use no registry credentials.
-for fixture in ruby gin falcon; do
+for fixture in ruby gin; do
   case "$fixture" in
     ruby) repository=datadog_ruby_linux_amd64; payload=sha256:b463ba27fdebf8841551f9c707ad87bc4bc504a4962c10afb3292a87ecafbe3a ;;
     gin) repository=gin_datadog_realworld_linux_amd64; payload=sha256:f2532c86ac33814c8ab87c3cc6b64d0d88ad9bdee043bc65982276adbf55e99b ;;
-    falcon) repository=falcon_realworld_linux_amd64; payload=sha256:9e75306ae318163fe2dd63a4689a981fe0ac47abbabe55e827735d4618c7e543 ;;
   esac
   python3 tools/local_oci_repository.py "$images/$fixture" "$repository" --rootfs-digest "$payload"
 done
 
-for fixture in ruby gin falcon; do
+for fixture in ruby gin; do
   case "$fixture" in
     ruby) context=fixtures/agents/datadog-ruby; image=ghcr.io/pawelchcki/rules_stest_agents; name=datadog_ruby; tag=datadog-ruby; payload=sha256:b463ba27fdebf8841551f9c707ad87bc4bc504a4962c10afb3292a87ecafbe3a ;;
     gin) context=fixtures/apps/go/realworld-gin; image=ghcr.io/pawelchcki/rules_stest_apps; name=gin_datadog_realworld; tag=gin-datadog; payload=sha256:f2532c86ac33814c8ab87c3cc6b64d0d88ad9bdee043bc65982276adbf55e99b ;;
-    falcon) context=fixtures/apps/ruby/realworld-falcon; image=ghcr.io/pawelchcki/rules_stest_apps; name=falcon_realworld; tag=falcon; payload=sha256:9e75306ae318163fe2dd63a4689a981fe0ac47abbabe55e827735d4618c7e543 ;;
   esac
   # A dirty context cannot be labelled with the committed source tree.
   test -z "$(git status --porcelain --untracked-files=all -- "$context")"

@@ -414,3 +414,14 @@ diff --git a/harness/BUILD.bazel b/harness/BUILD.bazel
  )
  
  go_binary(
+diff --git a/fixtures/apps/go/realworld-gin/BUILD.bazel b/fixtures/apps/go/realworld-gin/BUILD.bazel
+--- /dev/null
++++ b/fixtures/apps/go/realworld-gin/BUILD.bazel
+@@ -0,0 +1,7 @@
++package(default_visibility = ["//visibility:public"])
++
++# Consumers compose their tracer-specific build context from these shared sources.
++filegroup(
++    name = "sources",
++    srcs = glob(["**"], exclude = ["BUILD.bazel", "datadog/**"]),
++)

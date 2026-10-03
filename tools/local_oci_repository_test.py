@@ -116,6 +116,7 @@ class LocalOCIRepositoryTest(unittest.TestCase):
             builder = tools / "build_datadog_fixtures.sh"
             shutil.copyfile(FIXTURE_BUILDER, builder)
             builder.chmod(0o755)
+            shutil.copyfile(Path(__file__).with_name("materialize_shared_app.py"), tools / "materialize_shared_app.py")
             validator = tools / "local_oci_repository.py"
             validator.write_text("""#!/usr/bin/env python3
 import pathlib, sys
@@ -132,9 +133,6 @@ print(f"--override_repository={sys.argv[2]}={directory.resolve()}")
             ):
                 context.mkdir(parents=True)
                 (context / "Dockerfile").write_text("FROM scratch\n")
-            # The Falcon fixture keeps its Dockerfile under oci/, like Rails.
-            (root / "fixtures/apps/ruby/realworld-falcon/oci").mkdir(parents=True)
-            (root / "fixtures/apps/ruby/realworld-falcon/oci/Dockerfile").write_text("FROM scratch\n")
             counter = root / "build-count"
             builds = root / "build-arguments"
             container_tool = root / "container-tool"
@@ -158,6 +156,7 @@ esac
                 "CONTAINER_TOOL": str(container_tool),
                 "CONTAINER_BUILD_NETWORK": "host",
                 "DATADOG_FIXTURE_CACHE": str(cache),
+                "RULES_STESTS_SOURCE_ROOT": str(root),
             }
 
             def run(number):
@@ -171,23 +170,24 @@ esac
 
             first = run(1)
             self.assertEqual(first.returncode, 0, first.stderr)
-            self.assertEqual(counter.read_text(), "xxx")
-            self.assertIn("-f fixtures/apps/ruby/realworld-falcon/oci/Dockerfile", builds.read_text())
-            second = run(2)
+            self.assertEqual(counter.read_text(), "xx")
+            self.assertIn("contexts/gin", builds.read_text())
+            # Reusing an output directory must also work with shared sources.
+            second = run(1)
             self.assertEqual(second.returncode, 0, second.stderr)
-            self.assertEqual(counter.read_text(), "xxx")
-            self.assertIn("validated fixture cache hit", (root / "output-2/ruby.build.log").read_text())
+            self.assertEqual(counter.read_text(), "xx")
+            self.assertIn("validated fixture cache hit", (root / "output-1/ruby.build.log").read_text())
 
             (root / "fixtures/apps/go/realworld-gin/Dockerfile").write_text("FROM scratch\n# changed\n")
             changed = run(3)
             self.assertEqual(changed.returncode, 0, changed.stderr)
-            self.assertEqual(counter.read_text(), "xxxx")
+            self.assertEqual(counter.read_text(), "xxx")
 
             ruby_entry = next(cache.glob("ruby-*"))
             (ruby_entry / "corrupt").touch()
             corrupt = run(4)
             self.assertEqual(corrupt.returncode, 0, corrupt.stderr)
-            self.assertEqual(counter.read_text(), "xxxxx")
+            self.assertEqual(counter.read_text(), "xxxx")
             self.assertTrue(list(cache.glob(".rejected-ruby-*")))
 
     def test_rejects_corrupted_manifest_blob(self):

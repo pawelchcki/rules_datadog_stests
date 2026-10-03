@@ -17,16 +17,20 @@ exported from `//rules:defs.bzl`. Shared service rules are loaded from
 `@rules_stests//rules:defs.bzl`.
 
 `MODULE.bazel` pins the shared infrastructure from GitHub. A small compatibility
-patch exposes the existing process runtime and launcher sources in that pinned
-revision; remove it when a post-split infrastructure revision is available.
+patch exposes the process runtime, launcher library, and shared Gin sources
+in that pinned revision; remove it when a post-split infrastructure revision is available.
 For coordinated local development, pass
 `--override_module=rules_stests=/absolute/path/to/rules_stests` to Bazel.
 
 The shared Scheme contract error and application scenario libraries are imported
 by external labels. Datadog assertion catalogs, native SDK checks, review records,
 receipts and publication workflows stay here. OCI payload digests remain pinned
-at their previously reviewed values. The Go fixture build context retains its
-historical three-binary image recipe to preserve those payload identities.
+at their previously reviewed values. The Go fixture builder imports the pinned
+Gin sources from
+`@rules_stests//fixtures/apps/go/realworld-gin:sources` and overlays only the
+Datadog tracer graph and image recipe. Falcon also uses the shared
+`@rules_stests//harness:falcon_rootfs`. Common application sources, launchers,
+runtimes, sink engine, and validator compiler remain in `rules_stests`.
 
 See [corpus documentation](corpus/datadog/README.md),
 [coverage](docs/datadog-coverage.md) and
