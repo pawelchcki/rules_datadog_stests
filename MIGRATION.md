@@ -6,16 +6,17 @@ Extracted from `pawelchcki/rules_stests` at
 Datadog corpus, reviewed shapes, SDK assertions, receipt/report tools, tracer
 fixture locks and publication belong to this repository. Common application
 sources and runtimes remain in rules_stests, including Falcon. Shared
-infrastructure is a one-way dependency pinned in `MODULE.bazel`. The compatibility patch only
-exports existing runtime mechanics, anchors a compiler label, and opens the
-launcher library for downstream bootstrap tests. It also exposes shared Gin sources.
+infrastructure is a one-way dependency pinned in `MODULE.bazel`. The current pin
+consumes the split infrastructure APIs and cache-safe OCI directory materializer
+directly; no compatibility patch or duplicated engine source is required.
 
 Historical evidence in `docs/` refers to executions before extraction. Those
 records retain their original revisions and links; they do not claim that the
 new repository has produced fresh acceptance evidence.
 
-After the infrastructure changes are published, update the pinned commit and
-remove `third_party/rules_stests.patch` and its consumer-example symlink.
+The infrastructure pin and external-consumer example both reference
+`c3d48275eb329f970ce2a2e76b415ddbc5305eed` from the
+[infrastructure removal PR](https://github.com/pawelchcki/rules_stests/pull/47).
 
 Validated after extraction:
 

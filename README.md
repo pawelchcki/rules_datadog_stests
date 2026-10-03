@@ -16,9 +16,10 @@ without changing their contents. Datadog configuration and profile macros are
 exported from `//rules:defs.bzl`. Shared service rules are loaded from
 `@rules_stests//rules:defs.bzl`.
 
-`MODULE.bazel` pins the shared infrastructure from GitHub. A small compatibility
-patch exposes the process runtime, launcher library, and shared Gin sources
-in that pinned revision; remove it when a post-split infrastructure revision is available.
+`MODULE.bazel` pins the shared infrastructure from GitHub, including its public
+process runtime, launcher library, shared Gin sources and OCI materializer.
+The materializer preserves empty image directories across Bazel cache restores,
+so Rails starts against the same read-only application rootfs on warm CI runs.
 For coordinated local development, pass
 `--override_module=rules_stests=/absolute/path/to/rules_stests` to Bazel.
 
