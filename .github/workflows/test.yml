@@ -15,6 +15,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Validate GitHub Actions workflows
         run: go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
       - name: Validate tracked Python, shell and JSON sources
@@ -24,9 +26,13 @@ jobs:
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: bazel-contrib/setup-bazel@8cb04a772ab4c1eb984e9c1b493a182e96c5e425 # 0.19.0
         with:
           bazelisk-cache: true
+          repository-cache: true
+          disk-cache: true
       - run: bazel test --config=local --build_tests_only //...
       - name: Verify external consumer
         working-directory: examples/plugin_agent
