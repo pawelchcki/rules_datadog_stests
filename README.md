@@ -1,4 +1,4 @@
-# rules_datadog
+# rules_datadog_stests
 
 Datadog tracing assertions, reviewed shapes, pinned tracer profiles, SDK
 experiments and independently gated evidence. This repository depends on

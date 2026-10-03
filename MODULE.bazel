@@ -1,4 +1,4 @@
-module(name = "rules_datadog", version = "0.0.0")
+module(name = "rules_datadog_stests", version = "0.0.0")
 bazel_dep(name = "rules_stests", version = "0.0.0")
 bazel_dep(name = "rules_go", version = "0.63.0")
 bazel_dep(name = "rules_itest", version = "0.0.59")

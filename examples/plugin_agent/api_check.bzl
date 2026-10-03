@@ -6,7 +6,7 @@ load(
     "instrumentation_injection",
 )
 
-load("@rules_datadog//rules:defs.bzl", "datadog_env", "datadog_python_injection")
+load("@rules_datadog_stests//rules:defs.bzl", "datadog_env", "datadog_python_injection")
 
 def _telemetry_api_check_impl(ctx):
     entries = []
@@ -46,7 +46,7 @@ _telemetry_api_check = rule(
 
 def telemetry_api_check(name, datadog_profile):
     """Checks public default labels and compiles both consumer profile families."""
-    rootfs = Label("@rules_datadog//harness:datadog_python_rootfs")
+    rootfs = Label("@rules_datadog_stests//harness:datadog_python_rootfs")
     standard = datadog_python_injection(aiohttp = True)
     if standard.rootfs != rootfs:
         fail("Datadog helper default rootfs resolved in the consumer repository")

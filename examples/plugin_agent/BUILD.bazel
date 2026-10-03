@@ -1,5 +1,5 @@
 load("@rules_stests//rules:defs.bzl", "corpus_service", "realworld_service_tests")
-load("@rules_datadog//rules:defs.bzl", "datadog_env", "datadog_python_injection", "datadog_realworld_profile")
+load("@rules_datadog_stests//rules:defs.bzl", "datadog_env", "datadog_python_injection", "datadog_realworld_profile")
 load(":api_check.bzl", "telemetry_api_check")
 package(default_visibility = ["//visibility:public"])
 _DATADOG_REFERENCE_SCENARIOS = [
@@ -13,9 +13,9 @@ _DATADOG_REFERENCE_SCENARIOS = [
 datadog_realworld_profile(
     name = "example-aiohttp-datadog-v4-14-0",
     specification = "profile/example-aiohttp-datadog-v4-14-0.scm",
-    implementation_libraries = ["@rules_datadog//corpus:datadog/implementation/python-v4.14.0.scm"],
+    implementation_libraries = ["@rules_datadog_stests//corpus:datadog/implementation/python-v4.14.0.scm"],
     wire_version = "v0.5",
-    reference_profile = "@rules_datadog//corpus:python-aiohttp-datadog-v4-14-0-v05",
+    reference_profile = "@rules_datadog_stests//corpus:python-aiohttp-datadog-v4-14-0-v05",
 )
 
 corpus_service(
@@ -47,9 +47,9 @@ realworld_service_tests(
 datadog_realworld_profile(
     name = "example-django-datadog-v4-14-0",
     specification = "profile/example-django-datadog-v4-14-0.scm",
-    implementation_libraries = ["@rules_datadog//corpus:datadog/implementation/python-v4.14.0.scm"],
+    implementation_libraries = ["@rules_datadog_stests//corpus:datadog/implementation/python-v4.14.0.scm"],
     wire_version = "v0.5",
-    reference_profile = "@rules_datadog//corpus:python-django-datadog-v4-14-0-v05",
+    reference_profile = "@rules_datadog_stests//corpus:python-django-datadog-v4-14-0-v05",
 )
 
 corpus_service(
@@ -82,7 +82,7 @@ realworld_service_tests(
 # that a consumer-declared tracer identity is accepted and a mismatch rejected.
 test_suite(
     name = "datadog_consumer_identity_test",
-    tests = ["@rules_datadog//corpus:datadog_conformance_test"],
+    tests = ["@rules_datadog_stests//corpus:datadog_conformance_test"],
 )
 
 telemetry_api_check(name = "telemetry_api_check", datadog_profile = ":example-aiohttp-datadog-v4-14-0")
