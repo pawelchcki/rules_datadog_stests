@@ -47,3 +47,15 @@ Actions workflows and tracked Python, shell and JSON syntax. Run
 `go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.12` locally for those checks.
 The runnerless CI tool kit GitHub App provides `codex/review-gate` without a
 GitHub Actions runner or repository-stored Codex credentials.
+
+Runnerless report publication is declared in [.ci-toolkit.yml](.ci-toolkit.yml).
+Activation requires the configuration on the trusted default branch and the
+CI tool kit App installation to grant `Actions: read` for artifact downloads.
+Once both prerequisites are met, successful
+`Datadog assertions` runs publish a commit-addressed HTML proof page from
+GitHub Actions to the App's R2-backed artifact service. The `untrusted-html`
+security profile isolates report HTML. Failed or incomplete workflows do not
+publish. Reports remain available for 90 days, with five default-branch sets
+retained; PR comments link reports after publication. Complete evidence stays
+in the workflow's existing GitHub Actions artifacts. GitHub Pages also hosts
+the report produced by the existing main-branch publisher.

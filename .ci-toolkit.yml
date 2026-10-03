@@ -1,0 +1,56 @@
+api_version: ci-toolkit/v1alpha1
+
+# Effective publication policy comes from the trusted default branch.
+# Only the HTML report is published; evidence remains in Actions artifacts.
+automations:
+  - id: datadog-proof-report
+    triggers:
+      - id: successful-assertions
+        uses: github.workflow-run@v1
+        with:
+          event: github.workflow_run
+          conclusions: [success]
+          targets:
+            - default_branch: {}
+            - pull_request:
+                state: open
+                base_branches: ["*"]
+          workflow:
+            path: .github/workflows/test.yml
+    sources:
+      - id: report-files
+        uses: github.workflow-artifacts@v1
+        with:
+          run: "{{ triggers.successful-assertions.run }}"
+          artifacts:
+            - name: datadog-report
+              max_bytes: 5242880
+              unpack: true
+              files:
+                - name: datadog-report.html
+                  media_type: text/html
+                  max_bytes: 5242880
+    actions:
+      - id: publish
+        uses: toolkit.public-folder@v1
+        with:
+          source: report-files
+          security_profile: untrusted-html
+          retention: 90d
+          keep_default_branch_sets: 5
+      - id: comment
+        uses: github.pull-request-comment@v1
+        needs: [publish]
+        when:
+          target: pull_request
+        with:
+          operation: upsert
+          marker: "<!-- ci-toolkit:datadog-proof-report -->"
+          body: |
+            <!-- ci-toolkit:datadog-proof-report -->
+            ### Datadog proof report
+            **Commit:** [`{{ commit.sha | markdown_escape }}`]({{ commit.url | markdown_url_escape }})
+
+            [Open the HTML proof report]({{ actions.publish.outputs.folder_url | markdown_url_escape }})
+
+            {{ actions.publish.outputs.file_table }}
