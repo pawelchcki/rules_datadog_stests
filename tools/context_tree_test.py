@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -94,6 +95,9 @@ class PublicationTest(unittest.TestCase):
             subprocess.run(["git", "init", "-q", root], check=True, env=env)
             subprocess.run(["git", "add", "fixtures"], cwd=root, check=True, env=env)
             subprocess.run(["git", "-c", "user.name=Test", "-c", "user.email=test@example.invalid", "commit", "-qm", "fixtures"], cwd=root, check=True, env=env)
+            # The publisher CLI needs python3 even on an executor that only
+            # provides Bazel's hermetic Python runtime.
+            (binary / "python3").symlink_to(sys.executable)
             calls = root / "registry-calls"
             skopeo = binary / "skopeo"
             skopeo.write_text("#!/usr/bin/env python3\nimport pathlib,sys\n" + f"p=pathlib.Path({str(calls)!r});p.open('a').write(' '.join(sys.argv[1:])+'\\n')\n" + "if sys.argv[-1].startswith('oci:'): pathlib.Path(sys.argv[-1][4:]).mkdir(parents=True,exist_ok=True)\n")
