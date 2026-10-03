@@ -46,8 +46,10 @@ to produce two fresh gated executions and the Datadog report. The image director
 contains `bazel.flags`, which can be empty when using published fixtures.
 
 Pull requests run the full assertion suite, an external consumer build and two
-fresh gated parity executions. A separate `source-checks` job validates GitHub
-Actions workflows and tracked Python, shell and JSON syntax. Run
+fresh gated parity executions. Local execution eagerly materializes cached
+outputs so OCI directory symlink aliases remain intact; remote BuildBuddy
+execution retains minimal downloads with explicit evidence trees. A separate
+`source-checks` job validates GitHub Actions workflows and tracked Python, shell and JSON syntax. Run
 `python3 tools/check_sources.py` and
 `go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.12` locally for those checks.
 The runnerless CI tool kit GitHub App provides `codex/review-gate` without a
