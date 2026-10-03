@@ -1,0 +1,21 @@
+common --enable_bzlmod
+common --@@rules_python+//python/config_settings:bootstrap_impl=script
+common:local --remote_executor= --remote_cache= --bes_backend=
+common:local --spawn_strategy=sandboxed,local
+common:local --extra_execution_platforms= --host_platform=@platforms//host
+test --test_output=errors
+
+# Optional BuildBuddy fleet, using the shared execution platform.
+common:buildbuddy --bes_backend=grpcs://remote.buildbuddy.io
+common:buildbuddy --bes_results_url=https://pawel.buildbuddy.io/invocation/
+common:buildbuddy --remote_cache=grpcs://remote.buildbuddy.io
+common:buildbuddy --remote_executor=grpcs://remote.buildbuddy.io
+common:buildbuddy --remote_timeout=10m
+common:buildbuddy --remote_download_outputs=minimal
+common:buildbuddy --remote_local_fallback=false
+common:buildbuddy --remote_upload_local_results=false
+common:buildbuddy --spawn_strategy=remote
+common:buildbuddy --jobs=100
+common:buildbuddy --extra_execution_platforms=@rules_stests//bazel/platforms:rbe_linux_amd64
+common:buildbuddy --host_platform=@rules_stests//bazel/platforms:rbe_linux_amd64
+build:buildbuddy --build_metadata=VISIBILITY=PUBLIC

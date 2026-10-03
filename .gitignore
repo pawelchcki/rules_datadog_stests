@@ -1,0 +1,75 @@
+# Operating-system and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Python bytecode and native extensions
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Python environments
+.venv/
+venv/
+env/
+ENV/
+
+# Packaging and build output
+build/
+dist/
+*.egg-info/
+.eggs/
+wheels/
+pip-wheel-metadata/
+bazel-*
+.bazel-cache/
+oci-layout/
+*.oci.tar
+.config/go/
+
+# Test, coverage, lint, and type-check caches
+.cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.hypothesis/
+.mypy_cache/
+.nox/
+.pytest_cache/
+.ruff_cache/
+.tox/
+.pytype/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+!**/.env.example
+# Runtime databases and service state
+*.db
+*.db-journal
+*.sqlite
+*.sqlite-journal
+*.sqlite3
+*.sqlite3-journal
+postgres-data/
+
+# Logs and temporary process files
+*.log
+*.pid
+*.tmp
+
+# Container tooling
+.buildx-cache/
+.podman/
+
+# Local report assembly artifacts.
+otel-profile.bep.json
+feature-parity-report.html
+datadog-report.html

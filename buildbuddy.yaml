@@ -1,0 +1,47 @@
+actions:
+  - name: Full test suite
+    visibility: PUBLIC
+    container_image: ubuntu-24.04
+    # Keep runner caches and installed tools across PR iterations.
+    platform_properties:
+      remote-snapshot-save-policy: always
+      snapshot-read-policy: newest
+    resource_requests:
+      # Bazel actions execute on the self-hosted RBE fleet. Fixtures are
+      # anonymously pulled from the digest-locked published packages.
+      cpu: 4
+      memory: 8GB
+    triggers:
+      push:
+        branches:
+          - main
+      pull_request:
+        branches:
+          - "*"
+    steps:
+      - run: |
+          set -euo pipefail
+          revision="$(git rev-parse HEAD)"
+          if [ "$(git show -s --format=%ce HEAD)" = "ci-runner@buildbuddy.io" ]; then
+            revision="$(git rev-parse HEAD^1)"
+          fi
+          git checkout --detach "$revision"
+          images="$(mktemp -d "${TMPDIR:-/tmp}/datadog-images.XXXXXX")"
+          evidence="$(mktemp -d "${TMPDIR:-/tmp}/datadog-evidence.XXXXXX")"
+          archive_evidence() {
+            status=$?
+            trap - EXIT
+            set +e
+            tools/run_datadog_parity.sh --archive "$images" "$evidence"
+            archive_status=$?
+            if (( status == 0 && archive_status != 0 )); then
+              exit "$archive_status"
+            fi
+            exit "$status"
+          }
+          trap archive_evidence EXIT
+          : > "$images/bazel.flags"
+          bazel test --config=buildbuddy --spawn_strategy=remote,local --build_tests_only //...
+          DATADOG_BAZEL_CONFIG=buildbuddy tools/run_datadog_parity.sh "$images" "$revision" "$evidence"
+          cp "$evidence/datadog-report.html" "$BUILDBUDDY_ARTIFACTS_DIRECTORY/datadog-report.html"
+          (cd examples/plugin_agent && bazel build //:telemetry_api_check)

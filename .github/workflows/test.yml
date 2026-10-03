@@ -1,0 +1,37 @@
+name: Datadog assertions
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  assertions:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: bazel-contrib/setup-bazel@8cb04a772ab4c1eb984e9c1b493a182e96c5e425 # 0.19.0
+        with:
+          bazelisk-cache: true
+      - run: bazel test --config=local --build_tests_only //...
+      - name: Verify external consumer
+        working-directory: examples/plugin_agent
+        run: bazel build //:telemetry_api_check
+      - name: Fresh gated Datadog evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          images="$RUNNER_TEMP/datadog-images"
+          evidence="$RUNNER_TEMP/datadog-evidence"
+          mkdir -p "$images"
+          : > "$images/bazel.flags"
+          DATADOG_BAZEL_CONFIG=local tools/run_datadog_parity.sh "$images" "$(git rev-parse HEAD)" "$evidence"
+      - name: Retain proof artifacts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: datadog-evidence
+          path: ${{ runner.temp }}/datadog-evidence
+          if-no-files-found: ignore
