@@ -14,6 +14,8 @@ if [[ -n "$container_build_network" ]]; then
 fi
 cd "$root"
 : > "$out/bazel.flags"
+# A failed rebuild must not retain provenance from a previous output.
+rm -f -- "$out/gin.source-tree"
 
 cache_root="${DATADOG_FIXTURE_CACHE:-}"
 if [[ -n "$cache_root" ]]; then
@@ -79,6 +81,7 @@ for fixture in ruby gin; do
     mkdir -p "$out/contexts"
     context="$(mktemp -d "$out/contexts/gin.XXXXXX")/app"
     python3 tools/materialize_shared_app.py --overlay "$overlay" --output "$context"
+    source_tree="$(python3 tools/context_tree.py "$context")"
     repository=gin_datadog_realworld_linux_amd64
     image=localhost/rules-stests-gin-datadog:2.10.1
     rootfs_digest=sha256:f2532c86ac33814c8ab87c3cc6b64d0d88ad9bdee043bc65982276adbf55e99b
@@ -95,6 +98,9 @@ for fixture in ruby gin; do
         printf 'validated fixture cache hit: %s\n' "$cache_entry" > "$out/$fixture.build.log"
         printf 'Datadog fixture cache hit: %s (reviewed payload verified)\n' "$fixture"
         printf '%s\n' "$flag" >> "$out/bazel.flags"
+        if [[ "$fixture" == gin ]]; then
+          printf '%s\n' "$source_tree" > "$out/gin.source-tree"
+        fi
         continue
       fi
       rejected="$cache_root/.rejected-$fixture-$cache_key-$$"
@@ -136,4 +142,7 @@ for fixture in ruby gin; do
     rm -rf -- "$staging"
   fi
   printf '%s\n' "$flag" >> "$out/bazel.flags"
+  if [[ "$fixture" == gin ]]; then
+    printf '%s\n' "$source_tree" > "$out/gin.source-tree"
+  fi
 done

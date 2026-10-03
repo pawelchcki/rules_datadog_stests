@@ -29,7 +29,11 @@ receipts and publication workflows stay here. OCI payload digests remain pinned
 at their previously reviewed values. The Go fixture builder imports the pinned
 Gin sources from
 `@rules_stests//fixtures/apps/go/realworld-gin:sources` and overlays only the
-Datadog tracer graph and image recipe. Falcon also uses the shared
+Datadog tracer graph and image recipe. The fixture builder records the complete
+composed Gin context as a canonical Git tree in `gin.source-tree`, including
+shared files, executable modes and symlink targets. Publication requires this
+metadata and uses it for image tags and the lock source tree. Rebuilding the
+unchanged historical context retains its reviewed tree identity. Falcon also uses the shared
 `@rules_stests//harness:falcon_rootfs`. Common application sources, launchers,
 runtimes, sink engine, and validator compiler remain in `rules_stests`.
 

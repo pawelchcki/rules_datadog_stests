@@ -7,6 +7,15 @@ cd "$root"
 staging="$(mktemp -d "${TMPDIR:-/tmp}/datadog-publication.XXXXXX")"
 trap 'rm -rf -- "$staging"' EXIT
 
+# The builder records the actual shared app plus tracer overlay after payload
+# validation, including on cache hits. Reject missing or malformed provenance
+# before any registry write. Historical locks retain their original trees.
+gin_tree="$(cat "$images/gin.source-tree")"
+if [[ ! "$gin_tree" =~ ^[0-9a-f]{40}$ ]]; then
+  printf 'invalid Gin build-context source tree\n' >&2
+  exit 1
+fi
+
 # Check every payload before the first registry write. Publication preserves
 # the OCI manifest digest, and the subsequent pulls use no registry credentials.
 for fixture in ruby gin; do
@@ -24,7 +33,11 @@ for fixture in ruby gin; do
   esac
   # A dirty context cannot be labelled with the committed source tree.
   test -z "$(git status --porcelain --untracked-files=all -- "$context")"
-  tree="$(git rev-parse "HEAD:$context")"
+  if [[ "$fixture" == gin ]]; then
+    tree="$gin_tree"
+  else
+    tree="$(git rev-parse "HEAD:$context")"
+  fi
   digest="$(python3 - "$images/$fixture/index.json" <<'PY'
 import json, sys
 print(json.load(open(sys.argv[1]))["manifests"][0]["digest"])

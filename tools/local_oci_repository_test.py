@@ -117,6 +117,7 @@ class LocalOCIRepositoryTest(unittest.TestCase):
             shutil.copyfile(FIXTURE_BUILDER, builder)
             builder.chmod(0o755)
             shutil.copyfile(Path(__file__).with_name("materialize_shared_app.py"), tools / "materialize_shared_app.py")
+            shutil.copyfile(Path(__file__).with_name("context_tree.py"), tools / "context_tree.py")
             validator = tools / "local_oci_repository.py"
             validator.write_text("""#!/usr/bin/env python3
 import pathlib, sys
@@ -133,6 +134,9 @@ print(f"--override_repository={sys.argv[2]}={directory.resolve()}")
             ):
                 context.mkdir(parents=True)
                 (context / "Dockerfile").write_text("FROM scratch\n")
+            shared = root / "shared" / "fixtures/apps/go/realworld-gin"
+            shared.mkdir(parents=True)
+            (shared / "main.go").write_text("shared application v1")
             counter = root / "build-count"
             builds = root / "build-arguments"
             container_tool = root / "container-tool"
@@ -156,7 +160,7 @@ esac
                 "CONTAINER_TOOL": str(container_tool),
                 "CONTAINER_BUILD_NETWORK": "host",
                 "DATADOG_FIXTURE_CACHE": str(cache),
-                "RULES_STESTS_SOURCE_ROOT": str(root),
+                "RULES_STESTS_SOURCE_ROOT": str(root / "shared"),
             }
 
             def run(number):
@@ -172,16 +176,21 @@ esac
             self.assertEqual(first.returncode, 0, first.stderr)
             self.assertEqual(counter.read_text(), "xx")
             self.assertIn("contexts/gin", builds.read_text())
+            original_tree = (root / "output-1/gin.source-tree").read_text()
             # Reusing an output directory must also work with shared sources.
             second = run(1)
             self.assertEqual(second.returncode, 0, second.stderr)
             self.assertEqual(counter.read_text(), "xx")
+            self.assertEqual((root / "output-1/gin.source-tree").read_text(), original_tree)
             self.assertIn("validated fixture cache hit", (root / "output-1/ruby.build.log").read_text())
 
-            (root / "fixtures/apps/go/realworld-gin/Dockerfile").write_text("FROM scratch\n# changed\n")
+            # Shared inputs change provenance and the cache key independently
+            # of the unchanged local tracer overlay.
+            (shared / "main.go").write_text("shared application v2")
             changed = run(3)
             self.assertEqual(changed.returncode, 0, changed.stderr)
             self.assertEqual(counter.read_text(), "xxx")
+            self.assertNotEqual((root / "output-3/gin.source-tree").read_text(), original_tree)
 
             ruby_entry = next(cache.glob("ruby-*"))
             (ruby_entry / "corrupt").touch()
