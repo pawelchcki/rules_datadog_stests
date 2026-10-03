@@ -49,13 +49,12 @@ The runnerless CI tool kit GitHub App provides `codex/review-gate` without a
 GitHub Actions runner or repository-stored Codex credentials.
 
 Runnerless report publication is declared in [.ci-toolkit.yml](.ci-toolkit.yml).
-Activation requires the configuration on the trusted default branch and the
-CI tool kit App installation to grant `Actions: read` for artifact downloads.
-Once both prerequisites are met, successful
-`Datadog assertions` runs publish a commit-addressed HTML proof page from
-GitHub Actions to the App's R2-backed artifact service. The `untrusted-html`
-security profile isolates report HTML. Failed or incomplete workflows do not
+After this configuration reaches the trusted default branch, successful
+BuildBuddy `Full test suite` runs publish a commit-addressed HTML proof page
+to the App's R2-backed artifact service. The source pins the status producer,
+invocation host and exact head, and declares only `datadog-report.html`.
+The `untrusted-html` security profile isolates report HTML. Failed or incomplete workflows do not
 publish. Reports remain available for 90 days, with five default-branch sets
 retained; PR comments link reports after publication. Complete evidence stays
-in the workflow's existing GitHub Actions artifacts. GitHub Pages also hosts
+in existing GitHub Actions and BuildBuddy CI artifacts. GitHub Pages also hosts
 the report produced by the existing main-branch publisher.
