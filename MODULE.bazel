@@ -12,7 +12,7 @@ bazel_dep(name = "aspect_bazel_lib", version = "2.21.1")
 git_override(
     module_name = "rules_stests",
     remote = "https://github.com/pawelchcki/rules_stests.git",
-    commit = "c3d48275eb329f970ce2a2e76b415ddbc5305eed",
+    commit = "7958ee822daeaba400b3b26bfab371c9fea015d1",
 )
 images = use_extension("//bazel:oci_deps.bzl", "oci_deps")
 use_repo(images, "datadog_python", "datadog_python_linux_amd64", "datadog_ruby", "datadog_ruby_linux_amd64", "gin_datadog_realworld", "gin_datadog_realworld_linux_amd64")
