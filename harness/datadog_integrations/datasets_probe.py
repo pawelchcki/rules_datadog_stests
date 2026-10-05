@@ -17,7 +17,7 @@ from urllib.parse import urlsplit
 from harness.datadog_agent.probe import AGENT_VERSION, server_thread
 from harness.datadog_llmobs import connect
 from harness.datadog_integrations import datasets_assertions
-from harness.datadog_integrations.lab import (AgentLab, TRACER_SOURCE, attach_artifacts, base_parser,
+from harness.datadog_integrations.lab import (AgentLab, attach_artifacts, base_parser,
     output_dir, receipt, resolve_args, write_results)
 from harness.datadog_telemetry.probe import TelemetryBackendHandler, sha
 from harness.datadog_telemetry.proxy import CaptureProxy
@@ -25,6 +25,7 @@ from harness.datadog_telemetry.proxy import CaptureProxy
 CAPABILITY = "llm_observability_datasets"
 SOURCE = ("https://github.com/DataDog/system-tests/blob/" + "098fe0967c587db8a16b74a1e711777d0a9d5867"
           + "/tests/parametric/test_llm_observability/test_llm_observability_dne.py#L36")
+SOURCE_HASH = "17a3993a4eb55d1b8c86a60adcb1eee828c1af16a404e181b54695052635f869"
 RESULTS = "datadog-integrations-datasets-results.json"
 MAX_BODY = 32 * 1024 * 1024
 
@@ -173,7 +174,7 @@ def execute(args, out):
             result = receipt(CAPABILITY, [CAPABILITY], env, "datasets/tracer/requests.json",
                              sha((case / "tracer" / "requests.json").read_bytes()), out,
                              clientVersion=identity["tracer_version"], source=SOURCE,
-                             sourceMethod="Test_Dataset.test_dataset_create_delete", sourceSha256=TRACER_SOURCE,
+                             sourceMethod="Test_Dataset.test_dataset_create_delete", sourceSha256=SOURCE_HASH,
                              workloadSha256=sha(Path(args.app).read_bytes()),
                              missingAssertions=[{"name": "vcr_replay_of_real_datadog_api", "status": "missing",
                                  "reason": "upstream replays recorded cassettes of the real llm-obs API; this lab "

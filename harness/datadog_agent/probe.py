@@ -316,7 +316,7 @@ def execute(args, sink, out):
                         records = backend.snapshot()
                         chunks = [chunk for record in records if record["path"] == "/api/v0.2/traces" and record["status"] == 200 for chunk in trace_chunks(record["payload"])]
                         delivered = {span["span_id"] for chunk in chunks for span in chunk["spans"]}
-                        wanted = {int(identity[key]) for case, _, identity, _, _ in observations for key in (["root_id", "child_id"] if case["exported"] == "all" else ["root_id"] if case["exported"] == "root" else [])}
+                        wanted = {int(identity[key]) for case, _, identity, _, _ in observations for key in (["root_id", "child_id"] if case["exported"] == "all" else ["root_id"] if case["exported"] == "root" else ["child_id"] if case["exported"] == "child" else [])}
                         resources = {row["Resource"] for row in stats_rows(records)}
                         expected_resources = {identity["name"] for _, _, identity, _, _ in observations}
                         runtime_sketches = [sketch for record in records if record["path"] == "/api/beta/sketches" and record["status"] == 200 for sketch in record["payload"].get("sketches", [])]

@@ -12,12 +12,13 @@ from urllib.request import urlopen
 from harness.datadog_agent.probe import BASE_ENV, process, server_thread, wait_ready
 from harness.datadog_backend.wire import msgpack, trace_chunks
 from harness.datadog_integrations import graphql_assertions
-from harness.datadog_integrations.lab import (AgentLab, REVISION, TRACER_SOURCE, attach_artifacts, base_parser,
+from harness.datadog_integrations.lab import (AgentLab, REVISION, attach_artifacts, base_parser,
                                               output_dir, receipt, resolve_args, write_results)
 from harness.datadog_telemetry.probe import sha
 from harness.datadog_telemetry.proxy import CaptureProxy
 
 SOURCE = "https://github.com/DataDog/system-tests/blob/" + REVISION + "/tests/test_graphql.py"
+SOURCE_HASH = "45822f597fa145640a895a8728f387d0fdf0851fcd2312cad1ec4b0ca8e070f1"
 ERROR_DOCUMENT = {"query": graphql_assertions.ERROR_QUERY, "operationName": "myQuery"}
 SUCCESS_DOCUMENT = {"query": graphql_assertions.SUCCESS_QUERY, "operationName": "myQuery"}
 EXTENSIONS_ENV = "int,float,str,bool,other"
@@ -110,7 +111,7 @@ def execute(args, out):
                 env, identity, records, native_spans, backend_spans = run_case(lab, args, out, case)
                 result = receipt("graphql-" + name, [case["capability"]], env, name + "/tracer/requests.json",
                                  sha((out / name / "tracer" / "requests.json").read_bytes()), out,
-                                 clientVersion=identity["tracer_version"], sourceSha256=TRACER_SOURCE,
+                                 clientVersion=identity["tracer_version"], sourceSha256=SOURCE_HASH,
                                  workloadSha256=sha(Path(args.app).read_bytes()), source=SOURCE,
                                  missingAssertions=case["missing"])
                 attach_artifacts(result, out, [name + "/identity.json", name + "/native-spans.json", name + "/events.json",

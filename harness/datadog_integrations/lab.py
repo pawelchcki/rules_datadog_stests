@@ -21,7 +21,6 @@ from harness.datadog_telemetry.probe import TelemetryBackendHandler, sha
 from harness.datadog_telemetry.proxy import CaptureProxy
 
 REVISION = "098fe0967c587db8a16b74a1e711777d0a9d5867"
-TRACER_SOURCE = "4d55cfcd058c01a19555fc3f5eb2ad298e17e50ffe2bcacbe255ca825868bae1"
 CERTIFICATE = Path(__file__).parent.parent / "datadog_llmobs/localhost-test.crt"
 
 

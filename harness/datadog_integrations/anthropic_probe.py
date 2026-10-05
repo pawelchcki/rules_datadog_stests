@@ -8,13 +8,17 @@ from harness.datadog_agent.probe import AGENT_VERSION, server_thread
 from harness.datadog_backend.backend import decompress
 from harness.datadog_backend.wire import msgpack, trace_chunks
 from harness.datadog_integrations import anthropic_api, anthropic_assertions
-from harness.datadog_integrations.lab import (AgentLab, REVISION, TRACER_SOURCE, attach_artifacts, base_parser,
+from harness.datadog_integrations.lab import (AgentLab, REVISION, attach_artifacts, base_parser,
                                               output_dir, receipt, resolve_args, write_results)
 from harness.datadog_telemetry.probe import sha
 
 SDK_PATH = "/evp_proxy/v2/api/v2/llmobs"
 SOURCE = ("https://github.com/DataDog/system-tests/blob/" + REVISION
           + "/tests/integration_frameworks/llm/anthropic/test_anthropic_")
+SOURCE_HASHES = {
+    "apm": "ca6b808a9dcf5046e583c21797203a72043fce9688505b4a05f68fdc3ccaed30",
+    "llmobs": "a09d619f044e70688217281739c959c80d1aec302f6745ca173ba54dd1c7ef0f",
+}
 MISSING = {
     # Upstream test_create/test_create_stream_method assert only name, resource
     # and the model tag; every one of those is covered here plus linkage,
@@ -88,7 +92,7 @@ def execute(args, out):
                 feature, check = anthropic_assertions.CHECKS[mode]
                 result = receipt(feature, [feature], env, mode + "/tracer/requests.json",
                                  sha((case_dir / "tracer" / "requests.json").read_bytes()), out,
-                                 clientVersion=identity["client_version"], sourceSha256=TRACER_SOURCE,
+                                 clientVersion=identity["client_version"], sourceSha256=SOURCE_HASHES[mode],
                                  workloadSha256=sha(Path(args.app).read_bytes()), missingAssertions=MISSING[mode],
                                  source=SOURCE + ("apm.py" if mode == "apm" else "llmobs.py"))
                 files = [mode + "/identity.json", mode + "/events.json", "datadog.yaml", "agent-info.json"]
