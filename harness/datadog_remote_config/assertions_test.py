@@ -3,6 +3,7 @@ import hashlib
 import json
 from pathlib import Path
 import unittest
+from unittest.mock import patch
 from harness.datadog_remote_config import assertions
 from harness.datadog_remote_config.backend import FIXTURES, encode
 
@@ -10,6 +11,9 @@ from harness.datadog_remote_config.backend import FIXTURES, encode
 class RCAssertionsTest(unittest.TestCase):
     def setUp(self):
         self.data = json.loads(Path(__file__).with_name("golden.json").read_text())
+        version = patch.object(assertions, "SDK_VERSION", "4.14.0")
+        version.start()
+        self.addCleanup(version.stop)
 
     def test_real_capture(self):
         d = self.data

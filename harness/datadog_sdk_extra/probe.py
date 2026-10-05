@@ -19,6 +19,7 @@ from harness.datadog_agent.probe import BASE_ENV, resolve, server_thread
 from harness.datadog_backend.wire import msgpack
 
 REVISION = '098fe0967c587db8a16b74a1e711777d0a9d5867'
+SDK_VERSION = '4.15.4'
 
 
 def sha(data):
@@ -73,9 +74,13 @@ class Handler(BaseHTTPRequestHandler):
 def decode(record):
     raw = base64.b64decode(record['body'])
     assert sha(raw) == record['sha256']
-    if record['headers'].get('Content-Encoding', '').lower() == 'gzip':
+    if headers(record).get('content-encoding', '').lower() == 'gzip':
         raw = gzip.decompress(raw)
     return msgpack(raw)
+
+
+def headers(record):
+    return {name.lower(): value for name, value in record['headers'].items()}
 
 
 def native_spans(records):
@@ -84,7 +89,7 @@ def native_spans(records):
 
 
 def assert_export(records, identity):
-    assert identity['sdkVersion'] == '4.14.0', identity
+    assert identity['sdkVersion'] == SDK_VERSION, identity
     spans = native_spans(records)
     index = {s['span_id']: s for s in spans}
     assert len(index) == len(spans), 'Duplicate span identities'
@@ -104,7 +109,7 @@ def check_discovery(records, identity, env):
     assert re.fullmatch(r'/memfd:datadog-tracer-info-[A-Za-z0-9]{8} \(deleted\)', metadata[0]['target'])
     data = msgpack(base64.b64decode(metadata[0]['bytes']))
     assert data['schema_version'] in (1, 2) and data['tracer_language'] == 'python'
-    assert data['tracer_version'] == '4.14.0' and isinstance(data['hostname'], str)
+    assert data['tracer_version'] == SDK_VERSION and isinstance(data['hostname'], str)
     uuid.UUID(data['runtime_id'])
     for field, key in [('service_name', 'DD_SERVICE'), ('service_env', 'DD_ENV'), ('service_version', 'DD_VERSION')]:
         assert data[field] == env[key], (data, env)
@@ -256,8 +261,8 @@ def check_ai_guard(records, identity, env):
     if env.get('DD_APM_TRACING_ENABLED') == 'false':
         assert all(s['metrics'].get('_dd.apm.enabled') == 0 for s in spans), spans
     for record in api_calls:
-        assert record['headers']['DD-API-KEY'] == 'local-sdk-extra-api-key'
-        assert record['headers']['DD-APPLICATION-KEY'] == 'local-sdk-extra-app-key'
+        assert headers(record)['dd-api-key'] == 'local-sdk-extra-api-key'
+        assert headers(record)['dd-application-key'] == 'local-sdk-extra-app-key'
         request = json.loads(base64.b64decode(record['body']))
         assert request['data']['attributes']['meta'] == {'service': 'sdk-extra', 'env': 'sdk-env'}
 
@@ -269,7 +274,7 @@ def check_ipv6(records, identity, env):
 
 
 def check_otlp_traces(records, identity, env):
-    assert identity['sdkVersion'] == '4.14.0'
+    assert identity['sdkVersion'] == SDK_VERSION
     own = [r for r in records if r['path'] == '/routed/traces']
     assert own and len(own) == len(records), records
     documents = [json.loads(base64.b64decode(r['body'])) for r in own]

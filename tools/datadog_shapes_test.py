@@ -100,7 +100,7 @@ def main() -> None:
                 list(pool.map(check_candidate, enumerate(candidates)))
 
             # A changed tag is reported with the span path that leads to it.
-            path = TESTDATA / "python-aiohttp-datadog-v4-14-0-v04" / "unicode.scm"
+            path = TESTDATA / "python-aiohttp-datadog-v4-15-4-v04" / "unicode.scm"
             candidate = path.read_text()
             rendered = datadog_shapes.render_file(path.parent.name, path.stem, candidate)
             observed = re.search(r'\("http\.status_code" "(\d{3})"\)', candidate).group(1)

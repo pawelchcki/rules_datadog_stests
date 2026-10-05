@@ -14,7 +14,7 @@ The vendor manifest pins upstream revision
 `098fe0967c587db8a16b74a1e711777d0a9d5867`, records every source hash and retains
 the upstream license. The probe verifies those hashes before loading any test.
 It also requires assertions to be enabled and checks the running tracer is
-`ddtrace` 4.14.0. Updating either pin requires reviewing the vendor manifest,
+`ddtrace` 4.15.4. Updating either pin requires reviewing the vendor manifest,
 the matching Python support manifest and the explicit exclusions.
 
 The adapter replaces infrastructure imports and decorators with fixture routing

@@ -3,7 +3,7 @@
 Every scenario reuses the same production-shaped stack: a TLS-authenticated
 fake backend serving signed remote-config TUF stages, the real pinned core and
 trace Agents (7.83.1) forwarding to that backend, and a capture proxy between
-the pinned Python SDK (ddtrace 4.14) and the trace Agent retaining every
+the pinned Python SDK (ddtrace 4.15.4) and the trace Agent retaining every
 native request.
 """
 import json

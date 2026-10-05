@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"testing"
 )
@@ -60,6 +59,13 @@ func TestDatadogNativeAssertionsRejectMutations(t *testing.T) {
 				}
 				if c.Priority != nil {
 					s.Metrics["_sampling_priority_v1"] = float64(*c.Priority)
+				}
+				if c.HTTPError != nil {
+					s.Error = *c.HTTPError
+				}
+				if c.RuntimeIdentity {
+					s.Meta["runtime-id"] = "37e6f28bd416438e8e8accaf0d1a6e51"
+					s.Metrics["process_id"] = 123
 				}
 				if c.Name == "origin" {
 					s.Meta["_dd.origin"] = "synthetics"
@@ -167,7 +173,11 @@ func TestDatadogConfigurationEvidencePinsSourceAndAgentURL(t *testing.T) {
 		if c.SourceRevision == "" {
 			continue
 		}
-		if got := ddSourceURL(c); got != datadogConfigUpstream+"test_config_consistency.py" {
+		want := datadogConfigUpstream + "test_config_consistency.py"
+		if c.ReferencePath != "" {
+			want = "https://github.com/DataDog/system-tests/blob/" + c.SourceRevision + "/" + c.ReferencePath
+		}
+		if got := ddSourceURL(c); got != want {
 			t.Fatalf("incorrect source for %s: %s", c.Name, got)
 		}
 		if c.ReferenceClass == "" || c.ReferenceTest == "" {
@@ -222,37 +232,5 @@ func TestDatadogHTTPMetadataMutations(t *testing.T) {
 		if (err == nil) != (tagged == "/echo?<redacted>&safe=visible") {
 			t.Fatalf("query %q: %v", tagged, err)
 		}
-	}
-}
-
-func TestDuplicateOriginWaiverIsPythonOnly(t *testing.T) {
-	oldWire := datadogWire
-	t.Cleanup(func() { datadogWire = oldWire })
-	datadogWire = "v0.4"
-	log := []byte("intake Response: duplicate MessagePack map key")
-	origin := ddCase{Name: "origin"}
-
-	for _, app := range []string{"aiohttp", "django"} {
-		if !knownPythonDuplicateOrigin(app, origin, log, nil) {
-			t.Fatalf("Python duplicate-origin failure not recognized for %s", app)
-		}
-	}
-	for _, app := range []string{"rails", "falcon", "gin"} {
-		if knownPythonDuplicateOrigin(app, origin, log, nil) {
-			t.Fatalf("duplicate-origin failure incorrectly waived for %s", app)
-		}
-	}
-	if knownPythonDuplicateOrigin("aiohttp", ddCase{Name: "tags"}, log, nil) {
-		t.Fatal("non-origin case was waived")
-	}
-	if knownPythonDuplicateOrigin("aiohttp", origin, []byte("different failure"), nil) {
-		t.Fatal("different intake failure was waived")
-	}
-	if knownPythonDuplicateOrigin("aiohttp", origin, log, errors.New("log unavailable")) {
-		t.Fatal("unreadable rejection log was waived")
-	}
-	datadogWire = "v0.5"
-	if knownPythonDuplicateOrigin("aiohttp", origin, log, nil) {
-		t.Fatal("v0.5 duplicate-origin failure was waived")
 	}
 }

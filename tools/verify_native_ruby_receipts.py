@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Verify reviewed upstream Rails schema-v2 receipts and paired captures.
 
-The compatibility specification is dd-trace-rb v2.42.0 at c48add11242b1cd50b59deb00ca044bd6db54626.
+The compatibility specification is dd-trace-rb v2.43.0 at 859d8c24bcb3775f461d09706b75a4b788423ac0.
 No Ruby tracer gem is loaded by this suite; these are native-tracer receipts.
 """
 
@@ -120,7 +120,7 @@ HALTED_401_CONTROLLERS = {
     "errors_profiles": 4,
 }
 
-REFERENCE_PROFILE = "ruby-rails-datadog-v2-42-0-v04"
+REFERENCE_PROFILE = "ruby-rails-datadog-v2-43-0-v04"
 REFERENCE_INSTANTIATIONS = {
     "articles": 66, "auth": 19, "comments": 43,
     "errors_articles": 20, "errors_auth": 10,

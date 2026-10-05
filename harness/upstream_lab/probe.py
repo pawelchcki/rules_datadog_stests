@@ -101,7 +101,7 @@ def application(args, env, out, group):
                     assert proc.poll() is None, log_path.read_text(errors="replace")
                     assert time.monotonic() < deadline, "health readiness timeout"
                     time.sleep(0.05)
-            assert health["ready"] and health["ddtraceVersion"] == "4.14.0", health
+            assert health["ready"] and health["ddtraceVersion"] == "4.15.4", health
             library = Library(url)
             library.sdk_version = health["ddtraceVersion"]
             library.log_path = log_path

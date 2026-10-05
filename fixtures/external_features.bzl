@@ -28,7 +28,7 @@ def _datadog_fixture(app):
             command = ["bin/server", "--host", "127.0.0.1", "--port", "$${PORT}"],
             injection = datadog_ruby_injection(),
             wires = ["v0.4"],
-            profile = "ruby-falcon-datadog-v2-42-0-",
+            profile = "ruby-falcon-datadog-v2-43-0-",
         )
     config = REALWORLD_APPS[app]
     return struct(
@@ -37,7 +37,7 @@ def _datadog_fixture(app):
         command = ["opt/app/bin/realworld-gin-datadog"] + config.command if app == "gin" else config.command,
         injection = datadog_ruby_injection() if app == "rails" else (None if app == "gin" else datadog_python_injection(aiohttp = app == "aiohttp")),
         wires = ["v0.4"] if app in ["rails", "gin"] else ["v0.4", "v0.5"],
-        profile = {"rails": "ruby-rails-datadog-v2-42-0-", "gin": "go-gin-datadog-v2-10-1-"}.get(app, "python-" + app + "-datadog-v4-14-0-"),
+        profile = {"rails": "ruby-rails-datadog-v2-43-0-", "gin": "go-gin-datadog-v2-10-1-"}.get(app, "python-" + app + "-datadog-v4-15-4-"),
     )
 
 def datadog_external_feature_tests():

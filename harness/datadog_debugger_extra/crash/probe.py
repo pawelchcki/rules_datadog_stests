@@ -35,7 +35,7 @@ def execute(args, out):
                         env.update(DD_TRACE_AGENT_URL="http://127.0.0.1:" + str(proxy.server_port), DD_TRACE_API_VERSION="v0.4", DD_CRASHTRACKING_ENABLED=str(enabled).lower(), DD_CRASHTRACKING_ERRORS_INTAKE_ENABLED="false", DD_CRASHTRACKING_STACKTRACE_RESOLVER="none", DD_SERVICE="extra-crash", DD_CRASHTRACKING_STDOUT_FILENAME=str(directory / "receiver.stdout"), DD_CRASHTRACKING_STDERR_FILENAME=str(directory / "receiver.stderr"))
                         with process(launch_command(args, env, directory, instance="extra-crash-" + name), directory / "app.log", clean) as sdk:
                             ready = wait_for(lambda: json.loads((directory / "ready.json").read_text()) if (directory / "ready.json").exists() else None, "Crash SDK did not start")
-                            assert ready["tracer_version"] == "4.14.0", ready
+                            assert ready["tracer_version"] == "4.15.4", ready
                             assert ready["crashtracker_available"] and ready["crashtracker_started"] == enabled, ready
                             record = receipt("crashtracking", env, ready, "Real SIGSEGV from isolated pinned SDK; enabled report and disabled absence, control span and Agent forwarding", ["Other signals and delayed intake timeout"], "tests/parametric/test_crashtracking.py", "d21b9166ed7fbaf06e490b649e0c23c87bad3d2f8770feb153800d88619129e8")
                             record["name"] = name + ":crashtracking"

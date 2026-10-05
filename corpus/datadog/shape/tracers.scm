@@ -65,9 +65,9 @@
 
 ;; dd-trace-py -------------------------------------------------------------------
 
-; Trace-level tags go on the trace's root span. A W3C caller's traceparent is
-; kept as a tag; a caller that sent Datadog headers has its `_dd.p.tid` copied
-; to every span of the trace.
+; Trace-level tags go on the trace's root span. Python 4.15.4 preserves W3C
+; trace and parent identity without copying the raw traceparent into metadata.
+; A caller that sent Datadog headers has its `_dd.p.tid` copied to every span.
 (define (dd-trace-py wire process-tags)
   (tracer
     (list 'exception-stack "error.stack")
@@ -76,9 +76,7 @@
           (lambda (caller)
             (list trace-id-high (tag "_dd.tags.process" process-tags)
                   (process-identity "python") (metric "_dd.tracer_kr" 1)
-                  (sampling-priority caller) (sampling-decision caller)
-                  (and caller (eq? (caller-style caller) 'w3c)
-                       (tag "traceparent" (caller-header caller))))))
+                  (sampling-priority caller) (sampling-decision caller))))
     (list 'every-span
           (lambda (caller)
             (list deployment-env

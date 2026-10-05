@@ -48,7 +48,7 @@ func TestDatadogRubyBootstrap(t *testing.T) {
 	t.Run("frozen-idempotent-early", func(t *testing.T) {
 		code := fmt.Sprintf(`raise "late activation" if Rails.application&.initialized?
 RulesStestsDatadog.activate!; RulesStestsDatadog.activate!
-raise "wrong tracer" unless Gem.loaded_specs.fetch("datadog").version.to_s == "2.42.0"
+raise "wrong tracer" unless Gem.loaded_specs.fetch("datadog").version.to_s == "2.43.0"
 raise "duplicate load paths" unless $LOAD_PATH.uniq == $LOAD_PATH
 require %q
 raise "missing early Rack instrumentation" unless Rails.application.middleware.any? { |m| m.klass.name == "Datadog::Tracing::Contrib::Rack::TraceMiddleware" }
@@ -95,7 +95,7 @@ puts "bootstrap verified"`, filepath.Join(app, "config/environment"))
 				if err != nil {
 					return err
 				}
-				if !entry.IsDir() && strings.Contains(path, "/datadog-2.42.0/") && strings.HasSuffix(path, ".so") {
+				if !entry.IsDir() && strings.Contains(path, "/datadog-2.43.0/") && strings.HasSuffix(path, ".so") {
 					removed++
 					return os.Remove(path)
 				}

@@ -42,12 +42,12 @@ else
   test_download_outputs=minimal
 fi
 profiles=(
-  //corpus:python-aiohttp-datadog-v4-14-0-v04
-  //corpus:python-aiohttp-datadog-v4-14-0-v05
-  //corpus:python-django-datadog-v4-14-0-v04
-  //corpus:python-django-datadog-v4-14-0-v05
-  //corpus:ruby-rails-datadog-v2-42-0-v04
-  //corpus:ruby-falcon-datadog-v2-42-0-v04
+  //corpus:python-aiohttp-datadog-v4-15-4-v04
+  //corpus:python-aiohttp-datadog-v4-15-4-v05
+  //corpus:python-django-datadog-v4-15-4-v04
+  //corpus:python-django-datadog-v4-15-4-v05
+  //corpus:ruby-rails-datadog-v2-43-0-v04
+  //corpus:ruby-falcon-datadog-v2-43-0-v04
   //corpus:go-gin-datadog-v2-10-1-v04
 )
 # DefaultInfo for each profile carries its manifest and validator runfiles.
@@ -101,6 +101,30 @@ bazel test "${bazel_args[@]}" "${test_download_args[@]}" \
   //fixtures:datadog_external_features_suite
 mkdir -p "$evidence/features"
 find -L bazel-testlogs/fixtures -path '*datadog_external_features*/test.outputs/*' -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/features/" \;
+
+# Shared assertions require independent evidence from all three SDK languages.
+# Keep the entire 301-feature denominator and publish every missing cell.
+shared_evidence=()
+while IFS= read -r -d '' receipt; do
+  shared_evidence+=(--evidence "$receipt")
+done < <(find "$evidence/features" -name 'datadog-shared-results.json' -type f -print0)
+if [[ ${#shared_evidence[@]} -eq 0 ]]; then
+  echo 'No retained shared Datadog capability receipts' >&2
+  exit 1
+fi
+shared_report=(
+  report --inventory docs/datadog-capabilities-inventory.json
+  --mapping docs/datadog-shared-capabilities-mapping.json --local-root "$PWD"
+  --gap-issues docs/datadog-coverage-gaps.json
+  --require-language python --require-language ruby --require-language go
+  "${shared_evidence[@]}"
+)
+python3 tools/datadog_capabilities.py "${shared_report[@]}" \
+  --output "$evidence/datadog-shared-capabilities-report.json"
+python3 tools/datadog_capabilities.py "${shared_report[@]}" \
+  --format markdown --output "$evidence/datadog-shared-capabilities-report.md" \
+  --require-all-implemented \
+  --require-percent "${DATADOG_SHARED_CAPABILITY_MIN_PERCENT:-0}"
 
 # Capability suites reuse existing Python frameworks and include the real Agent
 # and local backend. Retain every raw capture beside its receipt before gating.

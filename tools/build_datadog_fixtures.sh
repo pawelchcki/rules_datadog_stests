@@ -74,8 +74,8 @@ for fixture in ruby gin; do
   if [[ "$fixture" == ruby ]]; then
     context=fixtures/agents/datadog-ruby
     repository=datadog_ruby_linux_amd64
-    image=localhost/rules-stests-datadog-ruby:2.42.0
-    rootfs_digest=sha256:b463ba27fdebf8841551f9c707ad87bc4bc504a4962c10afb3292a87ecafbe3a
+    image=localhost/rules-stests-datadog-ruby:2.43.0
+    rootfs_digest=sha256:3c02edad18444381e1a2965dcd71989603713de43beb7f4fc1dbcfb3b7af0794
   else
     overlay=fixtures/apps/go/realworld-gin
     mkdir -p "$out/contexts"

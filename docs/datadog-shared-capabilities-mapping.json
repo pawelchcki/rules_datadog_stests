@@ -1,0 +1,376 @@
+{
+  "schemaVersion": 1,
+  "upstreamRevision": "098fe0967c587db8a16b74a1e711777d0a9d5867",
+  "coverageSemantics": "Identical assertions independently verified in each requested language. All 301 named capabilities remain in the denominator. Unsupported, failed, unlabelled, or missing evidence supplies no coverage.",
+  "capabilities": [
+    {
+      "name": "b3_headers_propagation",
+      "status": "implemented",
+      "assertionScope": "The same native HTTP workload and span assertions run on Python, Ruby, and Go. Only the listed required cases count; other upstream parameters, scenarios, and products remain outside this claim.",
+      "requiredCases": [
+        "shared-b3",
+        "shared-b3-zero",
+        "shared-b3-invalid-hex",
+        "shared-outbound-b3"
+      ],
+      "checks": [
+        {
+          "path": "harness/external_features/datadog.go",
+          "symbol": "validateDatadogCase",
+          "target": "//fixtures:datadog_external_features_suite"
+        },
+        {
+          "path": "harness/external_features/datadog_probes.go",
+          "symbol": "validateDatadogProbes",
+          "target": "//fixtures:datadog_external_features_suite"
+        }
+      ]
+    },
+    {
+      "name": "b3multi_headers_propagation",
+      "status": "implemented",
+      "assertionScope": "The same native HTTP workload and span assertions run on Python, Ruby, and Go. Only the listed required cases count; other upstream parameters, scenarios, and products remain outside this claim.",
+      "requiredCases": [
+        "shared-b3multi",
+        "shared-b3multi-zero",
+        "shared-b3multi-invalid-hex",
+        "shared-outbound-b3multi"
+      ],
+      "checks": [
+        {
+          "path": "harness/external_features/datadog.go",
+          "symbol": "validateDatadogCase",
+          "target": "//fixtures:datadog_external_features_suite"
+        },
+        {
+          "path": "harness/external_features/datadog_probes.go",
+          "symbol": "validateDatadogProbes",
+          "target": "//fixtures:datadog_external_features_suite"
+        }
+      ]
+    },
+    {
+      "name": "context_propagation_extract_behavior",
+      "status": "implemented",
+      "assertionScope": "The same native HTTP workload and span assertions run on Python, Ruby, and Go. Only the listed required cases count; other upstream parameters, scenarios, and products remain outside this claim.",
+      "requiredCases": [
+        "shared-none",
+        "shared-malformed",
+        "shared-precedence"
+      ],
+      "checks": [
+        {
+          "path": "harness/external_features/datadog.go",
+          "symbol": "validateDatadogCase",
+          "target": "//fixtures:datadog_external_features_suite"
+        }
+      ]
+    },
+    {
+      "name": "datadog_headers_propagation",
+      "status": "implemented",
+      "assertionScope": "The same native HTTP workload and span assertions run on Python, Ruby, and Go. Only the listed required cases count; other upstream parameters, scenarios, and products remain outside this claim.",
+      "requiredCases": [
+        "shared-extract-64",
+        "shared-datadog",
+        "shared-malformed",
+        "shared-malformed-zero",
+        "shared-malformed-overflow",
+        "shared-outbound-datadog"
+      ],
+      "checks": [
+        {
+          "path": "harness/external_features/datadog.go",
+          "symbol": "validateDatadogCase",
+          "target": "//fixtures:datadog_external_features_suite"
+        },
+        {
+          "path": "harness/external_features/datadog_probes.go",
+          "symbol": "validateDatadogProbes",
+          "target": "//fixtures:datadog_external_features_suite"
+        }
+      ]
+    },
+    {
+      "name": "http_headers_as_tags_dd_trace_header_tags",
+      "status": "implemented",
+      "assertionScope": "Native HTTP header values and manual span annotations are checked by the same assertions on every fixture. Only the listed required cases count.",
+      "checks": [
+        {
+          "path": "harness/external_features/datadog.go",
+          "symbol": "validateDatadogCase",
+          "target": "//fixtures:datadog_external_features_suite"
+        },
+        {
+          "path": "harness/external_features/datadog_probes.go",
+          "symbol": "validateDatadogProbes",
+          "target": "//fixtures:datadog_external_features_suite"
+        }
+      ],
+      "requiredCases": [
+        "shared-head",
+        "shared-outbound"
+      ]
+    },
+    {
+      "name": "partial_flush",
+      "status": "implemented",
+      "assertionScope": "The same native HTTP workload and span assertions run on Python, Ruby, and Go. Only the listed required cases count; other upstream parameters, scenarios, and products remain outside this claim.",
+      "requiredCases": [
+        "shared-partial-1",
+        "shared-partial-2",
+        "shared-partial-1000",
+        "shared-partial-disabled"
+      ],
+      "checks": [
+        {
+          "path": "harness/external_features/datadog.go",
+          "symbol": "validateDatadogCase",
+          "target": "//fixtures:datadog_external_features_suite"
+        },
+        {
+          "path": "harness/external_features/datadog_probes.go",
+          "symbol": "validateDatadogProbes",
+          "target": "//fixtures:datadog_external_features_suite"
+        }
+      ]
+    },
+    {
+      "name": "runtime_id_in_span_metadata_for_service_entry_spans",
+      "status": "implemented",
+      "assertionScope": "Native service-entry spans expose a nonzero 128-bit runtime ID stable across four requests in one process and a positive process ID. Both SDK UUID spellings are accepted.",
+      "requiredCases": [
+        "shared-runtime-identity"
+      ],
+      "checks": [
+        {
+          "path": "harness/external_features/datadog.go",
+          "symbol": "validateDatadogCase",
+          "target": "//fixtures:datadog_external_features_suite"
+        }
+      ]
+    },
+    {
+      "name": "trace_agent_connection",
+      "status": "implemented",
+      "assertionScope": "The same native HTTP workload and span assertions run on Python, Ruby, and Go. Only the listed required cases count; other upstream parameters, scenarios, and products remain outside this claim.",
+      "requiredCases": [
+        "shared-agent-url-precedence"
+      ],
+      "checks": [
+        {
+          "path": "harness/external_features/datadog.go",
+          "symbol": "validateDatadogCase",
+          "target": "//fixtures:datadog_external_features_suite"
+        }
+      ]
+    },
+    {
+      "name": "trace_annotation",
+      "status": "implemented",
+      "assertionScope": "Native HTTP header values and manual span annotations are checked by the same assertions on every fixture. Only the listed required cases count.",
+      "checks": [
+        {
+          "path": "harness/external_features/datadog.go",
+          "symbol": "validateDatadogCase",
+          "target": "//fixtures:datadog_external_features_suite"
+        },
+        {
+          "path": "harness/external_features/datadog_probes.go",
+          "symbol": "validateDatadogProbes",
+          "target": "//fixtures:datadog_external_features_suite"
+        }
+      ],
+      "requiredCases": [
+        "shared-nested"
+      ]
+    },
+    {
+      "name": "trace_client_ip_header",
+      "status": "implemented",
+      "assertionScope": "Explicit custom client-IP header wins over a conflicting X-Forwarded-For header on all four native server spans.",
+      "requiredCases": [
+        "shared-client-ip-override"
+      ],
+      "checks": [
+        {
+          "path": "harness/external_features/datadog.go",
+          "symbol": "validateDatadogCase",
+          "target": "//fixtures:datadog_external_features_suite"
+        }
+      ]
+    },
+    {
+      "name": "trace_data_integrity",
+      "status": "implemented",
+      "assertionScope": "Nonzero IDs, positive timing, unique span IDs, nested parentage, controlled exception fields, and outbound client/server context restoration. Native v0.4/v0.5 only; OTLP semantic conventions and efficient v1 payloads remain gaps.",
+      "requiredCases": [
+        "shared-nested",
+        "shared-outbound",
+        "shared-exception"
+      ],
+      "checks": [
+        {
+          "path": "harness/external_features/datadog.go",
+          "symbol": "validateDatadogCase",
+          "target": "//fixtures:datadog_external_features_suite"
+        },
+        {
+          "path": "harness/external_features/datadog_probes.go",
+          "symbol": "validateDatadogProbes",
+          "target": "//fixtures:datadog_external_features_suite"
+        }
+      ]
+    },
+    {
+      "name": "trace_enablement",
+      "status": "implemented",
+      "assertionScope": "The same native HTTP workload and span assertions run on Python, Ruby, and Go. Only the listed required cases count; other upstream parameters, scenarios, and products remain outside this claim.",
+      "requiredCases": [
+        "shared-disabled"
+      ],
+      "checks": [
+        {
+          "path": "harness/external_features/datadog.go",
+          "symbol": "validateDatadogCase",
+          "target": "//fixtures:datadog_external_features_suite"
+        }
+      ]
+    },
+    {
+      "name": "trace_global_tags",
+      "status": "implemented",
+      "assertionScope": "The same native HTTP workload and span assertions run on Python, Ruby, and Go. Only the listed required cases count; other upstream parameters, scenarios, and products remain outside this claim.",
+      "requiredCases": [
+        "shared-tags-comma",
+        "shared-tags-space",
+        "shared-tags-colon-value",
+        "shared-tags-unicode",
+        "shared-tags-identity-precedence"
+      ],
+      "checks": [
+        {
+          "path": "harness/external_features/datadog.go",
+          "symbol": "validateDatadogCase",
+          "target": "//fixtures:datadog_external_features_suite"
+        }
+      ]
+    },
+    {
+      "name": "trace_http_server_error_statuses",
+      "status": "implemented",
+      "assertionScope": "Four HTTP 200 responses have error=1 under the configured 200-299 range, versus error=0 in the baseline.",
+      "requiredCases": [
+        "shared-server-custom-error"
+      ],
+      "checks": [
+        {
+          "path": "harness/external_features/datadog.go",
+          "symbol": "validateDatadogCase",
+          "target": "//fixtures:datadog_external_features_suite"
+        }
+      ]
+    },
+    {
+      "name": "trace_id_128_bit_generation_propagation",
+      "status": "implemented",
+      "assertionScope": "The same native HTTP workload and span assertions run on Python, Ruby, and Go. Only the listed required cases count; other upstream parameters, scenarios, and products remain outside this claim.",
+      "requiredCases": [
+        "shared-generate-128",
+        "shared-generate-64",
+        "shared-extract-64",
+        "shared-datadog",
+        "shared-tracecontext"
+      ],
+      "checks": [
+        {
+          "path": "harness/external_features/datadog.go",
+          "symbol": "validateDatadogCase",
+          "target": "//fixtures:datadog_external_features_suite"
+        }
+      ]
+    },
+    {
+      "name": "trace_query_string_obfuscation",
+      "status": "implemented",
+      "assertionScope": "The same native HTTP workload and span assertions run on Python, Ruby, and Go. Only the listed required cases count; other upstream parameters, scenarios, and products remain outside this claim.",
+      "requiredCases": [
+        "shared-query-redaction"
+      ],
+      "checks": [
+        {
+          "path": "harness/external_features/datadog.go",
+          "symbol": "validateDatadogCase",
+          "target": "//fixtures:datadog_external_features_suite"
+        }
+      ]
+    },
+    {
+      "name": "trace_sampling",
+      "status": "implemented",
+      "assertionScope": "The same native HTTP workload and span assertions run on Python, Ruby, and Go. Only the listed required cases count; other upstream parameters, scenarios, and products remain outside this claim.",
+      "requiredCases": [
+        "shared-sample-one",
+        "shared-sample-zero",
+        "shared-rule-precedence",
+        "shared-sample-service-glob",
+        "shared-manual-keep",
+        "shared-manual-drop"
+      ],
+      "checks": [
+        {
+          "path": "harness/external_features/datadog.go",
+          "symbol": "validateDatadogCase",
+          "target": "//fixtures:datadog_external_features_suite"
+        },
+        {
+          "path": "harness/external_features/datadog_probes.go",
+          "symbol": "validateDatadogProbes",
+          "target": "//fixtures:datadog_external_features_suite"
+        }
+      ]
+    },
+    {
+      "name": "unified_service_tagging",
+      "status": "implemented",
+      "assertionScope": "The same native HTTP workload and span assertions run on Python, Ruby, and Go. Only the listed required cases count; other upstream parameters, scenarios, and products remain outside this claim.",
+      "requiredCases": [
+        "shared-identity",
+        "shared-tags-identity-precedence"
+      ],
+      "checks": [
+        {
+          "path": "harness/external_features/datadog.go",
+          "symbol": "validateDatadogCase",
+          "target": "//fixtures:datadog_external_features_suite"
+        }
+      ]
+    },
+    {
+      "name": "w3c_headers_injection_and_extraction",
+      "status": "implemented",
+      "assertionScope": "The same native HTTP workload and span assertions run on Python, Ruby, and Go. Only the listed required cases count; other upstream parameters, scenarios, and products remain outside this claim.",
+      "requiredCases": [
+        "shared-tracecontext",
+        "shared-tracecontext-zero-trace",
+        "shared-tracecontext-zero-parent",
+        "shared-tracecontext-invalid-hex",
+        "shared-tracecontext-forbidden-version",
+        "shared-tracecontext-short-trace",
+        "shared-outbound-tracecontext"
+      ],
+      "checks": [
+        {
+          "path": "harness/external_features/datadog.go",
+          "symbol": "validateDatadogCase",
+          "target": "//fixtures:datadog_external_features_suite"
+        },
+        {
+          "path": "harness/external_features/datadog_probes.go",
+          "symbol": "validateDatadogProbes",
+          "target": "//fixtures:datadog_external_features_suite"
+        }
+      ]
+    }
+  ]
+}

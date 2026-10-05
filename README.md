@@ -12,6 +12,13 @@ bazel test --config=local //fixtures:datadog_external_features_suite //fixtures:
 bazel test --config=local //fixtures:datadog_capability_suite
 ```
 
+The shared external-feature suite applies identical native assertions to Ruby,
+Python, and Go. Its retained language matrix requires independent passing
+evidence in each SDK and includes all 301 upstream capabilities, with missing
+and unsupported coverage kept explicit. See
+[shared capability measurement](docs/datadog-capabilities.md#shared-ruby-python-and-go-assertions)
+for the full-inventory 100% gate and the current scope.
+
 The seven reviewed RealWorld profiles and their Scheme sources were moved
 without changing their contents. Datadog configuration and profile macros are
 exported from `//rules:defs.bzl`. Shared service rules are loaded from

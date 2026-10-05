@@ -8,6 +8,7 @@ import ast
 import hashlib
 import json
 from pathlib import Path
+import re
 import subprocess
 
 REVISION = "098fe0967c587db8a16b74a1e711777d0a9d5867"
@@ -236,6 +237,8 @@ def evidence_results(paths):
             capture = Path(path).parent / capture
             result["_captureVerified"] = (capture.is_file() and
                 sha256(capture.read_bytes()) == result.get("captureSha256"))
+            result["_repeatVerified"] = False
+            repeat_file = result.get("repeatCaptureFile", str(Path(capture_file).with_name("repeat-" + Path(capture_file).name)))
             artifacts = result.get("artifacts", [])
             if not isinstance(artifacts, list):
                 raise ValueError("Artifacts must be a list of relative files and hashes")
@@ -249,15 +252,21 @@ def evidence_results(paths):
                 artifact_valid = (artifact_path.is_file() and
                     sha256(artifact_path.read_bytes()) == artifact["sha256"])
                 result["_captureVerified"] = result["_captureVerified"] and artifact_valid
+                if (artifact_valid and artifact["file"] == repeat_file
+                        and artifact["file"] != capture_file
+                        and artifact["sha256"] == result.get("repeatCaptureSha256")):
+                    result["_repeatVerified"] = True
             yield result
 
 
-def coverage(data, mapping, scope="all", results=(), local_root=None):
+def coverage(data, mapping, scope="all", results=(), local_root=None, language=None):
     mappings = validate_mapping(data, mapping, local_root)
     features = {row["name"]: row for row in data["features"] if scope in row["scopes"]}
     inventory_names = {row["name"] for row in data["features"]}
     observed = {}
     for result in results:
+        if language is not None and result.get("language") != language:
+            continue
         names = result.get("capabilityNames", [])
         if not isinstance(names, list) or any(not isinstance(name, str) for name in names):
             raise ValueError("capabilityNames must be a list of feature names")
@@ -274,6 +283,8 @@ def coverage(data, mapping, scope="all", results=(), local_root=None):
                  and isinstance(result.get("configuration"), dict)
                  and result.get("capabilityInventoryRevision") == data["revision"]
                  and result.get("_captureVerified") is True)
+        if language is not None:
+            valid = valid and result.get("repetitions") == 2 and result.get("_repeatVerified") is True
         # Failed assertions usually leave capabilityNames empty. Index every
         # outcome so a passing duplicate cannot hide an earlier failure.
         observation = (valid, set(names))
@@ -304,6 +315,40 @@ def coverage(data, mapping, scope="all", results=(), local_root=None):
             "fullUpstreamCaseParity": False, "capabilities": rows}
 
 
+def coverage_matrix(data, mapping, languages, scope="all", results=(), local_root=None):
+    """Require identical mapped assertions independently in every language.
+
+    Missing language metadata supplies no cross-language proof. The denominator
+    always includes all inventory features in the requested scope, even when a
+    language or its SDK does not implement them.
+    """
+    if not languages or len(languages) != len(set(languages)):
+        raise ValueError("Expected distinct required languages")
+    if any(language not in ("python", "ruby", "go") for language in languages):
+        raise ValueError("Unknown required language")
+    results = list(results)
+    reports = {language: coverage(data, mapping, scope, results, local_root, language)
+               for language in languages}
+    report = dict(reports[languages[0]])
+    report["requiredLanguages"] = list(languages)
+    report["requiredRepetitions"] = 2
+    report["languageCoverage"] = reports
+    report["capabilities"] = []
+    for index, original in enumerate(reports[languages[0]]["capabilities"]):
+        row = dict(original)
+        cells = {language: reports[language]["capabilities"][index] for language in languages}
+        row["verified"] = all(cell["verified"] for cell in cells.values())
+        row["languages"] = cells
+        for field in ("missingEvidenceCases", "failedEvidenceCases"):
+            row[field] = [{"language": language, "case": case}
+                          for language, cell in cells.items() for case in cell[field]]
+        report["capabilities"].append(row)
+    report["verifiedCapabilities"] = sum(row["verified"] for row in report["capabilities"])
+    report["verifiedPercent"] = (100 * report["verifiedCapabilities"] / report["denominator"]
+                                 if report["denominator"] else 0)
+    return report
+
+
 def markdown(report):
     lines = ["# Datadog capability coverage", "",
              f"Pinned upstream: `{report['upstreamRevision']}`. Scope: `{report['scope']}`.", "",
@@ -320,7 +365,54 @@ def markdown(report):
     for row in report["capabilities"]:
         lines.append(f"| `{row['name']}` | {row['id']} | {row['status']} | "
                      f"{'yes' if row['verified'] else 'no'} | {row['upstreamTestCount']} |")
+    if "requiredLanguages" in report:
+        lines += ["", "Identical required assertions must pass in every requested language. "
+                  "Unlabelled receipts and unsupported SDKs supply no language coverage.", "",
+                  "| Language | Verified capabilities | Percent |", "| --- | ---: | ---: |"]
+        for language, cell in report["languageCoverage"].items():
+            lines.append(f"| {language} | {cell['verifiedCapabilities']}/{cell['denominator']} | "
+                         f"{cell['verifiedPercent']:.1f}% |")
+        lines += ["", "| Capability | " + " | ".join(report["requiredLanguages"]) + " |",
+                  "| --- | " + " | ".join("---" for _ in report["requiredLanguages"]) + " |"]
+        for row in report["capabilities"]:
+            missing = "missing"
+            if row.get("gapIssues"):
+                missing += " (" + ", ".join(f"[issue]({url})" for url in row["gapIssues"]) + ")"
+            cells = ["passed" if row["languages"][language]["verified"] else
+                     missing if row["status"] == "missing" else "unverified"
+                     for language in report["requiredLanguages"]]
+            lines.append(f"| `{row['name']}` | " + " | ".join(cells) + " |")
     return "\n".join(lines) + "\n"
+
+
+def annotate_gap_issues(report, gaps):
+    """Link tracked implementation gaps without changing verification counts."""
+    if gaps.get("upstreamRevision") != report["upstreamRevision"]:
+        raise ValueError("Gap tracker revision differs from inventory")
+    scope = "shared" if report.get("requiredLanguages") else "broad"
+    known = {row["name"] for row in report["capabilities"]}
+    linked = {}
+    for issue in gaps.get("issues", []):
+        if scope not in issue.get("scope", []):
+            continue
+        url = issue.get("url", "")
+        if not re.fullmatch(r"https://github.com/[^/]+/[^/]+/issues/[1-9][0-9]*", url):
+            raise ValueError("Gap issue needs a GitHub issue URL")
+        for name in issue["capabilities"]:
+            if name not in known:
+                # A scoped report can omit known capabilities outside its
+                # denominator; full-inventory reports cover every issue name.
+                if report["scope"] == "all":
+                    raise ValueError("Gap tracker names an unknown capability: " + name)
+                continue
+            linked.setdefault(name, []).append(url)
+    for row in report["capabilities"]:
+        if row["name"] in linked:
+            row["gapIssues"] = linked[row["name"]]
+        if row["status"] in ("missing", "unsupported") and not row.get("gapIssues"):
+            raise ValueError("Untracked capability gap: " + row["name"])
+    report["caseGaps"] = gaps.get("caseGaps", [])
+    return report
 
 
 def main(argv=None):
@@ -338,6 +430,12 @@ def main(argv=None):
     report.add_argument("--output", type=Path)
     report.add_argument("--format", choices=["json", "markdown"], default="json")
     report.add_argument("--require-percent", type=float)
+    report.add_argument("--require-language", action="append", choices=["python", "ruby", "go"], default=[],
+                        help="Require the same mapped assertions separately in each language; repeat for a matrix")
+    report.add_argument("--require-all-implemented", action="store_true",
+                        help="Require every implemented mapping to have verified runtime evidence")
+    report.add_argument("--gap-issues", type=Path,
+                        help="Link issues and require tracking for every missing capability")
     args = parser.parse_args(argv)
     if args.command == "inventory":
         actual = subprocess.check_output(["git", "-C", str(args.upstream), "rev-parse", "HEAD"], text=True).strip()
@@ -350,13 +448,23 @@ def main(argv=None):
         return 0
     data = json.loads(args.inventory.read_text())
     mapping = json.loads(args.mapping.read_text())
-    result = coverage(data, mapping, args.scope, evidence_results(args.evidence), args.local_root)
+    if args.require_language:
+        result = coverage_matrix(data, mapping, args.require_language, args.scope,
+                                 evidence_results(args.evidence), args.local_root)
+    else:
+        result = coverage(data, mapping, args.scope, evidence_results(args.evidence), args.local_root)
+    if args.gap_issues:
+        annotate_gap_issues(result, json.loads(args.gap_issues.read_text()))
     result["evidenceReceipts"] = [{"file": path.name, "sha256": sha256(path.read_bytes())} for path in args.evidence]
     rendered = markdown(result) if args.format == "markdown" else json.dumps(result, indent=2) + "\n"
     if args.output:
         args.output.write_text(rendered)
     else:
         print(rendered, end="")
+    if args.require_all_implemented and (not result["implementedCapabilities"] or
+            result["verifiedCapabilities"] != result["implementedCapabilities"]):
+        print("Capability gate failed: not every implemented assertion has verified evidence")
+        return 1
     if args.require_percent is not None:
         if not 0 <= args.require_percent <= 100:
             parser.error("--require-percent must be between 0 and 100")
