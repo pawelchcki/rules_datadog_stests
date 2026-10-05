@@ -2,8 +2,8 @@
 
 def _bundle_impl(ctx):
     lock = json.decode(ctx.read(ctx.attr.lock))
-    if lock["python"] != "3.11" or lock["platform"] != "manylinux2014_x86_64":
-        fail("Only the pinned CPython 3.11 Linux lab platform is supported")
+    if lock["python"] not in ("3.11", "3.12") or lock["platform"] != "manylinux2014_x86_64":
+        fail("Only the pinned CPython 3.11/3.12 Linux lab platforms are supported")
     for wheel in lock["wheels"]:
         filename = wheel["filename"]
         if "/" in filename or not filename.endswith(".whl"):

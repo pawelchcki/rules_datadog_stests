@@ -292,8 +292,8 @@
   "moduleExtensions": {
     "//bazel:wheel_deps.bzl%wheel_deps": {
       "general": {
-        "bzlTransitiveDigest": "Ag/z7WQTOPzNPI47X63w0N0yeEVo4wi6/DvrQ3tqzkM=",
-        "usagesDigest": "SwtXIq+Fpt8YxXkF904WuGPe9Wc3xFmtjQkh1YtbTy0=",
+        "bzlTransitiveDigest": "pRb7fy1JjbG6YD3WShNLaLjXvW3otXq+wzwbUaSNLig=",
+        "usagesDigest": "MQ1UNwT5gtgdLP2+btfMQlr4IAdC/oVtUIV/+WmUczM=",
         "recordedInputs": [],
         "generatedRepoSpecs": {
           "openai_wheels": {
@@ -312,6 +312,30 @@
             "repoRuleId": "@@//bazel:wheel_deps.bzl%_bundle",
             "attributes": {
               "lock": "@@//bazel:ffe_wheels.lock.json"
+            }
+          },
+          "integrations_wheels": {
+            "repoRuleId": "@@//bazel:wheel_deps.bzl%_bundle",
+            "attributes": {
+              "lock": "@@//bazel:integrations_wheels.lock.json"
+            }
+          },
+          "security_extra_wheels": {
+            "repoRuleId": "@@//bazel:wheel_deps.bzl%_bundle",
+            "attributes": {
+              "lock": "@@//bazel:security_extra_wheels.lock.json"
+            }
+          },
+          "messaging_wheels": {
+            "repoRuleId": "@@//bazel:wheel_deps.bzl%_bundle",
+            "attributes": {
+              "lock": "@@//bazel:messaging_wheels.lock.json"
+            }
+          },
+          "sca_wheels": {
+            "repoRuleId": "@@//bazel:wheel_deps.bzl%_bundle",
+            "attributes": {
+              "lock": "@@//bazel:sca_wheels.lock.json"
             }
           }
         }

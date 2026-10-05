@@ -64,6 +64,81 @@
       ]
     },
     {
+      "name": "agent_host_ipv6",
+      "status": "implemented",
+      "assertionScope": "Native Python tracer resolves DD_AGENT_HOST=::1 with the configured port and no DD_TRACE_AGENT_URL; retained IPv6 peer addresses and native spans prove delivery and identity. This checks the SDK intake connection, without a remote Agent or nonloopback IPv6 claims.",
+      "requiredCases": [
+        "agent-ipv6"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_sdk_extra/probe.py",
+          "symbol": "check_ipv6",
+          "target": "//fixtures:datadog_sdk_extra_test"
+        }
+      ]
+    },
+    {
+      "name": "ai_guard",
+      "status": "implemented",
+      "assertionScope": "Native Python AI Guard SDK performs real HTTP evaluations for ALLOW, nonblocking DENY, blocking DENY and ABORT. Captured requests, native spans and retained SDK identities assert action, reason, messages, attack categories, error/blocking state and sampling. The policy backend is a controlled loopback fixture.",
+      "requiredCases": [
+        "ai-guard"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_sdk_extra/probe.py",
+          "symbol": "check_ai_guard",
+          "target": "//fixtures:datadog_sdk_extra_test"
+        }
+      ]
+    },
+    {
+      "name": "ai_guard_standalone",
+      "status": "implemented",
+      "assertionScope": "Native AI Guard evaluations with APM disabled assert all exported spans carry the billing marker, kept priorities and AI Guard decision/trace-source propagation tags. A loopback policy backend supplies controlled decisions.",
+      "requiredCases": [
+        "ai-guard-standalone"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_sdk_extra/probe.py",
+          "symbol": "check_ai_guard",
+          "target": "//fixtures:datadog_sdk_extra_test"
+        }
+      ]
+    },
+    {
+      "name": "api10",
+      "status": "implemented",
+      "assertionScope": "Six independent real requests/urllib3 outbound exchanges drive native upstream RASP API10 rules for request headers/method/body and response status/headers/body, validating exact trace attributes and absence of unrelated attributes; retained downstream HTTP witnesses and benign control. Redirect/cache/fingerprint matrices are not claimed.",
+      "requiredCases": [
+        "rasp:check_api10"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_security_extra/probe.py",
+          "symbol": "check_api10",
+          "target": "//fixtures:datadog_security_extra_rasp_test"
+        }
+      ]
+    },
+    {
+      "name": "api_llm_endpoint",
+      "status": "implemented",
+      "assertionScope": "Native AppSec WAF custom upstream LLM extraction rule marks actual OpenAI completion/chat/responses SDK calls with provider/model tags and retains them. Both native and real-Agent backend spans are checked; embeddings are an unmarked negative control. A native web control span supplies the ASM request context. Django endpoints, async calls, streaming and other providers are not asserted.",
+      "requiredCases": [
+        "appsec:api_llm_endpoint"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_openai/assertions.py",
+          "symbol": "check_llm_endpoint",
+          "target": "//fixtures:datadog_openai_test"
+        }
+      ]
+    },
+    {
       "name": "api_security_configuration",
       "status": "implemented",
       "assertionScope": "Existing Django with real Python SDK AppSec/IAST/RASP and typed API Security schemas. Exact named cases require real native reports, correlated source/sink addresses, independent safe controls or enabled/disabled schemas and genuine SDK telemetry. Structured security-report assertions use supported v0.4; v0.5 omissions remain gaps. Local WAF rules/exclusions/block actions do not claim remote configuration. Pickle naming and redirect/user-block-ID SDK discrepancies remain explicitly scoped.",
@@ -295,6 +370,51 @@
       ]
     },
     {
+      "name": "apm_anthropic_messages",
+      "status": "implemented",
+      "assertionScope": "Real pinned anthropic SDK 0.75.0 client runs create and streaming create against a loopback Anthropic Messages API fixture through the real trace-agent 7.83.1. Native v0.4 msgpack spans and agent-forwarded backend spans prove anthropic.request span creation, resource, model tag, control-span parenting, and error marking on a bad-model 400. Prompt caching, image redaction and multi-system cases are not asserted.",
+      "requiredCases": [
+        "apm_anthropic_messages"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_integrations/anthropic_assertions.py",
+          "symbol": "check_apm",
+          "target": "//fixtures:datadog_anthropic_test"
+        }
+      ]
+    },
+    {
+      "name": "apm_google_genai_embed_content",
+      "status": "implemented",
+      "assertionScope": "Real google-genai1.55.0 models.embed_content against loopback batchEmbedContents; model/provider/resource, span creation and control parent asserted natively and after real-agent transport. Embedding token metrics are not emitted by this fixture.",
+      "requiredCases": [
+        "apm:apm_google_genai_embed_content"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_integrations/genai_assertions.py",
+          "symbol": "check_apm",
+          "target": "//fixtures:datadog_genai_test"
+        }
+      ]
+    },
+    {
+      "name": "apm_google_genai_generate_content",
+      "status": "implemented",
+      "assertionScope": "Real google-genai SDK 1.55.0 models.generate_content against a loopback Gemini generateContent fixture through the real agent; native and backend spans prove google_genai request span creation, resource, model/provider tags and control-span parenting.",
+      "requiredCases": [
+        "apm:apm_google_genai_generate_content"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_integrations/genai_assertions.py",
+          "symbol": "check_apm",
+          "target": "//fixtures:datadog_genai_test"
+        }
+      ]
+    },
+    {
       "name": "apm_openai_chat_completions",
       "status": "implemented",
       "assertionScope": "Official OpenAI Python SDK against loopback response/error fixtures with real tracer and Agent APM/EVP. Synchronous success/error inputs, outputs, model/token fields and exact trace hierarchy; streaming, tool calls and strict error-output parity remain explicit gaps.",
@@ -355,6 +475,21 @@
       ]
     },
     {
+      "name": "app_client_configuration_change_event",
+      "status": "implemented",
+      "assertionScope": "The actual SDK emits telemetry app-client-configuration-change after signed APM_TRACING sampling configuration, carrying native DD_TRACE_SAMPLING_RULES value sample_rate=1 and remote_config origin. SDK capture and real trace-Agent backend forwarding retain matching bytes. The pinned inventory has only a mock annotation for this name, so the feature definition is the semantic source; no mock test execution or other configuration changes are claimed.",
+      "requiredCases": [
+        "app_client_configuration_change_event"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_debugger_extra/probes/probe.py",
+          "symbol": "check_config",
+          "target": "//fixtures:datadog_debugger_extra_probes_test"
+        }
+      ]
+    },
+    {
       "name": "app_extended_heartbeat_event",
       "status": "implemented",
       "assertionScope": "Real Python tracer telemetry, enabled/disabled dependency controls, validated identity and payloads forwarded byte-for-byte by the real Agent to the fake backend.",
@@ -367,6 +502,21 @@
           "path": "harness/datadog_telemetry/assertions.py",
           "symbol": "check_extended",
           "target": "//fixtures:datadog_telemetry_test"
+        }
+      ]
+    },
+    {
+      "name": "appsec_apm_standalone",
+      "status": "implemented",
+      "assertionScope": "Real scanner request under DD_APM_TRACING_ENABLED=false exports native security event, USER_KEEP, AppSec decision maker -5 and _dd.apm.enabled=0, with a benign no-event control. Only the pinned Django AppSec standalone profile is asserted.",
+      "requiredCases": [
+        "standalone:check_standalone"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_security_extra/probe.py",
+          "symbol": "check_standalone",
+          "target": "//fixtures:datadog_security_extra_standalone_test"
         }
       ]
     },
@@ -446,6 +596,36 @@
           "path": "harness/datadog_security/probe.py",
           "symbol": "run",
           "target": "//fixtures:datadog_security_v04_test"
+        }
+      ]
+    },
+    {
+      "name": "appsec_onboarding",
+      "status": "implemented",
+      "assertionScope": "Same pinned Python SDK accepts signed ASM_FEATURES responses from a controlled Agent-compatible HTTP mock: baseline off, enable with actual scanner event, disable and remove with no event, then reenable and apply remote ASM_DD trace-tagging rules. Native RC requests prove product subscription, versions1..6, applied version ACKs, exact cached file lengths/SHA256 and cache removal. Retained signed response bytes and configuration hash/length integrity are checked; real Agent, crypto signature validation, TUF root rotation and full multi-config/error matrix are not claimed.",
+      "requiredCases": [
+        "onboarding:check_onboarding"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_security_extra/probe.py",
+          "symbol": "check_onboarding",
+          "target": "//fixtures:datadog_security_extra_onboarding_test"
+        }
+      ]
+    },
+    {
+      "name": "appsec_rate_limiter",
+      "status": "implemented",
+      "assertionScope": "Twenty real rapid scanner requests retain genuine native security events; configured 1/sec WAF limiter permits only 1..6 USER_KEEP priorities while every request remains AppSec-enabled, plus benign control. Event presence alone is not used as rate-limiting evidence.",
+      "requiredCases": [
+        "rate:check_rate"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_security_extra/probe.py",
+          "symbol": "check_rate",
+          "target": "//fixtures:datadog_security_extra_rate_test"
         }
       ]
     },
@@ -543,6 +723,21 @@
       ]
     },
     {
+      "name": "appsec_shell_execution_tracing",
+      "status": "implemented",
+      "assertionScope": "Real subprocess execution using the pinned Python interpreter exports system command_execution spans with subprocess component, zero exit code and cmd.exec/cmd.shell tags; command arguments redact a dummy secret. Shell mode explicitly uses the pinned interpreter to avoid host shell dependency. Native Popen initialization and repeated wait calls emit extra spans; upstream exact-single-span and POSIX-sh-resource assertions are not claimed.",
+      "requiredCases": [
+        "default:check_shell"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_security_extra/probe.py",
+          "symbol": "check_shell",
+          "target": "//fixtures:datadog_security_extra_default_test"
+        }
+      ]
+    },
+    {
       "name": "appsec_standalone",
       "status": "implemented",
       "assertionScope": "Existing Django with real Python SDK AppSec and APM tracing disabled: actual WAF trigger, billing marker zero on every native span in the trace, security trace-source metadata and keep priority. Structured security reports are supported on v0.4; v0.5 omissions and collection of all custom headers remain explicit gaps.",
@@ -584,6 +779,42 @@
           "path": "harness/datadog_security/probe.py",
           "symbol": "run",
           "target": "//fixtures:datadog_security_v05_test"
+        }
+      ]
+    },
+    {
+      "name": "appsec_trace_tagging_rules",
+      "status": "implemented",
+      "assertionScope": "Four focused upstream compatibility rules execute in the native WAF with exact string/numeric attributes and all four keep/event combinations plus benign control. The same behavior is also proven after genuine ASM_DD AgentRC delivery to the live SDK, with product/version apply_state2 and advertised ASM_TRACE_TAGGING_RULES bit43. The Agent boundary is a controlled local HTTP mock serving signed metadata; real Agent verification and cryptographic signature validation are not claimed.",
+      "requiredCases": [
+        "tagging:check_tagging",
+        "onboarding:check_onboarding"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_security_extra/probe.py",
+          "symbol": "check_tagging",
+          "target": "//fixtures:datadog_security_extra_tagging_test"
+        },
+        {
+          "path": "harness/datadog_security_extra/probe.py",
+          "symbol": "check_onboarding",
+          "target": "//fixtures:datadog_security_extra_onboarding_test"
+        }
+      ]
+    },
+    {
+      "name": "appsec_truncation_action",
+      "status": "implemented",
+      "assertionScope": "Actual complex JSON request produces native WAF truncation metrics for 5000-byte string, 300-key container and 20..28 depth; small-body control has no truncation metrics. Retained SDK telemetry proves waf.requests input_truncated:true and count waf.input_truncated truncation_reason:7.",
+      "requiredCases": [
+        "default:check_truncation"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_security_extra/probe.py",
+          "symbol": "check_truncation",
+          "target": "//fixtures:datadog_security_extra_default_test"
         }
       ]
     },
@@ -656,6 +887,51 @@
           "path": "harness/upstream_lab/local_cases.py",
           "symbol": "test_inferred_gateway_parent_and_http_errors",
           "target": "//fixtures:datadog_upstream_lab_v05_test"
+        }
+      ]
+    },
+    {
+      "name": "aws_kinesis_span_creationcontext_propagation_via_message_attributes_with_dd_trace",
+      "status": "implemented",
+      "assertionScope": "Genuineboto3 PutRecord/GetRecords against local AWS wire peer; actual JSON record _datadog carrier preserves trace ID/producer span ID, GetRecords restores producer trace and parent, checked on native and real-agent spans. Single-process SDK producer/consumer; cross-language buddy pairs are untested.",
+      "requiredCases": [
+        "aws_kinesis_span_creationcontext_propagation_via_message_attributes_with_dd_trace"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_integrations/dsm_assertions.py",
+          "symbol": "check_aws_propagation",
+          "target": "//fixtures:datadog_dsm_test"
+        }
+      ]
+    },
+    {
+      "name": "aws_sns_span_creationcontext_propagation_via_message_attributes_with_dd_trace",
+      "status": "implemented",
+      "assertionScope": "Genuineboto3 SNS Publish/SQS ReceiveMessage via local AWS wire peer; binary _datadog message attribute encodes native producer trace ID and span ID; real SDK consumer restores producer trace and parent. Native and Agent span status/component/duration checked; cross-language buddy pairs are untested.",
+      "requiredCases": [
+        "aws_sns_span_creationcontext_propagation_via_message_attributes_with_dd_trace"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_integrations/dsm_assertions.py",
+          "symbol": "check_aws_propagation",
+          "target": "//fixtures:datadog_dsm_test"
+        }
+      ]
+    },
+    {
+      "name": "aws_sqs_span_creationcontext_propagation_via_message_attributes_with_dd_trace",
+      "status": "implemented",
+      "assertionScope": "Real boto3 SQS send/receive against loopback stub: ddtrace botocore instrumentation creates aws.sqs spans and injects Datadog context into SQS message attributes; the stub-recorded attributes prove propagation and the consume span continues the produce trace. Cross-language and cross-process weblog pairs are not exercised (single-process produce/consume with the real SDK).",
+      "requiredCases": [
+        "aws_sqs_span_creationcontext_propagation_via_message_attributes_with_dd_trace"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_integrations/dsm_assertions.py",
+          "symbol": "check_aws_propagation",
+          "target": "//fixtures:datadog_dsm_test"
         }
       ]
     },
@@ -1130,6 +1406,22 @@
       ]
     },
     {
+      "name": "client_side_stats_supported",
+      "status": "implemented",
+      "assertionScope": "Native Python exporter sends v0.6 client stats for three measured requests: exact hits/errors/top-level hits, summed durations, service/env/version and summary fields. An independently disabled configuration emits no stats. Broad aggregation/time-window matrices are not asserted.",
+      "requiredCases": [
+        "client-stats-enabled",
+        "client-stats-disabled"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_sdk_extra/probe.py",
+          "symbol": "check_stats",
+          "target": "//fixtures:datadog_sdk_extra_test"
+        }
+      ]
+    },
+    {
       "name": "context_propagation_extract_behavior",
       "status": "implemented",
       "assertionScope": "selected pinned upstream methods and explicitly named local supplemental assertions, executed against Python 4.14.0 SDK on the indicated native wire. Original annotations are preserved separately; semantic supplements use actual exercised operations. Unsupported cases and other language/framework/configuration profiles remain gaps.",
@@ -1283,6 +1575,22 @@
       ]
     },
     {
+      "name": "crashtracking",
+      "status": "implemented",
+      "assertionScope": "Actual isolated pinned SDK process emits a native fatal SIGSEGV report with signal 11, library/service/runtime metadata and UnixSignal kind. Real trace-Agent forwarding retains byte-identical telemetry at the backend. A second process with DD_CRASHTRACKING_ENABLED=false also crashes but produces no native crash report; independent control spans are forwarded for both processes and exits are bounded. Other signals, errors-intake mode, complete native stack symbolication and delayed-intake timeout behavior are not claimed.",
+      "requiredCases": [
+        "enabled:crashtracking",
+        "disabled:crashtracking"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_debugger_extra/crash/probe.py",
+          "symbol": "execute",
+          "target": "//fixtures:datadog_debugger_extra_crash_test"
+        }
+      ]
+    },
+    {
       "name": "custom_business_logic_events",
       "status": "implemented",
       "assertionScope": "Existing Django with real Python SDK AppSec/IAST/RASP and typed API Security schemas. Exact named cases require real native reports, correlated source/sink addresses, independent safe controls or enabled/disabled schemas and genuine SDK telemetry. Structured security-report assertions use supported v0.4; v0.5 omissions remain gaps. Local WAF rules/exclusions/block actions do not claim remote configuration. Pickle naming and redirect/user-block-ID SDK discrepancies remain explicitly scoped.",
@@ -1306,6 +1614,66 @@
           "path": "harness/datadog_security/probe.py",
           "symbol": "assert_event",
           "target": "//fixtures:datadog_security_v05_test"
+        }
+      ]
+    },
+    {
+      "name": "database_monitoring_correlation",
+      "status": "implemented",
+      "assertionScope": "With DBM propagation full, executed SQL comments carry the trace correlation (traceparent/dd trace keys) tying the query to the active trace span as upstream test_trace_payload_full asserts; disabled mode shows no comment.",
+      "requiredCases": [
+        "database_monitoring_correlation"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_integrations/dbm_assertions.py",
+          "symbol": "check_dbm_correlation",
+          "target": "//fixtures:datadog_dbm_test"
+        }
+      ]
+    },
+    {
+      "name": "database_monitoring_dynamic_service",
+      "status": "implemented",
+      "assertionScope": "Digest-pinned MariaDB11.4.13 and realPyMySQL1.1.2 execute SQL with DD_DBM_PROPAGATION_MODE=dynamic_service; actual server general log ddsh matches nonempty _dd.propagated_hash on native and Agent SQL spans, with disabled control. Driver differs from upstream PostgreSQL.",
+      "requiredCases": [
+        "database_monitoring_dynamic_service"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_integrations/dbm_assertions.py",
+          "symbol": "check_dbm_dynamic_service",
+          "target": "//fixtures:datadog_dbm_test"
+        }
+      ]
+    },
+    {
+      "name": "database_monitoring_support",
+      "status": "implemented",
+      "assertionScope": "Real pymysql 1.1.2 queries (CREATE TABLE/INSERT/SELECT) executed against a real local MariaDB server with DD_DBM_PROPAGATION_MODE=full; the MariaDB general query log proves /*dddbs=...,ddps=...,ddpv=...,ddprs=...*/ comment injection on executed SQL, for full and service modes and absence when disabled.",
+      "requiredCases": [
+        "database_monitoring_support"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_integrations/dbm_assertions.py",
+          "symbol": "check_dbm_comment",
+          "target": "//fixtures:datadog_dbm_test"
+        }
+      ]
+    },
+    {
+      "name": "datadog_baggage_headers",
+      "status": "implemented",
+      "assertionScope": "Native HTTPPropagator extracts multi-item percent-encoded baggage, modifies Unicode baggage through public Context methods, injects/roundtrips/removes an item, and exports a correlated real child span. Size/invalid-item limits are not asserted.",
+      "requiredCases": [
+        "baggage"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_sdk_extra/probe.py",
+          "symbol": "check_baggage",
+          "target": "//fixtures:datadog_sdk_extra_test"
         }
       ]
     },
@@ -2757,6 +3125,144 @@
       ]
     },
     {
+      "name": "datastreams_monitoring_support_context_injection_base64",
+      "status": "implemented",
+      "assertionScope": "DSM context injection returns a base64-encoded payload carrying the pathway hash, matching upstream injection assertions. Native gzip/msgpack checkpoint stats match raw hashes after real trace-agent forwarding; disabled control emits no stats. Six distinct mechanisms: manual produce/consume, canonical base64 injection, fixed upstream base64 extraction, SQS hooks, SNS-to-SQS hooks and Kinesis hooks. Service/env and process-tag-dependent hashes are derived from actual carriers; relationships and fixed extraction parent are asserted, rather than treating six generic spans as six capabilities.",
+      "requiredCases": [
+        "datastreams_monitoring_support_context_injection_base64"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_integrations/dsm_assertions.py",
+          "symbol": "check_base64_injection",
+          "target": "//fixtures:datadog_dsm_test"
+        }
+      ]
+    },
+    {
+      "name": "datastreams_monitoring_support_for_base64_encoding",
+      "status": "implemented",
+      "assertionScope": "DSM context extraction from base64-encoded propagation payload produces the checkpoint and pathway stats upstream expects. Native gzip/msgpack checkpoint stats match raw hashes after real trace-agent forwarding; disabled control emits no stats. Six distinct mechanisms: manual produce/consume, canonical base64 injection, fixed upstream base64 extraction, SQS hooks, SNS-to-SQS hooks and Kinesis hooks. Service/env and process-tag-dependent hashes are derived from actual carriers; relationships and fixed extraction parent are asserted, rather than treating six generic spans as six capabilities.",
+      "requiredCases": [
+        "datastreams_monitoring_support_for_base64_encoding"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_integrations/dsm_assertions.py",
+          "symbol": "check_base64_extraction",
+          "target": "//fixtures:datadog_dsm_test"
+        }
+      ]
+    },
+    {
+      "name": "datastreams_monitoring_support_for_kinesis",
+      "status": "implemented",
+      "assertionScope": "Real boto3 kinesis PutRecord/GetRecord(s) against a loopback Kinesis stub with DD_DATA_STREAMS_ENABLED; DSM botocore hooks produce pathway stats with kinesis edge tags captured at the tracer boundary. Native gzip/msgpack checkpoint stats match raw hashes after real trace-agent forwarding; disabled control emits no stats. Six distinct mechanisms: manual produce/consume, canonical base64 injection, fixed upstream base64 extraction, SQS hooks, SNS-to-SQS hooks and Kinesis hooks. Service/env and process-tag-dependent hashes are derived from actual carriers; relationships and fixed extraction parent are asserted, rather than treating six generic spans as six capabilities.",
+      "requiredCases": [
+        "datastreams_monitoring_support_for_kinesis"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_integrations/dsm_assertions.py",
+          "symbol": "check_aws_dsm",
+          "target": "//fixtures:datadog_dsm_test"
+        }
+      ]
+    },
+    {
+      "name": "datastreams_monitoring_support_for_manual_checkpoints",
+      "status": "implemented",
+      "assertionScope": "ddtrace.internal.datastreams set_consume_checkpoint/set_produce_checkpoint intra-process and via encoded context; tracer /v0.1/pipeline_stats payloads captured at the agent boundary assert produced/consumed pathway stats with expected edge tags. Native gzip/msgpack checkpoint stats match raw hashes after real trace-agent forwarding; disabled control emits no stats. Six distinct mechanisms: manual produce/consume, canonical base64 injection, fixed upstream base64 extraction, SQS hooks, SNS-to-SQS hooks and Kinesis hooks. Service/env and process-tag-dependent hashes are derived from actual carriers; relationships and fixed extraction parent are asserted, rather than treating six generic spans as six capabilities.",
+      "requiredCases": [
+        "datastreams_monitoring_support_for_manual_checkpoints"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_integrations/dsm_assertions.py",
+          "symbol": "check_manual_checkpoints",
+          "target": "//fixtures:datadog_dsm_test"
+        }
+      ]
+    },
+    {
+      "name": "datastreams_monitoring_support_for_rabbitmq",
+      "status": "implemented",
+      "assertionScope": "Actual Kombu5.3.7 AMQP transport performs publication and callback delivery through a controlled AMQP0-9-1 loopback peer. Retained protocol frames and routing/binding records prove direct, three-queue fanout or wildcard topic routing as applicable, including the nonmatching topic binding. Native producer/consumer spans and injected/extracted headers prove parentage and identity. Native DSM exports match independently computed FNV hashes, outgoing/incoming edges, parent hashes and sketches; independently disabled DSM emits no pathway headers/stats. This is scoped client instrumentation and protocol-fixture routing, without RabbitMQ server conformance, persistence or cross-language claims.",
+      "requiredCases": [
+        "direct-true",
+        "direct-false"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_messaging/probe.py",
+          "symbol": "check_messaging",
+          "target": "//fixtures:datadog_messaging_test"
+        }
+      ]
+    },
+    {
+      "name": "datastreams_monitoring_support_for_rabbitmq_fanout",
+      "status": "implemented",
+      "assertionScope": "Actual Kombu5.3.7 AMQP transport performs publication and callback delivery through a controlled AMQP0-9-1 loopback peer. Retained protocol frames and routing/binding records prove direct, three-queue fanout or wildcard topic routing as applicable, including the nonmatching topic binding. Native producer/consumer spans and injected/extracted headers prove parentage and identity. Native DSM exports match independently computed FNV hashes, outgoing/incoming edges, parent hashes and sketches; independently disabled DSM emits no pathway headers/stats. This is scoped client instrumentation and protocol-fixture routing, without RabbitMQ server conformance, persistence or cross-language claims.",
+      "requiredCases": [
+        "fanout-true",
+        "fanout-false"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_messaging/probe.py",
+          "symbol": "check_messaging",
+          "target": "//fixtures:datadog_messaging_test"
+        }
+      ]
+    },
+    {
+      "name": "datastreams_monitoring_support_for_rabbitmq_topicexchange",
+      "status": "implemented",
+      "assertionScope": "Actual Kombu5.3.7 AMQP transport performs publication and callback delivery through a controlled AMQP0-9-1 loopback peer. Retained protocol frames and routing/binding records prove direct, three-queue fanout or wildcard topic routing as applicable, including the nonmatching topic binding. Native producer/consumer spans and injected/extracted headers prove parentage and identity. Native DSM exports match independently computed FNV hashes, outgoing/incoming edges, parent hashes and sketches; independently disabled DSM emits no pathway headers/stats. This is scoped client instrumentation and protocol-fixture routing, without RabbitMQ server conformance, persistence or cross-language claims.",
+      "requiredCases": [
+        "topic-true",
+        "topic-false"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_messaging/probe.py",
+          "symbol": "check_messaging",
+          "target": "//fixtures:datadog_messaging_test"
+        }
+      ]
+    },
+    {
+      "name": "datastreams_monitoring_support_for_sns",
+      "status": "implemented",
+      "assertionScope": "Real boto3 sns Publish against a loopback SNS stub; DSM pathway stats for the sns edge asserted from captured /v0.1/pipeline_stats. Native gzip/msgpack checkpoint stats match raw hashes after real trace-agent forwarding; disabled control emits no stats. Six distinct mechanisms: manual produce/consume, canonical base64 injection, fixed upstream base64 extraction, SQS hooks, SNS-to-SQS hooks and Kinesis hooks. Service/env and process-tag-dependent hashes are derived from actual carriers; relationships and fixed extraction parent are asserted, rather than treating six generic spans as six capabilities.",
+      "requiredCases": [
+        "datastreams_monitoring_support_for_sns"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_integrations/dsm_assertions.py",
+          "symbol": "check_aws_dsm",
+          "target": "//fixtures:datadog_dsm_test"
+        }
+      ]
+    },
+    {
+      "name": "datastreams_monitoring_support_for_sqs",
+      "status": "implemented",
+      "assertionScope": "Real boto3 sqs SendMessage/ReceiveMessage against a loopback SQS stub; DSM pathway stats for the sqs edge asserted from captured /v0.1/pipeline_stats. Native gzip/msgpack checkpoint stats match raw hashes after real trace-agent forwarding; disabled control emits no stats. Six distinct mechanisms: manual produce/consume, canonical base64 injection, fixed upstream base64 extraction, SQS hooks, SNS-to-SQS hooks and Kinesis hooks. Service/env and process-tag-dependent hashes are derived from actual carriers; relationships and fixed extraction parent are asserted, rather than treating six generic spans as six capabilities.",
+      "requiredCases": [
+        "datastreams_monitoring_support_for_sqs"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_integrations/dsm_assertions.py",
+          "symbol": "check_aws_dsm",
+          "target": "//fixtures:datadog_dsm_test"
+        }
+      ]
+    },
+    {
       "name": "dd_profiling_enabled",
       "status": "implemented",
       "assertionScope": "Real Python SDK sampled profile stack and retained native HTTP profile payload, enabled/disabled controls and process/unified-service metadata.",
@@ -2816,6 +3322,56 @@
       ]
     },
     {
+      "name": "debugger",
+      "status": "implemented",
+      "assertionScope": "Pinned Python SDK app-started telemetry reports all four debugger settings required by the pinned debugger telemetry tests: dynamic instrumentation, exception replay, symbol database uploads and code origin, with actual default values and default origins. Additionally, three signed LIVE_DEBUGGING function probes emit native dynamic spans, root-span decoration and return snapshots through real core/trace Agents, with disabled/enabled/empty-config/disabled controls. Other probe kinds and configuration origins are not claimed.",
+      "requiredCases": [
+        "debugger"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_debugger_extra/probes/probe.py",
+          "symbol": "check_debugger_telemetry",
+          "target": "//fixtures:datadog_debugger_extra_probes_test"
+        },
+        {
+          "path": "harness/datadog_debugger_extra/probes/probe.py",
+          "symbol": "check_debugger",
+          "target": "//fixtures:datadog_debugger_extra_probes_test"
+        }
+      ]
+    },
+    {
+      "name": "debugger_code_origins",
+      "status": "implemented",
+      "assertionScope": "Actual instrumented Django request entrypoint spans carry entry code-origin type and matching workload file, function and positive source line after signed APM_TRACING enablement and retained empty lib_config. Explicit remote disable removes the fields while independent request spans remain present. The error route avoids dynamic-span-probe metadata satisfying the origin assertion. Other entrypoint integrations and default-on parity are not claimed.",
+      "requiredCases": [
+        "debugger_code_origins"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_debugger_extra/probes/probe.py",
+          "symbol": "check_code_origins",
+          "target": "//fixtures:datadog_debugger_extra_probes_test"
+        }
+      ]
+    },
+    {
+      "name": "debugger_exception_replay",
+      "status": "implemented",
+      "assertionScope": "Ordinary application exceptions recorded by the actual pinned SDK produce native exception replay snapshots containing the thrown message and snapshot IDs linked by SDK span debug tags after signed remote enablement. Five independent error spans prove execution, while initial and explicit remote-disabled cases have no capture tags. Recursion, async, chained exceptions, out-of-memory and first-hit matrices are not claimed.",
+      "requiredCases": [
+        "debugger_exception_replay"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_debugger_extra/probes/probe.py",
+          "symbol": "check_replay",
+          "target": "//fixtures:datadog_debugger_extra_probes_test"
+        }
+      ]
+    },
+    {
       "name": "debugger_expression_language",
       "status": "implemented",
       "requiredCases": [
@@ -2829,6 +3385,31 @@
         }
       ],
       "assertionScope": "Real core/trace Agent 7.83.1 validates signed LIVE_DEBUGGING configurations and installs four probes in the actual Python SDK 4.14.0 process. Method/line snapshots assert arguments, locals and return values; one ref/gt condition expression distinguish three matches from one nonmatch; password identifiers are redacted; a one-per-second jittered token-bucket probe budget bounds snapshots from 150 calls by measured monotonic elapsed time and rejects an unbounded emission count. Native multipart diagnostics prove RECEIVED/INSTALLED/EMITTING, authenticated backend payloads match original bytes, and a real APM trace retains SDK identity. Other probe types, expression operators, PII sources and capture limits remain gaps."
+    },
+    {
+      "name": "debugger_inproduct_enablement",
+      "status": "implemented",
+      "assertionScope": "Signed APM_TRACING settings pass through real core/trace Agents to one SDK process and control actual DI log/span/decoration output and actual Django code-origin metadata across explicit disabled, enabled, empty lib_config retaining enablement, and explicit disabled stages. Controller proves native APM configuration acknowledgement, LIVE_DEBUGGING product enrollment and probe installation before invocation. Exception replay empty-config and service/wildcard precedence matrices are not claimed.",
+      "requiredCases": [
+        "debugger_inproduct_enablement"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_debugger_extra/probes/probe.py",
+          "symbol": "check_debugger",
+          "target": "//fixtures:datadog_debugger_extra_probes_test"
+        },
+        {
+          "path": "harness/datadog_debugger_extra/probes/probe.py",
+          "symbol": "check_code_origins",
+          "target": "//fixtures:datadog_debugger_extra_probes_test"
+        },
+        {
+          "path": "harness/datadog_debugger_extra/probes/probe.py",
+          "symbol": "execute",
+          "target": "//fixtures:datadog_debugger_extra_probes_test"
+        }
+      ]
     },
     {
       "name": "debugger_line_probe",
@@ -2889,6 +3470,21 @@
         }
       ],
       "assertionScope": "Real core/trace Agent 7.83.1 validates signed LIVE_DEBUGGING configurations and installs four probes in the actual Python SDK 4.14.0 process. Method/line snapshots assert arguments, locals and return values; one ref/gt condition expression distinguish three matches from one nonmatch; password identifiers are redacted; a one-per-second jittered token-bucket probe budget bounds snapshots from 150 calls by measured monotonic elapsed time and rejects an unbounded emission count. Native multipart diagnostics prove RECEIVED/INSTALLED/EMITTING, authenticated backend payloads match original bytes, and a real APM trace retains SDK identity. Other probe types, expression operators, PII sources and capture limits remain gaps."
+    },
+    {
+      "name": "debugger_symdb",
+      "status": "implemented",
+      "assertionScope": "Signed LIVE_DEBUGGING_SYMBOL_DB upload instruction causes actual SDK multipart symbol upload through the trace Agent to the TLS backend. Independently decoded gzipped attachment contains the application DebuggerController CLASS with nested scopes; event type and runtime identity, attachmentSize and matching uploadId/batchNum metadata are checked. Fork uploader limits and complete symbol population are not claimed.",
+      "requiredCases": [
+        "debugger_symdb"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_debugger_extra/probes/probe.py",
+          "symbol": "check_symdb",
+          "target": "//fixtures:datadog_debugger_extra_probes_test"
+        }
+      ]
     },
     {
       "name": "decisionless_extraction",
@@ -3138,19 +3734,32 @@
     },
     {
       "name": "ensure_that_sampling_is_consistent_across_languages",
-      "status": "partial",
-      "assertionScope": "Original manual-keep assertion passes in Python only; inter-language comparisons are not exercised.",
+      "status": "implemented",
+      "assertionScope": "Python native trace sampling for2000fixed128-bit IDs per rate0.25/0.75 is compared against the specified language-independent Knuth hash reference and exact native priority/rule-rate values, plus frequency bounds. This exercises one SDK against the shared algorithm; other SDKs and manual/Agent/rate-capping matrices are not asserted.",
       "requiredCases": [
-        {
-          "name": "test_sampling_manual.Test_Manual_Sampling.test_sampling_manual_keep[0]",
-          "wire": "v0.5"
-        }
+        "sampling-quarter",
+        "sampling-three-quarters"
       ],
       "checks": [
         {
-          "path": "harness/upstream_lab/vendor/test_sampling_manual.py",
-          "symbol": "test_sampling_manual_keep",
-          "target": "//fixtures:datadog_upstream_lab_v05_test"
+          "path": "harness/datadog_sdk_extra/probe.py",
+          "symbol": "check_sampling",
+          "target": "//fixtures:datadog_sdk_extra_test"
+        }
+      ]
+    },
+    {
+      "name": "event_tracking_sdk_v2",
+      "status": "implemented",
+      "assertionScope": "Public v2 SDK success/failure calls emit exact login, user ID, tracking/SDK/mode and heterogeneous metadata tags; native business-event and unsafe-ID WAF rules execute, benign request has no event, and telemetry reports sdk.event sdk_version:v2. Login-only usr.login rule matching, signup and SDK/automatic collision cases are not claimed.",
+      "requiredCases": [
+        "events:check_events"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_security_extra/probe.py",
+          "symbol": "check_events",
+          "target": "//fixtures:datadog_security_extra_events_test"
         }
       ]
     },
@@ -3295,6 +3904,21 @@
           "path": "harness/datadog_security/probe.py",
           "symbol": "assert_fingerprints",
           "target": "//fixtures:datadog_security_v05_test"
+        }
+      ]
+    },
+    {
+      "name": "graphql_operation_error_reporting",
+      "status": "implemented",
+      "assertionScope": "Real graphql-core 3.2.10 execution of 'query myQuery { withError }' raising in the resolver, traced by ddtrace graphql integration through the real agent; the graphql.execute span carries an error span event with message/type/stacktrace/path/locations as upstream asserts.",
+      "requiredCases": [
+        "graphql-reporting"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_integrations/graphql_assertions.py",
+          "symbol": "check_case",
+          "target": "//fixtures:datadog_graphql_test"
         }
       ]
     },
@@ -3518,6 +4142,21 @@
           "path": "harness/datadog_security/probe.py",
           "symbol": "iast_report",
           "target": "//fixtures:datadog_security_v04_test"
+        }
+      ]
+    },
+    {
+      "name": "iast_security_controls",
+      "status": "implemented",
+      "assertionScope": "Public security-controls configuration installs application sanitizer and input validator for COMMAND_INJECTION: real tainted subprocess arguments are suppressed with native suppressed-vulnerability metrics. Raw input and a SQL-only sanitizer still report COMMAND_INJECTION; static inert-argument control reports none.",
+      "requiredCases": [
+        "controls:check_controls"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_security_extra/probe.py",
+          "symbol": "check_controls",
+          "target": "//fixtures:datadog_security_extra_controls_test"
         }
       ]
     },
@@ -4066,6 +4705,21 @@
       ]
     },
     {
+      "name": "iast_vuln_sampling_route_method_count_algorithm",
+      "status": "implemented",
+      "assertionScope": "Thirty real Django requests cover two routes and GET/POST, with fifteen distinct real subprocess source lines per group and two-vulnerability budget. Native reports contain at most two command vulnerabilities per request and accumulate all fifteen hashes in each group, forty-five unique hashes total, plus static safe control.",
+      "requiredCases": [
+        "sampling:check_sampling"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_security_extra/probe.py",
+          "symbol": "check_sampling",
+          "target": "//fixtures:datadog_security_extra_sampling_test"
+        }
+      ]
+    },
+    {
       "name": "integration_enablement",
       "status": "implemented",
       "assertionScope": "selected pinned upstream methods and explicitly named local supplemental assertions, executed against Python 4.14.0 SDK on the indicated native wire. Original annotations are preserved separately; semantic supplements use actual exercised operations. Unsupported cases and other language/framework/configuration profiles remain gaps.",
@@ -4111,6 +4765,52 @@
       ]
     },
     {
+      "name": "language_specifics",
+      "status": "implemented",
+      "assertionScope": "A controlled application circular import executes under the native tracer and returns its round-trip result; retained application log has no circular-import or ImportError failure. Only the pinned Python/Django import path is asserted.",
+      "requiredCases": [
+        "default:check_circular"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_security_extra/probe.py",
+          "symbol": "check_circular",
+          "target": "//fixtures:datadog_security_extra_default_test"
+        }
+      ]
+    },
+    {
+      "name": "library_scrubbing",
+      "status": "implemented",
+      "assertionScope": "Native requests integration exports a real HTTP child with default token query scrubbing and a custom regex control. Captured native http.url retains a redaction placeholder and excludes the controlled secret; custom matching preserves the public query parameter. This covers the upstream URL-query scrubbing scope, without environment/log scrubbing, URL credentials or the TODO no-IP check.",
+      "requiredCases": [
+        "scrubbing-default",
+        "scrubbing-custom"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_sdk_extra/probe.py",
+          "symbol": "check_scrubbing",
+          "target": "//fixtures:datadog_sdk_extra_test"
+        }
+      ]
+    },
+    {
+      "name": "llm_observability_anthropic_messages",
+      "status": "implemented",
+      "assertionScope": "LLMObs events emitted by the pinned SDK for Anthropic messages.create (success, streaming, error) are captured raw at the tracer boundary and after real-agent EVP proxy forwarding, proving span kind llm, model name/provider, input/output message content, token metrics, integration:anthropic tags and error shapes. Prompt caching, tool-result and redaction cases are not asserted.",
+      "requiredCases": [
+        "llm_observability_anthropic_messages"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_integrations/anthropic_assertions.py",
+          "symbol": "check_llm",
+          "target": "//fixtures:datadog_anthropic_test"
+        }
+      ]
+    },
+    {
       "name": "llm_observability_cost_tags",
       "status": "implemented",
       "assertionScope": "Real Python LLMObs SDK emits 42 events across override/default/empty controls; real Agent EVP forwarding matches original body and preserves enriched identity, prompt and cost fields. No AI integration framework coverage claimed.",
@@ -4124,6 +4824,81 @@
           "path": "harness/datadog_llmobs/assertions.py",
           "symbol": "check_cost_tags",
           "target": "//fixtures:datadog_llmobs_test"
+        }
+      ]
+    },
+    {
+      "name": "llm_observability_datasets",
+      "status": "implemented",
+      "assertionScope": "Pinned SDK LLMObs dataset create and delete calls reach the local backend through the real agent EVP proxy with well-formed payloads and via-headers; SDK return values confirmed in-process.",
+      "requiredCases": [
+        "llm_observability_datasets"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_integrations/datasets_assertions.py",
+          "symbol": "check",
+          "target": "//fixtures:datadog_datasets_test"
+        }
+      ]
+    },
+    {
+      "name": "llm_observability_google_genai_embed_content",
+      "status": "implemented",
+      "assertionScope": "LLMObs embedding events for embed_content; span kind embedding, documents input, output.value and token metrics asserted.",
+      "requiredCases": [
+        "llmobs:llm_observability_google_genai_embed_content"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_integrations/genai_assertions.py",
+          "symbol": "check_embed_llm",
+          "target": "//fixtures:datadog_genai_test"
+        }
+      ]
+    },
+    {
+      "name": "llm_observability_google_genai_generate_content",
+      "status": "implemented",
+      "assertionScope": "Real google-genai1.55.0 generate_content and streaming against a loopback Gemini wire fixture; LLMObs events preserve input/output messages, model/provider, config metadata, tokens and integration tags at native and real-agent EVP boundaries. Multiple-string,parts-list and content-block variants remain untested.",
+      "requiredCases": [
+        "llmobs:llm_observability_google_genai_generate_content"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_integrations/genai_assertions.py",
+          "symbol": "check_generate_llm",
+          "target": "//fixtures:datadog_genai_test"
+        }
+      ]
+    },
+    {
+      "name": "llm_observability_google_genai_generate_content_reasoning",
+      "status": "implemented",
+      "assertionScope": "LLMObs llm events for generate_content with thinking/reasoning parts in input and output; reasoning content preserved in input/output messages and token metrics asserted.",
+      "requiredCases": [
+        "llmobs:llm_observability_google_genai_generate_content_reasoning"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_integrations/genai_assertions.py",
+          "symbol": "check_reasoning_llm",
+          "target": "//fixtures:datadog_genai_test"
+        }
+      ]
+    },
+    {
+      "name": "llm_observability_google_genai_generate_content_with_tools",
+      "status": "implemented",
+      "assertionScope": "LLMObs llm events for generate_content with tool calls: function call/response and executable-code parts preserved in output messages, tool metadata asserted.",
+      "requiredCases": [
+        "llmobs:llm_observability_google_genai_generate_content_with_tools"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_integrations/genai_assertions.py",
+          "symbol": "check_tools_llm",
+          "target": "//fixtures:datadog_genai_test"
         }
       ]
     },
@@ -4301,6 +5076,187 @@
           "path": "harness/datadog_signals/probe.py",
           "symbol": "execute",
           "target": "//fixtures:datadog_signals_v05_test"
+        }
+      ]
+    },
+    {
+      "name": "mysql_support",
+      "status": "implemented",
+      "assertionScope": "ActualMariaDB11.4.13 SQL CREATE/INSERT/SELECT returns two independently expected rows via PyMySQL1.1.2; native and Agent SQL spans assert SELECT@@version resource, db.name/db.user/out.host/db.row_count/network.destination.port, success status, duration and control trace parent. Broader CRUD/procedures/error metadata remain unasserted.",
+      "requiredCases": [
+        "mysql_support"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_integrations/dbm_assertions.py",
+          "symbol": "check_mysql_spans",
+          "target": "//fixtures:datadog_dbm_test"
+        }
+      ]
+    },
+    {
+      "name": "open_tracing_api",
+      "status": "implemented",
+      "assertionScope": "Original pinned feature decorators name the OpenTelemetry API methods as open_tracing_api. This mapping executes the selected original native Otel tracer/span lifecycle, attributes, status, events, exceptions and links assertions unchanged on both wire formats; unsupported version/profile cases are excluded and are not counted as passed. It does not claim legacy OpenTracing package behavior.",
+      "requiredCases": [
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_add_event_meta_serialization[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_get_span_context[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_record_exception_attributes_serialization[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_record_exception_does_not_set_error[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_record_exception_meta_serialization[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_record_exception_sets_all_error_tracking_tags[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_set_attribute_remapping_httpresponsestatuscode[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_set_attribute_remapping_httpstatuscode[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_set_service_name[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_set_span_status_error[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_span_end[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_span_finished_end_options[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_span_is_recording[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_span_link_attribute_handling[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_span_started_with_link_from_another_span[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_span_started_with_link_from_other_spans[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_start_span[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_otel_tracer.Test_Otel_Tracer.test_otel_force_flush[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_otel_tracer.Test_Otel_Tracer.test_otel_simple_trace[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_add_event_meta_serialization[0]",
+          "wire": "v0.5"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_get_span_context[0]",
+          "wire": "v0.5"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_record_exception_attributes_serialization[0]",
+          "wire": "v0.5"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_record_exception_does_not_set_error[0]",
+          "wire": "v0.5"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_record_exception_meta_serialization[0]",
+          "wire": "v0.5"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_record_exception_sets_all_error_tracking_tags[0]",
+          "wire": "v0.5"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_set_attribute_remapping_httpresponsestatuscode[0]",
+          "wire": "v0.5"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_set_attribute_remapping_httpstatuscode[0]",
+          "wire": "v0.5"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_set_service_name[0]",
+          "wire": "v0.5"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_set_span_status_error[0]",
+          "wire": "v0.5"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_span_end[0]",
+          "wire": "v0.5"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_span_finished_end_options[0]",
+          "wire": "v0.5"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_span_is_recording[0]",
+          "wire": "v0.5"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_span_link_attribute_handling[0]",
+          "wire": "v0.5"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_span_started_with_link_from_another_span[0]",
+          "wire": "v0.5"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_span_started_with_link_from_other_spans[0]",
+          "wire": "v0.5"
+        },
+        {
+          "name": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_start_span[0]",
+          "wire": "v0.5"
+        },
+        {
+          "name": "test_otel_tracer.Test_Otel_Tracer.test_otel_force_flush[0]",
+          "wire": "v0.5"
+        },
+        {
+          "name": "test_otel_tracer.Test_Otel_Tracer.test_otel_simple_trace[0]",
+          "wire": "v0.5"
+        }
+      ],
+      "checks": [
+        {
+          "path": "harness/upstream_lab/adapter.py",
+          "symbol": "load_cases",
+          "target": "//fixtures:datadog_upstream_lab_suite"
         }
       ]
     },
@@ -4716,6 +5672,22 @@
       ]
     },
     {
+      "name": "otel_blrp_max_queue_size",
+      "status": "implemented",
+      "assertionScope": "Actual OTEL log batch processor reports configured queue capacities16and128 and exports the real correlated log records as native OTLP protobuf through the real Agent. This checks configuration and successful delivery, without queue-overflow semantics.",
+      "requiredCases": [
+        "log-queue-small",
+        "log-queue-large"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_otlp/probe.py",
+          "symbol": "execute",
+          "target": "//fixtures:datadog_otlp_test"
+        }
+      ]
+    },
+    {
       "name": "otel_blrp_schedule_delay",
       "status": "implemented",
       "assertionScope": "Real automatically configured OTel SDK metrics/logs exporters delivered protobuf payloads to local HTTP collectors. Seven instrument types, typed correlated logs/exemplars and identity; endpoint precedence, metric reader timeout configuration, batch-size two and observed scheduling-before/after-flush controls. Unsupported NONE exporter and ineffective BLRP timeout remain gaps.",
@@ -4777,6 +5749,21 @@
       ]
     },
     {
+      "name": "otel_exporter_otlp_traces_endpoint",
+      "status": "implemented",
+      "assertionScope": "Native ddtrace OTLP HTTP/JSON exporter sends the configured traces-specific endpoint instead of the generic endpoint. Retained actual JSON spans prove full128-bit trace/span identity, span name and timing. Empty/invalid endpoint and grpc variants are not asserted.",
+      "requiredCases": [
+        "otlp-specific-traces"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_sdk_extra/probe.py",
+          "symbol": "check_otlp_traces",
+          "target": "//fixtures:datadog_sdk_extra_test"
+        }
+      ]
+    },
+    {
       "name": "otel_logs_enabled",
       "status": "implemented",
       "assertionScope": "Real automatically configured OTel SDK metrics/logs exporters delivered protobuf payloads to local HTTP collectors. Seven instrument types, typed correlated logs/exemplars and identity; endpoint precedence, metric reader timeout configuration, batch-size two and observed scheduling-before/after-flush controls. Unsupported NONE exporter and ineffective BLRP timeout remain gaps.",
@@ -4818,6 +5805,36 @@
           "path": "harness/datadog_otlp/probe.py",
           "symbol": "check_pipeline",
           "target": "//fixtures:datadog_otlp_test"
+        }
+      ]
+    },
+    {
+      "name": "otel_mysql_support",
+      "status": "implemented",
+      "assertionScope": "Genuine opentelemetry-instrumentation-pymysql0.65b0 with OpenTelemetry API1.44.0 and Datadog OTELTracerProvider executes actual CREATE/INSERT/SELECT and invalid-column error against digest-pinned MariaDB11.4.13. Native and real-agent spans assert mysql db.system/name/user, CLIENTkind, controltrace/parent, successful operations, error flag/message/type/stack and exceptionevent type/message; instrumentation-disabled control emits no db spans. OTLP route, connection-string/operation/table fields, event exception.stacktrace (absent in pinnedprovider), and upstream query-obfuscation matrix remain unasserted.",
+      "requiredCases": [
+        "otel_mysql_support"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_integrations/otel_mysql_probe.py",
+          "symbol": "check",
+          "target": "//fixtures:datadog_otel_mysql_test"
+        }
+      ]
+    },
+    {
+      "name": "otel_propagators_api",
+      "status": "implemented",
+      "assertionScope": "Default native OpenTelemetry propagator API extracts a full128-bit W3C context/tracestate and injects the identity of a real native Otel child. Native parentage and carrier IDs are asserted; alternative propagators and invalid input are not asserted.",
+      "requiredCases": [
+        "otel-propagator"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_sdk_extra/probe.py",
+          "symbol": "check_otel_propagator",
+          "target": "//fixtures:datadog_sdk_extra_test"
         }
       ]
     },
@@ -5288,6 +6305,84 @@
       ]
     },
     {
+      "name": "parametric_endpoint_parity",
+      "status": "implemented",
+      "assertionScope": "Original eight pinned system-tests methods run unchanged for DD span start/finish, context inject/extract, resource/error/meta/metric changes on the real SDK. Native captured traces and RPC identities are retained on both wire formats. Other parametric endpoint classes beyond the explicit source selection are not asserted.",
+      "requiredCases": [
+        {
+          "name": "test_parametric_endpoints.Test_Parametric_DDSpan_Finish.test_span_finish[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_parametric_endpoints.Test_Parametric_DDSpan_Set_Error.test_set_error[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_parametric_endpoints.Test_Parametric_DDSpan_Set_Meta.test_set_meta[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_parametric_endpoints.Test_Parametric_DDSpan_Set_Metric.test_set_metric[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_parametric_endpoints.Test_Parametric_DDSpan_Set_Resource.test_set_resource[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_parametric_endpoints.Test_Parametric_DDSpan_Start.test_start_span[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_parametric_endpoints.Test_Parametric_DDTrace_Extract_Headers.test_extract_headers[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_parametric_endpoints.Test_Parametric_Inject_Headers.test_inject_headers[0]",
+          "wire": "v0.4"
+        },
+        {
+          "name": "test_parametric_endpoints.Test_Parametric_DDSpan_Finish.test_span_finish[0]",
+          "wire": "v0.5"
+        },
+        {
+          "name": "test_parametric_endpoints.Test_Parametric_DDSpan_Set_Error.test_set_error[0]",
+          "wire": "v0.5"
+        },
+        {
+          "name": "test_parametric_endpoints.Test_Parametric_DDSpan_Set_Meta.test_set_meta[0]",
+          "wire": "v0.5"
+        },
+        {
+          "name": "test_parametric_endpoints.Test_Parametric_DDSpan_Set_Metric.test_set_metric[0]",
+          "wire": "v0.5"
+        },
+        {
+          "name": "test_parametric_endpoints.Test_Parametric_DDSpan_Set_Resource.test_set_resource[0]",
+          "wire": "v0.5"
+        },
+        {
+          "name": "test_parametric_endpoints.Test_Parametric_DDSpan_Start.test_start_span[0]",
+          "wire": "v0.5"
+        },
+        {
+          "name": "test_parametric_endpoints.Test_Parametric_DDTrace_Extract_Headers.test_extract_headers[0]",
+          "wire": "v0.5"
+        },
+        {
+          "name": "test_parametric_endpoints.Test_Parametric_Inject_Headers.test_inject_headers[0]",
+          "wire": "v0.5"
+        }
+      ],
+      "checks": [
+        {
+          "path": "harness/upstream_lab/adapter.py",
+          "symbol": "load_cases",
+          "target": "//fixtures:datadog_upstream_lab_suite"
+        }
+      ]
+    },
+    {
       "name": "partial_flush",
       "status": "implemented",
       "assertionScope": "selected pinned upstream methods and explicitly named local supplemental assertions, executed against Python 4.14.0 SDK on the indicated native wire. Original annotations are preserved separately; semantic supplements use actual exercised operations. Unsupported cases and other language/framework/configuration profiles remain gaps.",
@@ -5369,6 +6464,21 @@
       ]
     },
     {
+      "name": "process_discovery",
+      "status": "implemented",
+      "assertionScope": "Native Linux memfd descriptor naming and msgpack tracer-info schema are validated with process-tag propagation disabled. Runtime UUID is matched to a real exported span; service/env/version/hostname and tracer version are checked. Enabled process tags are not implemented by this pinned discovery schema.",
+      "requiredCases": [
+        "process-discovery-disabled"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_sdk_extra/probe.py",
+          "symbol": "check_discovery",
+          "target": "//fixtures:datadog_sdk_extra_test"
+        }
+      ]
+    },
+    {
       "name": "process_tags",
       "status": "implemented",
       "assertionScope": "Existing local assertions plus selected pinned upstream methods and explicitly named local supplemental assertions, executed against Python 4.14.0 SDK on the indicated native wire. Original annotations are preserved separately; semantic supplements use actual exercised operations. Unsupported cases and other language/framework/configuration profiles remain gaps.",
@@ -5433,6 +6543,47 @@
           "path": "harness/datadog_profiling/probe.py",
           "symbol": "check_profiles",
           "target": "//fixtures:datadog_profiling_test"
+        }
+      ]
+    },
+    {
+      "name": "propagation_of_user_id_rfc",
+      "status": "implemented",
+      "assertionScope": "Public native set_user sets all six identity fields and base64 propagation metadata. Actual injected headers and an extracted remote child preserve the encoded ID while the incoming span has no plaintext usr.id. Attack/framework automatic login controls are covered separately where stated. Additional scope: Public set_user exports six identity tags, preserves them during a real WAF attack, and propagates the encoded user ID on an actual requests HTTP call in Datadog headers and W3C tracestate. Incoming encoded user ID remains a propagation tag without populating usr.id.",
+      "requiredCases": [
+        "user-identification",
+        "default:check_identify"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_sdk_extra/probe.py",
+          "symbol": "check_identification",
+          "target": "//fixtures:datadog_sdk_extra_test"
+        },
+        {
+          "path": "harness/datadog_security_extra/probe.py",
+          "symbol": "check_identify",
+          "target": "//fixtures:datadog_security_extra_default_test"
+        }
+      ]
+    },
+    {
+      "name": "rabbitmq_span_creationcontext_propagation_with_dd_trace",
+      "status": "implemented",
+      "assertionScope": "Actual Kombu5.3.7 AMQP transport performs publication and callback delivery through a controlled AMQP0-9-1 loopback peer. Retained protocol frames and routing/binding records prove direct, three-queue fanout or wildcard topic routing as applicable, including the nonmatching topic binding. Native producer/consumer spans and injected/extracted headers prove parentage and identity. Native DSM exports match independently computed FNV hashes, outgoing/incoming edges, parent hashes and sketches; independently disabled DSM emits no pathway headers/stats. This is scoped client instrumentation and protocol-fixture routing, without RabbitMQ server conformance, persistence or cross-language claims.",
+      "requiredCases": [
+        "direct-true",
+        "direct-false",
+        "fanout-true",
+        "fanout-false",
+        "topic-true",
+        "topic-false"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_messaging/probe.py",
+          "symbol": "check_messaging",
+          "target": "//fixtures:datadog_messaging_test"
         }
       ]
     },
@@ -5652,6 +6803,21 @@
       ]
     },
     {
+      "name": "resource_renaming",
+      "status": "implemented",
+      "assertionScope": "Native resource-renaming configuration extracts exact http.endpoint templates for static, int, int_id, hex, hex_id and string paths on real HTTP requests. Stats aggregation, endpoint-in-resource and edge-case matrices are not claimed.",
+      "requiredCases": [
+        "renaming:check_renaming"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_security_extra/probe.py",
+          "symbol": "check_renaming",
+          "target": "//fixtures:datadog_security_extra_renaming_test"
+        }
+      ]
+    },
+    {
       "name": "runtime_id_in_span_metadata_for_service_entry_spans",
       "status": "implemented",
       "assertionScope": "Existing local assertions plus selected pinned upstream methods and explicitly named local supplemental assertions, executed against Python 4.14.0 SDK on the indicated native wire. Original annotations are preserved separately; semantic supplements use actual exercised operations. Unsupported cases and other language/framework/configuration profiles remain gaps.",
@@ -5804,6 +6970,38 @@
           "path": "harness/datadog_signals/probe.py",
           "symbol": "check_runtime",
           "target": "//fixtures:datadog_signals_v05_test"
+        }
+      ]
+    },
+    {
+      "name": "runtime_sca_reachability",
+      "status": "implemented",
+      "assertionScope": "Pinned vulnerable requests2.31.0 is registered automatically from the native immutable CVE database. Actual dependency telemetry first reports GHSA-652x-xj99-gmcc with reached=[] and then the automatically instrumented Session.send target using the SDK native fallback path/symbol/line; a second call site leaves one reached entry. Disabled SCA is an independent negative control. Only this Python advisory is exercised. Application caller attribution is not asserted because the native frame walker uses target fallback under the lab launcher.",
+      "requiredCases": [
+        "sca-reachability",
+        "sca-disabled"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_sdk_extra/probe.py",
+          "symbol": "check_sca",
+          "target": "//fixtures:datadog_sdk_extra_test"
+        }
+      ]
+    },
+    {
+      "name": "sca_standalone",
+      "status": "implemented",
+      "assertionScope": "SCA enabled while APM is disabled emits real app-dependencies-loaded events and the enabled configuration, including native reachability metadata after real dependency calls; exported spans carry APM-disabled billing markers. Disabled SCA supplies a negative control; broader distributed standalone sampling matrices are not asserted.",
+      "requiredCases": [
+        "sca-standalone",
+        "sca-disabled"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_sdk_extra/probe.py",
+          "symbol": "check_sca",
+          "target": "//fixtures:datadog_sdk_extra_test"
         }
       ]
     },
@@ -6029,6 +7227,36 @@
       ]
     },
     {
+      "name": "sensitive_data_obfuscation",
+      "status": "implemented",
+      "assertionScope": "Native WAF sensitive query key pwd redacts an attack-bearing dummy secret to <Redacted>; the identical attack under a public key remains in a genuine trigger. Only this query-key obfuscation path is asserted.",
+      "requiredCases": [
+        "default:check_obfuscation"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_security_extra/probe.py",
+          "symbol": "check_obfuscation",
+          "target": "//fixtures:datadog_security_extra_default_test"
+        }
+      ]
+    },
+    {
+      "name": "serialize_waf_rules_without_limiting_their_sizes",
+      "status": "implemented",
+      "assertionScope": "The native WAF loads the upstream large-list custom rules and emits separate real events matching the first and last list entries; a benign header produces no event. This verifies list serialization through the pinned WAF, not every rule-size shape.",
+      "requiredCases": [
+        "large:check_large"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_security_extra/probe.py",
+          "symbol": "check_large",
+          "target": "//fixtures:datadog_security_extra_large_test"
+        }
+      ]
+    },
+    {
       "name": "service_override_source",
       "status": "implemented",
       "assertionScope": "selected pinned upstream methods and explicitly named local supplemental assertions, executed against Python 4.14.0 SDK on the indicated native wire. Original annotations are preserved separately; semantic supplements use actual exercised operations. Unsupported cases and other language/framework/configuration profiles remain gaps.",
@@ -6070,6 +7298,36 @@
           "path": "harness/upstream_lab/vendor/test_tracer.py",
           "symbol": "test_tracer_srv_src_inherited_on_child_span",
           "target": "//fixtures:datadog_upstream_lab_v05_test"
+        }
+      ]
+    },
+    {
+      "name": "single_span_ingestion_control",
+      "status": "implemented",
+      "assertionScope": "Native Python and real trace-Agent selective ingestion checks both wire formats. Root/child span sampling rules select exactly one span from otherwise rejected traces, retaining native mechanism8/rate1/max-per-second50 and identical fields at the real backend. Other descendants and rule/rate-limit matrices are not asserted.",
+      "requiredCases": [
+        {
+          "name": "agent-single-span",
+          "wire": "v0.4"
+        },
+        {
+          "name": "agent-single-span",
+          "wire": "v0.5"
+        },
+        {
+          "name": "agent-single-child",
+          "wire": "v0.4"
+        },
+        {
+          "name": "agent-single-child",
+          "wire": "v0.5"
+        }
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_agent/probe.py",
+          "symbol": "assert_delivery",
+          "target": "//fixtures:datadog_agent_suite"
         }
       ]
     },
@@ -6565,6 +7823,23 @@
       ]
     },
     {
+      "name": "stable_configuration_support",
+      "status": "implemented",
+      "assertionScope": "Native configuration file reader processes retained local/fleet YAML fixtures. SDK effective config and actual exported spans prove local defaults, environment-over-local and fleet-over-environment precedence for service/env/tags. Filesystem errors, all setting names and other languages are not asserted.",
+      "requiredCases": [
+        "stable-local",
+        "stable-env-over-local",
+        "stable-fleet-over-env"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_sdk_extra/probe.py",
+          "symbol": "check_stable",
+          "target": "//fixtures:datadog_sdk_extra_test"
+        }
+      ]
+    },
+    {
       "name": "structured_log_injection",
       "status": "implemented",
       "assertionScope": "Actual patched stdlib log records, native trace identities and captured DogStatsD UDP from the Python SDK; enabled/disabled controls and 64/128-bit identities, with startup configuration and URL precedence assertions.",
@@ -6901,6 +8176,33 @@
           "path": "harness/upstream_lab/vendor/test_tracer.py",
           "symbol": "test_tracer_span_top_level_attributes",
           "target": "//fixtures:datadog_upstream_lab_v05_test"
+        }
+      ]
+    },
+    {
+      "name": "trace_client_ip_header",
+      "status": "implemented",
+      "assertionScope": "Native Django span tags prove custom configured client-IP header precedence, disabled collection despite supplied IP headers, and all nine upstream default header precedence steps, including IPv6; AppSec is disabled for these tracing configuration controls.",
+      "requiredCases": [
+        "ip-custom:check_ip",
+        "ip-disabled:check_ip",
+        "ip-precedence:check_ip"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_security_extra/probe.py",
+          "symbol": "check_ip",
+          "target": "//fixtures:datadog_security_extra_ip_custom_test"
+        },
+        {
+          "path": "harness/datadog_security_extra/probe.py",
+          "symbol": "check_ip",
+          "target": "//fixtures:datadog_security_extra_ip_disabled_test"
+        },
+        {
+          "path": "harness/datadog_security_extra/probe.py",
+          "symbol": "check_ip",
+          "target": "//fixtures:datadog_security_extra_ip_precedence_test"
         }
       ]
     },
@@ -8703,6 +10005,37 @@
       ]
     },
     {
+      "name": "tracer_flare",
+      "status": "implemented",
+      "assertionScope": "A signed AGENT_TASK tracer_flare request causes the actual SDK native flare generator to upload one valid nonempty ZIP through the real trace Agent. Original and backend multipart bytes match, case_id is checked, and ZIP contains native Python log and tracer configuration with expected service. Remote log-level ordering, unsupported-task absence, profiling-only and language-specific file matrices are not claimed.",
+      "requiredCases": [
+        "tracer_flare"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_debugger_extra/probes/probe.py",
+          "symbol": "check_flare",
+          "target": "//fixtures:datadog_debugger_extra_probes_test"
+        }
+      ]
+    },
+    {
+      "name": "twl_customer_controls_ingestion_dd_trace_sampling_rules",
+      "status": "implemented",
+      "assertionScope": "Native Python trace rules at0.25and0.75 independently exercise2000controlled IDs each. Native priorities and rule-rate values match the deterministic reference, with tight aggregate ingestion fractions. Root SDK export is checked; downstream backend ingestion and other rule patterns are not asserted.",
+      "requiredCases": [
+        "sampling-quarter",
+        "sampling-three-quarters"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_sdk_extra/probe.py",
+          "symbol": "check_sampling",
+          "target": "//fixtures:datadog_sdk_extra_test"
+        }
+      ]
+    },
+    {
       "name": "unified_service_tagging",
       "status": "implemented",
       "assertionScope": "Existing local assertions plus selected pinned upstream methods and explicitly named local supplemental assertions, executed against Python 4.14.0 SDK on the indicated native wire. Original annotations are preserved separately; semantic supplements use actual exercised operations. Unsupported cases and other language/framework/configuration profiles remain gaps.",
@@ -8841,6 +10174,33 @@
           "path": "harness/datadog_signals/probe.py",
           "symbol": "execute",
           "target": "//fixtures:datadog_signals_v05_test"
+        }
+      ]
+    },
+    {
+      "name": "user_id_collection_modes",
+      "status": "implemented",
+      "assertionScope": "Real Django authenticate/login exports identified or deterministically SHA256-anonymized login and string user ID for successful login, failure tracking without root usr.id, and no automatic login events in disabled mode. The same generated user has a numeric string PK accepted by Django; integer/UUID/custom-field and remote-config mode combinations are not claimed.",
+      "requiredCases": [
+        "identified:check_mode",
+        "anonymized:check_mode",
+        "disabled:check_mode"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_security_extra/probe.py",
+          "symbol": "check_mode",
+          "target": "//fixtures:datadog_security_extra_identified_test"
+        },
+        {
+          "path": "harness/datadog_security_extra/probe.py",
+          "symbol": "check_mode",
+          "target": "//fixtures:datadog_security_extra_anonymized_test"
+        },
+        {
+          "path": "harness/datadog_security_extra/probe.py",
+          "symbol": "check_mode",
+          "target": "//fixtures:datadog_security_extra_disabled_test"
         }
       ]
     },
@@ -9972,6 +11332,21 @@
       ]
     },
     {
+      "name": "waf_rules",
+      "status": "implemented",
+      "assertionScope": "Pinned default WAF scanner ua0-600-12x, LFI crs-930-120 and SQLi crs-942-160 events from real Django HTTP requests with a benign control; native report IDs and WAF metrics. Other bundled rule families are not claimed.",
+      "requiredCases": [
+        "default:check_waf"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_security_extra/probe.py",
+          "symbol": "check_waf",
+          "target": "//fixtures:datadog_security_extra_default_test"
+        }
+      ]
+    },
+    {
       "name": "waf_telemetry",
       "status": "implemented",
       "assertionScope": "Existing Django with real Python SDK AppSec/IAST/RASP and typed API Security schemas. Exact named cases require real native reports, correlated source/sink addresses, independent safe controls or enabled/disabled schemas and genuine SDK telemetry. Structured security-report assertions use supported v0.4; v0.5 omissions remain gaps. Local WAF rules/exclusions/block actions do not claim remote configuration. Pickle naming and redirect/user-block-ID SDK discrepancies remain explicitly scoped.",
@@ -10013,6 +11388,21 @@
           "path": "harness/datadog_security/probe.py",
           "symbol": "assert_security_telemetry",
           "target": "//fixtures:datadog_security_api_enabled_v05_test"
+        }
+      ]
+    },
+    {
+      "name": "weak_cipher_detection",
+      "status": "implemented",
+      "assertionScope": "Pinned hash-locked PyCryptodome ARC4 encryption reports native WEAK_CIPHER evidence RC4 with application path and line; AES encryption is the independent secure control.",
+      "requiredCases": [
+        "default:check_cipher"
+      ],
+      "checks": [
+        {
+          "path": "harness/datadog_security_extra/probe.py",
+          "symbol": "check_cipher",
+          "target": "//fixtures:datadog_security_extra_default_test"
         }
       ]
     },

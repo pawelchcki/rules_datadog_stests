@@ -14,6 +14,11 @@ load(":datadog_otlp.bzl", "datadog_otlp_tests")
 load(":datadog_ffe.bzl", "datadog_ffe_tests")
 load(":datadog_remote_config.bzl", "datadog_remote_config_tests")
 load(":datadog_debugger.bzl", "datadog_debugger_tests")
+load(":datadog_sdk_extra.bzl", "datadog_sdk_extra_tests")
+load(":datadog_messaging.bzl", "datadog_messaging_tests")
+load(":datadog_integrations.bzl", "datadog_integrations_tests")
+load(":datadog_debugger_extra.bzl", "datadog_debugger_extra_tests")
+load(":datadog_security_extra.bzl", "datadog_security_extra_tests")
 package(default_visibility = ["//visibility:public"])
 datadog_external_feature_tests()
 datadog_parallel_tests()
@@ -30,10 +35,27 @@ datadog_otlp_tests()
 datadog_ffe_tests()
 datadog_remote_config_tests()
 datadog_debugger_tests()
+datadog_sdk_extra_tests()
+datadog_messaging_tests()
+datadog_integrations_tests()
+datadog_debugger_extra_tests()
+datadog_security_extra_tests()
 
 test_suite(
     name = "datadog_capability_suite",
     tests = [
+        ":datadog_sdk_extra_test",
+        ":datadog_messaging_test",
+        ":datadog_anthropic_test",
+        ":datadog_genai_test",
+        ":datadog_graphql_test",
+        ":datadog_datasets_test",
+        ":datadog_dsm_test",
+        ":datadog_dbm_test",
+        ":datadog_otel_mysql_test",
+        ":datadog_debugger_extra_probes_test",
+        ":datadog_debugger_extra_crash_test",
+        ":datadog_security_extra_suite",
         ":datadog_lab_suite",
         ":datadog_upstream_lab_suite",
         ":datadog_agent_suite",

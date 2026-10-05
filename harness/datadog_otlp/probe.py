@@ -99,6 +99,8 @@ def execute(args):
         ("specific-endpoints", {"OTEL_EXPORTER_OTLP_ENDPOINT": sink + "/unused-base",
             "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT": sink + "/v1/metrics", "OTEL_EXPORTER_OTLP_LOGS_ENDPOINT": sink + "/v1/logs"},
             ["otel_exporter_otlp_metrics_endpoint", "otel_exporter_otlp_logs_endpoint"], 0),
+        ("log-queue-small", {"OTEL_BLRP_MAX_QUEUE_SIZE": "16", "OTEL_BLRP_MAX_EXPORT_BATCH_SIZE": "2"}, ["otel_blrp_max_queue_size"], 0),
+        ("log-queue-large", {"OTEL_BLRP_MAX_QUEUE_SIZE": "128"}, ["otel_blrp_max_queue_size"], 0),
         ("metric-timeout", {"OTEL_METRIC_EXPORT_TIMEOUT": "12000"}, ["otel_metric_export_timeout"], 0),
         ("log-batch-limit", {"OTEL_BLRP_MAX_EXPORT_BATCH_SIZE": "2"}, ["otel_blrp_max_export_batch_size"], 0),
         ("log-schedule-fast", {"OTEL_BLRP_MAX_EXPORT_BATCH_SIZE": "64", "OTEL_BLRP_SCHEDULE_DELAY": "200"}, ["otel_blrp_schedule_delay"], 0.8),
@@ -143,6 +145,8 @@ def execute(args):
             results.append(result)
             check_pipeline(records, traces, identity)
             assert all(record["request"]["path"] == "/v1/" + record["signal"] for record in records)
+            if name.startswith("log-queue"):
+                assert identity["processorConfiguration"][0]["max_queue_size"] == int(env["OTEL_BLRP_MAX_QUEUE_SIZE"]), identity
             if name == "metric-timeout":
                 assert identity["readerConfiguration"][0]["export_timeout_millis"] == 12000, identity
             if name == "log-batch-limit":

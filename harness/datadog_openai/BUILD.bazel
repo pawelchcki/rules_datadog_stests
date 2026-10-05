@@ -6,6 +6,7 @@ wheel_overlay(name = "sdk_overlay", wheels = "@openai_wheels//:wheels")
 py_library(
     name = "openai_lib",
     srcs = ["assertions.py", "fake_api.py", "probe.py"],
+    data = ["llm-rules.json"],
     deps = ["//harness/datadog_agent:agent_lib", "//harness/datadog_backend:backend_lib", "//harness/datadog_llmobs:llmobs_lib", "//harness/datadog_telemetry:telemetry_lib"],
 )
 py_binary(name = "probe", srcs = ["probe.py"], main = "probe.py", deps = [":openai_lib"])

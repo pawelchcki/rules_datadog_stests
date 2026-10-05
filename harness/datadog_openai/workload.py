@@ -30,7 +30,7 @@ for api in ("completions", "chat", "responses", "embeddings"):
         model = {"completions": "gpt-3.5-turbo-instruct", "chat": "gpt-3.5-turbo", "responses": "gpt-4.1", "embeddings": "text-embedding-ada-002"}[api]
         if error:
             model = "bad-model"
-        with tracer.trace("openai.lab.case", resource=api + (".error" if error else ".success")) as control:
+        with tracer.trace("openai.lab.case", resource=api + (".error" if error else ".success"), span_type="web" if args.mode == "appsec" else None) as control:
             record = {"api": api, "error": error, "trace_id": str(control.trace_id), "parent_id": str(control.span_id)}
             try:
                 if api == "completions":

@@ -6,10 +6,22 @@ import sys
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from adapter import AgentIntake, load_cases, fixture_namespace
+from adapter import AgentIntake, Library, load_cases, fixture_namespace
 
 
 class AdapterChecks(unittest.TestCase):
+    def test_start_span_retains_explicit_finish_lifecycle(self):
+        class Client(Library):
+            def rpc(self, operation, **values):
+                self.operations.append(operation)
+                return {"span_id": 42, "trace_id": 123} if operation == "start" else None
+        client = Client("unused")
+        span = client.dd_start_span("control").__enter__()
+        self.assertEqual(client.operations, ["start"])
+        span.finish()
+        span.finish()
+        self.assertEqual(client.operations, ["start", "finish"])
+
     def test_vendored_sources_match_revision_hashes_and_cases_retain_parameters(self):
         vendor = Path(__file__).parent / "vendor"
         manifest = json.loads((vendor / "manifest.json").read_text())

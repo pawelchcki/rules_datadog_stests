@@ -165,15 +165,10 @@ class Library:
     def __exit__(self, *exc):
         self.dd_flush()
 
-    @contextmanager
     def dd_start_span(self, name, service=None, resource=None, parent_id=None, typestr=None, tags=None):
         identity = self.rpc("start", name=name, service=service, resource=resource,
                             parent_id=parent_id, span_type=typestr, tags=tags)
-        span = SpanClient(self, **identity)
-        try:
-            yield span
-        finally:
-            span.finish()
+        return SpanClient(self, **identity)
 
     def config(self):
         return self.rpc("config")
@@ -228,6 +223,12 @@ class SpanClient:
         self.trace_id = trace_id
         self.finished = False
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        self.finish()
+
     def get_span_id(self):
         return self.span_id
 
@@ -248,6 +249,7 @@ class SpanClient:
     def __getattr__(self, operation):
         fields = {
             "set_meta": ["key", "value"], "set_metric": ["key", "value"],
+            "set_error": ["error_type", "message", "stack"],
             "set_baggage": ["key", "value"], "get_baggage": ["key"],
             "get_all_baggage": [], "remove_baggage": ["key"], "remove_all_baggage": [],
             "add_link": ["parent_id", "attributes"],

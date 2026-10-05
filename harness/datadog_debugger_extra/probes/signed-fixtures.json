@@ -1,0 +1,1208 @@
+{
+  "root": {
+    "signed": {
+      "_type": "root",
+      "consistent_snapshot": true,
+      "expires": "3000-01-01T00:00:00Z",
+      "keys": {
+        "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070": {
+          "keyid_hash_algorithms": [
+            "sha256"
+          ],
+          "keytype": "ed25519",
+          "keyval": {
+            "public": "3b6a27bcceb6a42d62a3a8d02a6f0d73653215771de243a63ac048a18b59da29"
+          },
+          "scheme": "ed25519"
+        }
+      },
+      "roles": {
+        "root": {
+          "keyids": [
+            "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070"
+          ],
+          "threshold": 1
+        },
+        "snapshot": {
+          "keyids": [
+            "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070"
+          ],
+          "threshold": 1
+        },
+        "targets": {
+          "keyids": [
+            "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070"
+          ],
+          "threshold": 1
+        },
+        "timestamp": {
+          "keyids": [
+            "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070"
+          ],
+          "threshold": 1
+        }
+      },
+      "spec_version": "1.0",
+      "version": 1
+    },
+    "signatures": [
+      {
+        "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+        "sig": "3e618ffd9a271cb3084d6047e29121f4cc2c85561106317eb4d19469267a7d7563b7026c0235ced18ad643bdef9c22c69e0371331c82106eed38061d62dc970a"
+      }
+    ]
+  },
+  "stages": [
+    {
+      "version": 1,
+      "targets": {
+        "signed": {
+          "_type": "targets",
+          "custom": {
+            "opaque_backend_state": "eyJmb28iOiAiYmFyIn0="
+          },
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 1,
+          "targets": {}
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "0e6aec8a611902c10bdb1a404e4f4939ec51057cf93e42f222215f4f1878bfa0804bd38cd3846ff24c94b963c9396b0e953a1a46275b45aa1103fc9f53442b04"
+          }
+        ]
+      },
+      "snapshot": {
+        "signed": {
+          "_type": "snapshot",
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 1,
+          "meta": {
+            "targets.json": {
+              "hashes": {
+                "sha256": "08cdcb606097685d4deea1e0bd75e1a4c53d3fce8de8dccfc81cd9571462ed1f"
+              },
+              "length": 395,
+              "version": 1
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "f3a7b00b7022ec0cb9498c521ea0c5a6dd05f19dee66249ae485cf023de61a7982a44c41baa0bc7fde6267c3cf105cbebec01def16e799680c19116a7a11140d"
+          }
+        ]
+      },
+      "timestamp": {
+        "signed": {
+          "_type": "timestamp",
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 1,
+          "meta": {
+            "snapshot.json": {
+              "hashes": {
+                "sha256": "723a3746e5a1141d98e86e4307f41c2313f877e40041957aab9312f3a4d11315"
+              },
+              "length": 464,
+              "version": 1
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "3eb658100be48c514c90b6454163589f2c72c9da0b003027f6a793951eef87fab5c630d995658e893bca26061eea2002f0600c0bd71b675d44e1403adafbc609"
+          }
+        ]
+      },
+      "files": {}
+    },
+    {
+      "version": 2,
+      "targets": {
+        "signed": {
+          "_type": "targets",
+          "custom": {
+            "opaque_backend_state": "eyJmb28iOiAiYmFyIn0="
+          },
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 2,
+          "targets": {
+            "datadog/2/LIVE_DEBUGGING/extra-span/config": {
+              "custom": {
+                "v": 2
+              },
+              "length": 126,
+              "hashes": {
+                "sha256": "5f27a678dad02fd315eb1b5b590364a91473c23bd39b8cb7ddff62f9cd3f1e8a"
+              }
+            },
+            "datadog/2/LIVE_DEBUGGING/extra-decoration/config": {
+              "custom": {
+                "v": 2
+              },
+              "length": 261,
+              "hashes": {
+                "sha256": "641a689fe1461ffff13e666a472f78b9d6ad01632f28fc259c5d8f5b311a8516"
+              }
+            },
+            "datadog/2/LIVE_DEBUGGING/extra-log/config": {
+              "custom": {
+                "v": 2
+              },
+              "length": 185,
+              "hashes": {
+                "sha256": "747b745c2d58a26123a2581bf76595db896cdfd2e2db69b7e86961259cef6c2d"
+              }
+            },
+            "datadog/2/APM_TRACING/extra/config": {
+              "custom": {
+                "v": 2
+              },
+              "length": 201,
+              "hashes": {
+                "sha256": "f5608a18130731bb81c5d813dd87801276e52a7a81e9a58304f846da6ae0d13d"
+              }
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "ca0bb9ab87a38eebf24ae86e674f9a7cfd52dfa850d42004c473c36bd176b27f4d313f976542993f1ea640dcd46b2b83781596bc9fd2df66889296bde74e9308"
+          }
+        ]
+      },
+      "snapshot": {
+        "signed": {
+          "_type": "snapshot",
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 2,
+          "meta": {
+            "targets.json": {
+              "hashes": {
+                "sha256": "73ce817b870898ec6892967d3c3a7024771055982f36f6d2a55c88614091b8bf"
+              },
+              "length": 1047,
+              "version": 2
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "01238726f32fbca2a47ee45507692ce4dfa179c96c6a1df984e05704a1ce2892ee339ee7f72768982bc613e2abce3fd3ccba939660f0f474be5e2bdc3b211407"
+          }
+        ]
+      },
+      "timestamp": {
+        "signed": {
+          "_type": "timestamp",
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 2,
+          "meta": {
+            "snapshot.json": {
+              "hashes": {
+                "sha256": "b4114d74e67e4b2f25b202c2024b9530d77f3cca75fb38214fbcaad13cdd809a"
+              },
+              "length": 465,
+              "version": 2
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "cc43579be7f7dac824d7e00ef6c3fde7e313922308de5c0942da2ada6d981a16630aab6963d967d3e4d68ed7e9ba495ac8a2a6811a6eb4209728f62725baea09"
+          }
+        ]
+      },
+      "files": {
+        "datadog/2/LIVE_DEBUGGING/extra-span/config": {
+          "id": "extra-span",
+          "version": 1,
+          "language": "python",
+          "type": "SPAN_PROBE",
+          "where": {
+            "typeName": "target",
+            "methodName": "calculate"
+          }
+        },
+        "datadog/2/LIVE_DEBUGGING/extra-decoration/config": {
+          "id": "extra-decoration",
+          "version": 1,
+          "language": "python",
+          "type": "SPAN_DECORATION_PROBE",
+          "where": {
+            "typeName": "target",
+            "methodName": "calculate"
+          },
+          "targetSpan": "ROOT",
+          "decorations": [
+            {
+              "tags": [
+                {
+                  "name": "extra.decoration",
+                  "value": {
+                    "segments": [
+                      {
+                        "str": "signed-rc"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "datadog/2/LIVE_DEBUGGING/extra-log/config": {
+          "id": "extra-log",
+          "version": 1,
+          "language": "python",
+          "type": "LOG_PROBE",
+          "where": {
+            "typeName": "target",
+            "methodName": "calculate"
+          },
+          "captureSnapshot": true,
+          "sampling": {
+            "snapshotsPerSecond": 100
+          }
+        },
+        "datadog/2/APM_TRACING/extra/config": {
+          "action": "enable",
+          "revision": 2,
+          "service_target": {
+            "service": "rc-lab",
+            "env": "rc-env"
+          },
+          "lib_config": {
+            "dynamic_instrumentation_enabled": false,
+            "exception_replay_enabled": false,
+            "code_origin_enabled": false
+          }
+        }
+      }
+    },
+    {
+      "version": 3,
+      "targets": {
+        "signed": {
+          "_type": "targets",
+          "custom": {
+            "opaque_backend_state": "eyJmb28iOiAiYmFyIn0="
+          },
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 3,
+          "targets": {
+            "datadog/2/LIVE_DEBUGGING/extra-span/config": {
+              "custom": {
+                "v": 3
+              },
+              "length": 126,
+              "hashes": {
+                "sha256": "5f27a678dad02fd315eb1b5b590364a91473c23bd39b8cb7ddff62f9cd3f1e8a"
+              }
+            },
+            "datadog/2/LIVE_DEBUGGING/extra-decoration/config": {
+              "custom": {
+                "v": 3
+              },
+              "length": 261,
+              "hashes": {
+                "sha256": "641a689fe1461ffff13e666a472f78b9d6ad01632f28fc259c5d8f5b311a8516"
+              }
+            },
+            "datadog/2/LIVE_DEBUGGING/extra-log/config": {
+              "custom": {
+                "v": 3
+              },
+              "length": 185,
+              "hashes": {
+                "sha256": "747b745c2d58a26123a2581bf76595db896cdfd2e2db69b7e86961259cef6c2d"
+              }
+            },
+            "datadog/2/APM_TRACING/extra/config": {
+              "custom": {
+                "v": 3
+              },
+              "length": 226,
+              "hashes": {
+                "sha256": "437d1c5e1df36d215a063764ca9df6c84648dddb29c38e02cce518bbfa0b319e"
+              }
+            },
+            "datadog/2/LIVE_DEBUGGING_SYMBOL_DB/extra/config": {
+              "custom": {
+                "v": 3
+              },
+              "length": 23,
+              "hashes": {
+                "sha256": "7d1b69e889a7b5494801c2d1a39e9e70da09b027fa4976aa987e5307da1b2541"
+              }
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "6e14f9a2c34c680a4c018b69086220b02617e979ce0d1ae9dba03735c79297244abb4a42c5f2d1501046ec6ba69bb94d835b1a8305c45bd290099198abf51d01"
+          }
+        ]
+      },
+      "snapshot": {
+        "signed": {
+          "_type": "snapshot",
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 3,
+          "meta": {
+            "targets.json": {
+              "hashes": {
+                "sha256": "acd45a720f5e05d05f37e2291e692e972f4c81144313655724bf0fb74b176967"
+              },
+              "length": 1215,
+              "version": 3
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "565a2a2062d62b07dbfa3d3be160e604501c0b5b888511c09052e7509b59ca2d872263046f488ebbbe39093eb554fdb181df872d80bee063903d60a17f011000"
+          }
+        ]
+      },
+      "timestamp": {
+        "signed": {
+          "_type": "timestamp",
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 3,
+          "meta": {
+            "snapshot.json": {
+              "hashes": {
+                "sha256": "870e331d1ede7bbb81443b929e0e082e992a1222c767e8213307325b1282b910"
+              },
+              "length": 465,
+              "version": 3
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "18e800d6c08e3c7dcbd23a353cf11361e65567821954def4d461a53dd0d8f10c12717756e697f748791c497a5b21f395d886714344027df767da1517f43a2e0d"
+          }
+        ]
+      },
+      "files": {
+        "datadog/2/LIVE_DEBUGGING/extra-span/config": {
+          "id": "extra-span",
+          "version": 1,
+          "language": "python",
+          "type": "SPAN_PROBE",
+          "where": {
+            "typeName": "target",
+            "methodName": "calculate"
+          }
+        },
+        "datadog/2/LIVE_DEBUGGING/extra-decoration/config": {
+          "id": "extra-decoration",
+          "version": 1,
+          "language": "python",
+          "type": "SPAN_DECORATION_PROBE",
+          "where": {
+            "typeName": "target",
+            "methodName": "calculate"
+          },
+          "targetSpan": "ROOT",
+          "decorations": [
+            {
+              "tags": [
+                {
+                  "name": "extra.decoration",
+                  "value": {
+                    "segments": [
+                      {
+                        "str": "signed-rc"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "datadog/2/LIVE_DEBUGGING/extra-log/config": {
+          "id": "extra-log",
+          "version": 1,
+          "language": "python",
+          "type": "LOG_PROBE",
+          "where": {
+            "typeName": "target",
+            "methodName": "calculate"
+          },
+          "captureSnapshot": true,
+          "sampling": {
+            "snapshotsPerSecond": 100
+          }
+        },
+        "datadog/2/APM_TRACING/extra/config": {
+          "action": "enable",
+          "revision": 3,
+          "service_target": {
+            "service": "rc-lab",
+            "env": "rc-env"
+          },
+          "lib_config": {
+            "dynamic_instrumentation_enabled": true,
+            "exception_replay_enabled": true,
+            "code_origin_enabled": true,
+            "tracing_sampling_rate": 1.0
+          }
+        },
+        "datadog/2/LIVE_DEBUGGING_SYMBOL_DB/extra/config": {
+          "upload_symbols": true
+        }
+      }
+    },
+    {
+      "version": 4,
+      "targets": {
+        "signed": {
+          "_type": "targets",
+          "custom": {
+            "opaque_backend_state": "eyJmb28iOiAiYmFyIn0="
+          },
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 4,
+          "targets": {
+            "datadog/2/LIVE_DEBUGGING/extra-span/config": {
+              "custom": {
+                "v": 4
+              },
+              "length": 126,
+              "hashes": {
+                "sha256": "5f27a678dad02fd315eb1b5b590364a91473c23bd39b8cb7ddff62f9cd3f1e8a"
+              }
+            },
+            "datadog/2/LIVE_DEBUGGING/extra-decoration/config": {
+              "custom": {
+                "v": 4
+              },
+              "length": 261,
+              "hashes": {
+                "sha256": "641a689fe1461ffff13e666a472f78b9d6ad01632f28fc259c5d8f5b311a8516"
+              }
+            },
+            "datadog/2/LIVE_DEBUGGING/extra-log/config": {
+              "custom": {
+                "v": 4
+              },
+              "length": 185,
+              "hashes": {
+                "sha256": "747b745c2d58a26123a2581bf76595db896cdfd2e2db69b7e86961259cef6c2d"
+              }
+            },
+            "datadog/2/APM_TRACING/extra/config": {
+              "custom": {
+                "v": 4
+              },
+              "length": 226,
+              "hashes": {
+                "sha256": "353cd375779e55874690d7edce0a45edf596530b8f3cff24b96575238b746110"
+              }
+            },
+            "datadog/2/LIVE_DEBUGGING_SYMBOL_DB/extra/config": {
+              "custom": {
+                "v": 4
+              },
+              "length": 23,
+              "hashes": {
+                "sha256": "7d1b69e889a7b5494801c2d1a39e9e70da09b027fa4976aa987e5307da1b2541"
+              }
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "8779b45a550ad0b5562d8b4fd1fee33ef892b64b21b26180e4398016b8562dad7c40e5a44594fd048aed9809057e4cd3b30791a8edcddbdfe57c6cbff584380c"
+          }
+        ]
+      },
+      "snapshot": {
+        "signed": {
+          "_type": "snapshot",
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 4,
+          "meta": {
+            "targets.json": {
+              "hashes": {
+                "sha256": "67d0620fdc7d6e7a034879b53fcb898547a823b3b52e06fef67eb0bb1c04acd7"
+              },
+              "length": 1215,
+              "version": 4
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "e1582d9dfcd2c52a843e52d4c4c955bc45d4848e076a4fae53979806cffaf00aea1723cfdeaf5dc1800062f5633c8ed2c48c0bd60806d1e9f5396ad2b9edf205"
+          }
+        ]
+      },
+      "timestamp": {
+        "signed": {
+          "_type": "timestamp",
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 4,
+          "meta": {
+            "snapshot.json": {
+              "hashes": {
+                "sha256": "f215a4011925b9b0e2901334961df1405431805e856f41d26b6c3a77393d9046"
+              },
+              "length": 465,
+              "version": 4
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "e3f2a28d256a63e0071c62b4f4a3febbe51fbda8d84ffcb7c1cbba5a924c6603dc16d77fc024cec572c0b313a13e7ea07edad0760b6437b04d8680cabae36b03"
+          }
+        ]
+      },
+      "files": {
+        "datadog/2/LIVE_DEBUGGING/extra-span/config": {
+          "id": "extra-span",
+          "version": 1,
+          "language": "python",
+          "type": "SPAN_PROBE",
+          "where": {
+            "typeName": "target",
+            "methodName": "calculate"
+          }
+        },
+        "datadog/2/LIVE_DEBUGGING/extra-decoration/config": {
+          "id": "extra-decoration",
+          "version": 1,
+          "language": "python",
+          "type": "SPAN_DECORATION_PROBE",
+          "where": {
+            "typeName": "target",
+            "methodName": "calculate"
+          },
+          "targetSpan": "ROOT",
+          "decorations": [
+            {
+              "tags": [
+                {
+                  "name": "extra.decoration",
+                  "value": {
+                    "segments": [
+                      {
+                        "str": "signed-rc"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "datadog/2/LIVE_DEBUGGING/extra-log/config": {
+          "id": "extra-log",
+          "version": 1,
+          "language": "python",
+          "type": "LOG_PROBE",
+          "where": {
+            "typeName": "target",
+            "methodName": "calculate"
+          },
+          "captureSnapshot": true,
+          "sampling": {
+            "snapshotsPerSecond": 100
+          }
+        },
+        "datadog/2/APM_TRACING/extra/config": {
+          "action": "enable",
+          "revision": 4,
+          "service_target": {
+            "service": "rc-lab",
+            "env": "rc-env"
+          },
+          "lib_config": {
+            "dynamic_instrumentation_enabled": true,
+            "exception_replay_enabled": true,
+            "code_origin_enabled": true,
+            "tracing_sampling_rate": 1.0
+          }
+        },
+        "datadog/2/LIVE_DEBUGGING_SYMBOL_DB/extra/config": {
+          "upload_symbols": true
+        }
+      }
+    },
+    {
+      "version": 5,
+      "targets": {
+        "signed": {
+          "_type": "targets",
+          "custom": {
+            "opaque_backend_state": "eyJmb28iOiAiYmFyIn0="
+          },
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 5,
+          "targets": {
+            "datadog/2/LIVE_DEBUGGING/extra-span/config": {
+              "custom": {
+                "v": 5
+              },
+              "length": 126,
+              "hashes": {
+                "sha256": "5f27a678dad02fd315eb1b5b590364a91473c23bd39b8cb7ddff62f9cd3f1e8a"
+              }
+            },
+            "datadog/2/LIVE_DEBUGGING/extra-decoration/config": {
+              "custom": {
+                "v": 5
+              },
+              "length": 261,
+              "hashes": {
+                "sha256": "641a689fe1461ffff13e666a472f78b9d6ad01632f28fc259c5d8f5b311a8516"
+              }
+            },
+            "datadog/2/LIVE_DEBUGGING/extra-log/config": {
+              "custom": {
+                "v": 5
+              },
+              "length": 185,
+              "hashes": {
+                "sha256": "747b745c2d58a26123a2581bf76595db896cdfd2e2db69b7e86961259cef6c2d"
+              }
+            },
+            "datadog/2/APM_TRACING/extra/config": {
+              "custom": {
+                "v": 5
+              },
+              "length": 101,
+              "hashes": {
+                "sha256": "89a189bcb3179c020c12d46f29142b1136353edc1e853a4ee7fc79ea8ee89804"
+              }
+            },
+            "datadog/2/LIVE_DEBUGGING_SYMBOL_DB/extra/config": {
+              "custom": {
+                "v": 5
+              },
+              "length": 23,
+              "hashes": {
+                "sha256": "7d1b69e889a7b5494801c2d1a39e9e70da09b027fa4976aa987e5307da1b2541"
+              }
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "d71f127ef7bbd15b223dae623d9a7def60a4c547c32542159cd81e5852b7318d60c6f8d47f6cbbfe1d19a4ffb921d78d8146caccd1fa10b825b52cf90299e600"
+          }
+        ]
+      },
+      "snapshot": {
+        "signed": {
+          "_type": "snapshot",
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 5,
+          "meta": {
+            "targets.json": {
+              "hashes": {
+                "sha256": "1ad0e43d5509eeebd31e6fa9385a5fe9bfbb91af58375e09d2d344f33897fba9"
+              },
+              "length": 1215,
+              "version": 5
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "01a0bc1a78da0e561652fa714fd271176cc2c44fa42cf79000d3e9480d6f443d976a7a0f212a20c47c319df9b03b6ed586270020b06aaeb80a4da8e1c779b30f"
+          }
+        ]
+      },
+      "timestamp": {
+        "signed": {
+          "_type": "timestamp",
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 5,
+          "meta": {
+            "snapshot.json": {
+              "hashes": {
+                "sha256": "49ed42cd018a8880310b6e688160c6cbd4d7fa088cf44e7250a3f64a97aaa861"
+              },
+              "length": 465,
+              "version": 5
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "35298668f2e2a98f89b1e90c7f61afc2f4fb875611a9f7f1a80ae002c07bdadb8d7f2885d57ded2d71646f9a160360813a0c13eac6c916ac36e11b54c28cd902"
+          }
+        ]
+      },
+      "files": {
+        "datadog/2/LIVE_DEBUGGING/extra-span/config": {
+          "id": "extra-span",
+          "version": 1,
+          "language": "python",
+          "type": "SPAN_PROBE",
+          "where": {
+            "typeName": "target",
+            "methodName": "calculate"
+          }
+        },
+        "datadog/2/LIVE_DEBUGGING/extra-decoration/config": {
+          "id": "extra-decoration",
+          "version": 1,
+          "language": "python",
+          "type": "SPAN_DECORATION_PROBE",
+          "where": {
+            "typeName": "target",
+            "methodName": "calculate"
+          },
+          "targetSpan": "ROOT",
+          "decorations": [
+            {
+              "tags": [
+                {
+                  "name": "extra.decoration",
+                  "value": {
+                    "segments": [
+                      {
+                        "str": "signed-rc"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "datadog/2/LIVE_DEBUGGING/extra-log/config": {
+          "id": "extra-log",
+          "version": 1,
+          "language": "python",
+          "type": "LOG_PROBE",
+          "where": {
+            "typeName": "target",
+            "methodName": "calculate"
+          },
+          "captureSnapshot": true,
+          "sampling": {
+            "snapshotsPerSecond": 100
+          }
+        },
+        "datadog/2/APM_TRACING/extra/config": {
+          "action": "enable",
+          "revision": 5,
+          "service_target": {
+            "service": "rc-lab",
+            "env": "rc-env"
+          },
+          "lib_config": {}
+        },
+        "datadog/2/LIVE_DEBUGGING_SYMBOL_DB/extra/config": {
+          "upload_symbols": true
+        }
+      }
+    },
+    {
+      "version": 6,
+      "targets": {
+        "signed": {
+          "_type": "targets",
+          "custom": {
+            "opaque_backend_state": "eyJmb28iOiAiYmFyIn0="
+          },
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 6,
+          "targets": {
+            "datadog/2/LIVE_DEBUGGING/extra-span/config": {
+              "custom": {
+                "v": 6
+              },
+              "length": 126,
+              "hashes": {
+                "sha256": "5f27a678dad02fd315eb1b5b590364a91473c23bd39b8cb7ddff62f9cd3f1e8a"
+              }
+            },
+            "datadog/2/LIVE_DEBUGGING/extra-decoration/config": {
+              "custom": {
+                "v": 6
+              },
+              "length": 261,
+              "hashes": {
+                "sha256": "641a689fe1461ffff13e666a472f78b9d6ad01632f28fc259c5d8f5b311a8516"
+              }
+            },
+            "datadog/2/LIVE_DEBUGGING/extra-log/config": {
+              "custom": {
+                "v": 6
+              },
+              "length": 185,
+              "hashes": {
+                "sha256": "747b745c2d58a26123a2581bf76595db896cdfd2e2db69b7e86961259cef6c2d"
+              }
+            },
+            "datadog/2/APM_TRACING/extra/config": {
+              "custom": {
+                "v": 6
+              },
+              "length": 201,
+              "hashes": {
+                "sha256": "e90de33446f09e8c8759362db83f4bca453f732b55ffd14b934326a3ddb2f36e"
+              }
+            },
+            "datadog/2/LIVE_DEBUGGING_SYMBOL_DB/extra/config": {
+              "custom": {
+                "v": 6
+              },
+              "length": 24,
+              "hashes": {
+                "sha256": "db0c17b0f441406d9d68bc3b05f91ac389cce4d44873f7c8e423e1a9e5eeef06"
+              }
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "86b7d894d0abf95bf0edb6b13ff5ccb6c6adaef756308404698bab5ffd482dbb54779d3ef3f75b3903e82ddc1619d93e2a80fa4eeb8beb05f46f0ac1b2439104"
+          }
+        ]
+      },
+      "snapshot": {
+        "signed": {
+          "_type": "snapshot",
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 6,
+          "meta": {
+            "targets.json": {
+              "hashes": {
+                "sha256": "f57b2b540c76131757316ab97530bbe4bbf9582bd44e64a93e87fb06a3b2fbd1"
+              },
+              "length": 1215,
+              "version": 6
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "7902da62b01c098384c5271fcbdf4c361e85d0a5caf893442ccc2ab167f7b480e0165ebf55d9a1d5c6ca916e6042eca06e79911aedacc4fc00c76cb6e2096902"
+          }
+        ]
+      },
+      "timestamp": {
+        "signed": {
+          "_type": "timestamp",
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 6,
+          "meta": {
+            "snapshot.json": {
+              "hashes": {
+                "sha256": "681a17e14883ca93fbbced5623269b5820940f1dcc16a9509e014e121a580bff"
+              },
+              "length": 465,
+              "version": 6
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "a22318adcb59cac3e0195dc4a59cf93f75aaa2377bf3dfdd33edada89c3da8f4f68128b0cb81053e357d9d41a6fed9791cd586a1e4e5f837aec842564dbb8805"
+          }
+        ]
+      },
+      "files": {
+        "datadog/2/LIVE_DEBUGGING/extra-span/config": {
+          "id": "extra-span",
+          "version": 1,
+          "language": "python",
+          "type": "SPAN_PROBE",
+          "where": {
+            "typeName": "target",
+            "methodName": "calculate"
+          }
+        },
+        "datadog/2/LIVE_DEBUGGING/extra-decoration/config": {
+          "id": "extra-decoration",
+          "version": 1,
+          "language": "python",
+          "type": "SPAN_DECORATION_PROBE",
+          "where": {
+            "typeName": "target",
+            "methodName": "calculate"
+          },
+          "targetSpan": "ROOT",
+          "decorations": [
+            {
+              "tags": [
+                {
+                  "name": "extra.decoration",
+                  "value": {
+                    "segments": [
+                      {
+                        "str": "signed-rc"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "datadog/2/LIVE_DEBUGGING/extra-log/config": {
+          "id": "extra-log",
+          "version": 1,
+          "language": "python",
+          "type": "LOG_PROBE",
+          "where": {
+            "typeName": "target",
+            "methodName": "calculate"
+          },
+          "captureSnapshot": true,
+          "sampling": {
+            "snapshotsPerSecond": 100
+          }
+        },
+        "datadog/2/APM_TRACING/extra/config": {
+          "action": "enable",
+          "revision": 6,
+          "service_target": {
+            "service": "rc-lab",
+            "env": "rc-env"
+          },
+          "lib_config": {
+            "dynamic_instrumentation_enabled": false,
+            "exception_replay_enabled": false,
+            "code_origin_enabled": false
+          }
+        },
+        "datadog/2/LIVE_DEBUGGING_SYMBOL_DB/extra/config": {
+          "upload_symbols": false
+        }
+      }
+    },
+    {
+      "version": 7,
+      "targets": {
+        "signed": {
+          "_type": "targets",
+          "custom": {
+            "opaque_backend_state": "eyJmb28iOiAiYmFyIn0="
+          },
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 7,
+          "targets": {
+            "datadog/2/LIVE_DEBUGGING/extra-span/config": {
+              "custom": {
+                "v": 7
+              },
+              "length": 126,
+              "hashes": {
+                "sha256": "5f27a678dad02fd315eb1b5b590364a91473c23bd39b8cb7ddff62f9cd3f1e8a"
+              }
+            },
+            "datadog/2/LIVE_DEBUGGING/extra-decoration/config": {
+              "custom": {
+                "v": 7
+              },
+              "length": 261,
+              "hashes": {
+                "sha256": "641a689fe1461ffff13e666a472f78b9d6ad01632f28fc259c5d8f5b311a8516"
+              }
+            },
+            "datadog/2/LIVE_DEBUGGING/extra-log/config": {
+              "custom": {
+                "v": 7
+              },
+              "length": 185,
+              "hashes": {
+                "sha256": "747b745c2d58a26123a2581bf76595db896cdfd2e2db69b7e86961259cef6c2d"
+              }
+            },
+            "datadog/2/APM_TRACING/extra/config": {
+              "custom": {
+                "v": 7
+              },
+              "length": 168,
+              "hashes": {
+                "sha256": "ed16a5a188511f8069c9f8b692073c7a564546baa58c9cabf24eedcd46e570ee"
+              }
+            },
+            "datadog/2/AGENT_TASK/extra/config": {
+              "custom": {
+                "v": 7
+              },
+              "length": 156,
+              "hashes": {
+                "sha256": "3baf5ef4606ec61686e6472ee041cda1b7cc1149ee06f22dc6c0da4578a26880"
+              }
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "30a669c366ea16cf6478e947a327af31cb342bb5834c90fd2b665f7a446cd9b18026c341f06dc6f4df6e66c5cdbe2cf244323cccd03b442bb148a8735051c80b"
+          }
+        ]
+      },
+      "snapshot": {
+        "signed": {
+          "_type": "snapshot",
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 7,
+          "meta": {
+            "targets.json": {
+              "hashes": {
+                "sha256": "fcf3e9d33e52eb271ada81402e34baac2edac0c3b82f74b4e0254ae79b0b860e"
+              },
+              "length": 1202,
+              "version": 7
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "1904d1d9ae3c3f9f2ca89be2f1c36085870d536329383392d3d5f8ed04dba3ea78ac3061928b6cc525f0d947a7cab46791775bc41cdac64777cae9bdcdfe9203"
+          }
+        ]
+      },
+      "timestamp": {
+        "signed": {
+          "_type": "timestamp",
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 7,
+          "meta": {
+            "snapshot.json": {
+              "hashes": {
+                "sha256": "791fac4250c4496cb614edc3ed869ffdfccf33707cb4add248da26c1c233c420"
+              },
+              "length": 465,
+              "version": 7
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "5991dff8e1c7bba5459088987fc3315489d2adb4e9dafe61306980f08450036acb5628d2c8433188da076cb1bf93f6d3d30ac8dc37fd9ae968d5a8e743b41203"
+          }
+        ]
+      },
+      "files": {
+        "datadog/2/LIVE_DEBUGGING/extra-span/config": {
+          "id": "extra-span",
+          "version": 1,
+          "language": "python",
+          "type": "SPAN_PROBE",
+          "where": {
+            "typeName": "target",
+            "methodName": "calculate"
+          }
+        },
+        "datadog/2/LIVE_DEBUGGING/extra-decoration/config": {
+          "id": "extra-decoration",
+          "version": 1,
+          "language": "python",
+          "type": "SPAN_DECORATION_PROBE",
+          "where": {
+            "typeName": "target",
+            "methodName": "calculate"
+          },
+          "targetSpan": "ROOT",
+          "decorations": [
+            {
+              "tags": [
+                {
+                  "name": "extra.decoration",
+                  "value": {
+                    "segments": [
+                      {
+                        "str": "signed-rc"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "datadog/2/LIVE_DEBUGGING/extra-log/config": {
+          "id": "extra-log",
+          "version": 1,
+          "language": "python",
+          "type": "LOG_PROBE",
+          "where": {
+            "typeName": "target",
+            "methodName": "calculate"
+          },
+          "captureSnapshot": true,
+          "sampling": {
+            "snapshotsPerSecond": 100
+          }
+        },
+        "datadog/2/APM_TRACING/extra/config": {
+          "action": "enable",
+          "revision": 7,
+          "service_target": {
+            "service": "rc-lab",
+            "env": "rc-env"
+          },
+          "lib_config": {
+            "dynamic_instrumentation_enabled": false,
+            "code_origin_enabled": false
+          }
+        },
+        "datadog/2/AGENT_TASK/extra/config": {
+          "uuid": "ea0d5d20d11d4adeb394f7bf37a1aafd",
+          "task_type": "tracer_flare",
+          "args": {
+            "case_id": "12345",
+            "hostname": "rc-agent",
+            "user_handle": "fixture@example.test"
+          }
+        }
+      }
+    }
+  ]
+}
