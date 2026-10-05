@@ -41,6 +41,8 @@ sh_test(
         "build_datadog_fixtures.sh",
         "local_oci_repository.py",
         "local_oci_repository_test.py",
+        "materialize_shared_app.py",
+        "context_tree.py",
     ],
 )
 
@@ -113,4 +115,36 @@ py_test(
     name = "datadog_capabilities_test",
     srcs = ["datadog_capabilities_test.py"],
     deps = [":datadog_capabilities_lib"],
+)
+
+py_library(
+    name = "materialize_shared_app_lib",
+    srcs = ["materialize_shared_app.py"],
+    imports = ["."],
+)
+
+py_test(
+    name = "materialize_shared_app_test",
+    srcs = ["materialize_shared_app_test.py"],
+    deps = [":materialize_shared_app_lib"],
+)
+
+py_library(
+    name = "context_tree_lib",
+    srcs = ["context_tree.py"],
+    imports = ["."],
+)
+
+py_test(
+    name = "context_tree_test",
+    srcs = ["context_tree_test.py"],
+    data = [
+        "publish_datadog_fixtures.sh",
+        "update_oci_lock.py",
+        "//bazel:oci_images.lock.bzl",
+    ],
+    deps = [
+        ":context_tree_lib",
+        ":materialize_shared_app_lib",
+    ],
 )

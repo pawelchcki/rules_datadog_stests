@@ -8,17 +8,14 @@ bazel_dep(name = "rules_python", version = "1.8.0")
 bazel_dep(name = "platforms", version = "1.1.0")
 bazel_dep(name = "package_metadata", version = "0.0.7")
 bazel_dep(name = "aspect_bazel_lib", version = "2.21.1")
-# Pin the infrastructure; the small compatibility patch exposes shared probe
-# sources. Drop the patch when the infrastructure split is published and pinned.
+# Pin the shared infrastructure and cache-safe OCI materializer from the split.
 git_override(
     module_name = "rules_stests",
     remote = "https://github.com/pawelchcki/rules_stests.git",
-    commit = "11b5e4768eb63f3b7328b742278e90fcaa30b8a6",
-    patches = ["//third_party:rules_stests.patch", "//third_party:datadog_metadata.patch"],
-    patch_strip = 1,
+    commit = "db94b7ae98d1c8765b2ec236f6732683bbbfb54d",
 )
 images = use_extension("//bazel:oci_deps.bzl", "oci_deps")
-use_repo(images, "datadog_python", "datadog_python_linux_amd64", "datadog_ruby", "datadog_ruby_linux_amd64", "datadog_agent", "datadog_agent_linux_amd64", "falcon_realworld", "falcon_realworld_linux_amd64", "gin_datadog_realworld", "gin_datadog_realworld_linux_amd64")
+use_repo(images, "datadog_python", "datadog_python_linux_amd64", "datadog_ruby", "datadog_ruby_linux_amd64", "datadog_agent", "datadog_agent_linux_amd64", "gin_datadog_realworld", "gin_datadog_realworld_linux_amd64")
 wheel_deps = use_extension("//bazel:wheel_deps.bzl", "wheel_deps")
 wheel_deps.bundle(name = "openai_wheels", lock = "//bazel:openai_wheels.lock.json")
 wheel_deps.bundle(name = "otel_wheels", lock = "//bazel:otel_wheels.lock.json")

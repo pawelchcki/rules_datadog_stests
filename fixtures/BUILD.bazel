@@ -204,7 +204,7 @@ realworld_service_tests(
 # request in its own fiber, with Sequel over SQLite.
 corpus_service(
     name = "falcon_datadog_service",
-    rootfs = "//harness:falcon_rootfs",
+    rootfs = "@rules_stests//harness:falcon_rootfs",
     runtime = "ruby",
     instance = "falcon-datadog",
     command = "bin/server",

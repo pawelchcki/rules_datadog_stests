@@ -6,15 +6,33 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: datadog-assertions-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
+  source-checks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Validate GitHub Actions workflows
+        run: go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
+      - name: Validate tracked Python, shell and JSON sources
+        run: python3 tools/check_sources.py
   assertions:
     runs-on: ubuntu-24.04
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: bazel-contrib/setup-bazel@8cb04a772ab4c1eb984e9c1b493a182e96c5e425 # 0.19.0
         with:
           bazelisk-cache: true
+          repository-cache: true
+          disk-cache: true
       - run: bazel test --config=local --build_tests_only //...
       - name: Verify external consumer
         working-directory: examples/plugin_agent
@@ -28,6 +46,12 @@ jobs:
           mkdir -p "$images"
           : > "$images/bazel.flags"
           DATADOG_BAZEL_CONFIG=local tools/run_datadog_parity.sh "$images" "$(git rev-parse HEAD)" "$evidence"
+      - name: Retain publishable proof report
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: datadog-report
+          path: ${{ runner.temp }}/datadog-evidence/datadog-report.html
+          if-no-files-found: error
       - name: Retain proof artifacts
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2

@@ -113,7 +113,7 @@
                             "stackId": {
                                 "description": "Id of the stack in the vulnerability category under the _dd.stack tag in metastruct, ",
                                 "type": "string"
-                            }                            
+                            }
                         },
                         "additionalProperties": false,
                         "required": [
@@ -143,8 +143,8 @@
                 "COMMAND_INJECTION",
                 "DEFAULT_HTML_ESCAPE_INVALID",
                 "DIRECTORY_LISTING_LEAK",
-                "EMAIL_HTML_INJECTION",   
-                "HARDCODED_KEY", 
+                "EMAIL_HTML_INJECTION",
+                "HARDCODED_KEY",
                 "HARDCODED_PASSWORD",
                 "HARDCODED_SECRET",
                 "HEADER_INJECTION",

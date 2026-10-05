@@ -4,4 +4,4 @@ bazel_dep(name = "rules_stests", version = "0.0.0")
 bazel_dep(name = "platforms", version = "1.1.0")
 local_path_override(module_name = "rules_datadog_stests", path = "../..")
 # Overrides only apply in root modules; mirror the infrastructure pin.
-git_override(module_name = "rules_stests", remote = "https://github.com/pawelchcki/rules_stests.git", commit = "11b5e4768eb63f3b7328b742278e90fcaa30b8a6", patches = ["//third_party:rules_stests.patch"], patch_strip = 1)
+git_override(module_name = "rules_stests", remote = "https://github.com/pawelchcki/rules_stests.git", commit = "db94b7ae98d1c8765b2ec236f6732683bbbfb54d")

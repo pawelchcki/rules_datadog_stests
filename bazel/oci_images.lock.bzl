@@ -12,11 +12,6 @@ OCI_IMAGES = {
         digest = "sha256:ee6a879cae36694b99a967fc4ba62b797a269422bd80249f8c7939de07cd0166",
         tree = "3e3c29c2f28bc232eba4d3911d0399abfb009b8e",
     ),
-    "falcon_realworld": struct(
-        repository = "ghcr.io/pawelchcki/rules_stest_apps",
-        digest = "sha256:e6ff3e6066d976206748a4820ad01477fd13a78f982e6b94ef073ca01b3ee0d4",
-        tree = "792881ec6bc8bb91e8e7f0ed2d45974006291808",
-    ),
 }
 
 DATADOG_PYTHON = struct(

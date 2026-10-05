@@ -4,69 +4,69 @@ Pinned upstream: `098fe0967c587db8a16b74a1e711777d0a9d5867`. Scope: `all`.
 
 Implemented capability assertions: **154/301 (51.2%)**. Runtime verified with supplied receipts: **154/301 (51.2%)**.
 
-Evidence receipt: `datadog-agent-results.json` (SHA-256 `878b699782f0fd188eb5541cddd8fcf3bcc904660910a250afeedea5587a5b60`).
+Evidence receipt: `datadog-agent-results.json` (SHA-256 `a2b9ac8485a69f83d72dde260bce3c80762820b9997fb929059d556854f37c72`).
 
-Evidence receipt: `datadog-agent-results.json` (SHA-256 `02b94cae0f885f0e9960b4c60dfeaf7d13e5fdffbcf336b1d01e29e6baf43978`).
+Evidence receipt: `datadog-agent-results.json` (SHA-256 `96533732fc080ce17ebe58931e49f05eccbe1e0f52cc2e191baf7234df104652`).
 
-Evidence receipt: `datadog-agent-results.json` (SHA-256 `337c276e5fe04e76ad43e22e79c2e88b237e9d1587867bcd8ae46969cda02f8d`).
+Evidence receipt: `datadog-agent-results.json` (SHA-256 `a0869e340a2126886945ce1de76a40fc23d115140dcdc752e8089a382ee59b56`).
 
-Evidence receipt: `datadog-agent-results.json` (SHA-256 `4b61473c6ba8186d41edcd038da08c5b7f613e5013801d3f4911277c4da33d0f`).
+Evidence receipt: `datadog-agent-results.json` (SHA-256 `81bb6d5aa8614034f6b57a8b2fc9058ff785f07ca996857a45679826ba3b448d`).
 
-Evidence receipt: `datadog-debugger-results.json` (SHA-256 `b620d87d8f6d8ae342e692ee9549cade73788b644dfbe11879e15c47e8b2d21e`).
+Evidence receipt: `datadog-debugger-results.json` (SHA-256 `62b408c728896372881a2f97b85291bd60028d308f7307778f0fd92f709dc0ca`).
 
-Evidence receipt: `datadog-ffe-results.json` (SHA-256 `a32df702cb8d6fec4c61f056c2274ee24f83d337ba2c622b3e6f4916d2dc2fe2`).
+Evidence receipt: `datadog-ffe-results.json` (SHA-256 `752f532630e7eac276f83f7d3b679d0d68db7fdcca2634be322687a0d115d427`).
 
-Evidence receipt: `datadog-lab-results.json` (SHA-256 `2cb404dba5b0414802b2c664345031b9fb4e966d54a20addae0645e1588cbbb2`).
+Evidence receipt: `datadog-lab-results.json` (SHA-256 `5aea91fe7525b1723cd69f58a05b9693bb91e83ed99d0f83523174c8befd67d3`).
 
-Evidence receipt: `datadog-lab-results.json` (SHA-256 `1cc95d5907f3dfc63567f947398b220074d828cb149beba92fed1ad7c34a0dc1`).
+Evidence receipt: `datadog-lab-results.json` (SHA-256 `6a0212698022c10d158814d7753c509bd1fd78ccd01ed99262717ce0a6cb9c34`).
 
-Evidence receipt: `datadog-llmobs-results.json` (SHA-256 `d9d9c306866e72873ef8d5931fe8d85ef4e03fc8f351ad34efd067caf49e2bd5`).
+Evidence receipt: `datadog-llmobs-results.json` (SHA-256 `dce32ba545d38475a35a3b4da9a2afc976a68122f0e038f29d951b717130b06c`).
 
-Evidence receipt: `datadog-openai-results.json` (SHA-256 `6298528a9261914303757f7924d433f74429f29884cf7a93daa48d08e894df29`).
+Evidence receipt: `datadog-openai-results.json` (SHA-256 `b7aaf6825b1e4e237f6e10611000dfc68b666fc9976996135d66155c7e23e3ec`).
 
-Evidence receipt: `datadog-otlp-results.json` (SHA-256 `3e56a5ef4f4b2dd7988043ce6d74cbcf8a76e5730bf8fec104300a0cccdcec39`).
+Evidence receipt: `datadog-otlp-results.json` (SHA-256 `46169ad66a9f680c8b4b4482e1aff9639b1e8edbf6e196b8501b983223e7c1ea`).
 
-Evidence receipt: `datadog-profiling-results.json` (SHA-256 `cbd278975ea889ed7a15cd1d3b5a93ac69b74a46bc71c43a3851f7419b12eaf0`).
+Evidence receipt: `datadog-profiling-results.json` (SHA-256 `240b1287df4e57990aa401dbc4d2cc589a78ed524cab97ac186e21e188b079a7`).
 
-Evidence receipt: `datadog-remote-config-results.json` (SHA-256 `f3321f9f54f3dc36e6da555ea72d272b200f4412456d72494eec1cee92b6d034`).
+Evidence receipt: `datadog-remote-config-results.json` (SHA-256 `4cb57ca48c871acfab6dc5e22ac7f3dcaa206a330fed264ae2fb5fcc360b73bd`).
 
-Evidence receipt: `datadog-security-results.json` (SHA-256 `d6d24dff47f7a5e3c7eb27e8b86ddc0f8d71b2be5e8e3dff5be639f98c40930b`).
+Evidence receipt: `datadog-security-results.json` (SHA-256 `00a787ad9d5c8f16a58f5959bbf2cdfd363c06b615d4b1fe74e6f0375b98c5b8`).
 
-Evidence receipt: `datadog-security-results.json` (SHA-256 `9bf04c73f9e49b82ec75edfd3c41398d45d23d43fc51b141d03efbc9725065c1`).
+Evidence receipt: `datadog-security-results.json` (SHA-256 `04a2b5f5f0d572d9589c49288e1ebe43b897bcceb3ccd88177b51da763029ce1`).
 
-Evidence receipt: `datadog-security-results.json` (SHA-256 `05926372ec962b1437d0cec0762ddba2f34660b6b07372d38eb9aa7f7760a740`).
+Evidence receipt: `datadog-security-results.json` (SHA-256 `b587ca7ab4ff385ab6df2ca7c22a37ce80c336bccc5e7c3f0e9e603e71c8bbb2`).
 
-Evidence receipt: `datadog-security-results.json` (SHA-256 `bab69501e7f43fdd1cb38f4d7c56ec0943114239bd7f22bf82e1e6dfb960ff66`).
+Evidence receipt: `datadog-security-results.json` (SHA-256 `6e9ba120912e526f308c8af9046024a15276c3ef2158863490324d99b9b9d217`).
 
-Evidence receipt: `datadog-security-results.json` (SHA-256 `fe0ce7f48c6418ac47c089683570d2fee1f8d95031ac75a37f794eab5dbd0f54`).
+Evidence receipt: `datadog-security-results.json` (SHA-256 `ad7a3d206e9035a9875d16eae4a3cba7fce4b1a3cbf24eb92f391061fb8e2e13`).
 
-Evidence receipt: `datadog-security-results.json` (SHA-256 `6d26eb02a0881b2a4a50a1ef88a144231e68bd2ab70dde405b05c9184b0c4726`).
+Evidence receipt: `datadog-security-results.json` (SHA-256 `3001cdda6fb00510ff7ec3542c7fd58da30fd5ef2323516bdfb45adc7a5026de`).
 
-Evidence receipt: `datadog-security-results.json` (SHA-256 `8cf1a3131a93a5d93ca953b640322e0c6921fb52548e70007f78623063744c92`).
+Evidence receipt: `datadog-security-results.json` (SHA-256 `e164b2607a46f0ed136dbf36c449857304d192fd1adb74344c0cda87e8ce60a1`).
 
-Evidence receipt: `datadog-security-results.json` (SHA-256 `f3981e51cd5db1ad0229fc06c3c8a78211b92e818283f90f57f132f4a1b5677d`).
+Evidence receipt: `datadog-security-results.json` (SHA-256 `b4c14796fe19558c9b0b86c59ecc3294bda300150671074fbd8664d250dc1860`).
 
-Evidence receipt: `datadog-security-results.json` (SHA-256 `ac02a3208ebaffc16cb72b845e13fd55bc7f94b479a19c0f239af06f2fd0bf9b`).
+Evidence receipt: `datadog-security-results.json` (SHA-256 `8064d30f2d072f28fe71d47cca512eff7ee7bd4bc61022eabd71296b5eb499fc`).
 
-Evidence receipt: `datadog-security-results.json` (SHA-256 `dec3d4875cbfc86f4a70e8f295a0de661acad773bde4a4bac1d70d2231106b96`).
+Evidence receipt: `datadog-security-results.json` (SHA-256 `6024f8a7c389acfc7134dec344ca17c6bfd056afde8a0c86d955486d36c241bc`).
 
-Evidence receipt: `datadog-security-results.json` (SHA-256 `d8848110411a6a1dff5712a9c6ee2da94665c56b33bbdb1ed8da6729ac478efd`).
+Evidence receipt: `datadog-security-results.json` (SHA-256 `4f6af7175fe100aca63e9943f4dfac22836e7602d9f3aea9bbbe03278bd9a034`).
 
-Evidence receipt: `datadog-security-results.json` (SHA-256 `410e85cd57a6919d16433daaa131f904c8ac2e1d0444db6e1c572d7ba2967d9f`).
+Evidence receipt: `datadog-security-results.json` (SHA-256 `c2c7da8f1221e0ac697cd5aa6c59832a57d87c0f13a9fa9774065d8d574f6500`).
 
-Evidence receipt: `datadog-security-results.json` (SHA-256 `acfdd47574bdecc576df566e76add37d907dce6079b743175f2ccedd241595ee`).
+Evidence receipt: `datadog-security-results.json` (SHA-256 `02408fca68ecbee3822ca98f3e51a9cd0392a1ce1bb8e6613f77b7bfaaf88a54`).
 
-Evidence receipt: `datadog-security-results.json` (SHA-256 `15621f4d59ce2058eb060ca6019bc91ecdd20868b71c16cafc4be145d27b55a0`).
+Evidence receipt: `datadog-security-results.json` (SHA-256 `f83beba18d45a039e5ea39409127b70c66257a3504ff837be8dfa2e0de948a20`).
 
-Evidence receipt: `datadog-signals-results.json` (SHA-256 `e718ecebccd87fc957c3e11e1e9d779124a6ffbc1eac127f31781386c394e7b1`).
+Evidence receipt: `datadog-signals-results.json` (SHA-256 `40fbef39f0657183c5222dd8c254efebee9672db40c7836bfef7d7a65f2e2330`).
 
-Evidence receipt: `datadog-signals-results.json` (SHA-256 `2a64d2c52e82c9133476864c05c0594c3c9d74da11089e48e5ff6298c84a5b24`).
+Evidence receipt: `datadog-signals-results.json` (SHA-256 `fb0ada9e3f008a1cb4a96c32434ffb8f9a9736959703bb8c131cddc6d2eae410`).
 
-Evidence receipt: `datadog-telemetry-results.json` (SHA-256 `c707d9da485d4f95a5e2b4bc32b667a2a9058f060c51dbdfffd67795943dfbe2`).
+Evidence receipt: `datadog-telemetry-results.json` (SHA-256 `5521ba6a48e235569b80a04a1fcec0ed3226d877d8b3112d3198c7c461cb9996`).
 
-Evidence receipt: `datadog-upstream-results.json` (SHA-256 `064a1e388122b4954e2342d90890ae81adce02c79950441e774179e6c99d1fd5`).
+Evidence receipt: `datadog-upstream-results.json` (SHA-256 `d90dc3337f8ce2604aee6ad521e694cb0dfa102a6685ff22ac191ced58d04ae4`).
 
-Evidence receipt: `datadog-upstream-results.json` (SHA-256 `615f24a089bc41e7987bfdbd8ef37aae210fd13fef88fde92f8d19c3dcbc7e1e`).
+Evidence receipt: `datadog-upstream-results.json` (SHA-256 `03eddd498b939b9292bf0e646699efe26a5134d8e94f7b940083673969927fa6`).
 
 A capability mapping means specific assertions exercise that feature. It does not establish full upstream test-case, language, framework, scenario, configuration, or statistical parity. Partial, unsupported, missing, failed, and absent evidence never pass the runtime gate.
 

@@ -36,8 +36,10 @@ mapfile -t image_flags < "$images/bazel.flags"
 bazel_args=(--config="${DATADOG_BAZEL_CONFIG:-local}")
 if [[ "${DATADOG_BAZEL_CONFIG:-local}" == local ]]; then
   bazel_args+=(--jobs=4 --local_test_jobs=4)
+  test_download_outputs=all
 else
   bazel_args+=(--spawn_strategy=remote,local)
+  test_download_outputs=minimal
 fi
 profiles=(
   //corpus:python-aiohttp-datadog-v4-14-0-v04
@@ -57,8 +59,9 @@ bazel build "${bazel_args[@]}" --remote_download_outputs=toplevel \
 
 # Remote tests expose test.log under minimal downloading; the explicit regex
 # fetches the complete validator and undeclared-output trees used as evidence.
+# Local cached OCI inputs need eager materialization to preserve directory aliases.
 test_download_args=(
-  --remote_download_outputs=minimal
+  --remote_download_outputs="$test_download_outputs"
   "--remote_download_regex=$downloaded_evidence_regex"
 )
 
@@ -101,10 +104,11 @@ find -L bazel-testlogs/fixtures -path '*datadog_external_features*/test.outputs/
 
 # Capability suites reuse existing Python frameworks and include the real Agent
 # and local backend. Retain every raw capture beside its receipt before gating.
+capability_test_status=0
 bazel test "${bazel_args[@]}" "${test_download_args[@]}" \
   --nocache_test_results \
   "${image_flags[@]}" \
-  //fixtures:datadog_capability_suite
+  //fixtures:datadog_capability_suite || capability_test_status=$?
 mkdir -p "$evidence/capabilities"
 for family in lab upstream_lab agent security signals telemetry profiling llmobs openai otlp ffe remote_config debugger; do
   for directory in bazel-testlogs/fixtures/datadog_"$family"*_test/test.outputs; do
@@ -113,6 +117,9 @@ for family in lab upstream_lab agent security signals telemetry profiling llmobs
     fi
   done
 done
+if (( capability_test_status != 0 )); then
+  exit "$capability_test_status"
+fi
 capability_evidence=()
 while IFS= read -r -d '' receipt; do
   capability_evidence+=(--evidence "$receipt")
