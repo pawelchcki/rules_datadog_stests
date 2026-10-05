@@ -18,7 +18,10 @@ MARIADB_DIGEST='sha256:1292844148b311e4ed4300022a996d39083f415a963e970cf47cad1b3
 
 def server_command(root):
     root=Path(root)
-    return [str(root/'lib64/ld-linux-x86-64.so.2'),'--library-path',str(root/'lib/x86_64-linux-gnu')+':'+str(root/'usr/lib/x86_64-linux-gnu'),str(root/'usr/sbin/mariadbd'),'--no-defaults',
+    # RBE containers run as root; MariaDB requires an explicit user in that case.
+    # Keep the fixture under the executor's existing identity on either platform.
+    user_args = ['--user=root'] if os.geteuid() == 0 else []
+    return [str(root/'lib64/ld-linux-x86-64.so.2'),'--library-path',str(root/'lib/x86_64-linux-gnu')+':'+str(root/'usr/lib/x86_64-linux-gnu'),str(root/'usr/sbin/mariadbd'),'--no-defaults'] + user_args + [
             '--basedir='+str(root/'usr'),'--lc-messages-dir='+str(root/'usr/share/mariadb'),'--plugin-dir='+str(root/'usr/lib/mysql/plugin')]
 
 @contextmanager
