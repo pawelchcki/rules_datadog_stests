@@ -10,7 +10,7 @@ IDENTITY = {"runtime_id": "123456781234123412341234567890ab", "tracer_version": 
 def fixture(dependencies=True):
     configuration = [{"name": key, "value": value, "origin": "env_var"} for key, value in {
         "DD_ENV": "telemetry-env", "DD_SERVICE": "telemetry-lab", "DD_VERSION": "telemetry-version", "DD_TRACE_RATE_LIMIT": "7",
-        "DD_TRACE_ENABLED": "true", "DD_INSTRUMENTATION_TELEMETRY_ENABLED": "true", "DD_TELEMETRY_HEARTBEAT_INTERVAL": "1.0",
+        "DD_TRACE_ENABLED": "true", "DD_INSTRUMENTATION_TELEMETRY_ENABLED": "true", "DD_TELEMETRY_HEARTBEAT_INTERVAL": "5.0",
         "DD_TELEMETRY_DEPENDENCY_COLLECTION_ENABLED": str(dependencies).lower()}.items()]
     configuration.append({"name": "DD_TRACE_RATE_LIMIT", "value": "100", "origin": "default"})
     dependency = dict(IDENTITY["dependency"])
@@ -38,7 +38,7 @@ def fixture(dependencies=True):
         records.append({"path": check.TELEMETRY_PATH, "status": 200, "raw_sha256": str(index), "raw_size": 100,
                         "headers": {"content-type": "application/json", "dd-telemetry-api-version": "v2",
                             "dd-telemetry-request-type": kind, "dd-client-library-language": "python", "dd-client-library-version": "4.14.0"},
-                        "payload": {"document": document, "received_at": float(index)}})
+                        "payload": {"document": document, "received_at": float(index * check.HEARTBEAT_INTERVAL)}})
     return records
 
 
@@ -80,11 +80,12 @@ class TelemetryAssertionsTest(unittest.TestCase):
                 check.check_metrics(records, IDENTITY)
 
     def test_heartbeat_requires_timing_evidence(self):
-        records = fixture()
-        for record in records:
-            record["payload"]["received_at"] = 1.0
-        with self.assertRaises(AssertionError):
-            check.check_heartbeat(records, IDENTITY)
+        for interval in (0, 1, 10):
+            records = fixture()
+            for index, record in enumerate(records):
+                record["payload"]["received_at"] = float(index * interval)
+            with self.subTest(interval=interval), self.assertRaises(AssertionError):
+                check.check_heartbeat(records, IDENTITY)
 
     def test_extended_and_dependency_controls_reject_omissions(self):
         records = fixture()

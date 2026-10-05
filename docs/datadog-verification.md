@@ -64,7 +64,7 @@ An initial [112-case attempt](https://pawel.buildbuddy.io/invocation/c5827bd2-f9
 
 ## Reproduce the current evidence
 
-The full driver runs the two exact-shape executions, their retention gates, report generation, the four-worker concurrent suite, the external-feature suite, and the complete capability suite with its 75% full-inventory gate. Use an empty image-override file to consume the published locks:
+The full driver runs the two exact-shape executions, their retention gates, report generation, the four-worker concurrent suite, the external-feature suite, and the complete capability suite with its 75% full-inventory gate. Capability fixtures run with four-worker concurrency on both local and remote executors. Use an empty image-override file to consume the published locks:
 
 ```sh
 images=$(mktemp -d /tmp/datadog-images.XXXXXX)
