@@ -78,7 +78,7 @@ def execute(args,out):
                 result=receipt(feature,[feature],all_env['full'],'full/tracer/requests.json',sha((out/'full/tracer/requests.json').read_bytes()),out,
                     clientVersion='1.1.2',databaseImageDigest=MARIADB_DIGEST,workloadSha256=sha(Path(args.app).read_bytes()),
                     sourceSha256='0f020d887f4bf57e0428cad0ee1f460ce23e062bf1e0b60c2c9eaba57a3445c8' if feature=='mysql_support' else 'fec905b50afb37d2b72a908b4fb98cdbecf70a464bb614efb72b5783ab1b9e76',
-                    source='https://github.com/DataDog/system-tests/blob/'+REVISION+'/tests/integrations/test_dbm.py',
+                    source='https://github.com/DataDog/system-tests/blob/'+REVISION+'/tests/integrations/'+('test_db_integrations_sql.py' if feature=='mysql_support' else 'test_dbm.py'),
                     missingAssertions=['MariaDB/PyMySQL exercised; upstream PostgreSQL and other language drivers are not exercised.'])
                 results.append(result)
                 for mode in evidence:
