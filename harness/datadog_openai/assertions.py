@@ -88,7 +88,22 @@ def check_embeddings(spans, identity): check_apm(spans, identity, "embeddings")
 def check_llm_interactions(spans, identity): check_llm(spans, identity, ("completions", "chat", "responses"))
 def check_llm_embeddings(spans, identity): check_llm(spans, identity, ("embeddings",))
 
+def check_llm_endpoint(spans, identity):
+    for call in identity['calls']:
+        roots = [s for s in spans if s['span_id'] == int(call['parent_id'])]
+        assert len(roots) == 1, (call, roots)
+        root = roots[0]
+        meta = root.get('meta', {})
+        if call['api'] == 'embeddings':
+            assert 'appsec.events.llm.call.provider' not in meta and 'appsec.events.llm.call.model' not in meta, root
+        else:
+            assert meta.get('appsec.events.llm.call.provider') == 'openai', root
+            assert meta.get('appsec.events.llm.call.model') == ('bad-model' if call['error'] else MODELS[call['api']]), root
+            assert root['metrics']['_sampling_priority_v1'] == 2, root
+
+
 CHECKS = {
+    "appsec": [("api_llm_endpoint", check_llm_endpoint)],
     "apm": [("apm_openai_completions", check_completions), ("apm_openai_chat_completions", check_chat),
             ("apm_openai_responses", check_responses), ("apm_openai_embeddings", check_embeddings)],
     "llmobs": [("llm_observability_openai_llm_interactions", check_llm_interactions), ("llm_observability_openai_embeddings", check_llm_embeddings)],

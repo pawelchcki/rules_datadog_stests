@@ -1325,5 +1325,898 @@
         "trace_id": "6ac15fd00000000052a1254c5a7424ff"
       }
     ]
+  },
+  "appsec": {
+    "spans": [
+      {
+        "service": "openai-lab",
+        "name": "openai.lab.case",
+        "resource": "completions.success",
+        "trace_id": 8012275689896985411,
+        "span_id": 3074847957139378419,
+        "start": 1791222167010717656,
+        "duration": 13786702,
+        "meta": {
+          "_dd.appsec.waf.version": "2.0.1",
+          "runtime-id": "1b35361cdbd3445aa831e09d3244da89",
+          "_dd.appsec.rc_products": "[] u:0 r:1",
+          "_dd.p.dm": "-5",
+          "appsec.events.llm.call.provider": "openai",
+          "_dd.runtime_family": "python",
+          "_dd.appsec.event_rules.version": "1.99.0",
+          "appsec.events.llm.call.model": "gpt-3.5-turbo-instruct",
+          "language": "python",
+          "http.endpoint": "/",
+          "_dd.p.tid": "6ac3e19700000000",
+          "env": "openai-env",
+          "version": "openai-version",
+          "_dd.p.ts": "02",
+          "_dd.tags.process": "entrypoint.basedir:main,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:main,svc.user:true"
+        },
+        "metrics": {
+          "_dd.tracer_kr": 1.0,
+          "_dd.appsec.enabled": 1.0,
+          "_dd.appsec.waf.duration_ext": 236.94313131272793,
+          "process_id": 104.0,
+          "_dd.appsec.event_rules.error_count": 0.0,
+          "_dd.appsec.event_rules.loaded": 1.0,
+          "_dd.appsec.waf.duration": 26.219,
+          "_dd.top_level": 1.0,
+          "_sampling_priority_v1": 2.0
+        },
+        "type": "web"
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.request",
+        "resource": "createCompletion",
+        "trace_id": 8012275689896985411,
+        "span_id": 1261916775683294557,
+        "parent_id": 3074847957139378419,
+        "start": 1791222167012090708,
+        "duration": 12353377,
+        "meta": {
+          "_dd.llmobs.model_name": "gpt-3.5-turbo-instruct-fixture",
+          "component": "openai",
+          "openai.request.endpoint": "/v1/completions",
+          "openai.response.model": "gpt-3.5-turbo-instruct-fixture",
+          "openai.request.method": "POST",
+          "_dd.llmobs.model_provider": "openai",
+          "_dd.svc_src": "m",
+          "openai.request.model": "gpt-3.5-turbo-instruct",
+          "env": "openai-env",
+          "_dd.llmobs.span_kind": "llm",
+          "openai.request.provider": "OpenAI",
+          "version": "openai-version"
+        },
+        "metrics": {
+          "_dd.llmobs.enabled": 0.0,
+          "_dd.measured": 1.0,
+          "_dd.llmobs.output_tokens": 9.0,
+          "_dd.llmobs.input_tokens": 7.0,
+          "_dd.llmobs.total_tokens": 16.0,
+          "_dd.llmobs.cache_read_input_tokens": 2.0
+        }
+      },
+      {
+        "service": "openai-lab",
+        "name": "command_execution",
+        "resource": "uname",
+        "trace_id": 8012275689896985411,
+        "span_id": 7367986406441386313,
+        "parent_id": 1261916775683294557,
+        "start": 1791222167013796322,
+        "duration": 594053,
+        "meta": {
+          "_dd.svc_src": "m",
+          "version": "openai-version",
+          "env": "openai-env"
+        },
+        "type": "system"
+      },
+      {
+        "service": "openai-lab",
+        "name": "command_execution",
+        "resource": "uname",
+        "trace_id": 8012275689896985411,
+        "span_id": 6808850511156395911,
+        "parent_id": 1261916775683294557,
+        "start": 1791222167014968247,
+        "duration": 93285,
+        "meta": {
+          "cmd.exec": "['uname', '-p']",
+          "cmd.exit_code": "0",
+          "version": "openai-version",
+          "_dd.svc_src": "m",
+          "component": "subprocess",
+          "env": "openai-env"
+        },
+        "type": "system"
+      },
+      {
+        "service": "openai-lab",
+        "name": "command_execution",
+        "resource": "uname",
+        "trace_id": 8012275689896985411,
+        "span_id": 5119841064745592755,
+        "parent_id": 1261916775683294557,
+        "start": 1791222167015097429,
+        "duration": 16851,
+        "meta": {
+          "cmd.exec": "['uname', '-p']",
+          "cmd.exit_code": "0",
+          "version": "openai-version",
+          "_dd.svc_src": "m",
+          "component": "subprocess",
+          "env": "openai-env"
+        },
+        "type": "system"
+      },
+      {
+        "service": "openai-lab",
+        "name": "http.request",
+        "resource": "http.request",
+        "trace_id": 8012275689896985411,
+        "span_id": 2199585971391024506,
+        "parent_id": 1261916775683294557,
+        "start": 1791222167015873072,
+        "duration": 4343194,
+        "meta": {
+          "http.method": "POST",
+          "_dd.svc_src": "httpx",
+          "component": "httpx",
+          "env": "openai-env",
+          "out.host": "api.openai.com",
+          "version": "openai-version",
+          "http.useragent": "OpenAI/Python 2.41.1",
+          "http.status_code": "200",
+          "span.kind": "client",
+          "http.url": "http://api.openai.com/v1/completions"
+        },
+        "metrics": {
+          "_dd.measured": 1.0
+        },
+        "type": "http"
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.lab.case",
+        "resource": "completions.error",
+        "trace_id": 3525814593113029133,
+        "span_id": 3657246879909683797,
+        "start": 1791222167025292784,
+        "duration": 6774158,
+        "meta": {
+          "_dd.appsec.waf.version": "2.0.1",
+          "runtime-id": "1b35361cdbd3445aa831e09d3244da89",
+          "_dd.appsec.rc_products": "[] u:0 r:2",
+          "_dd.p.dm": "-5",
+          "appsec.events.llm.call.provider": "openai",
+          "_dd.runtime_family": "python",
+          "_dd.appsec.event_rules.version": "1.99.0",
+          "appsec.events.llm.call.model": "bad-model",
+          "language": "python",
+          "http.endpoint": "/",
+          "_dd.p.tid": "6ac3e19700000000",
+          "env": "openai-env",
+          "version": "openai-version",
+          "_dd.p.ts": "02",
+          "_dd.tags.process": "entrypoint.basedir:main,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:main,svc.user:true"
+        },
+        "metrics": {
+          "_dd.tracer_kr": 1.0,
+          "_dd.appsec.enabled": 1.0,
+          "_dd.appsec.waf.duration_ext": 223.09808991849422,
+          "process_id": 104.0,
+          "_dd.appsec.event_rules.error_count": 0.0,
+          "_dd.appsec.event_rules.loaded": 1.0,
+          "_dd.appsec.waf.duration": 21.88,
+          "_dd.top_level": 1.0,
+          "_sampling_priority_v1": 2.0
+        },
+        "type": "web"
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.request",
+        "resource": "createCompletion",
+        "trace_id": 3525814593113029133,
+        "span_id": 3816841089159365123,
+        "parent_id": 3657246879909683797,
+        "start": 1791222167025523346,
+        "duration": 6505675,
+        "error": 1,
+        "meta": {
+          "_dd.llmobs.model_name": "bad-model",
+          "component": "openai",
+          "openai.request.endpoint": "/v1/completions",
+          "openai.request.method": "POST",
+          "error.message": "Error code: 400 - {'error': {'message': 'Model bad-model does not exist', 'type': 'invalid_request_error', 'param': 'model', 'code': 'model_not_found'}}",
+          "_dd.llmobs.model_provider": "openai",
+          "error.stack": "Traceback (most recent call last):\n  File \"/tmp/datadog-parity-output/sandbox/linux-sandbox/30/execroot/_main/bazel-out/k8-fastbuild/bin/fixtures/datadog_openai_test.runfiles/_main/harness/datadog_python_rootfs/ddtrace_pkgs/site-packages-ddtrace-py3.11-manylinux2014-x86_64/ddtrace/contrib/internal/openai/patch.py\", line 307, in patched_endpoint\n    resp = func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/datadog-parity-output/sandbox/linux-sandbox/30/execroot/_main/bazel-out/k8-fastbuild/bin/fixtures/datadog_openai_test.runfiles/_main/harness/datadog_openai/sdk_overlay/openai/_utils/_utils.py\", line 298, in wrapper\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/datadog-parity-output/sandbox/linux-sandbox/30/execroot/_main/bazel-out/k8-fastbuild/bin/fixtures/datadog_openai_test.runfiles/_main/harness/datadog_openai/sdk_overlay/openai/resources/completions.py\", line 554, in create\n    return self._post(\n           ^^^^^^^^^^^\n  File \"/tmp/datadog-parity-output/sandbox/linux-sandbox/30/execroot/_main/bazel-out/k8-fastbuild/bin/fixtures/datadog_openai_test.runfiles/_main/harness/datadog_openai/sdk_overlay/openai/_base_client.py\", line 1332, in post\n    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))\n                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/datadog-parity-output/sandbox/linux-sandbox/30/execroot/_main/bazel-out/k8-fastbuild/bin/fixtures/datadog_openai_test.runfiles/_main/harness/datadog_openai/sdk_overlay/openai/_base_client.py\", line 1105, in request\n    raise self._make_status_error_from_response(err.response) from None\nopenai.BadRequestError: Error code: 400 - {'error': {'message': 'Model bad-model does not exist', 'type': 'invalid_request_error', 'param': 'model', 'code': 'model_not_found'}}\n",
+          "_dd.llmobs.span_kind": "llm",
+          "_dd.svc_src": "m",
+          "env": "openai-env",
+          "openai.request.model": "bad-model",
+          "openai.request.provider": "OpenAI",
+          "version": "openai-version",
+          "error.type": "openai.BadRequestError"
+        },
+        "metrics": {
+          "_dd.llmobs.enabled": 0.0,
+          "_dd.measured": 1.0
+        }
+      },
+      {
+        "service": "openai-lab",
+        "name": "http.request",
+        "resource": "http.request",
+        "trace_id": 3525814593113029133,
+        "span_id": 12314503376745015621,
+        "parent_id": 3816841089159365123,
+        "start": 1791222167026486781,
+        "duration": 3680563,
+        "meta": {
+          "http.method": "POST",
+          "_dd.svc_src": "httpx",
+          "component": "httpx",
+          "env": "openai-env",
+          "out.host": "api.openai.com",
+          "version": "openai-version",
+          "http.useragent": "OpenAI/Python 2.41.1",
+          "http.status_code": "400",
+          "span.kind": "client",
+          "http.url": "http://api.openai.com/v1/completions"
+        },
+        "metrics": {
+          "_dd.measured": 1.0
+        },
+        "type": "http"
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.lab.case",
+        "resource": "chat.success",
+        "trace_id": 15172510561234662876,
+        "span_id": 16809904406918737848,
+        "start": 1791222167032437065,
+        "duration": 8701397,
+        "meta": {
+          "_dd.appsec.waf.version": "2.0.1",
+          "runtime-id": "1b35361cdbd3445aa831e09d3244da89",
+          "_dd.appsec.rc_products": "[] u:0 r:3",
+          "_dd.p.dm": "-5",
+          "appsec.events.llm.call.provider": "openai",
+          "_dd.runtime_family": "python",
+          "_dd.appsec.event_rules.version": "1.99.0",
+          "appsec.events.llm.call.model": "gpt-3.5-turbo",
+          "language": "python",
+          "http.endpoint": "/",
+          "_dd.p.tid": "6ac3e19700000000",
+          "env": "openai-env",
+          "version": "openai-version",
+          "_dd.p.ts": "02",
+          "_dd.tags.process": "entrypoint.basedir:main,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:main,svc.user:true"
+        },
+        "metrics": {
+          "_dd.tracer_kr": 1.0,
+          "_dd.appsec.enabled": 1.0,
+          "_dd.appsec.waf.duration_ext": 183.25308337807655,
+          "process_id": 104.0,
+          "_dd.appsec.event_rules.error_count": 0.0,
+          "_dd.appsec.event_rules.loaded": 1.0,
+          "_dd.appsec.waf.duration": 22.733,
+          "_dd.top_level": 1.0,
+          "_sampling_priority_v1": 2.0
+        },
+        "type": "web"
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.request",
+        "resource": "createChatCompletion",
+        "trace_id": 15172510561234662876,
+        "span_id": 14928769024579820816,
+        "parent_id": 16809904406918737848,
+        "start": 1791222167032589010,
+        "duration": 8513104,
+        "meta": {
+          "_dd.llmobs.model_name": "gpt-3.5-turbo-fixture",
+          "component": "openai",
+          "openai.request.endpoint": "/v1/chat/completions",
+          "openai.response.model": "gpt-3.5-turbo-fixture",
+          "openai.request.method": "POST",
+          "_dd.llmobs.model_provider": "openai",
+          "_dd.svc_src": "m",
+          "openai.request.model": "gpt-3.5-turbo",
+          "env": "openai-env",
+          "_dd.llmobs.span_kind": "llm",
+          "openai.request.provider": "OpenAI",
+          "version": "openai-version"
+        },
+        "metrics": {
+          "_dd.llmobs.enabled": 0.0,
+          "_dd.measured": 1.0,
+          "_dd.llmobs.output_tokens": 9.0,
+          "_dd.llmobs.input_tokens": 7.0,
+          "_dd.llmobs.total_tokens": 16.0,
+          "_dd.llmobs.cache_read_input_tokens": 2.0
+        }
+      },
+      {
+        "service": "openai-lab",
+        "name": "http.request",
+        "resource": "http.request",
+        "trace_id": 15172510561234662876,
+        "span_id": 18305458409236385253,
+        "parent_id": 14928769024579820816,
+        "start": 1791222167034411072,
+        "duration": 2686021,
+        "meta": {
+          "http.method": "POST",
+          "_dd.svc_src": "httpx",
+          "component": "httpx",
+          "env": "openai-env",
+          "out.host": "api.openai.com",
+          "version": "openai-version",
+          "http.useragent": "OpenAI/Python 2.41.1",
+          "http.status_code": "200",
+          "span.kind": "client",
+          "http.url": "http://api.openai.com/v1/chat/completions"
+        },
+        "metrics": {
+          "_dd.measured": 1.0
+        },
+        "type": "http"
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.lab.case",
+        "resource": "chat.error",
+        "trace_id": 11673005671748024657,
+        "span_id": 15232213275045607809,
+        "start": 1791222167041471847,
+        "duration": 4490851,
+        "meta": {
+          "_dd.appsec.waf.version": "2.0.1",
+          "runtime-id": "1b35361cdbd3445aa831e09d3244da89",
+          "_dd.appsec.rc_products": "[] u:0 r:4",
+          "_dd.p.dm": "-5",
+          "appsec.events.llm.call.provider": "openai",
+          "_dd.runtime_family": "python",
+          "_dd.appsec.event_rules.version": "1.99.0",
+          "appsec.events.llm.call.model": "bad-model",
+          "language": "python",
+          "http.endpoint": "/",
+          "_dd.p.tid": "6ac3e19700000000",
+          "env": "openai-env",
+          "version": "openai-version",
+          "_dd.p.ts": "02",
+          "_dd.tags.process": "entrypoint.basedir:main,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:main,svc.user:true"
+        },
+        "metrics": {
+          "_dd.tracer_kr": 1.0,
+          "_dd.appsec.enabled": 1.0,
+          "_dd.appsec.waf.duration_ext": 160.21030023694038,
+          "process_id": 104.0,
+          "_dd.appsec.event_rules.error_count": 0.0,
+          "_dd.appsec.event_rules.loaded": 1.0,
+          "_dd.appsec.waf.duration": 16.2,
+          "_dd.top_level": 1.0,
+          "_sampling_priority_v1": 2.0
+        },
+        "type": "web"
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.request",
+        "resource": "createChatCompletion",
+        "trace_id": 11673005671748024657,
+        "span_id": 15328959532721228920,
+        "parent_id": 15232213275045607809,
+        "start": 1791222167041601159,
+        "duration": 4334679,
+        "error": 1,
+        "meta": {
+          "_dd.llmobs.model_name": "bad-model",
+          "component": "openai",
+          "openai.request.endpoint": "/v1/chat/completions",
+          "openai.request.method": "POST",
+          "error.message": "Error code: 400 - {'error': {'message': 'Model bad-model does not exist', 'type': 'invalid_request_error', 'param': 'model', 'code': 'model_not_found'}}",
+          "_dd.llmobs.model_provider": "openai",
+          "error.stack": "Traceback (most recent call last):\n  File \"/tmp/datadog-parity-output/sandbox/linux-sandbox/30/execroot/_main/bazel-out/k8-fastbuild/bin/fixtures/datadog_openai_test.runfiles/_main/harness/datadog_python_rootfs/ddtrace_pkgs/site-packages-ddtrace-py3.11-manylinux2014-x86_64/ddtrace/contrib/internal/openai/patch.py\", line 307, in patched_endpoint\n    resp = func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/datadog-parity-output/sandbox/linux-sandbox/30/execroot/_main/bazel-out/k8-fastbuild/bin/fixtures/datadog_openai_test.runfiles/_main/harness/datadog_openai/sdk_overlay/openai/_utils/_utils.py\", line 298, in wrapper\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/datadog-parity-output/sandbox/linux-sandbox/30/execroot/_main/bazel-out/k8-fastbuild/bin/fixtures/datadog_openai_test.runfiles/_main/harness/datadog_openai/sdk_overlay/openai/resources/chat/completions/completions.py\", line 1251, in create\n    return self._post(\n           ^^^^^^^^^^^\n  File \"/tmp/datadog-parity-output/sandbox/linux-sandbox/30/execroot/_main/bazel-out/k8-fastbuild/bin/fixtures/datadog_openai_test.runfiles/_main/harness/datadog_openai/sdk_overlay/openai/_base_client.py\", line 1332, in post\n    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))\n                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/datadog-parity-output/sandbox/linux-sandbox/30/execroot/_main/bazel-out/k8-fastbuild/bin/fixtures/datadog_openai_test.runfiles/_main/harness/datadog_openai/sdk_overlay/openai/_base_client.py\", line 1105, in request\n    raise self._make_status_error_from_response(err.response) from None\nopenai.BadRequestError: Error code: 400 - {'error': {'message': 'Model bad-model does not exist', 'type': 'invalid_request_error', 'param': 'model', 'code': 'model_not_found'}}\n",
+          "_dd.llmobs.span_kind": "llm",
+          "_dd.svc_src": "m",
+          "env": "openai-env",
+          "openai.request.model": "bad-model",
+          "openai.request.provider": "OpenAI",
+          "version": "openai-version",
+          "error.type": "openai.BadRequestError"
+        },
+        "metrics": {
+          "_dd.llmobs.enabled": 0.0,
+          "_dd.measured": 1.0
+        }
+      },
+      {
+        "service": "openai-lab",
+        "name": "http.request",
+        "resource": "http.request",
+        "trace_id": 11673005671748024657,
+        "span_id": 6629830476731116854,
+        "parent_id": 15328959532721228920,
+        "start": 1791222167042403762,
+        "duration": 2433358,
+        "meta": {
+          "http.method": "POST",
+          "_dd.svc_src": "httpx",
+          "component": "httpx",
+          "env": "openai-env",
+          "out.host": "api.openai.com",
+          "version": "openai-version",
+          "http.useragent": "OpenAI/Python 2.41.1",
+          "http.status_code": "400",
+          "span.kind": "client",
+          "http.url": "http://api.openai.com/v1/chat/completions"
+        },
+        "metrics": {
+          "_dd.measured": 1.0
+        },
+        "type": "http"
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.lab.case",
+        "resource": "responses.success",
+        "trace_id": 809673772560581860,
+        "span_id": 7191520520450610528,
+        "start": 1791222167046267980,
+        "duration": 79783369,
+        "meta": {
+          "_dd.appsec.waf.version": "2.0.1",
+          "runtime-id": "1b35361cdbd3445aa831e09d3244da89",
+          "_dd.appsec.rc_products": "[] u:0 r:5",
+          "_dd.p.dm": "-5",
+          "appsec.events.llm.call.provider": "openai",
+          "_dd.runtime_family": "python",
+          "_dd.appsec.event_rules.version": "1.99.0",
+          "appsec.events.llm.call.model": "gpt-4.1",
+          "language": "python",
+          "http.endpoint": "/",
+          "_dd.p.tid": "6ac3e19700000000",
+          "env": "openai-env",
+          "version": "openai-version",
+          "_dd.p.ts": "02",
+          "_dd.tags.process": "entrypoint.basedir:main,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:main,svc.user:true"
+        },
+        "metrics": {
+          "_dd.tracer_kr": 1.0,
+          "_dd.appsec.enabled": 1.0,
+          "_dd.appsec.waf.duration_ext": 208.95223133265972,
+          "process_id": 104.0,
+          "_dd.appsec.event_rules.error_count": 0.0,
+          "_dd.appsec.event_rules.loaded": 1.0,
+          "_dd.appsec.waf.duration": 21.752000000000002,
+          "_dd.top_level": 1.0,
+          "_sampling_priority_v1": 2.0
+        },
+        "type": "web"
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.request",
+        "resource": "createResponse",
+        "trace_id": 809673772560581860,
+        "span_id": 4286282469848039178,
+        "parent_id": 7191520520450610528,
+        "start": 1791222167046391491,
+        "duration": 79556304,
+        "meta": {
+          "_dd.llmobs.model_name": "gpt-4.1-fixture",
+          "component": "openai",
+          "openai.request.endpoint": "/v1/responses",
+          "openai.response.model": "gpt-4.1-fixture",
+          "openai.request.method": "POST",
+          "_dd.llmobs.model_provider": "openai",
+          "_dd.svc_src": "m",
+          "openai.request.model": "gpt-4.1",
+          "env": "openai-env",
+          "_dd.llmobs.span_kind": "llm",
+          "openai.request.provider": "OpenAI",
+          "version": "openai-version"
+        },
+        "metrics": {
+          "_dd.llmobs.enabled": 0.0,
+          "_dd.measured": 1.0,
+          "_dd.llmobs.output_tokens": 9.0,
+          "_dd.llmobs.input_tokens": 7.0,
+          "_dd.llmobs.total_tokens": 16.0,
+          "_dd.llmobs.cache_read_input_tokens": 2.0
+        }
+      },
+      {
+        "service": "openai-lab",
+        "name": "http.request",
+        "resource": "http.request",
+        "trace_id": 809673772560581860,
+        "span_id": 6348810958577350923,
+        "parent_id": 4286282469848039178,
+        "start": 1791222167047449533,
+        "duration": 4098005,
+        "meta": {
+          "http.method": "POST",
+          "_dd.svc_src": "httpx",
+          "component": "httpx",
+          "env": "openai-env",
+          "out.host": "api.openai.com",
+          "version": "openai-version",
+          "http.useragent": "OpenAI/Python 2.41.1",
+          "http.status_code": "200",
+          "span.kind": "client",
+          "http.url": "http://api.openai.com/v1/responses"
+        },
+        "metrics": {
+          "_dd.measured": 1.0
+        },
+        "type": "http"
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.lab.case",
+        "resource": "responses.error",
+        "trace_id": 9935018538649790408,
+        "span_id": 15617399537647409143,
+        "start": 1791222167126557657,
+        "duration": 49436111,
+        "meta": {
+          "_dd.appsec.waf.version": "2.0.1",
+          "runtime-id": "1b35361cdbd3445aa831e09d3244da89",
+          "_dd.appsec.rc_products": "[] u:0 r:6",
+          "_dd.p.dm": "-5",
+          "appsec.events.llm.call.provider": "openai",
+          "_dd.runtime_family": "python",
+          "_dd.appsec.event_rules.version": "1.99.0",
+          "appsec.events.llm.call.model": "bad-model",
+          "language": "python",
+          "http.endpoint": "/",
+          "_dd.p.tid": "6ac3e19700000000",
+          "env": "openai-env",
+          "version": "openai-version",
+          "_dd.p.ts": "02",
+          "_dd.tags.process": "entrypoint.basedir:main,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:main,svc.user:true"
+        },
+        "metrics": {
+          "_dd.tracer_kr": 1.0,
+          "_dd.appsec.enabled": 1.0,
+          "_dd.appsec.waf.duration_ext": 230.30187003314495,
+          "process_id": 104.0,
+          "_dd.appsec.event_rules.error_count": 0.0,
+          "_dd.appsec.event_rules.loaded": 1.0,
+          "_dd.appsec.waf.duration": 30.577,
+          "_dd.top_level": 1.0,
+          "_sampling_priority_v1": 2.0
+        },
+        "type": "web"
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.request",
+        "resource": "createResponse",
+        "trace_id": 9935018538649790408,
+        "span_id": 10965012060815937617,
+        "parent_id": 15617399537647409143,
+        "start": 1791222167126745018,
+        "duration": 49191683,
+        "error": 1,
+        "meta": {
+          "_dd.llmobs.model_name": "bad-model",
+          "component": "openai",
+          "openai.request.endpoint": "/v1/responses",
+          "openai.request.method": "POST",
+          "error.message": "Error code: 400 - {'error': {'message': 'Model bad-model does not exist', 'type': 'invalid_request_error', 'param': 'model', 'code': 'model_not_found'}}",
+          "_dd.llmobs.model_provider": "openai",
+          "error.stack": "Traceback (most recent call last):\n  File \"/tmp/datadog-parity-output/sandbox/linux-sandbox/30/execroot/_main/bazel-out/k8-fastbuild/bin/fixtures/datadog_openai_test.runfiles/_main/harness/datadog_python_rootfs/ddtrace_pkgs/site-packages-ddtrace-py3.11-manylinux2014-x86_64/ddtrace/contrib/internal/openai/patch.py\", line 307, in patched_endpoint\n    resp = func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/datadog-parity-output/sandbox/linux-sandbox/30/execroot/_main/bazel-out/k8-fastbuild/bin/fixtures/datadog_openai_test.runfiles/_main/harness/datadog_openai/sdk_overlay/openai/resources/responses/responses.py\", line 954, in create\n    return self._post(\n           ^^^^^^^^^^^\n  File \"/tmp/datadog-parity-output/sandbox/linux-sandbox/30/execroot/_main/bazel-out/k8-fastbuild/bin/fixtures/datadog_openai_test.runfiles/_main/harness/datadog_openai/sdk_overlay/openai/_base_client.py\", line 1332, in post\n    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))\n                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/datadog-parity-output/sandbox/linux-sandbox/30/execroot/_main/bazel-out/k8-fastbuild/bin/fixtures/datadog_openai_test.runfiles/_main/harness/datadog_openai/sdk_overlay/openai/_base_client.py\", line 1105, in request\n    raise self._make_status_error_from_response(err.response) from None\nopenai.BadRequestError: Error code: 400 - {'error': {'message': 'Model bad-model does not exist', 'type': 'invalid_request_error', 'param': 'model', 'code': 'model_not_found'}}\n",
+          "_dd.llmobs.span_kind": "llm",
+          "_dd.svc_src": "m",
+          "env": "openai-env",
+          "openai.request.model": "bad-model",
+          "openai.request.provider": "OpenAI",
+          "version": "openai-version",
+          "error.type": "openai.BadRequestError"
+        },
+        "metrics": {
+          "_dd.llmobs.enabled": 0.0,
+          "_dd.measured": 1.0
+        }
+      },
+      {
+        "service": "openai-lab",
+        "name": "http.request",
+        "resource": "http.request",
+        "trace_id": 9935018538649790408,
+        "span_id": 2198854144469009259,
+        "parent_id": 10965012060815937617,
+        "start": 1791222167128099986,
+        "duration": 46097939,
+        "meta": {
+          "http.method": "POST",
+          "_dd.svc_src": "httpx",
+          "component": "httpx",
+          "env": "openai-env",
+          "out.host": "api.openai.com",
+          "version": "openai-version",
+          "http.useragent": "OpenAI/Python 2.41.1",
+          "http.status_code": "400",
+          "span.kind": "client",
+          "http.url": "http://api.openai.com/v1/responses"
+        },
+        "metrics": {
+          "_dd.measured": 1.0
+        },
+        "type": "http"
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.lab.case",
+        "resource": "embeddings.success",
+        "trace_id": 15704302265619210993,
+        "span_id": 8320581358809215535,
+        "start": 1791222167176453860,
+        "duration": 7956352,
+        "meta": {
+          "_dd.appsec.waf.version": "2.0.1",
+          "runtime-id": "1b35361cdbd3445aa831e09d3244da89",
+          "_dd.appsec.rc_products": "[] u:0 r:7",
+          "_dd.p.dm": "-3",
+          "_dd.appsec.event_rules.version": "1.99.0",
+          "_dd.runtime_family": "python",
+          "language": "python",
+          "http.endpoint": "/",
+          "_dd.p.tid": "6ac3e19700000000",
+          "_dd.p.ksr": "1",
+          "env": "openai-env",
+          "version": "openai-version",
+          "_dd.tags.process": "entrypoint.basedir:main,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:main,svc.user:true"
+        },
+        "metrics": {
+          "_dd.rule_psr": 1.0,
+          "_dd.tracer_kr": 1.0,
+          "_dd.appsec.enabled": 1.0,
+          "_dd.appsec.waf.duration_ext": 93.22399273514748,
+          "process_id": 104.0,
+          "_dd.appsec.event_rules.error_count": 0.0,
+          "_dd.appsec.event_rules.loaded": 1.0,
+          "_dd.appsec.waf.duration": 8.215,
+          "_dd.top_level": 1.0,
+          "_sampling_priority_v1": 2.0,
+          "_dd.limit_psr": 1.0
+        },
+        "type": "web"
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.request",
+        "resource": "createEmbedding",
+        "trace_id": 15704302265619210993,
+        "span_id": 8956771070150284732,
+        "parent_id": 8320581358809215535,
+        "start": 1791222167176642263,
+        "duration": 7715621,
+        "meta": {
+          "_dd.llmobs.model_name": "text-embedding-ada-002-fixture",
+          "component": "openai",
+          "openai.request.endpoint": "/v1/embeddings",
+          "openai.response.model": "text-embedding-ada-002-fixture",
+          "openai.request.method": "POST",
+          "_dd.llmobs.model_provider": "openai",
+          "_dd.svc_src": "m",
+          "openai.request.model": "text-embedding-ada-002",
+          "env": "openai-env",
+          "_dd.llmobs.span_kind": "embedding",
+          "openai.request.provider": "OpenAI",
+          "version": "openai-version"
+        },
+        "metrics": {
+          "_dd.llmobs.enabled": 0.0,
+          "_dd.measured": 1.0,
+          "_dd.llmobs.output_tokens": 0.0,
+          "_dd.llmobs.input_tokens": 7.0,
+          "_dd.llmobs.total_tokens": 7.0
+        }
+      },
+      {
+        "service": "openai-lab",
+        "name": "http.request",
+        "resource": "http.request",
+        "trace_id": 15704302265619210993,
+        "span_id": 15813419627004376141,
+        "parent_id": 8956771070150284732,
+        "start": 1791222167177671190,
+        "duration": 5430211,
+        "meta": {
+          "http.method": "POST",
+          "_dd.svc_src": "httpx",
+          "component": "httpx",
+          "env": "openai-env",
+          "out.host": "api.openai.com",
+          "version": "openai-version",
+          "http.useragent": "OpenAI/Python 2.41.1",
+          "http.status_code": "200",
+          "span.kind": "client",
+          "http.url": "http://api.openai.com/v1/embeddings"
+        },
+        "metrics": {
+          "_dd.measured": 1.0
+        },
+        "type": "http"
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.lab.case",
+        "resource": "embeddings.error",
+        "trace_id": 9330432818914594686,
+        "span_id": 8234697535184025501,
+        "start": 1791222167184810632,
+        "duration": 5546448,
+        "meta": {
+          "_dd.appsec.waf.version": "2.0.1",
+          "runtime-id": "1b35361cdbd3445aa831e09d3244da89",
+          "_dd.appsec.rc_products": "[] u:0 r:8",
+          "_dd.p.dm": "-3",
+          "_dd.appsec.event_rules.version": "1.99.0",
+          "_dd.runtime_family": "python",
+          "language": "python",
+          "http.endpoint": "/",
+          "_dd.p.tid": "6ac3e19700000000",
+          "_dd.p.ksr": "1",
+          "env": "openai-env",
+          "version": "openai-version",
+          "_dd.tags.process": "entrypoint.basedir:main,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:main,svc.user:true"
+        },
+        "metrics": {
+          "_dd.rule_psr": 1.0,
+          "_dd.tracer_kr": 1.0,
+          "_dd.appsec.enabled": 1.0,
+          "_dd.appsec.waf.duration_ext": 104.28507812321186,
+          "process_id": 104.0,
+          "_dd.appsec.event_rules.error_count": 0.0,
+          "_dd.appsec.event_rules.loaded": 1.0,
+          "_dd.appsec.waf.duration": 6.813,
+          "_dd.top_level": 1.0,
+          "_sampling_priority_v1": 2.0,
+          "_dd.limit_psr": 1.0
+        },
+        "type": "web"
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.request",
+        "resource": "createEmbedding",
+        "trace_id": 9330432818914594686,
+        "span_id": 16239506489526325983,
+        "parent_id": 8234697535184025501,
+        "start": 1791222167184961124,
+        "duration": 5347545,
+        "error": 1,
+        "meta": {
+          "_dd.llmobs.model_name": "bad-model",
+          "component": "openai",
+          "openai.request.endpoint": "/v1/embeddings",
+          "openai.request.method": "POST",
+          "error.message": "Error code: 400 - {'error': {'message': 'Model bad-model does not exist', 'type': 'invalid_request_error', 'param': 'model', 'code': 'model_not_found'}}",
+          "_dd.llmobs.model_provider": "openai",
+          "error.stack": "Traceback (most recent call last):\n  File \"/tmp/datadog-parity-output/sandbox/linux-sandbox/30/execroot/_main/bazel-out/k8-fastbuild/bin/fixtures/datadog_openai_test.runfiles/_main/harness/datadog_python_rootfs/ddtrace_pkgs/site-packages-ddtrace-py3.11-manylinux2014-x86_64/ddtrace/contrib/internal/openai/patch.py\", line 307, in patched_endpoint\n    resp = func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/datadog-parity-output/sandbox/linux-sandbox/30/execroot/_main/bazel-out/k8-fastbuild/bin/fixtures/datadog_openai_test.runfiles/_main/harness/datadog_openai/sdk_overlay/openai/resources/embeddings.py\", line 136, in create\n    return self._post(\n           ^^^^^^^^^^^\n  File \"/tmp/datadog-parity-output/sandbox/linux-sandbox/30/execroot/_main/bazel-out/k8-fastbuild/bin/fixtures/datadog_openai_test.runfiles/_main/harness/datadog_openai/sdk_overlay/openai/_base_client.py\", line 1332, in post\n    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))\n                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/datadog-parity-output/sandbox/linux-sandbox/30/execroot/_main/bazel-out/k8-fastbuild/bin/fixtures/datadog_openai_test.runfiles/_main/harness/datadog_openai/sdk_overlay/openai/_base_client.py\", line 1105, in request\n    raise self._make_status_error_from_response(err.response) from None\nopenai.BadRequestError: Error code: 400 - {'error': {'message': 'Model bad-model does not exist', 'type': 'invalid_request_error', 'param': 'model', 'code': 'model_not_found'}}\n",
+          "_dd.llmobs.span_kind": "embedding",
+          "_dd.svc_src": "m",
+          "env": "openai-env",
+          "openai.request.model": "bad-model",
+          "openai.request.provider": "OpenAI",
+          "version": "openai-version",
+          "error.type": "openai.BadRequestError"
+        },
+        "metrics": {
+          "_dd.llmobs.enabled": 0.0,
+          "_dd.measured": 1.0
+        }
+      },
+      {
+        "service": "openai-lab",
+        "name": "http.request",
+        "resource": "http.request",
+        "trace_id": 9330432818914594686,
+        "span_id": 2178318206917078573,
+        "parent_id": 16239506489526325983,
+        "start": 1791222167185562720,
+        "duration": 3746688,
+        "meta": {
+          "http.method": "POST",
+          "_dd.svc_src": "httpx",
+          "component": "httpx",
+          "env": "openai-env",
+          "out.host": "api.openai.com",
+          "version": "openai-version",
+          "http.useragent": "OpenAI/Python 2.41.1",
+          "http.status_code": "400",
+          "span.kind": "client",
+          "http.url": "http://api.openai.com/v1/embeddings"
+        },
+        "metrics": {
+          "_dd.measured": 1.0
+        },
+        "type": "http"
+      }
+    ],
+    "identity": {
+      "client_version": "2.41.1",
+      "tracer_version": "4.14.0",
+      "calls": [
+        {
+          "api": "completions",
+          "error": false,
+          "trace_id": "141915240946228735203139635620487283523",
+          "parent_id": "3074847957139378419",
+          "output": "Hello from the local model fixture."
+        },
+        {
+          "api": "completions",
+          "error": true,
+          "trace_id": "141915240946228735198653174523703327245",
+          "parent_id": "3657246879909683797",
+          "exception": "BadRequestError"
+        },
+        {
+          "api": "chat",
+          "error": false,
+          "trace_id": "141915240946228735210299870491824960988",
+          "parent_id": "16809904406918737848",
+          "output": "Hello from the local model fixture."
+        },
+        {
+          "api": "chat",
+          "error": true,
+          "trace_id": "141915240946228735206800365602338322769",
+          "parent_id": "15232213275045607809",
+          "exception": "BadRequestError"
+        },
+        {
+          "api": "responses",
+          "error": false,
+          "trace_id": "141915240946228735195937033703150879972",
+          "parent_id": "7191520520450610528",
+          "output": "Hello from the local model fixture."
+        },
+        {
+          "api": "responses",
+          "error": true,
+          "trace_id": "141915240946228735205062378469240088520",
+          "parent_id": "15617399537647409143",
+          "exception": "BadRequestError"
+        },
+        {
+          "api": "embeddings",
+          "error": false,
+          "trace_id": "141915240946228735210831662196209509105",
+          "parent_id": "8320581358809215535",
+          "output": [
+            0.125,
+            0.25,
+            0.5
+          ]
+        },
+        {
+          "api": "embeddings",
+          "error": true,
+          "trace_id": "141915240946228735204457792749504892798",
+          "parent_id": "8234697535184025501",
+          "exception": "BadRequestError"
+        }
+      ],
+      "dependencies": {
+        "openai": "2.41.1",
+        "httpx": "0.28.1",
+        "pydantic": "2.13.5",
+        "jiter": "0.17.0"
+      }
+    }
   }
 }

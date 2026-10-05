@@ -15,6 +15,21 @@ class AssertionsTest(unittest.TestCase):
             for _, check in checks:
                 check(self.golden[mode]["spans"], self.golden[mode]["identity"])
 
+    def test_reject_missing_llm_endpoint_model(self):
+        evidence = self.golden['appsec']
+        root = next(s for s in evidence['spans'] if 'appsec.events.llm.call.model' in s.get('meta', {}))
+        del root['meta']['appsec.events.llm.call.model']
+        with self.assertRaises(AssertionError):
+            assertions.check_llm_endpoint(evidence['spans'], evidence['identity'])
+
+    def test_reject_llm_endpoint_tags_on_embedding_control(self):
+        evidence = self.golden['appsec']
+        call = next(c for c in evidence['identity']['calls'] if c['api'] == 'embeddings')
+        root = next(s for s in evidence['spans'] if s['span_id'] == int(call['parent_id']))
+        root.setdefault('meta', {})['appsec.events.llm.call.provider'] = 'openai'
+        with self.assertRaises(AssertionError):
+            assertions.check_llm_endpoint(evidence['spans'], evidence['identity'])
+
     def test_reject_apm_parent_mismatch(self):
         evidence = self.golden["apm"]
         for span in evidence["spans"]:

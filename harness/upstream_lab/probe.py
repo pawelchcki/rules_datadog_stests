@@ -169,8 +169,7 @@ def execute(args):
             "sourceSha256": digest((Path(__file__).parent / case["file"]).read_bytes()) if case.get("local") else manifest["files"][case["file"]]["sha256"],
             "workloadSha256": digest(Path(args.app).read_bytes()),
             "capabilityInventoryRevision": REVISION, "upstreamFeatures": [] if case.get("local") else case["features"],
-            "capabilityNames": [feature for feature in case["features"] if feature != "open_tracing_api"
-                and not (feature == "dd_service_mapping" and case["class"] == "Test_TracerUniversalServiceTagging")
+            "capabilityNames": [feature for feature in case["features"] if not (feature == "dd_service_mapping" and case["class"] == "Test_TracerUniversalServiceTagging")
                 and not (feature == "f_otel_interoperability" and case["method"] == "test_span_creation_using_otel")],
             "configuration": env,
         }

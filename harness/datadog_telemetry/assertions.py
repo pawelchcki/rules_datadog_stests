@@ -5,6 +5,7 @@ import math
 import uuid
 
 TELEMETRY_PATH = "/telemetry/proxy/api/v2/apmtelemetry"
+HEARTBEAT_INTERVAL = 5
 
 
 def events(document):
@@ -79,7 +80,8 @@ def check_configuration(records, identity, dependencies):
     configuration = startup["payload"]["configuration"]
     expected = {"DD_ENV": "telemetry-env", "DD_SERVICE": "telemetry-lab", "DD_VERSION": "telemetry-version",
                 "DD_TRACE_RATE_LIMIT": "7", "DD_TRACE_ENABLED": "true", "DD_INSTRUMENTATION_TELEMETRY_ENABLED": "true",
-                "DD_TELEMETRY_HEARTBEAT_INTERVAL": "1.0", "DD_TELEMETRY_DEPENDENCY_COLLECTION_ENABLED": str(dependencies).lower()}
+                "DD_TELEMETRY_HEARTBEAT_INTERVAL": str(float(HEARTBEAT_INTERVAL)),
+                "DD_TELEMETRY_DEPENDENCY_COLLECTION_ENABLED": str(dependencies).lower()}
     for name, value in expected.items():
         found = [item for item in configuration if item["name"] == name and item["origin"] == "env_var"]
         assert len(found) == 1 and found[0]["value"] == value, (name, value, found)
@@ -94,7 +96,7 @@ def check_heartbeat(records, identity):
     delays = [later - earlier for earlier, later in zip(times, times[1:])]
     assert all(math.isfinite(delay) and delay >= 0 for delay in delays), delays
     average = sum(delays) / len(delays)
-    assert 0.75 < average < 1.5, (average, delays)
+    assert 0.75 * HEARTBEAT_INTERVAL < average < 1.5 * HEARTBEAT_INTERVAL, (average, delays)
     return {"count": len(times), "averageDelaySeconds": average}
 
 

@@ -1,6 +1,11 @@
 """Digest locks for the independently reviewed Datadog fixtures."""
 
 OCI_IMAGES = {
+    "datadog_mariadb": struct(
+        repository = "docker.io/library/mariadb",
+        digest = "sha256:1292844148b311e4ed4300022a996d39083f415a963e970cf47cad1b3b18e3a6",
+        version = "11.4",
+    ),
     # Same Agent release and manifest index as system-tests at 098fe0967c58.
     "datadog_agent": struct(
         repository = "docker.io/datadog/agent",

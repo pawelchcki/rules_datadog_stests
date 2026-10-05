@@ -132,12 +132,20 @@
     "otel_env_vars/test_otel_traces_exporter.py": {
       "source": "tests/parametric/otel_env_vars/test_otel_traces_exporter.py",
       "sha256": "d8aef0d67c15b0b688b3cee18836ad014bfd1935ee5e3472f15f39ba914f0f5c"
+    },
+    "test_parametric_endpoints.py": {
+      "source": "tests/parametric/test_parametric_endpoints.py",
+      "sha256": "acac9c2c1301e7417c813a5b2dc0128b0471f064638dddeb40d1e03fabec1038"
     }
   },
   "sourceSelection": {
     "test_config_consistency.py": {
       "topLevelNodesBeforeLine": 364,
       "reason": "Stable configuration file writes, DogStatsD URL introspection, and external process fixtures need separate labs; selected original tracing configuration classes are retained unchanged."
+    },
+    "test_parametric_endpoints.py": {
+      "topLevelNodesBeforeLine": 237,
+      "reason": "Original native start/finish, extract/inject, metadata/metric/error/resource endpoint contracts run through the SDK operation adapter. Other parametric endpoints require separate fixtures and remain outside this source selection."
     }
   }
 }

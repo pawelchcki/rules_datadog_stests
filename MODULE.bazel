@@ -15,12 +15,16 @@ git_override(
     commit = "db94b7ae98d1c8765b2ec236f6732683bbbfb54d",
 )
 images = use_extension("//bazel:oci_deps.bzl", "oci_deps")
-use_repo(images, "datadog_python", "datadog_python_linux_amd64", "datadog_ruby", "datadog_ruby_linux_amd64", "datadog_agent", "datadog_agent_linux_amd64", "gin_datadog_realworld", "gin_datadog_realworld_linux_amd64")
+use_repo(images, "datadog_python", "datadog_python_linux_amd64", "datadog_ruby", "datadog_ruby_linux_amd64", "datadog_agent", "datadog_agent_linux_amd64", "gin_datadog_realworld", "gin_datadog_realworld_linux_amd64", "datadog_mariadb", "datadog_mariadb_linux_amd64")
 wheel_deps = use_extension("//bazel:wheel_deps.bzl", "wheel_deps")
 wheel_deps.bundle(name = "openai_wheels", lock = "//bazel:openai_wheels.lock.json")
 wheel_deps.bundle(name = "otel_wheels", lock = "//bazel:otel_wheels.lock.json")
 wheel_deps.bundle(name = "ffe_wheels", lock = "//bazel:ffe_wheels.lock.json")
-use_repo(wheel_deps, "openai_wheels", "otel_wheels", "ffe_wheels")
+wheel_deps.bundle(name = "integrations_wheels", lock = "//bazel:integrations_wheels.lock.json")
+wheel_deps.bundle(name = "security_extra_wheels", lock = "//bazel:security_extra_wheels.lock.json")
+wheel_deps.bundle(name = "messaging_wheels", lock = "//bazel:messaging_wheels.lock.json")
+wheel_deps.bundle(name = "sca_wheels", lock = "//bazel:sca_wheels.lock.json")
+use_repo(wheel_deps, "sca_wheels", "messaging_wheels", "openai_wheels", "otel_wheels", "ffe_wheels", "integrations_wheels", "security_extra_wheels")
 http_file = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
 http_file(
     name = "datadog_system_tests_headers",

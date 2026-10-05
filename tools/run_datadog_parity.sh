@@ -105,12 +105,15 @@ find -L bazel-testlogs/fixtures -path '*datadog_external_features*/test.outputs/
 # Capability suites reuse existing Python frameworks and include the real Agent
 # and local backend. Retain every raw capture beside its receipt before gating.
 capability_test_status=0
+# Native SDK/Agent fixtures share the executor fleet. Bound their concurrency
+# to the four-worker load used for local acceptance, including startup timing.
 bazel test "${bazel_args[@]}" "${test_download_args[@]}" \
+  --jobs=4 \
   --nocache_test_results \
   "${image_flags[@]}" \
   //fixtures:datadog_capability_suite || capability_test_status=$?
 mkdir -p "$evidence/capabilities"
-for family in lab upstream_lab agent security signals telemetry profiling llmobs openai otlp ffe remote_config debugger; do
+for family in lab upstream_lab agent security signals telemetry profiling llmobs openai otlp ffe remote_config debugger sdk_extra messaging anthropic genai graphql datasets dsm dbm otel_mysql; do
   for directory in bazel-testlogs/fixtures/datadog_"$family"*_test/test.outputs; do
     if [[ -d "$directory" ]]; then
       find -L "$directory" -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/capabilities/" \;
@@ -137,4 +140,4 @@ python3 tools/datadog_capabilities.py "${capability_report[@]}" \
   --output "$evidence/datadog-capabilities-report.json"
 python3 tools/datadog_capabilities.py "${capability_report[@]}" \
   --format markdown --output "$evidence/datadog-capabilities-report.md" \
-  --require-percent "${DATADOG_CAPABILITY_MIN_PERCENT:-50}"
+  --require-percent "${DATADOG_CAPABILITY_MIN_PERCENT:-75}"

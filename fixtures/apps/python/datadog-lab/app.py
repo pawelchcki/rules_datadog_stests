@@ -153,6 +153,11 @@ class Handler(BaseHTTPRequestHandler):
                 elif op == "set_resource":
                     span.resource = args["resource"]
                     result = None
+                elif op == "set_error":
+                    span.error = 1
+                    for key, value in (("error.type", args["error_type"]), ("error.message", args["message"]), ("error.stack", args["stack"])):
+                        span.set_tag(key, value)
+                    result = None
                 elif op == "set_meta":
                     span.set_tag(args["key"], args.get("value"))
                     result = None

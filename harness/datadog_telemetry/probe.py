@@ -55,8 +55,11 @@ def run_workload(args, agent_url, out, dependencies):
     with server_thread(proxy):
         env = dict(BASE_ENV)
         env.update({"DD_TRACE_AGENT_URL": "http://127.0.0.1:" + str(proxy.server_port),
-                    "DD_INSTRUMENTATION_TELEMETRY_ENABLED": "true", "DD_TELEMETRY_HEARTBEAT_INTERVAL": "1",
-                    "_DD_TELEMETRY_EXTENDED_HEARTBEAT_INTERVAL": "2",
+                    "DD_INSTRUMENTATION_TELEMETRY_ENABLED": "true",
+                    "DD_TELEMETRY_HEARTBEAT_INTERVAL": str(assertions.HEARTBEAT_INTERVAL),
+                    # Dependency discovery uses the regular heartbeat. Give it
+                    # a complete poll before the first extended snapshot.
+                    "_DD_TELEMETRY_EXTENDED_HEARTBEAT_INTERVAL": str(2 * assertions.HEARTBEAT_INTERVAL),
                     "DD_TELEMETRY_DEPENDENCY_COLLECTION_ENABLED": str(dependencies).lower(),
                     "DD_SERVICE": "telemetry-lab", "DD_ENV": "telemetry-env", "DD_VERSION": "telemetry-version",
                     "DD_TRACE_RATE_LIMIT": "7", "DD_TRACE_API_VERSION": "v0.5"})
@@ -72,9 +75,11 @@ def run_workload(args, agent_url, out, dependencies):
             while not identity_path.exists():
                 assert proc.poll() is None and time.monotonic() < deadline, log_path.read_text(errors="replace")
                 time.sleep(0.1)
-            # Native telemetry metric flushes occur every ten seconds. Waiting
-            # longer also supplies multiple actual heartbeat intervals.
-            deadline = time.monotonic() + 13
+            # The SDK also uses the heartbeat interval for its startup fallback.
+            # Five seconds lets product initialization finish under executor load.
+            # Observe seven intervals, preserving the native metric flush and
+            # the minimum heartbeat count with the same relative timing bounds.
+            deadline = time.monotonic() + 7 * assertions.HEARTBEAT_INTERVAL
             while time.monotonic() < deadline:
                 assert proc.poll() is None, log_path.read_text(errors="replace")
                 time.sleep(0.1)

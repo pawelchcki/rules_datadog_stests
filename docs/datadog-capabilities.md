@@ -8,7 +8,7 @@ The [mapping](datadog-capabilities-mapping.json) ties each local capability asse
 
 Capability coverage counts specific behaviors exercised by assertions. Full upstream test coverage also requires each original test method, parameter combination, scenario, activation setting, and relevant implementation to run and pass. This tool does not claim full upstream case parity, and its JSON output explicitly records `fullUpstreamCaseParity: false`.
 
-The capability suite combines original-method and supplemental Python SDK labs, real Agent/backend assertions, Django AppSec/IAST/RASP/API Security profiles, logging and runtime metrics, telemetry and profiling, LLMObs/OpenAI, OTLP metrics/logs, feature flags, signed remote configuration and debugger probes. Each mapping states its exercised subset and retained gaps. The runtime gate uses fresh receipts from these families together.
+The capability suite combines original-method and supplemental Python SDK labs, real Agent/backend assertions, Django AppSec/IAST/RASP/API Security profiles, logging and runtime metrics, telemetry and profiling, LLMObs/OpenAI/Anthropic/Google GenAI, GraphQL error reporting, DSM/AWS/AMQP messaging, native and OpenTelemetry MySQL, AI Guard, IPv6, stable configuration, SCA reachability, OTLP signals, feature flags, signed remote configuration, debugger symbols/replay/flare and native crash reports. Each mapping states its exercised subset and retained gaps. The runtime gate uses fresh receipts from these families together.
 
 To regenerate the pinned inventory from a clean upstream checkout:
 
@@ -35,8 +35,8 @@ python3 tools/datadog_capabilities.py report \
   --inventory docs/datadog-capabilities-inventory.json \
   --mapping docs/datadog-capabilities-mapping.json \
   --local-root . --scope all \
-  --evidence PATH/TO/datadog-upstream-lab-results.json \
-  --require-percent 50
+  --evidence PATH/TO/datadog-upstream-results.json \
+  --require-percent 75
 ```
 
-Repeat `--evidence` to combine suites or independently retained runs. Use `--scope parametric` only when explicitly measuring that subset; the default denominator remains all capabilities. A report generated without evidence lists implemented assertions and reports **0 runtime verified**, so it cannot pass a 50% gate.
+Repeat `--evidence` to combine suites or independently retained runs. Use `--scope parametric` only when explicitly measuring that subset; the default denominator remains all capabilities. A report generated without evidence lists implemented assertions and reports **0 runtime verified**, so it cannot pass a 75% gate.

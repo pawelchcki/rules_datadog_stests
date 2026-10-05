@@ -26,8 +26,10 @@ def run_workload(args, agent_url, out, mode, api_url):
         env = dict(BASE_ENV)
         env.update({"DD_TRACE_AGENT_URL": "http://127.0.0.1:" + str(proxy.server_port), "DD_SERVICE": "openai-lab",
                     "DD_ENV": "openai-env", "DD_VERSION": "openai-version", "DD_TRACE_SAMPLING_RULES": '[{"sample_rate":1}]',
-                    "DD_LLMOBS_AGENTLESS_ENABLED": "false", "DD_APM_TRACING_ENABLED": str(mode == "apm").lower(),
+                    "DD_LLMOBS_AGENTLESS_ENABLED": "false", "DD_APM_TRACING_ENABLED": str(mode != "llmobs").lower(),
                     "_DD_LLMOBS_WRITER_INTERVAL": "3600", "DD_TRACE_API_VERSION": "v0.4"})
+        if mode == "appsec":
+            env.update(DD_APPSEC_ENABLED="true", DD_APPSEC_RULES=str(Path(__file__).with_name("llm-rules.json")))
         launch = [args.launcher, "--runtime=python", "--rootfs=" + args.rootfs] + args.injection_flags
         launch += ["--instance=datadog-openai-" + mode]
         launch += ["--env=" + key + "=" + value for key, value in sorted(env.items())]
@@ -40,6 +42,7 @@ def run_workload(args, agent_url, out, mode, api_url):
 
 
 def execute(args, out):
+    (out / "llm-rules.json").write_bytes(Path(__file__).with_name("llm-rules.json").read_bytes())
     backend = BackendServer(("127.0.0.1", 0), out / "backend")
     backend.RequestHandlerClass = TelemetryBackendHandler
     certificate = Path(__file__).parent.parent / "datadog_llmobs/localhost-test.crt"
@@ -71,7 +74,7 @@ def execute(args, out):
             assert info["version"] == AGENT_VERSION
             (out / "agent-info.json").write_text(json.dumps(info, indent=2) + "\n")
             try:
-                for mode in ("apm", "llmobs"):
+                for mode in ("apm", "llmobs", "appsec"):
                     case_dir = out / mode
                     first_api = len(api.snapshot())
                     identity, tracer_records, env = run_workload(args, agent_url, case_dir, mode, "http://127.0.0.1:" + str(api.server_port))
@@ -80,7 +83,7 @@ def execute(args, out):
                     assert all(record["status"] == 200 for record in tracer_records), tracer_records
                     spans = []
                     native_spans = []
-                    if mode == "apm":
+                    if mode in ("apm", "appsec"):
                         for request in tracer_records:
                             if request["path"] == "/v0.4/traces":
                                 raw = (case_dir / "tracer" / request["raw_file"]).read_bytes()
@@ -91,7 +94,8 @@ def execute(args, out):
                         deadline = time.monotonic() + 12
                         while time.monotonic() < deadline:
                             spans = [span for record in backend.snapshot() if record["path"] == "/api/v0.2/traces" and record["status"] == 200
-                                     for chunk in trace_chunks(record["payload"]) for span in chunk["spans"]]
+                                     for chunk in trace_chunks(record["payload"]) for span in chunk["spans"]
+                                     if span["trace_id"] in {int(c["trace_id"]) & ((1 << 64) - 1) for c in identity["calls"]}]
                             if len([s for s in spans if s["name"] == "openai.request"]) == 8:
                                 break
                             time.sleep(0.1)
@@ -114,17 +118,20 @@ def execute(args, out):
                             "status": "failed", "configuration": env, "captureFile": mode + "/tracer/requests.json",
                             "captureSha256": sha((case_dir / "tracer/requests.json").read_bytes()), "agentVersion": AGENT_VERSION,
                             "clientVersion": identity["client_version"],
-                            "sourceSha256": "4d55cfcd058c01a19555fc3f5eb2ad298e17e50ffe2bcacbe255ca825868bae1" if mode == "apm" else "3a93b9d275f73cbf316237fb0eef6c0708e3fb243c2906315f49076688415a02",
+                            "sourceSha256": "63191f8515ff7dead875841cc52e8e476400945575992c17f561893d37da5aff" if mode == "appsec" else "4d55cfcd058c01a19555fc3f5eb2ad298e17e50ffe2bcacbe255ca825868bae1" if mode == "apm" else "3a93b9d275f73cbf316237fb0eef6c0708e3fb243c2906315f49076688415a02",
                             "missingAssertions": (["streaming", "tool calls", "text error outputs differ from upstream: pinned Python emits an empty message placeholder"] if feature == "llm_observability_openai_llm_interactions" else []), "workloadSha256": sha(Path(args.app).read_bytes()),
-                            "source": "https://github.com/DataDog/system-tests/blob/" + REVISION + "/tests/integration_frameworks/llm/openai/test_openai_" + ("apm.py" if mode == "apm" else "llmobs.py"),
+                            "source": "https://github.com/DataDog/system-tests/blob/" + REVISION + ("/tests/appsec/api_security/test_endpoints.py" if mode == "appsec" else "/tests/integration_frameworks/llm/openai/test_openai_" + ("apm.py" if mode == "apm" else "llmobs.py")),
                             "artifacts": []}
                         for file in [mode + "/identity.json", mode + "/events.json", "datadog.yaml", "agent-info.json"]:
                             receipt["artifacts"].append({"file": file, "sha256": sha((out / file).read_bytes())})
                         receipt["artifacts"].extend({"file": mode + "/tracer/" + r["raw_file"], "sha256": r["raw_sha256"]} for r in tracer_records)
+                        if mode == "appsec":
+                            receipt["missingAssertions"] = ["Django framework endpoints and other LLM providers; roots here use a native web span ASM context"]
+                            receipt["artifacts"].append({"file": "llm-rules.json", "sha256": sha((out / "llm-rules.json").read_bytes())})
                         results.append(receipt)
                         try:
                             check(spans, identity)
-                            if mode == "apm":
+                            if mode in ("apm", "appsec"):
                                 check(native_spans, identity)
                                 receipt["artifacts"].append({"file": mode + "/native-spans.json", "sha256": sha((case_dir / "native-spans.json").read_bytes())})
                             receipt["status"] = "passed"
@@ -140,7 +147,7 @@ def execute(args, out):
                         receipt["artifacts"].append({"file": path.name, "sha256": sha(path.read_bytes())})
                         receipt["artifacts"].extend({"file": label + "/" + r["raw_file"], "sha256": r["raw_sha256"]} for r in records)
                 (out / "datadog-openai-results.json").write_text(json.dumps({"schemaVersion": 1, "results": results}, indent=2) + "\n")
-    assert len(results) == 6
+    assert len(results) == 7
 
 
 def main():

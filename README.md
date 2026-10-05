@@ -46,22 +46,23 @@ The capability suite compares against a pinned inventory of **301 named
 DataDog/system-tests features**. It expands the existing Python labs with
 original upstream assertions, AppSec/IAST/RASP, profiling, telemetry, logs,
 runtime metrics, OpenTelemetry signals, LLM observability, feature flags, and
-signed Remote Config, and remotely installed debugger probes. The digest-pinned
+signed Remote Config, debugger probes/replay/symbols, native crash reports, AI Guard,
+SCA reachability, AWS/AMQP messaging, GraphQL, MySQL, Anthropic and Google GenAI. The digest-pinned
 Datadog Agent runs against a local
 backend that decodes its native trace, statistics, metric, and event payloads.
 The proxy retains both tracer intake and backend requests for assertions across
 the two boundaries. No additional language or web framework is required.
 
 The [capability report](docs/datadog-capabilities-report.md) records verified
-coverage (**154/301, 51.2%**) and remaining gaps. The [capability gate](docs/datadog-capabilities.md)
+coverage (**228/301, 75.7%**) and remaining gaps. The [capability gate](docs/datadog-capabilities.md)
 counts only passing assertions with intact capture hashes; it measures feature
 capabilities separately from full upstream test-case parity.
 
 Run `tools/run_datadog_parity.sh IMAGE_DIRECTORY REVISION EVIDENCE_DIRECTORY`
 to produce two fresh gated executions and the Datadog report. The image directory
 contains `bazel.flags`, which can be empty when using published fixtures.
-The driver also retains capability captures and requires at least 50% of the
-full feature inventory; `DATADOG_CAPABILITY_MIN_PERCENT` can raise that threshold.
+The driver also retains capability captures and requires at least 75% of the
+full feature inventory; `DATADOG_CAPABILITY_MIN_PERCENT` can override that threshold.
 
 Pull requests run the full assertion suite, an external consumer build and two
 fresh gated parity executions. Local execution eagerly materializes cached

@@ -1,0 +1,10 @@
+load("@rules_python//python:defs.bzl", "py_binary", "py_test", "py_library")
+load("//harness/wheel_overlay:defs.bzl", "wheel_overlay")
+package(default_visibility = ["//visibility:public"])
+exports_files(["workload.py", "peer.py"])
+wheel_overlay(name = "sdk_overlay", wheels = "@messaging_wheels//:wheels")
+py_binary(name = "probe", srcs = ["probe.py"], deps = ["//harness/datadog_sdk_extra:sdk_lib"])
+
+py_library(name = "messaging_lib", srcs = ["probe.py"], deps = ["//harness/datadog_sdk_extra:sdk_lib"])
+
+py_test(name = "assertions_test", srcs = ["assertions_test.py"], data = ["golden.json"], deps = [":messaging_lib"] )

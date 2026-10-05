@@ -1,0 +1,4 @@
+package(default_visibility = ["//visibility:public"])
+load("@rules_python//python:defs.bzl", "py_binary")
+exports_files(["workload.py"])
+py_binary(name = "probe", srcs = ["probe.py"], main = "probe.py", deps = ["//harness/datadog_debugger_extra:debugger_extra_common"])

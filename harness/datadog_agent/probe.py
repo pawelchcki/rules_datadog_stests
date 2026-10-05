@@ -23,7 +23,8 @@ AGENT_DIGEST = "sha256:ed0bd588e955d82f661d1b8dd1cdf179c1023e74a2817e7a812c99d52
 CASES = [
     {"name": "kept", "env": {}, "priority": 2, "exported": "all"},
     {"name": "dropped", "env": {"DD_TRACE_SAMPLING_RULES": '[{"sample_rate":0}]'}, "priority": -1, "exported": "none"},
-    {"name": "single-span", "env": {"DD_TRACE_SAMPLING_RULES": '[{"sample_rate":0}]', "DD_SPAN_SAMPLING_RULES": '[{"service":"lab-service","sample_rate":1}]'}, "priority": -1, "exported": "root", "normalized_name": "agent.lab.single_span"},
+    {"name": "single-span", "env": {"DD_TRACE_SAMPLING_RULES": '[{"sample_rate":0}]', "DD_SPAN_SAMPLING_RULES": '[{"service":"lab-service","sample_rate":1,"max_per_second":50}]'}, "priority": -1, "exported": "root", "normalized_name": "agent.lab.single_span"},
+    {"name": "single-child", "env": {"DD_TRACE_SAMPLING_RULES": '[{"sample_rate":0}]', "DD_SPAN_SAMPLING_RULES": '[{"service":"lab-child","sample_rate":1,"max_per_second":50}]'}, "priority": -1, "exported": "child", "normalized_name": "agent.lab.single_child"},
     {"name": "tags", "env": {"DD_TAGS": "probe.agent:visible,probe.colon:alpha:beta"}, "priority": 2, "exported": "all", "tags": {"probe.agent": "visible", "probe.colon": "alpha:beta"}},
     {"name": "identity", "env": {"DD_SERVICE": "lab-service", "DD_ENV": "agent-lab-env", "DD_VERSION": "agent-lab-version"}, "priority": 2, "exported": "all", "tags": {"env": "agent-lab-env"}, "root_tags": {"version": "agent-lab-version"}},
 ]
@@ -142,7 +143,7 @@ def assert_delivery(spans, chunks, identity, case):
     runtime = intake[root_id]["meta"]["runtime-id"]
     assert uuid.UUID(runtime).hex == runtime.replace("-", ""), runtime
     assert int(intake[root_id]["metrics"]["process_id"]) > 0, intake[root_id]
-    wanted = {root_id, child_id} if case["exported"] == "all" else {root_id} if case["exported"] == "root" else set()
+    wanted = {root_id, child_id} if case["exported"] == "all" else {root_id} if case["exported"] == "root" else {child_id} if case["exported"] == "child" else set()
     relevant = [span for chunk in chunks for span in chunk["spans"] if span.get("trace_id") == low]
     assert len(relevant) == len(wanted) and {span["span_id"] for span in relevant} == wanted, (case, relevant)
     for span in relevant:
@@ -162,10 +163,12 @@ def assert_delivery(spans, chunks, identity, case):
             assert span.get("metrics", {}).get("process_id") == original["metrics"]["process_id"], span
             for key, value in case.get("root_tags", {}).items():
                 assert span.get("meta", {}).get(key) == value, (key, span)
-    if case["exported"] == "root":
-        for observed in (intake[root_id], relevant[0]):
+    if case["exported"] in ("root", "child"):
+        selected = root_id if case["exported"] == "root" else child_id
+        for observed in (intake[selected], relevant[0]):
             assert observed["metrics"].get("_dd.span_sampling.mechanism") == 8, observed
             assert observed["metrics"].get("_dd.span_sampling.rule_rate") == 1, observed
+            assert observed["metrics"].get("_dd.span_sampling.max_per_second") == 50, observed
 
 
 def stats_rows(records):
@@ -313,7 +316,7 @@ def execute(args, sink, out):
                         records = backend.snapshot()
                         chunks = [chunk for record in records if record["path"] == "/api/v0.2/traces" and record["status"] == 200 for chunk in trace_chunks(record["payload"])]
                         delivered = {span["span_id"] for chunk in chunks for span in chunk["spans"]}
-                        wanted = {int(identity[key]) for case, _, identity, _, _ in observations for key in (["root_id", "child_id"] if case["exported"] == "all" else ["root_id"] if case["exported"] == "root" else [])}
+                        wanted = {int(identity[key]) for case, _, identity, _, _ in observations for key in (["root_id", "child_id"] if case["exported"] == "all" else ["root_id"] if case["exported"] == "root" else ["child_id"] if case["exported"] == "child" else [])}
                         resources = {row["Resource"] for row in stats_rows(records)}
                         expected_resources = {identity["name"] for _, _, identity, _, _ in observations}
                         runtime_sketches = [sketch for record in records if record["path"] == "/api/beta/sketches" and record["status"] == 200 for sketch in record["payload"].get("sketches", [])]
@@ -351,7 +354,7 @@ def execute(args, sink, out):
                             "agentVersion": AGENT_VERSION, "agentImageDigest": AGENT_DIGEST,
                             "backendCapture": "backend-capture.json", "traceId": identity["trace_id"],
                             "capabilityInventoryRevision": REVISION,
-                            "capabilityNames": {"kept": ["trace_agent_connection", "trace_sampling", "trace_data_integrity", "agent_data_integrity", "runtime_id_in_span_metadata_for_service_entry_spans"], "dropped": ["trace_sampling"], "single-span": ["single_span_sampling"], "tags": ["trace_global_tags"], "identity": ["unified_service_tagging"]}[case["name"]]})
+                            "capabilityNames": {"kept": ["trace_agent_connection", "trace_sampling", "trace_data_integrity", "agent_data_integrity", "runtime_id_in_span_metadata_for_service_entry_spans"], "dropped": ["trace_sampling"], "single-span": ["single_span_sampling", "single_span_ingestion_control"], "single-child": ["single_span_ingestion_control"], "tags": ["trace_global_tags"], "identity": ["unified_service_tagging"]}[case["name"]]})
                         if core is not None:
                             results[-1]["capabilityNames"] += ["runtime_metrics", "dogstatsd_agent_connection"]
                         print(args.wire, "agent-" + case["name"], "passed", flush=True)

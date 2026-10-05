@@ -1,0 +1,63 @@
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
+load("//harness/wheel_overlay:defs.bzl", "wheel_overlay")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files([
+    "anthropic_workload.py",
+    "genai_workload.py",
+    "graphql_workload.py",
+    "datasets_workload.py",
+    "dsm_workload.py",
+    "dbm_workload.py",
+    "otel_mysql_workload.py",
+])
+
+wheel_overlay(name = "sdk_overlay", wheels = "@integrations_wheels//:wheels")
+
+py_library(
+    name = "integrations_lib",
+    srcs = [
+        "lab.py",
+        "anthropic_api.py",
+        "anthropic_assertions.py",
+        "anthropic_probe.py",
+        "genai_api.py",
+        "genai_assertions.py",
+        "genai_probe.py",
+        "graphql_assertions.py",
+        "graphql_probe.py",
+        "datasets_assertions.py",
+        "datasets_probe.py",
+        "fake_aws.py",
+        "dsm_assertions.py",
+        "dsm_probe.py",
+        "dbm_assertions.py",
+        "dbm_probe.py",
+        "otel_mysql_probe.py",
+    ],
+    deps = [
+        "//harness/datadog_agent:agent_lib",
+        "//harness/datadog_backend:backend_lib",
+        "//harness/datadog_llmobs:llmobs_lib",
+        "//harness/datadog_telemetry:telemetry_lib",
+    ],
+)
+
+[
+    py_binary(
+        name = probe[:-3],
+        srcs = [probe],
+        main = probe,
+        deps = [":integrations_lib"],
+    )
+    for probe in [
+        "anthropic_probe.py",
+        "genai_probe.py",
+        "graphql_probe.py",
+        "datasets_probe.py",
+        "dsm_probe.py",
+        "dbm_probe.py",
+        "otel_mysql_probe.py",
+    ]
+]

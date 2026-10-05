@@ -2,24 +2,25 @@
 
 The new capability comparison uses [DataDog/system-tests at `098fe0967c587db8a16b74a1e711777d0a9d5867`](https://github.com/DataDog/system-tests/tree/098fe0967c587db8a16b74a1e711777d0a9d5867), with all **301 named features** as the denominator. Its [generated report](datadog-capabilities-report.md) records the current verified feature scopes and remaining gaps. This is separate from the seven-profile, 112-case shape matrix and its historical acceptance evidence below. Neither metric establishes full upstream test-case parity.
 
-Local PR integration acceptance on 2026-10-05 verifies **154/301 capabilities (51.2%)**, passing the 50% gate using only the final fresh suite's 32 retained receipts. Every implemented mapping has passing required cases and valid capture/artifact hashes. The run contains **860 passed, 310 explicitly unsupported, and zero failed outcomes**; unsupported outcomes contribute no coverage. The original-method adapter passes 340 cases on each native wire and records 134 unsupported cases per wire. Feature flag evaluation additionally exercises 217 pinned original vectors.
+Local coverage expansion acceptance on 2026-10-05 verifies **228/301 capabilities (75.7%)**, adding **74** to the earlier 154-feature baseline and passing the 75% gate against the complete inventory. Every implemented mapping has passing required cases and valid capture/artifact hashes in the final fresh suite's **60 retained receipts**. The run contains **965 passed, 310 explicitly unsupported, and zero failed outcomes**; unsupported outcomes contribute no coverage. Assertion scopes and excluded behaviors are recorded per feature in the generated report.
 
 | Acceptance check | Result |
 | --- | --- |
-| Complete capability suite, uncached | **32/32 targets passed** |
-| Repository assertion suites | **191/191 targets passed uncached**, including the complete capability suite, seven stress profiles, Ruby bootstrap, and shared-app regressions |
-| Independent consumer assertions | **37/37 targets passed uncached** against the same pinned dependency |
-| Full-inventory feature gate | **154/301 (51.2%) verified**, with no implemented feature lacking evidence |
-| Capability failure evidence | **Passed**: failing receipt/backend capture retained; original failure status preserved; gate skipped |
-| Diff and parity-driver shell syntax | **Passed** |
+| Complete capability suite, uncached | **60/60 targets passed** |
+| Assertion and adapter regressions, uncached | **5/5 targets passed**: OpenAI, SDK controls, AMQP messaging, original-method adapter, and capability gate |
+| Full-inventory feature gate | **228/301 (75.7%) verified**, with no implemented feature lacking evidence |
+| Retained captures and artifacts | **Passed**: every declared hash revalidated from the retained bytes |
+| Source syntax, diff, and parity-driver shell syntax | **Passed** |
 
-Raw captures, effective configurations, source copies, identities, Agent/backend requests, and receipts from the PR integration run are retained under `/tmp/datadog-pr-local-acceptance-20261005`, alongside test results, the integration record, and the machine-readable capability report. The earlier full local inventory run passed 308 repository targets and 69 consumer targets, including all manual tests, before updating the infrastructure pin; its evidence remains at `/tmp/datadog-local-assertions-20261005`. The checked-in Markdown report records every receipt hash. This evidence is local; CI for this worktree has not been observed.
+Raw captures, effective configurations, source copies, identities, Agent/backend requests, receipts, test results, and both report formats are retained under `/tmp/datadog-75-final-acceptance-20261005`. The uncached invocation log is `datadog-75-final-suite.log` in that directory. Initial debugger startup and crash-delivery failures were preserved separately under `/tmp/datadog-75-failed-debugger-startup` and `/tmp/datadog-75-failed-debugger-crash`; they are excluded from acceptance. The fixtures now wait for native initialization and startup telemetry before the controlled transitions. Both debugger targets also passed twice concurrently under four-worker load before the final complete run. This evidence is local; CI for this worktree has not been observed.
 
-The capability suite uses Python tracer 4.14.0 and the digest-pinned Agent 7.83.1. Both native tracer wire versions feed the real APM Agent; full-core variants additionally send runtime metrics through the real DogStatsD listener. A loopback backend receives and independently decodes Agent trace protobufs, compressed statistics, and metric series/sketches. Signed Remote Config travels through the core Agent, trace Agent, and the running SDK; TLS verification remains enabled. The retained proxy captures, backend bodies, identities, configurations, and receipts are hash checked by the capability gate.
+The earlier PR integration run verified 154/301 features (51.2%) and passed 191 repository targets and 37 independent-consumer targets uncached. That historical evidence remains at `/tmp/datadog-pr-local-acceptance-20261005`. The preceding full local inventory run passed 308 repository targets and 69 consumer targets, including manual tests, before the infrastructure pin update; its evidence remains at `/tmp/datadog-local-assertions-20261005`. These broader historical checks were not rerun as part of the current 65-target coverage acceptance.
+
+The capability suite uses Python tracer 4.14.0 and the digest-pinned Agent 7.83.1. Agent-backed profiles feed both native tracer wire versions into the real APM Agent; full-core variants additionally send runtime metrics through the real DogStatsD listener. SDK-focused configuration, security, and AMQP profiles use controlled intake/protocol peers, with those boundaries stated in their mappings. A loopback backend receives and independently decodes Agent trace protobufs, compressed statistics, and metric series/sketches. Signed Remote Config travels through the core Agent, trace Agent, and the running SDK; TLS verification remains enabled. The retained proxy captures, backend bodies, identities, configurations, and receipts are hash checked by the capability gate.
 
 The shared native intake fixes landed in [rules_stests PR #50](https://github.com/pawelchcki/rules_stests/pull/50). Both this module and the independent consumer pin `rules_stests` at `db94b7ae98d1c8765b2ec236f6732683bbbfb54d`, which includes those fixes. The shared decoder accepts identical repeated propagation strings in span metadata and binary security metastructs, with regression checks that retain rejection of conflicting duplicate keys and invalid binary lengths.
 
-Run `bazel test --config=local //fixtures:datadog_capability_suite` for the focused integration suite. The parity driver retains its raw outputs and gates the complete capability inventory at 50%. See [capability measurement](datadog-capabilities.md) for receipt generation and revalidation.
+Run `bazel test --config=local //fixtures:datadog_capability_suite` for the focused integration suite. The parity driver retains its raw outputs and gates the complete capability inventory at 75%. See [capability measurement](datadog-capabilities.md) for receipt generation and revalidation.
 
 ## Current matrix and publication
 
@@ -63,7 +64,7 @@ An initial [112-case attempt](https://pawel.buildbuddy.io/invocation/c5827bd2-f9
 
 ## Reproduce the current evidence
 
-The full driver runs the two exact-shape executions, their retention gates, report generation, the four-worker concurrent suite, the external-feature suite, and the complete capability suite with its 50% full-inventory gate. Use an empty image-override file to consume the published locks:
+The full driver runs the two exact-shape executions, their retention gates, report generation, the four-worker concurrent suite, the external-feature suite, and the complete capability suite with its 75% full-inventory gate. Capability fixtures run with four-worker concurrency on both local and remote executors. Use an empty image-override file to consume the published locks:
 
 ```sh
 images=$(mktemp -d /tmp/datadog-images.XXXXXX)

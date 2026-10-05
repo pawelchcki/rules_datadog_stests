@@ -5,3 +5,11 @@ exports_files(["wheel_deps.bzl", "openai_wheels.lock.json"])
 exports_files(["otel_wheels.lock.json"])
 
 exports_files(["ffe_wheels.lock.json"])
+
+exports_files(["integrations_wheels.lock.json"])
+
+exports_files(["security_extra_wheels.lock.json"])
+
+exports_files(["messaging_wheels.lock.json"])
+
+exports_files(["sca_wheels.lock.json"])

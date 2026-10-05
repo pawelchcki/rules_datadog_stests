@@ -1,0 +1,15 @@
+load("@rules_python//python:defs.bzl", "py_library")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "debugger_extra_common",
+    srcs = ["common.py"],
+    data = ["localhost-test.crt", "localhost-test.key"],
+    deps = [
+        "//harness/datadog_agent:agent_lib",
+        "//harness/datadog_backend:backend_lib",
+        "//harness/datadog_telemetry:telemetry_lib",
+        "//harness/datadog_debugger:debugger_lib",
+    ],
+)

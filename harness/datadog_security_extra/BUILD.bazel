@@ -1,0 +1,6 @@
+load("@rules_python//python:defs.bzl", "py_binary")
+load("//harness/wheel_overlay:defs.bzl", "wheel_overlay")
+package(default_visibility = ["//visibility:public"])
+exports_files(["app.py", "security_extra_views.py", "security_controls.py", "circular_a.py", "circular_b.py", "blocking-rules.json", "tagging-rules.json", "onboarding-responses.json", "onboarding-tagging-responses.json", "large-rules.json", "ato-sdk-rules.json", "rasp-ruleset.json"])
+wheel_overlay(name = "sdk_overlay", wheels = "@security_extra_wheels//:wheels")
+py_binary(name = "probe", srcs = ["probe.py"], main = "probe.py", deps = ["//harness/datadog_backend:backend_lib"])
