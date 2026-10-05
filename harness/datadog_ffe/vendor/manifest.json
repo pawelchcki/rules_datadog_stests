@@ -1,0 +1,113 @@
+{
+  "revision": "098fe0967c587db8a16b74a1e711777d0a9d5867",
+  "files": {
+    "flags-v1.json": {
+      "source": "tests/parametric/test_ffe/flags-v1.json",
+      "sha256": "f9ea5927ea7141082ee4ea9fff5bc9990f5a1b2a7035f30c974de644c9e1d515"
+    },
+    "span-enrichment-flags.json": {
+      "source": "tests/parametric/test_ffe/span-enrichment-flags.json",
+      "sha256": "846ae177e2a9688898a0b0f5c55d5df0ee442dbffc8d2fb089d4b98d3ca713db"
+    },
+    "test-case-boolean-false-assignment.json": {
+      "source": "tests/parametric/test_ffe/test-case-boolean-false-assignment.json",
+      "sha256": "54e8916ce9e0712b325e528ed126746a1b107793710c5f4df8e7e512073cfb98"
+    },
+    "test-case-boolean-one-of-matches.json": {
+      "source": "tests/parametric/test_ffe/test-case-boolean-one-of-matches.json",
+      "sha256": "b543eb1af3c004834c92a48579f5e97715f15441adc145593f0fa123d8c8a7e5"
+    },
+    "test-case-comparator-operator-flag.json": {
+      "source": "tests/parametric/test_ffe/test-case-comparator-operator-flag.json",
+      "sha256": "efd7cbc77497dc47caaabe833eddeb5b1b90c28ee5399efdd00d6e5403336f73"
+    },
+    "test-case-disabled-flag.json": {
+      "source": "tests/parametric/test_ffe/test-case-disabled-flag.json",
+      "sha256": "8074c31a8b53edb428dc484119b411a572616a337f24ac99fcb20010be46c26f"
+    },
+    "test-case-empty-flag.json": {
+      "source": "tests/parametric/test_ffe/test-case-empty-flag.json",
+      "sha256": "e6becfb27054aeab96976f6adb5429e41c0c94efa9a9a5d52bad5bca4ccbff07"
+    },
+    "test-case-empty-string-variation.json": {
+      "source": "tests/parametric/test_ffe/test-case-empty-string-variation.json",
+      "sha256": "f3bf2dcc11e6a5b0949a507cb54bd336b646989f69b8f96fac495b0351332610"
+    },
+    "test-case-falsy-value-assignments.json": {
+      "source": "tests/parametric/test_ffe/test-case-falsy-value-assignments.json",
+      "sha256": "a0056b69c89e14db023eb63383ffb7f0fd1cc1b9e6b6974aa28199fa55e27f9b"
+    },
+    "test-case-flag-with-empty-string.json": {
+      "source": "tests/parametric/test_ffe/test-case-flag-with-empty-string.json",
+      "sha256": "4da0439018bbadfd00977f99dd15eee7a85320a44699e8d09a2ab7d1c9520d10"
+    },
+    "test-case-integer-flag.json": {
+      "source": "tests/parametric/test_ffe/test-case-integer-flag.json",
+      "sha256": "caa984765dbcc5aeeb439e06b5fb9a63abaddc8f2036255010ae03dc8c018ebf"
+    },
+    "test-case-kill-switch-flag.json": {
+      "source": "tests/parametric/test_ffe/test-case-kill-switch-flag.json",
+      "sha256": "5afd54f99f0b20f931ced039aa5769e7fc39215356d86ef5f444ccb5eba80d3b"
+    },
+    "test-case-new-user-onboarding-flag.json": {
+      "source": "tests/parametric/test_ffe/test-case-new-user-onboarding-flag.json",
+      "sha256": "051d19851bc11a645f611b2682257270125031b235ad9a415854aa0d710d76bd"
+    },
+    "test-case-no-allocations-flag.json": {
+      "source": "tests/parametric/test_ffe/test-case-no-allocations-flag.json",
+      "sha256": "df2f6f28c3dd1d764599422f90d490030708ffcb6347f3e73172780f11790d40"
+    },
+    "test-case-null-operator-flag.json": {
+      "source": "tests/parametric/test_ffe/test-case-null-operator-flag.json",
+      "sha256": "81edd5ffed47c1fd3882fc84871e3bbf96d549ff9173289a4c4d8cec9aa626de"
+    },
+    "test-case-numeric-flag.json": {
+      "source": "tests/parametric/test_ffe/test-case-numeric-flag.json",
+      "sha256": "d7642b254405552e6b4c056b819125da7fe262fde10fdbe2ccc10af27760f963"
+    },
+    "test-case-numeric-one-of.json": {
+      "source": "tests/parametric/test_ffe/test-case-numeric-one-of.json",
+      "sha256": "828ce4b03475b442cdc8674d24825d00ced8ebdfc2bf28469ce5e83eeccf5d94"
+    },
+    "test-case-of-7-empty-targeting-key.json": {
+      "source": "tests/parametric/test_ffe/test-case-of-7-empty-targeting-key.json",
+      "sha256": "f751a35150598f679f54e83190eb3d72864b584a6b722c4df46c116a111eebbd"
+    },
+    "test-case-regex-flag.json": {
+      "source": "tests/parametric/test_ffe/test-case-regex-flag.json",
+      "sha256": "d37605bdedef4ca0855f27be5092b40573dcf97f181f879bcc0b1d144880ab26"
+    },
+    "test-case-start-and-end-date-flag.json": {
+      "source": "tests/parametric/test_ffe/test-case-start-and-end-date-flag.json",
+      "sha256": "40ad0341b2db93d9faa1239ae76faa2aefb005df04ff6ea66de6f3a8738d8352"
+    },
+    "test-flag-that-does-not-exist.json": {
+      "source": "tests/parametric/test_ffe/test-flag-that-does-not-exist.json",
+      "sha256": "e9517bdb2f497e5479619d6be25f30b2ef785e8108b662334e530ff7ccc3d9cb"
+    },
+    "test-json-config-flag.json": {
+      "source": "tests/parametric/test_ffe/test-json-config-flag.json",
+      "sha256": "0b823e4e142e5376411c9a0fbc8d71226a0480368813f26538a91d270ee2fd74"
+    },
+    "test-no-allocations-flag.json": {
+      "source": "tests/parametric/test_ffe/test-no-allocations-flag.json",
+      "sha256": "0eb88a07de0be213e5f2913aee0a5e1ee9f092b5589641b85e64ea8326018858"
+    },
+    "test-special-characters.json": {
+      "source": "tests/parametric/test_ffe/test-special-characters.json",
+      "sha256": "d467abed59718aedb82a38d604d321284f5b09e83fd2a843b26d0a470cb3aacb"
+    },
+    "test-string-with-special-characters.json": {
+      "source": "tests/parametric/test_ffe/test-string-with-special-characters.json",
+      "sha256": "74cea83704197e107cec644a4980fd1f68d5ca5eefab4777b80f230f71712a5f"
+    },
+    "LICENSE": {
+      "source": "LICENSE",
+      "sha256": "36ab1174f3e78276bacd70276389b2f70adfbefd5e0555e230951ec5272f3a97"
+    },
+    "utils.py": {
+      "source": "tests/parametric/test_ffe/utils.py",
+      "sha256": "bb113aa5c805c8f504a5ab48cb445003f1827ebd2b0985b8a9ab691505daaefb"
+    }
+  }
+}

@@ -95,3 +95,22 @@ py_test(
     ] + datadog_library_labels(_SHAPE_VOCABULARY) + glob(["testdata/datadog_candidates/**"]),
     deps = [":datadog_shapes_lib"],
 )
+
+# Pinned upstream feature inventory and evidence-based capability progress gate.
+py_library(
+    name = "datadog_capabilities_lib",
+    srcs = ["datadog_capabilities.py"],
+    imports = ["."],
+)
+
+py_binary(
+    name = "datadog_capabilities",
+    srcs = ["datadog_capabilities.py"],
+    main = "datadog_capabilities.py",
+)
+
+py_test(
+    name = "datadog_capabilities_test",
+    srcs = ["datadog_capabilities_test.py"],
+    deps = [":datadog_capabilities_lib"],
+)

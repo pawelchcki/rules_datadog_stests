@@ -1,0 +1,19 @@
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
+
+package(default_visibility = ["//visibility:public"])
+exports_files(["workload.py"])
+py_library(
+    name = "signals_lib",
+    srcs = ["probe.py"],
+    deps = ["//harness/datadog_agent:agent_lib"],
+)
+py_binary(
+    name = "probe",
+    srcs = ["probe.py"],
+    deps = [":signals_lib"],
+)
+py_test(
+    name = "assertions_test",
+    srcs = ["assertions_test.py"],
+    deps = [":signals_lib"],
+)

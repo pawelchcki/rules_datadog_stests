@@ -290,6 +290,33 @@
   },
   "selectedYankedVersions": {},
   "moduleExtensions": {
+    "//bazel:wheel_deps.bzl%wheel_deps": {
+      "general": {
+        "bzlTransitiveDigest": "Ag/z7WQTOPzNPI47X63w0N0yeEVo4wi6/DvrQ3tqzkM=",
+        "usagesDigest": "SwtXIq+Fpt8YxXkF904WuGPe9Wc3xFmtjQkh1YtbTy0=",
+        "recordedInputs": [],
+        "generatedRepoSpecs": {
+          "openai_wheels": {
+            "repoRuleId": "@@//bazel:wheel_deps.bzl%_bundle",
+            "attributes": {
+              "lock": "@@//bazel:openai_wheels.lock.json"
+            }
+          },
+          "otel_wheels": {
+            "repoRuleId": "@@//bazel:wheel_deps.bzl%_bundle",
+            "attributes": {
+              "lock": "@@//bazel:otel_wheels.lock.json"
+            }
+          },
+          "ffe_wheels": {
+            "repoRuleId": "@@//bazel:wheel_deps.bzl%_bundle",
+            "attributes": {
+              "lock": "@@//bazel:ffe_wheels.lock.json"
+            }
+          }
+        }
+      }
+    },
     "@@rules_kotlin+//src/main/starlark/core/repositories:bzlmod_setup.bzl%rules_kotlin_extensions": {
       "general": {
         "bzlTransitiveDigest": "+Kp6j204mBZ3mxlIDDR0gBoP45BZ4jYRhRAcB8sU0qc=",

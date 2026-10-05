@@ -2,11 +2,53 @@ load("@rules_stests//corpus:registry.bzl", "REALWORLD_BASE_HURL_CASES")
 load("@rules_stests//rules:defs.bzl", "corpus_service", "realworld_service_tests")
 load("//rules:defs.bzl", "datadog_env", "datadog_python_injection", "datadog_ruby_injection")
 load(":external_features.bzl", "datadog_external_feature_tests", "datadog_parallel_tests")
-load(":datadog_lab.bzl", "datadog_lab_tests")
+load(":datadog_lab.bzl", "datadog_lab_tests", "datadog_upstream_lab_tests")
+load(":datadog_agent.bzl", "datadog_agent_tests")
+load(":datadog_security.bzl", "datadog_security_tests")
+load(":datadog_telemetry.bzl", "datadog_telemetry_tests")
+load(":datadog_signals.bzl", "datadog_signals_tests")
+load(":datadog_profiling.bzl", "datadog_profiling_tests")
+load(":datadog_llmobs.bzl", "datadog_llmobs_tests")
+load(":datadog_openai.bzl", "datadog_openai_tests")
+load(":datadog_otlp.bzl", "datadog_otlp_tests")
+load(":datadog_ffe.bzl", "datadog_ffe_tests")
+load(":datadog_remote_config.bzl", "datadog_remote_config_tests")
+load(":datadog_debugger.bzl", "datadog_debugger_tests")
 package(default_visibility = ["//visibility:public"])
 datadog_external_feature_tests()
 datadog_parallel_tests()
 datadog_lab_tests()
+datadog_upstream_lab_tests()
+datadog_agent_tests()
+datadog_security_tests()
+datadog_telemetry_tests()
+datadog_signals_tests()
+datadog_profiling_tests()
+datadog_llmobs_tests()
+datadog_openai_tests()
+datadog_otlp_tests()
+datadog_ffe_tests()
+datadog_remote_config_tests()
+datadog_debugger_tests()
+
+test_suite(
+    name = "datadog_capability_suite",
+    tests = [
+        ":datadog_lab_suite",
+        ":datadog_upstream_lab_suite",
+        ":datadog_agent_suite",
+        ":datadog_security_suite",
+        ":datadog_signals_suite",
+        ":datadog_telemetry_test",
+        ":datadog_profiling_test",
+        ":datadog_llmobs_test",
+        ":datadog_openai_test",
+        ":datadog_otlp_test",
+        ":datadog_ffe_test",
+        ":datadog_remote_config_test",
+        ":datadog_debugger_test",
+    ],
+)
 _PYTHON_ARGS = ["--host", "127.0.0.1", "--port", "$${PORT}"]
 corpus_service(
     name = "aiohttp_datadog_service",

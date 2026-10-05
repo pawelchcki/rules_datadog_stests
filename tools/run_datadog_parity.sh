@@ -99,11 +99,35 @@ bazel test "${bazel_args[@]}" "${test_download_args[@]}" \
 mkdir -p "$evidence/features"
 find -L bazel-testlogs/fixtures -path '*datadog_external_features*/test.outputs/*' -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/features/" \;
 
-# The Python SDK lab exercises controlled spans and configuration cases that
-# require a fixture beyond the existing RealWorld services.
+# Capability suites reuse existing Python frameworks and include the real Agent
+# and local backend. Retain every raw capture beside its receipt before gating.
 bazel test "${bazel_args[@]}" "${test_download_args[@]}" \
   --nocache_test_results \
   "${image_flags[@]}" \
-  //fixtures:datadog_lab_suite
-mkdir -p "$evidence/lab"
-find -L bazel-testlogs/fixtures -path '*datadog_lab*/test.outputs/*' -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/lab/" \;
+  //fixtures:datadog_capability_suite
+mkdir -p "$evidence/capabilities"
+for family in lab upstream_lab agent security signals telemetry profiling llmobs openai otlp ffe remote_config debugger; do
+  for directory in bazel-testlogs/fixtures/datadog_"$family"*_test/test.outputs; do
+    if [[ -d "$directory" ]]; then
+      find -L "$directory" -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/capabilities/" \;
+    fi
+  done
+done
+capability_evidence=()
+while IFS= read -r -d '' receipt; do
+  capability_evidence+=(--evidence "$receipt")
+done < <(find "$evidence/capabilities" -name 'datadog-*-results.json' -type f -print0)
+if [[ ${#capability_evidence[@]} -eq 0 ]]; then
+  echo 'No retained Datadog capability receipts' >&2
+  exit 1
+fi
+capability_report=(
+  report --inventory docs/datadog-capabilities-inventory.json
+  --mapping docs/datadog-capabilities-mapping.json --local-root "$PWD"
+  --scope all "${capability_evidence[@]}"
+)
+python3 tools/datadog_capabilities.py "${capability_report[@]}" \
+  --output "$evidence/datadog-capabilities-report.json"
+python3 tools/datadog_capabilities.py "${capability_report[@]}" \
+  --format markdown --output "$evidence/datadog-capabilities-report.md" \
+  --require-percent "${DATADOG_CAPABILITY_MIN_PERCENT:-50}"

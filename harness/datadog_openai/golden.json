@@ -1,0 +1,1329 @@
+{
+  "apm": {
+    "identity": {
+      "client_version": "2.41.1",
+      "tracer_version": "4.14.0",
+      "calls": [
+        {
+          "api": "completions",
+          "error": false,
+          "trace_id": "141902223996812129124752138102911149468",
+          "parent_id": "2015578430684102967",
+          "output": "Hello from the local model fixture."
+        },
+        {
+          "api": "completions",
+          "error": true,
+          "trace_id": "141902223996812129112276696007505110220",
+          "parent_id": "8525833360464598681",
+          "exception": "BadRequestError"
+        },
+        {
+          "api": "chat",
+          "error": false,
+          "trace_id": "141902223996812129118452958850827977304",
+          "parent_id": "14277618668781048661",
+          "output": "Hello from the local model fixture."
+        },
+        {
+          "api": "chat",
+          "error": true,
+          "trace_id": "141902223996812129117160829263372179524",
+          "parent_id": "4858816535698129238",
+          "exception": "BadRequestError"
+        },
+        {
+          "api": "responses",
+          "error": false,
+          "trace_id": "141902223996812129111746620708612085267",
+          "parent_id": "16608686204992684887",
+          "output": "Hello from the local model fixture."
+        },
+        {
+          "api": "responses",
+          "error": true,
+          "trace_id": "141902223996812129115183683489336751501",
+          "parent_id": "12101464358505090092",
+          "exception": "BadRequestError"
+        },
+        {
+          "api": "embeddings",
+          "error": false,
+          "trace_id": "141902223996812129116066052406450103137",
+          "parent_id": "5830776333784585939",
+          "output": [
+            0.125,
+            0.25,
+            0.5
+          ]
+        },
+        {
+          "api": "embeddings",
+          "error": true,
+          "trace_id": "141902223996812129120262469362650908111",
+          "parent_id": "10454502723272552675",
+          "exception": "BadRequestError"
+        }
+      ],
+      "dependencies": {
+        "openai": "2.41.1",
+        "httpx": "0.28.1",
+        "pydantic": "2.13.5",
+        "jiter": "0.17.0"
+      }
+    },
+    "spans": [
+      {
+        "service": "openai-lab",
+        "name": "openai.lab.case",
+        "resource": "completions.success",
+        "trace_id": 17498384662729205148,
+        "span_id": 2015578430684102967,
+        "start": 1791057870763820030,
+        "duration": 8085027,
+        "meta": {
+          "_dd.tags.process": "entrypoint.basedir:moar_coverage,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:moar_coverage,svc.user:true",
+          "_dd.p.tid": "6ac15fce00000000",
+          "_dd.p.ksr": "1",
+          "_dd.p.dm": "-3",
+          "env": "openai-env",
+          "_dd.install.time": "1791057869",
+          "runtime-id": "10f48509c0b1465fbc0d5311fc1c8d64",
+          "version": "openai-version",
+          "language": "python",
+          "_dd.install.type": "manual",
+          "_dd.install.id": "7e51d776-798e-4642-9b07-e2de554d7d9c"
+        },
+        "metrics": {
+          "_dd.rule_psr": 1.0,
+          "_top_level": 1.0,
+          "_sampling_priority_v1": 2.0,
+          "_dd.limit_psr": 1.0,
+          "_dd.top_level": 1.0,
+          "_dd.tracer_kr": 1.0,
+          "process_id": 1350130.0
+        }
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.request",
+        "resource": "createCompletion",
+        "trace_id": 17498384662729205148,
+        "span_id": 13536578961743366414,
+        "parent_id": 2015578430684102967,
+        "start": 1791057870763897054,
+        "duration": 7994308,
+        "meta": {
+          "openai.response.model": "gpt-3.5-turbo-instruct-fixture",
+          "openai.request.method": "POST",
+          "env": "openai-env",
+          "_dd.svc_src": "m",
+          "_dd.llmobs.model_name": "gpt-3.5-turbo-instruct-fixture",
+          "version": "openai-version",
+          "component": "openai",
+          "_dd.llmobs.model_provider": "openai",
+          "openai.request.endpoint": "/v1/completions",
+          "_dd.llmobs.span_kind": "llm",
+          "openai.request.provider": "OpenAI",
+          "openai.request.model": "gpt-3.5-turbo-instruct"
+        },
+        "metrics": {
+          "_dd.llmobs.cache_read_input_tokens": 2.0,
+          "_dd.llmobs.output_tokens": 9.0,
+          "_dd.measured": 1.0,
+          "_dd.llmobs.total_tokens": 16.0,
+          "_dd.llmobs.input_tokens": 7.0,
+          "_dd.llmobs.enabled": 0.0
+        }
+      },
+      {
+        "service": "openai-lab",
+        "name": "http.request",
+        "resource": "http.request",
+        "trace_id": 17498384662729205148,
+        "span_id": 4631591586408443541,
+        "parent_id": 13536578961743366414,
+        "start": 1791057870765993589,
+        "duration": 4192189,
+        "meta": {
+          "out.host": "api.openai.com",
+          "component": "httpx",
+          "http.status_code": "200",
+          "http.useragent": "OpenAI/Python 2.41.1",
+          "span.kind": "client",
+          "http.url": "http://api.openai.com/v1/completions",
+          "env": "openai-env",
+          "_dd.svc_src": "httpx",
+          "version": "openai-version",
+          "http.method": "POST"
+        },
+        "metrics": {
+          "_dd.measured": 1.0
+        },
+        "type": "http"
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.lab.case",
+        "resource": "completions.error",
+        "trace_id": 5022942567323165900,
+        "span_id": 8525833360464598681,
+        "start": 1791057870772083932,
+        "duration": 3141913,
+        "meta": {
+          "_dd.p.dm": "-3",
+          "language": "python",
+          "runtime-id": "10f48509c0b1465fbc0d5311fc1c8d64",
+          "env": "openai-env",
+          "_dd.tags.process": "entrypoint.basedir:moar_coverage,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:moar_coverage,svc.user:true",
+          "version": "openai-version",
+          "_dd.p.tid": "6ac15fce00000000",
+          "_dd.p.ksr": "1"
+        },
+        "metrics": {
+          "_dd.limit_psr": 1.0,
+          "_dd.top_level": 1.0,
+          "_top_level": 1.0,
+          "_sampling_priority_v1": 2.0,
+          "_dd.tracer_kr": 1.0,
+          "process_id": 1350130.0,
+          "_dd.rule_psr": 1.0
+        }
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.request",
+        "resource": "createCompletion",
+        "trace_id": 5022942567323165900,
+        "span_id": 10099877065446472881,
+        "parent_id": 8525833360464598681,
+        "start": 1791057870772106304,
+        "duration": 3098752,
+        "error": 1,
+        "meta": {
+          "version": "openai-version",
+          "env": "openai-env",
+          "error.stack": "openai.BadRequestError: Model bad-model does not exist",
+          "openai.request.model": "bad-model",
+          "_dd.llmobs.span_kind": "llm",
+          "error.message": "Error code: 400 - {'error': {'message': 'Model bad-model does not exist', 'type': 'invalid_request_error', 'param': 'model', 'code': 'model_not_found'}}",
+          "openai.request.endpoint": "/v1/completions",
+          "_dd.llmobs.model_provider": "openai",
+          "_dd.svc_src": "m",
+          "_dd.llmobs.model_name": "bad-model",
+          "openai.request.method": "POST",
+          "component": "openai",
+          "error.type": "openai.BadRequestError",
+          "openai.request.provider": "OpenAI"
+        },
+        "metrics": {
+          "_dd.llmobs.enabled": 0.0,
+          "_dd.measured": 1.0
+        }
+      },
+      {
+        "service": "openai-lab",
+        "name": "http.request",
+        "resource": "http.request",
+        "trace_id": 5022942567323165900,
+        "span_id": 5986921373968101125,
+        "parent_id": 10099877065446472881,
+        "start": 1791057870772375909,
+        "duration": 1435898,
+        "meta": {
+          "http.url": "http://api.openai.com/v1/completions",
+          "_dd.svc_src": "httpx",
+          "component": "httpx",
+          "span.kind": "client",
+          "out.host": "api.openai.com",
+          "env": "openai-env",
+          "http.method": "POST",
+          "http.status_code": "400",
+          "version": "openai-version",
+          "http.useragent": "OpenAI/Python 2.41.1"
+        },
+        "metrics": {
+          "_dd.measured": 1.0
+        },
+        "type": "http"
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.lab.case",
+        "resource": "chat.success",
+        "trace_id": 11199205410646032984,
+        "span_id": 14277618668781048661,
+        "start": 1791057870775276249,
+        "duration": 4849429,
+        "meta": {
+          "version": "openai-version",
+          "language": "python",
+          "_dd.p.dm": "-3",
+          "env": "openai-env",
+          "_dd.tags.process": "entrypoint.basedir:moar_coverage,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:moar_coverage,svc.user:true",
+          "_dd.p.ksr": "1",
+          "runtime-id": "10f48509c0b1465fbc0d5311fc1c8d64",
+          "_dd.p.tid": "6ac15fce00000000"
+        },
+        "metrics": {
+          "_dd.top_level": 1.0,
+          "_dd.rule_psr": 1.0,
+          "_dd.tracer_kr": 1.0,
+          "process_id": 1350130.0,
+          "_sampling_priority_v1": 2.0,
+          "_dd.limit_psr": 1.0,
+          "_top_level": 1.0
+        }
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.request",
+        "resource": "createChatCompletion",
+        "trace_id": 11199205410646032984,
+        "span_id": 8553576451887465980,
+        "parent_id": 14277618668781048661,
+        "start": 1791057870775308870,
+        "duration": 4802491,
+        "meta": {
+          "openai.request.model": "gpt-3.5-turbo",
+          "component": "openai",
+          "openai.request.method": "POST",
+          "version": "openai-version",
+          "env": "openai-env",
+          "openai.request.endpoint": "/v1/chat/completions",
+          "_dd.llmobs.model_provider": "openai",
+          "openai.request.provider": "OpenAI",
+          "_dd.llmobs.span_kind": "llm",
+          "_dd.svc_src": "m",
+          "openai.response.model": "gpt-3.5-turbo-fixture",
+          "_dd.llmobs.model_name": "gpt-3.5-turbo-fixture"
+        },
+        "metrics": {
+          "_dd.llmobs.enabled": 0.0,
+          "_dd.measured": 1.0,
+          "_dd.llmobs.total_tokens": 16.0,
+          "_dd.llmobs.cache_read_input_tokens": 2.0,
+          "_dd.llmobs.input_tokens": 7.0,
+          "_dd.llmobs.output_tokens": 9.0
+        }
+      },
+      {
+        "service": "openai-lab",
+        "name": "http.request",
+        "resource": "http.request",
+        "trace_id": 11199205410646032984,
+        "span_id": 615295614166976303,
+        "parent_id": 8553576451887465980,
+        "start": 1791057870776263167,
+        "duration": 1274576,
+        "meta": {
+          "out.host": "api.openai.com",
+          "_dd.svc_src": "httpx",
+          "version": "openai-version",
+          "http.method": "POST",
+          "span.kind": "client",
+          "component": "httpx",
+          "http.status_code": "200",
+          "http.useragent": "OpenAI/Python 2.41.1",
+          "http.url": "http://api.openai.com/v1/chat/completions",
+          "env": "openai-env"
+        },
+        "metrics": {
+          "_dd.measured": 1.0
+        },
+        "type": "http"
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.lab.case",
+        "resource": "chat.error",
+        "trace_id": 9907075823190235204,
+        "span_id": 4858816535698129238,
+        "start": 1791057870780167547,
+        "duration": 2151558,
+        "meta": {
+          "_dd.tags.process": "entrypoint.basedir:moar_coverage,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:moar_coverage,svc.user:true",
+          "env": "openai-env",
+          "version": "openai-version",
+          "language": "python",
+          "_dd.p.tid": "6ac15fce00000000",
+          "runtime-id": "10f48509c0b1465fbc0d5311fc1c8d64",
+          "_dd.p.dm": "-3",
+          "_dd.p.ksr": "1"
+        },
+        "metrics": {
+          "_dd.tracer_kr": 1.0,
+          "process_id": 1350130.0,
+          "_dd.rule_psr": 1.0,
+          "_dd.limit_psr": 1.0,
+          "_dd.top_level": 1.0,
+          "_sampling_priority_v1": 2.0,
+          "_top_level": 1.0
+        }
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.request",
+        "resource": "createChatCompletion",
+        "trace_id": 9907075823190235204,
+        "span_id": 3082103594649400653,
+        "parent_id": 4858816535698129238,
+        "start": 1791057870780185851,
+        "duration": 2118967,
+        "error": 1,
+        "meta": {
+          "openai.request.endpoint": "/v1/chat/completions",
+          "_dd.svc_src": "m",
+          "error.message": "Error code: 400 - {'error': {'message': 'Model bad-model does not exist', 'type': 'invalid_request_error', 'param': 'model', 'code': 'model_not_found'}}",
+          "error.stack": "openai.BadRequestError: Model bad-model does not exist",
+          "openai.request.provider": "OpenAI",
+          "_dd.llmobs.model_name": "bad-model",
+          "version": "openai-version",
+          "openai.request.method": "POST",
+          "component": "openai",
+          "error.type": "openai.BadRequestError",
+          "openai.request.model": "bad-model",
+          "env": "openai-env",
+          "_dd.llmobs.span_kind": "llm",
+          "_dd.llmobs.model_provider": "openai"
+        },
+        "metrics": {
+          "_dd.llmobs.enabled": 0.0,
+          "_dd.measured": 1.0
+        }
+      },
+      {
+        "service": "openai-lab",
+        "name": "http.request",
+        "resource": "http.request",
+        "trace_id": 9907075823190235204,
+        "span_id": 10366834346684648974,
+        "parent_id": 3082103594649400653,
+        "start": 1791057870780526218,
+        "duration": 1005703,
+        "meta": {
+          "span.kind": "client",
+          "http.useragent": "OpenAI/Python 2.41.1",
+          "env": "openai-env",
+          "version": "openai-version",
+          "_dd.svc_src": "httpx",
+          "component": "httpx",
+          "http.method": "POST",
+          "http.url": "http://api.openai.com/v1/chat/completions",
+          "http.status_code": "400",
+          "out.host": "api.openai.com"
+        },
+        "metrics": {
+          "_dd.measured": 1.0
+        },
+        "type": "http"
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.lab.case",
+        "resource": "responses.success",
+        "trace_id": 4492867268430140947,
+        "span_id": 16608686204992684887,
+        "start": 1791057870782369699,
+        "duration": 47229597,
+        "meta": {
+          "_dd.p.tid": "6ac15fce00000000",
+          "version": "openai-version",
+          "_dd.tags.process": "entrypoint.basedir:moar_coverage,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:moar_coverage,svc.user:true",
+          "_dd.p.ksr": "1",
+          "language": "python",
+          "_dd.p.dm": "-3",
+          "runtime-id": "10f48509c0b1465fbc0d5311fc1c8d64",
+          "env": "openai-env"
+        },
+        "metrics": {
+          "_top_level": 1.0,
+          "_dd.rule_psr": 1.0,
+          "_sampling_priority_v1": 2.0,
+          "_dd.limit_psr": 1.0,
+          "_dd.top_level": 1.0,
+          "_dd.tracer_kr": 1.0,
+          "process_id": 1350130.0
+        }
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.request",
+        "resource": "createResponse",
+        "trace_id": 4492867268430140947,
+        "span_id": 16538119482356624915,
+        "parent_id": 16608686204992684887,
+        "start": 1791057870782400667,
+        "duration": 47175104,
+        "meta": {
+          "openai.request.model": "gpt-4.1",
+          "_dd.llmobs.model_name": "gpt-4.1-fixture",
+          "_dd.llmobs.span_kind": "llm",
+          "openai.request.provider": "OpenAI",
+          "version": "openai-version",
+          "component": "openai",
+          "_dd.svc_src": "m",
+          "openai.request.method": "POST",
+          "env": "openai-env",
+          "_dd.llmobs.model_provider": "openai",
+          "openai.request.endpoint": "/v1/responses",
+          "openai.response.model": "gpt-4.1-fixture"
+        },
+        "metrics": {
+          "_dd.measured": 1.0,
+          "_dd.llmobs.total_tokens": 16.0,
+          "_dd.llmobs.cache_read_input_tokens": 2.0,
+          "_dd.llmobs.output_tokens": 9.0,
+          "_dd.llmobs.input_tokens": 7.0,
+          "_dd.llmobs.enabled": 0.0
+        }
+      },
+      {
+        "service": "openai-lab",
+        "name": "http.request",
+        "resource": "http.request",
+        "trace_id": 4492867268430140947,
+        "span_id": 10738013987429867593,
+        "parent_id": 16538119482356624915,
+        "start": 1791057870783047599,
+        "duration": 1181472,
+        "meta": {
+          "span.kind": "client",
+          "version": "openai-version",
+          "out.host": "api.openai.com",
+          "http.method": "POST",
+          "env": "openai-env",
+          "http.useragent": "OpenAI/Python 2.41.1",
+          "_dd.svc_src": "httpx",
+          "http.url": "http://api.openai.com/v1/responses",
+          "http.status_code": "200",
+          "component": "httpx"
+        },
+        "metrics": {
+          "_dd.measured": 1.0
+        },
+        "type": "http"
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.lab.case",
+        "resource": "responses.error",
+        "trace_id": 7929930049154807181,
+        "span_id": 12101464358505090092,
+        "start": 1791057870829654920,
+        "duration": 2329912,
+        "meta": {
+          "language": "python",
+          "_dd.p.tid": "6ac15fce00000000",
+          "runtime-id": "10f48509c0b1465fbc0d5311fc1c8d64",
+          "env": "openai-env",
+          "_dd.p.ksr": "1",
+          "_dd.tags.process": "entrypoint.basedir:moar_coverage,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:moar_coverage,svc.user:true",
+          "version": "openai-version",
+          "_dd.p.dm": "-3"
+        },
+        "metrics": {
+          "_sampling_priority_v1": 2.0,
+          "process_id": 1350130.0,
+          "_dd.limit_psr": 1.0,
+          "_top_level": 1.0,
+          "_dd.top_level": 1.0,
+          "_dd.rule_psr": 1.0,
+          "_dd.tracer_kr": 1.0
+        }
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.request",
+        "resource": "createResponse",
+        "trace_id": 7929930049154807181,
+        "span_id": 4307761707589117692,
+        "parent_id": 12101464358505090092,
+        "start": 1791057870829676410,
+        "duration": 2295317,
+        "error": 1,
+        "meta": {
+          "_dd.llmobs.model_provider": "openai",
+          "_dd.llmobs.model_name": "bad-model",
+          "openai.request.method": "POST",
+          "error.type": "openai.BadRequestError",
+          "_dd.svc_src": "m",
+          "version": "openai-version",
+          "openai.request.model": "bad-model",
+          "openai.request.endpoint": "/v1/responses",
+          "env": "openai-env",
+          "_dd.llmobs.span_kind": "llm",
+          "error.stack": "openai.BadRequestError: Model bad-model does not exist",
+          "error.message": "Error code: 400 - {'error': {'message': 'Model bad-model does not exist', 'type': 'invalid_request_error', 'param': 'model', 'code': 'model_not_found'}}",
+          "openai.request.provider": "OpenAI",
+          "component": "openai"
+        },
+        "metrics": {
+          "_dd.measured": 1.0,
+          "_dd.llmobs.enabled": 0.0
+        }
+      },
+      {
+        "service": "openai-lab",
+        "name": "http.request",
+        "resource": "http.request",
+        "trace_id": 7929930049154807181,
+        "span_id": 6176283287660524429,
+        "parent_id": 4307761707589117692,
+        "start": 1791057870830004304,
+        "duration": 1176512,
+        "meta": {
+          "http.status_code": "400",
+          "http.useragent": "OpenAI/Python 2.41.1",
+          "env": "openai-env",
+          "out.host": "api.openai.com",
+          "component": "httpx",
+          "http.url": "http://api.openai.com/v1/responses",
+          "version": "openai-version",
+          "span.kind": "client",
+          "http.method": "POST",
+          "_dd.svc_src": "httpx"
+        },
+        "metrics": {
+          "_dd.measured": 1.0
+        },
+        "type": "http"
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.lab.case",
+        "resource": "embeddings.success",
+        "trace_id": 8812298966268158817,
+        "span_id": 5830776333784585939,
+        "start": 1791057870832054512,
+        "duration": 2483620,
+        "meta": {
+          "_dd.tags.process": "entrypoint.basedir:moar_coverage,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:moar_coverage,svc.user:true",
+          "env": "openai-env",
+          "_dd.p.ksr": "1",
+          "version": "openai-version",
+          "runtime-id": "10f48509c0b1465fbc0d5311fc1c8d64",
+          "language": "python",
+          "_dd.p.tid": "6ac15fce00000000",
+          "_dd.p.dm": "-3"
+        },
+        "metrics": {
+          "_top_level": 1.0,
+          "_dd.limit_psr": 1.0,
+          "_dd.top_level": 1.0,
+          "_dd.tracer_kr": 1.0,
+          "_sampling_priority_v1": 2.0,
+          "process_id": 1350130.0,
+          "_dd.rule_psr": 1.0
+        }
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.request",
+        "resource": "createEmbedding",
+        "trace_id": 8812298966268158817,
+        "span_id": 17062300613989967505,
+        "parent_id": 5830776333784585939,
+        "start": 1791057870832098134,
+        "duration": 2424219,
+        "meta": {
+          "openai.request.provider": "OpenAI",
+          "env": "openai-env",
+          "_dd.llmobs.model_provider": "openai",
+          "openai.request.model": "text-embedding-ada-002",
+          "_dd.llmobs.model_name": "text-embedding-ada-002-fixture",
+          "component": "openai",
+          "openai.request.method": "POST",
+          "version": "openai-version",
+          "_dd.svc_src": "m",
+          "_dd.llmobs.span_kind": "embedding",
+          "openai.request.endpoint": "/v1/embeddings",
+          "openai.response.model": "text-embedding-ada-002-fixture"
+        },
+        "metrics": {
+          "_dd.llmobs.output_tokens": 0.0,
+          "_dd.llmobs.input_tokens": 7.0,
+          "_dd.llmobs.total_tokens": 7.0,
+          "_dd.measured": 1.0,
+          "_dd.llmobs.enabled": 0.0
+        }
+      },
+      {
+        "service": "openai-lab",
+        "name": "http.request",
+        "resource": "http.request",
+        "trace_id": 8812298966268158817,
+        "span_id": 15527482342891758653,
+        "parent_id": 17062300613989967505,
+        "start": 1791057870832581188,
+        "duration": 1310123,
+        "meta": {
+          "version": "openai-version",
+          "env": "openai-env",
+          "http.useragent": "OpenAI/Python 2.41.1",
+          "out.host": "api.openai.com",
+          "_dd.svc_src": "httpx",
+          "http.status_code": "200",
+          "http.method": "POST",
+          "http.url": "http://api.openai.com/v1/embeddings",
+          "span.kind": "client",
+          "component": "httpx"
+        },
+        "metrics": {
+          "_dd.measured": 1.0
+        },
+        "type": "http"
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.lab.case",
+        "resource": "embeddings.error",
+        "trace_id": 13008715922468963791,
+        "span_id": 10454502723272552675,
+        "start": 1791057870834599968,
+        "duration": 1935063,
+        "meta": {
+          "language": "python",
+          "_dd.p.tid": "6ac15fce00000000",
+          "env": "openai-env",
+          "_dd.p.ksr": "1",
+          "_dd.p.dm": "-3",
+          "version": "openai-version",
+          "_dd.tags.process": "entrypoint.basedir:moar_coverage,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:moar_coverage,svc.user:true",
+          "runtime-id": "10f48509c0b1465fbc0d5311fc1c8d64"
+        },
+        "metrics": {
+          "_top_level": 1.0,
+          "process_id": 1350130.0,
+          "_dd.limit_psr": 1.0,
+          "_dd.top_level": 1.0,
+          "_sampling_priority_v1": 2.0,
+          "_dd.tracer_kr": 1.0,
+          "_dd.rule_psr": 1.0
+        }
+      },
+      {
+        "service": "openai-lab",
+        "name": "openai.request",
+        "resource": "createEmbedding",
+        "trace_id": 13008715922468963791,
+        "span_id": 17869420223140407247,
+        "parent_id": 10454502723272552675,
+        "start": 1791057870834632469,
+        "duration": 1890359,
+        "error": 1,
+        "meta": {
+          "error.stack": "openai.BadRequestError: Model bad-model does not exist",
+          "component": "openai",
+          "openai.request.method": "POST",
+          "_dd.llmobs.model_name": "bad-model",
+          "openai.request.provider": "OpenAI",
+          "_dd.llmobs.model_provider": "openai",
+          "openai.request.endpoint": "/v1/embeddings",
+          "error.message": "Error code: 400 - {'error': {'message': 'Model bad-model does not exist', 'type': 'invalid_request_error', 'param': 'model', 'code': 'model_not_found'}}",
+          "_dd.svc_src": "m",
+          "error.type": "openai.BadRequestError",
+          "version": "openai-version",
+          "openai.request.model": "bad-model",
+          "_dd.llmobs.span_kind": "embedding",
+          "env": "openai-env"
+        },
+        "metrics": {
+          "_dd.llmobs.enabled": 0.0,
+          "_dd.measured": 1.0
+        }
+      },
+      {
+        "service": "openai-lab",
+        "name": "http.request",
+        "resource": "http.request",
+        "trace_id": 13008715922468963791,
+        "span_id": 4628730509640713086,
+        "parent_id": 17869420223140407247,
+        "start": 1791057870834977675,
+        "duration": 1156465,
+        "meta": {
+          "http.url": "http://api.openai.com/v1/embeddings",
+          "http.method": "POST",
+          "http.useragent": "OpenAI/Python 2.41.1",
+          "component": "httpx",
+          "span.kind": "client",
+          "http.status_code": "400",
+          "env": "openai-env",
+          "version": "openai-version",
+          "out.host": "api.openai.com",
+          "_dd.svc_src": "httpx"
+        },
+        "metrics": {
+          "_dd.measured": 1.0
+        },
+        "type": "http"
+      }
+    ]
+  },
+  "llmobs": {
+    "identity": {
+      "client_version": "2.41.1",
+      "tracer_version": "4.14.0",
+      "calls": [
+        {
+          "api": "completions",
+          "error": false,
+          "trace_id": "141902224155268454149643352899874449499",
+          "parent_id": "15236982469713717388",
+          "output": "Hello from the local model fixture."
+        },
+        {
+          "api": "completions",
+          "error": true,
+          "trace_id": "141902224155268454137418409257868646726",
+          "parent_id": "14247738431590385752",
+          "exception": "BadRequestError"
+        },
+        {
+          "api": "chat",
+          "error": false,
+          "trace_id": "141902224155268454148212275481171303418",
+          "parent_id": "8255977979410828693",
+          "output": "Hello from the local model fixture."
+        },
+        {
+          "api": "chat",
+          "error": true,
+          "trace_id": "141902224155268454143848445003548927884",
+          "parent_id": "689065904914219799",
+          "exception": "BadRequestError"
+        },
+        {
+          "api": "responses",
+          "error": false,
+          "trace_id": "141902224155268454148823398775007982354",
+          "parent_id": "3903056061932496766",
+          "output": "Hello from the local model fixture."
+        },
+        {
+          "api": "responses",
+          "error": true,
+          "trace_id": "141902224155268454137935491863321979953",
+          "parent_id": "11634073145894739773",
+          "exception": "BadRequestError"
+        },
+        {
+          "api": "embeddings",
+          "error": false,
+          "trace_id": "141902224155268454140385751577853731736",
+          "parent_id": "17862894115338132024",
+          "output": [
+            0.125,
+            0.25,
+            0.5
+          ]
+        },
+        {
+          "api": "embeddings",
+          "error": true,
+          "trace_id": "141902224155268454150017870395440338010",
+          "parent_id": "16596799958160287669",
+          "exception": "BadRequestError"
+        }
+      ],
+      "dependencies": {
+        "openai": "2.41.1",
+        "httpx": "0.28.1",
+        "pydantic": "2.13.5",
+        "jiter": "0.17.0"
+      }
+    },
+    "spans": [
+      {
+        "_dd": {
+          "apm_trace_id": "6ac15fd000000000c05be530072fe85b",
+          "sample_rate": "1",
+          "sampling_decision": "1",
+          "span_id": "5232033279903183625",
+          "trace_id": "6ac15fd000000000c05be530072fe85b"
+        },
+        "duration": 7904068,
+        "meta": {
+          "input": {
+            "messages": [
+              {
+                "content": "Hello OpenAI!",
+                "role": ""
+              }
+            ]
+          },
+          "metadata": {
+            "max_tokens": 35
+          },
+          "model_name": "gpt-3.5-turbo-instruct-fixture",
+          "model_provider": "openai",
+          "output": {
+            "messages": [
+              {
+                "content": "Hello from the local model fixture.",
+                "role": ""
+              }
+            ]
+          },
+          "span": {
+            "kind": "llm"
+          }
+        },
+        "metrics": {
+          "cache_read_input_tokens": 2,
+          "input_tokens": 7,
+          "output_tokens": 9,
+          "total_tokens": 16
+        },
+        "name": "OpenAI.createCompletion",
+        "parent_id": "undefined",
+        "span_id": "5232033279903183625",
+        "start_ns": 1791057872394569930,
+        "status": "ok",
+        "tags": [
+          "agent_service:openai-lab",
+          "ddtrace.version:4.14.0",
+          "env:openai-env",
+          "error:0",
+          "git.commit.sha:367263fc2755fcb8eb02376624ce7ed77eb911ba",
+          "git.repository_url:https://github.com/pawelchcki/rules_datadog_stests.git",
+          "integration:openai",
+          "language:python",
+          "ml_app:openai-lab",
+          "service:openai-lab",
+          "source:integration",
+          "version:openai-version"
+        ],
+        "trace_id": "6ac15fd000000000100251337df0ac4f"
+      },
+      {
+        "_dd": {
+          "apm_trace_id": "6ac15fd00000000016b42bb73a42d946",
+          "sample_rate": "1",
+          "sampling_decision": "1",
+          "span_id": "11024954154986345435",
+          "trace_id": "6ac15fd00000000016b42bb73a42d946"
+        },
+        "duration": 2862389,
+        "meta": {
+          "error": {
+            "message": "Error code: 400 - {'error': {'message': 'Model bad-model does not exist', 'type': 'invalid_request_error', 'param': 'model', 'code': 'model_not_found'}}",
+            "stack": "openai.BadRequestError: Model bad-model does not exist",
+            "type": "openai.BadRequestError"
+          },
+          "input": {
+            "messages": [
+              {
+                "content": "Hello OpenAI!",
+                "role": ""
+              }
+            ]
+          },
+          "metadata": {
+            "max_tokens": 35
+          },
+          "model_name": "bad-model",
+          "model_provider": "openai",
+          "output": {
+            "messages": [
+              {
+                "content": "",
+                "role": ""
+              }
+            ]
+          },
+          "span": {
+            "kind": "llm"
+          }
+        },
+        "metrics": {},
+        "name": "OpenAI.createCompletion",
+        "parent_id": "undefined",
+        "span_id": "11024954154986345435",
+        "start_ns": 1791057872402657481,
+        "status": "error",
+        "tags": [
+          "agent_service:openai-lab",
+          "ddtrace.version:4.14.0",
+          "env:openai-env",
+          "error:1",
+          "error_type:openai.BadRequestError",
+          "git.commit.sha:367263fc2755fcb8eb02376624ce7ed77eb911ba",
+          "git.repository_url:https://github.com/pawelchcki/rules_datadog_stests.git",
+          "integration:openai",
+          "language:python",
+          "ml_app:openai-lab",
+          "service:openai-lab",
+          "source:integration",
+          "version:openai-version"
+        ],
+        "trace_id": "6ac15fd00000000000941a1e58f49de0"
+      },
+      {
+        "_dd": {
+          "apm_trace_id": "6ac15fd000000000ac7fafdb834d9bfa",
+          "sample_rate": "1",
+          "sampling_decision": "1",
+          "span_id": "10261404910520222399",
+          "trace_id": "6ac15fd000000000ac7fafdb834d9bfa"
+        },
+        "duration": 5847910,
+        "meta": {
+          "input": {
+            "messages": [
+              {
+                "content": "Hello OpenAI!",
+                "role": "user"
+              }
+            ]
+          },
+          "metadata": {
+            "max_tokens": 35,
+            "stream": false
+          },
+          "model_name": "gpt-3.5-turbo-fixture",
+          "model_provider": "openai",
+          "output": {
+            "messages": [
+              {
+                "content": "Hello from the local model fixture.",
+                "role": "assistant"
+              }
+            ]
+          },
+          "span": {
+            "kind": "llm"
+          }
+        },
+        "metrics": {
+          "cache_read_input_tokens": 2,
+          "input_tokens": 7,
+          "output_tokens": 9,
+          "total_tokens": 16
+        },
+        "name": "OpenAI.createChatCompletion",
+        "parent_id": "undefined",
+        "span_id": "10261404910520222399",
+        "start_ns": 1791057872405704195,
+        "status": "ok",
+        "tags": [
+          "agent_service:openai-lab",
+          "ddtrace.version:4.14.0",
+          "env:openai-env",
+          "error:0",
+          "git.commit.sha:367263fc2755fcb8eb02376624ce7ed77eb911ba",
+          "git.repository_url:https://github.com/pawelchcki/rules_datadog_stests.git",
+          "integration:openai",
+          "language:python",
+          "ml_app:openai-lab",
+          "service:openai-lab",
+          "source:integration",
+          "version:openai-version"
+        ],
+        "trace_id": "6ac15fd000000000ba9aa4512b1d296b"
+      },
+      {
+        "_dd": {
+          "apm_trace_id": "6ac15fd0000000006ff03f289c99278c",
+          "sample_rate": "1",
+          "sampling_decision": "1",
+          "span_id": "15731817325505743587",
+          "trace_id": "6ac15fd0000000006ff03f289c99278c"
+        },
+        "duration": 2381389,
+        "meta": {
+          "error": {
+            "message": "Error code: 400 - {'error': {'message': 'Model bad-model does not exist', 'type': 'invalid_request_error', 'param': 'model', 'code': 'model_not_found'}}",
+            "stack": "openai.BadRequestError: Model bad-model does not exist",
+            "type": "openai.BadRequestError"
+          },
+          "input": {
+            "messages": [
+              {
+                "content": "Hello OpenAI!",
+                "role": "user"
+              }
+            ]
+          },
+          "metadata": {
+            "max_tokens": 35,
+            "stream": false
+          },
+          "model_name": "bad-model",
+          "model_provider": "openai",
+          "output": {
+            "messages": [
+              {
+                "content": "",
+                "role": ""
+              }
+            ]
+          },
+          "span": {
+            "kind": "llm"
+          }
+        },
+        "metrics": {},
+        "name": "OpenAI.createChatCompletion",
+        "parent_id": "undefined",
+        "span_id": "15731817325505743587",
+        "start_ns": 1791057872411705852,
+        "status": "error",
+        "tags": [
+          "agent_service:openai-lab",
+          "ddtrace.version:4.14.0",
+          "env:openai-env",
+          "error:1",
+          "error_type:openai.BadRequestError",
+          "git.commit.sha:367263fc2755fcb8eb02376624ce7ed77eb911ba",
+          "git.repository_url:https://github.com/pawelchcki/rules_datadog_stests.git",
+          "integration:openai",
+          "language:python",
+          "ml_app:openai-lab",
+          "service:openai-lab",
+          "source:integration",
+          "version:openai-version"
+        ],
+        "trace_id": "6ac15fd0000000000d5c0917267abbec"
+      },
+      {
+        "_dd": {
+          "apm_trace_id": "6ac15fd000000000b4fad5415e67b312",
+          "sample_rate": "1",
+          "sampling_decision": "1",
+          "span_id": "10748186214394440087",
+          "trace_id": "6ac15fd000000000b4fad5415e67b312"
+        },
+        "duration": 46293162,
+        "meta": {
+          "input": {
+            "messages": [
+              {
+                "content": "Hello OpenAI!",
+                "role": "user"
+              }
+            ]
+          },
+          "metadata": {
+            "max_output_tokens": 50,
+            "temperature": 0.1
+          },
+          "model_name": "gpt-4.1-fixture",
+          "model_provider": "openai",
+          "output": {
+            "messages": [
+              {
+                "content": "Hello from the local model fixture.",
+                "role": "assistant"
+              }
+            ]
+          },
+          "span": {
+            "kind": "llm"
+          }
+        },
+        "metrics": {
+          "cache_read_input_tokens": 2,
+          "input_tokens": 7,
+          "output_tokens": 9,
+          "reasoning_output_tokens": 0,
+          "total_tokens": 16
+        },
+        "name": "OpenAI.createResponse",
+        "parent_id": "undefined",
+        "span_id": "10748186214394440087",
+        "start_ns": 1791057872414245948,
+        "status": "ok",
+        "tags": [
+          "agent_service:openai-lab",
+          "ddtrace.version:4.14.0",
+          "env:openai-env",
+          "error:0",
+          "git.commit.sha:367263fc2755fcb8eb02376624ce7ed77eb911ba",
+          "git.repository_url:https://github.com/pawelchcki/rules_datadog_stests.git",
+          "integration:openai",
+          "language:python",
+          "ml_app:openai-lab",
+          "service:openai-lab",
+          "source:integration",
+          "version:openai-version"
+        ],
+        "trace_id": "6ac15fd000000000263a50d3a75f3cba"
+      },
+      {
+        "_dd": {
+          "apm_trace_id": "6ac15fd0000000001de1379b13d72c31",
+          "sample_rate": "1",
+          "sampling_decision": "1",
+          "span_id": "17066570503179672002",
+          "trace_id": "6ac15fd0000000001de1379b13d72c31"
+        },
+        "duration": 2631817,
+        "meta": {
+          "error": {
+            "message": "Error code: 400 - {'error': {'message': 'Model bad-model does not exist', 'type': 'invalid_request_error', 'param': 'model', 'code': 'model_not_found'}}",
+            "stack": "openai.BadRequestError: Model bad-model does not exist",
+            "type": "openai.BadRequestError"
+          },
+          "input": {
+            "messages": [
+              {
+                "content": "Hello OpenAI!",
+                "role": "user"
+              }
+            ]
+          },
+          "metadata": {
+            "max_output_tokens": 50,
+            "temperature": 0.1
+          },
+          "model_name": "bad-model",
+          "model_provider": "openai",
+          "output": {
+            "messages": [
+              {
+                "content": "",
+                "role": ""
+              }
+            ]
+          },
+          "span": {
+            "kind": "llm"
+          }
+        },
+        "metrics": {},
+        "name": "OpenAI.createResponse",
+        "parent_id": "undefined",
+        "span_id": "17066570503179672002",
+        "start_ns": 1791057872460678081,
+        "status": "error",
+        "tags": [
+          "agent_service:openai-lab",
+          "ddtrace.version:4.14.0",
+          "env:openai-env",
+          "error:1",
+          "error_type:openai.BadRequestError",
+          "git.commit.sha:367263fc2755fcb8eb02376624ce7ed77eb911ba",
+          "git.repository_url:https://github.com/pawelchcki/rules_datadog_stests.git",
+          "integration:openai",
+          "language:python",
+          "ml_app:openai-lab",
+          "service:openai-lab",
+          "source:integration",
+          "version:openai-version"
+        ],
+        "trace_id": "6ac15fd0000000005e8d146dd03acb34"
+      },
+      {
+        "_dd": {
+          "apm_trace_id": "6ac15fd0000000003fe249d587f4a398",
+          "sample_rate": "1",
+          "sampling_decision": "1",
+          "span_id": "7944476322299320484",
+          "trace_id": "6ac15fd0000000003fe249d587f4a398"
+        },
+        "duration": 2164252,
+        "meta": {
+          "input": {
+            "documents": [
+              {
+                "text": "Hello OpenAI!"
+              }
+            ]
+          },
+          "metadata": {
+            "encoding_format": "float"
+          },
+          "model_name": "text-embedding-ada-002-fixture",
+          "model_provider": "openai",
+          "output": {
+            "value": "[1 embedding(s) returned with size 3]"
+          },
+          "span": {
+            "kind": "embedding"
+          }
+        },
+        "metrics": {
+          "input_tokens": 7,
+          "output_tokens": 0,
+          "total_tokens": 7
+        },
+        "name": "OpenAI.createEmbedding",
+        "parent_id": "undefined",
+        "span_id": "7944476322299320484",
+        "start_ns": 1791057872463447897,
+        "status": "ok",
+        "tags": [
+          "agent_service:openai-lab",
+          "ddtrace.version:4.14.0",
+          "env:openai-env",
+          "error:0",
+          "git.commit.sha:367263fc2755fcb8eb02376624ce7ed77eb911ba",
+          "git.repository_url:https://github.com/pawelchcki/rules_datadog_stests.git",
+          "integration:openai",
+          "language:python",
+          "ml_app:openai-lab",
+          "service:openai-lab",
+          "source:integration",
+          "version:openai-version"
+        ],
+        "trace_id": "6ac15fd000000000320bebf058f082d2"
+      },
+      {
+        "_dd": {
+          "apm_trace_id": "6ac15fd000000000c58e72dd948f945a",
+          "sample_rate": "1",
+          "sampling_decision": "1",
+          "span_id": "2215096193310684650",
+          "trace_id": "6ac15fd000000000c58e72dd948f945a"
+        },
+        "duration": 2059837,
+        "meta": {
+          "error": {
+            "message": "Error code: 400 - {'error': {'message': 'Model bad-model does not exist', 'type': 'invalid_request_error', 'param': 'model', 'code': 'model_not_found'}}",
+            "stack": "openai.BadRequestError: Model bad-model does not exist",
+            "type": "openai.BadRequestError"
+          },
+          "input": {
+            "documents": [
+              {
+                "text": "Hello OpenAI!"
+              }
+            ]
+          },
+          "metadata": {
+            "encoding_format": "float"
+          },
+          "model_name": "bad-model",
+          "model_provider": "openai",
+          "span": {
+            "kind": "embedding"
+          }
+        },
+        "metrics": {},
+        "name": "OpenAI.createEmbedding",
+        "parent_id": "undefined",
+        "span_id": "2215096193310684650",
+        "start_ns": 1791057872465720782,
+        "status": "error",
+        "tags": [
+          "agent_service:openai-lab",
+          "ddtrace.version:4.14.0",
+          "env:openai-env",
+          "error:1",
+          "error_type:openai.BadRequestError",
+          "git.commit.sha:367263fc2755fcb8eb02376624ce7ed77eb911ba",
+          "git.repository_url:https://github.com/pawelchcki/rules_datadog_stests.git",
+          "integration:openai",
+          "language:python",
+          "ml_app:openai-lab",
+          "service:openai-lab",
+          "source:integration",
+          "version:openai-version"
+        ],
+        "trace_id": "6ac15fd00000000052a1254c5a7424ff"
+      }
+    ]
+  }
+}

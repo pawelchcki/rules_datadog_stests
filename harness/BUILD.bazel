@@ -4,6 +4,12 @@ load("@rules_stests//rules:defs.bzl", "corpus_service", "oci_rootfs")
 load("@rules_stests//harness:scheme_bytecode.bzl", "scheme_bytecode_bundles")
 load("//corpus:registry.bzl", "DATADOG_CAPTURE_LIBRARIES", "datadog_library_args", "datadog_library_labels")
 package(default_visibility = ["//visibility:public"])
+oci_rootfs(
+    name = "datadog_agent_rootfs",
+    image = "@datadog_agent_linux_amd64",
+    single_payload = True,
+    tags = ["manual"],
+)
 # Compatibility for the shared compiler macro in the pinned infrastructure release.
 alias(name = "telemetry_sink", actual = "@rules_stests//harness:telemetry_sink")
 alias(name = "telemetry_sink_service", actual = "@rules_stests//harness:telemetry_sink_service")

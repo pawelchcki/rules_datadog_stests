@@ -1,0 +1,16 @@
+load("@rules_python//python:defs.bzl", "py_binary")
+load("//harness/wheel_overlay:defs.bzl", "wheel_overlay")
+
+package(default_visibility = ["//visibility:public"])
+
+filegroup(name = "wheels", srcs = ["@ffe_wheels//:wheels", "@otel_wheels//:wheels"])
+wheel_overlay(name = "sdk_overlay", wheels = ":wheels")
+filegroup(name = "vendor", srcs = glob(["vendor/**"]))
+exports_files(["workload.py", "vendor/manifest.json"])
+
+py_binary(
+    name = "probe",
+    srcs = ["backend.py", "probe.py"],
+    main = "probe.py",
+    deps = ["//harness/datadog_agent:agent_lib"],
+)

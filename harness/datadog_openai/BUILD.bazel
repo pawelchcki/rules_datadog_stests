@@ -1,0 +1,12 @@
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
+load("//harness/wheel_overlay:defs.bzl", "wheel_overlay")
+package(default_visibility = ["//visibility:public"])
+exports_files(["workload.py"])
+wheel_overlay(name = "sdk_overlay", wheels = "@openai_wheels//:wheels")
+py_library(
+    name = "openai_lib",
+    srcs = ["assertions.py", "fake_api.py", "probe.py"],
+    deps = ["//harness/datadog_agent:agent_lib", "//harness/datadog_backend:backend_lib", "//harness/datadog_llmobs:llmobs_lib", "//harness/datadog_telemetry:telemetry_lib"],
+)
+py_binary(name = "probe", srcs = ["probe.py"], main = "probe.py", deps = [":openai_lib"])
+py_test(name = "assertions_test", srcs = ["assertions_test.py"], main = "assertions_test.py", data = ["golden.json"], deps = [":openai_lib"])
