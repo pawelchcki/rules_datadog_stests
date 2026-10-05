@@ -1,0 +1,342 @@
+{
+  "source": "https://github.com/DataDog/datadog-agent/blob/7.83.1/pkg/proto/datadog/remoteconfig/remoteconfig.proto",
+  "sha256": "ea9742a9e6373b6828204222b414c02fa7557a2c94478b61e18df439e3d6b87b",
+  "messages": {
+    ".datadog.config.LatestConfigsRequest": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "hostname",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "agentVersion",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "3": {
+          "name": "current_config_snapshot_version",
+          "type": 4,
+          "message": "",
+          "repeated": false
+        },
+        "9": {
+          "name": "current_config_root_version",
+          "type": 4,
+          "message": "",
+          "repeated": false
+        },
+        "8": {
+          "name": "current_director_root_version",
+          "type": 4,
+          "message": "",
+          "repeated": false
+        },
+        "4": {
+          "name": "products",
+          "type": 9,
+          "message": "",
+          "repeated": true
+        },
+        "5": {
+          "name": "new_products",
+          "type": 9,
+          "message": "",
+          "repeated": true
+        },
+        "6": {
+          "name": "active_clients",
+          "type": 11,
+          "message": ".datadog.config.Client",
+          "repeated": true
+        },
+        "10": {
+          "name": "backend_client_state",
+          "type": 12,
+          "message": "",
+          "repeated": false
+        },
+        "11": {
+          "name": "has_error",
+          "type": 8,
+          "message": "",
+          "repeated": false
+        },
+        "12": {
+          "name": "error",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "13": {
+          "name": "trace_agent_env",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "14": {
+          "name": "org_uuid",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "15": {
+          "name": "tags",
+          "type": 9,
+          "message": "",
+          "repeated": true
+        },
+        "16": {
+          "name": "agent_uuid",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.config.Client": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "state",
+          "type": 11,
+          "message": ".datadog.config.ClientState",
+          "repeated": false
+        },
+        "2": {
+          "name": "id",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "3": {
+          "name": "products",
+          "type": 9,
+          "message": "",
+          "repeated": true
+        },
+        "6": {
+          "name": "is_tracer",
+          "type": 8,
+          "message": "",
+          "repeated": false
+        },
+        "7": {
+          "name": "client_tracer",
+          "type": 11,
+          "message": ".datadog.config.ClientTracer",
+          "repeated": false
+        },
+        "8": {
+          "name": "is_agent",
+          "type": 8,
+          "message": "",
+          "repeated": false
+        },
+        "9": {
+          "name": "client_agent",
+          "type": 11,
+          "message": ".datadog.config.ClientAgent",
+          "repeated": false
+        },
+        "10": {
+          "name": "last_seen",
+          "type": 4,
+          "message": "",
+          "repeated": false
+        },
+        "11": {
+          "name": "capabilities",
+          "type": 12,
+          "message": "",
+          "repeated": false
+        },
+        "14": {
+          "name": "is_updater",
+          "type": 8,
+          "message": "",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.config.ClientState": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "root_version",
+          "type": 4,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "targets_version",
+          "type": 4,
+          "message": "",
+          "repeated": false
+        },
+        "3": {
+          "name": "config_states",
+          "type": 11,
+          "message": ".datadog.config.ConfigState",
+          "repeated": true
+        },
+        "4": {
+          "name": "has_error",
+          "type": 8,
+          "message": "",
+          "repeated": false
+        },
+        "5": {
+          "name": "error",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "6": {
+          "name": "backend_client_state",
+          "type": 12,
+          "message": "",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.config.ClientTracer": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "runtime_id",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "language",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "3": {
+          "name": "tracer_version",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "4": {
+          "name": "service",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "8": {
+          "name": "extra_services",
+          "type": 9,
+          "message": "",
+          "repeated": true
+        },
+        "5": {
+          "name": "env",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "6": {
+          "name": "app_version",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "7": {
+          "name": "tags",
+          "type": 9,
+          "message": "",
+          "repeated": true
+        },
+        "9": {
+          "name": "process_tags",
+          "type": 9,
+          "message": "",
+          "repeated": true
+        },
+        "10": {
+          "name": "container_tags",
+          "type": 9,
+          "message": "",
+          "repeated": true
+        }
+      }
+    },
+    ".datadog.config.ClientAgent": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "name",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "version",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "3": {
+          "name": "cluster_name",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "4": {
+          "name": "cluster_id",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "5": {
+          "name": "cws_workloads",
+          "type": 9,
+          "message": "",
+          "repeated": true
+        }
+      }
+    },
+    ".datadog.config.ConfigState": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "id",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "version",
+          "type": 4,
+          "message": "",
+          "repeated": false
+        },
+        "3": {
+          "name": "product",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "4": {
+          "name": "apply_state",
+          "type": 4,
+          "message": "",
+          "repeated": false
+        },
+        "5": {
+          "name": "apply_error",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        }
+      }
+    }
+  }
+}

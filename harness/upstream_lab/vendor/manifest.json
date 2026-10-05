@@ -1,0 +1,143 @@
+{
+  "revision": "098fe0967c587db8a16b74a1e711777d0a9d5867",
+  "files": {
+    "test_headers_datadog.py": {
+      "source": "tests/parametric/test_headers_datadog.py",
+      "sha256": "eae879d44ecf020bb1f4a2899d78f2027c9942e556baf406932c2f9ad6905b43"
+    },
+    "test_headers_tracecontext.py": {
+      "source": "tests/parametric/test_headers_tracecontext.py",
+      "sha256": "3f039084c528e318329cffe8a2f7345770f9ae4474449465b58154447111ae1d"
+    },
+    "test_headers_tracestate_dd.py": {
+      "source": "tests/parametric/test_headers_tracestate_dd.py",
+      "sha256": "e3cfc89e5638e141563fd2e0c7d59409540ca0369ff24c47dc7457bddc6ce594"
+    },
+    "test_headers_b3.py": {
+      "source": "tests/parametric/test_headers_b3.py",
+      "sha256": "0ea2de7ab49539cd7abf147560e53355bb5165ca1ea9e741c310d219af1609e9"
+    },
+    "test_headers_b3multi.py": {
+      "source": "tests/parametric/test_headers_b3multi.py",
+      "sha256": "99cdfb974407d5673d74ba4f57a60ed095a2d4d93a5e72c9965a751472d1adb2"
+    },
+    "test_headers_none.py": {
+      "source": "tests/parametric/test_headers_none.py",
+      "sha256": "f4990e85f9c003d0b8a89581f56576a0bf0d8e1627711e8d0cf7ea5132c1afae"
+    },
+    "test_headers_precedence.py": {
+      "source": "tests/parametric/test_headers_precedence.py",
+      "sha256": "4d6dd200460abcc9f1faae28ec8757436b9e366e631b0f8ef35eb369f5d66b45"
+    },
+    "test_headers_baggage.py": {
+      "source": "tests/parametric/test_headers_baggage.py",
+      "sha256": "0b0d844c55abcab06731f66b45bf6d5876f30434c813cfedaa4e320f56e5f8f9"
+    },
+    "test_extract_behavior.py": {
+      "source": "tests/parametric/test_extract_behavior.py",
+      "sha256": "2a5349b12e229ef2b0a27c32c7a50b3f87bbe0cf54d41cb292798114140169cd"
+    },
+    "test_128_bit_traceids.py": {
+      "source": "tests/parametric/test_128_bit_traceids.py",
+      "sha256": "ea446d2d65ae22176814c270640cfba9953444d0a747c26f8cbdd50564de9cc5"
+    },
+    "test_tracer.py": {
+      "source": "tests/parametric/test_tracer.py",
+      "sha256": "12dddb4972865a8a3a2e6dc9457dc40c640eeaaa529e5af9a4af98ef62feebb3"
+    },
+    "test_sampling_manual.py": {
+      "source": "tests/parametric/test_sampling_manual.py",
+      "sha256": "2b753b84b15f8302cc5ee1a59c70bb4aec8cd38f85203ab36a5f263cbd1a09d2"
+    },
+    "test_span_sampling.py": {
+      "source": "tests/parametric/test_span_sampling.py",
+      "sha256": "263984b8af6ce361d2561cdf74b5bec4f42a6e6351af477a2f7924b5dea4b490"
+    },
+    "test_trace_sampling.py": {
+      "source": "tests/parametric/test_trace_sampling.py",
+      "sha256": "fae81f7739bee4a0e7e3220dc3f87a5927b84e0137e62ff2c882054f26635f38"
+    },
+    "test_partial_flushing.py": {
+      "source": "tests/parametric/test_partial_flushing.py",
+      "sha256": "2c8a445acdc133f41a5323f6ed7ec9f955661f2233c253c30215100658747bd2"
+    },
+    "test_sampling_span_tags.py": {
+      "source": "tests/parametric/test_sampling_span_tags.py",
+      "sha256": "94b7587318fc835a02598047eac105ffadc881ff580f2b9584628f06a573acfc"
+    },
+    "test_span_events.py": {
+      "source": "tests/parametric/test_span_events.py",
+      "sha256": "04c623e842d40c5bd8ac73201515a7e2abcaf0ea957cae829920400cefd91f7d"
+    },
+    "test_span_links.py": {
+      "source": "tests/parametric/test_span_links.py",
+      "sha256": "bbe843a12bd221306647855f1e890051209195c5bb75903982281e1f6e0086a4"
+    },
+    "trace.py": {
+      "source": "utils/docker_fixtures/spec/trace.py",
+      "sha256": "0b926bc39aa5322fe3c305c1c8df85c92f4dd7a3ce75d3f4c1662299f84c1954"
+    },
+    "tracecontext.py": {
+      "source": "utils/docker_fixtures/spec/tracecontext.py",
+      "sha256": "2f6b54b8b35f95eaf54542bf7ec59c954484794971ff6cbdaab3185a0666504d"
+    },
+    "dd_constants.py": {
+      "source": "utils/dd_constants.py",
+      "sha256": "a31aa18a50759c58ba36b0bd5bc6f9fb65cd7995a677b0ee37e53c3b4fc9791a"
+    },
+    "python.yml": {
+      "source": "manifests/python.yml",
+      "sha256": "8c19e6e40c2fa81f21f8d36c8f2e5cc3ede782cb2de2d52212b106cfe7e95380"
+    },
+    "test_sampling_delegation.py": {
+      "source": "tests/parametric/test_sampling_delegation.py",
+      "sha256": "2a5e046e4f64be84f67902b21a7d8f45e183e93808f28c7ab9be1ba1dc25d33d"
+    },
+    "test_otel_tracer.py": {
+      "source": "tests/parametric/test_otel_tracer.py",
+      "sha256": "22de35b18648c0247182ae768c32b113ddf6095a359b9a7fcd20d03f3a4c8af1"
+    },
+    "test_otel_span_methods.py": {
+      "source": "tests/parametric/test_otel_span_methods.py",
+      "sha256": "6e72715795646bf82c67512a242e126dda48a8219f05b5522518f2b555e95418"
+    },
+    "test_otel_api_interoperability.py": {
+      "source": "tests/parametric/test_otel_api_interoperability.py",
+      "sha256": "0c39f0616e308ec56f6401c6d0ba3ac30da9c40962f19295b1a9f421fd328189"
+    },
+    "test_config_consistency.py": {
+      "source": "tests/parametric/test_config_consistency.py",
+      "sha256": "10b829ff3c97ef116afd1d072d566cccbda18a1c2e4772e09034446400ea7099"
+    },
+    "otel_env_vars/test_otel_service_name.py": {
+      "source": "tests/parametric/otel_env_vars/test_otel_service_name.py",
+      "sha256": "d1ffc13a19e631a2b42280581003789093697919dbd22ab8897ffcb43a995007"
+    },
+    "otel_env_vars/test_otel_resource_attributes.py": {
+      "source": "tests/parametric/otel_env_vars/test_otel_resource_attributes.py",
+      "sha256": "dcc244f1fce5b7a0e858d99231db6df462a31678c65f55ecc9bf4a4cf91392a1"
+    },
+    "otel_env_vars/test_otel_sdk_disabled.py": {
+      "source": "tests/parametric/otel_env_vars/test_otel_sdk_disabled.py",
+      "sha256": "338256383b9639cbe7e9e4fed5be0caaea1297a9e179a5023050ad8258012b97"
+    },
+    "otel_env_vars/test_otel_traces_sampler.py": {
+      "source": "tests/parametric/otel_env_vars/test_otel_traces_sampler.py",
+      "sha256": "05258676abc2f5dd242c231cb819b45aa4f39d4639306746cc88ceb0e650739d"
+    },
+    "otel_env_vars/test_otel_traces_sampler_arg.py": {
+      "source": "tests/parametric/otel_env_vars/test_otel_traces_sampler_arg.py",
+      "sha256": "c97236d98ab5b510828bf21ed2885919f0fa274e28979d94fdf07a51c7a4df6e"
+    },
+    "otel_env_vars/test_otel_traces_exporter.py": {
+      "source": "tests/parametric/otel_env_vars/test_otel_traces_exporter.py",
+      "sha256": "d8aef0d67c15b0b688b3cee18836ad014bfd1935ee5e3472f15f39ba914f0f5c"
+    }
+  },
+  "sourceSelection": {
+    "test_config_consistency.py": {
+      "topLevelNodesBeforeLine": 364,
+      "reason": "Stable configuration file writes, DogStatsD URL introspection, and external process fixtures need separate labs; selected original tracing configuration classes are retained unchanged."
+    }
+  }
+}

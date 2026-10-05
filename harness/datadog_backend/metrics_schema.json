@@ -1,0 +1,321 @@
+{
+  "source": "https://github.com/DataDog/agent-payload/blob/v5.0.207/proto/metrics/agent_payload.proto",
+  "sourceSha256": "f7873c975585f2e55ebd66011e383d02971cdb9b6135cdf0d3518ec0d78efe08",
+  "messages": {
+    ".datadog.agentpayload.Origin": {
+      "map": false,
+      "fields": {
+        "4": {
+          "name": "origin_product",
+          "type": 13,
+          "repeated": false
+        },
+        "5": {
+          "name": "origin_category",
+          "type": 13,
+          "repeated": false
+        },
+        "6": {
+          "name": "origin_service",
+          "type": 13,
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.agentpayload.Metadata": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "origin",
+          "type": 11,
+          "repeated": false,
+          "message": ".datadog.agentpayload.Origin"
+        }
+      }
+    },
+    ".datadog.agentpayload.CommonMetadata": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "agent_version",
+          "type": 9,
+          "repeated": false
+        },
+        "2": {
+          "name": "timezone",
+          "type": 9,
+          "repeated": false
+        },
+        "3": {
+          "name": "current_epoch",
+          "type": 1,
+          "repeated": false
+        },
+        "4": {
+          "name": "internal_ip",
+          "type": 9,
+          "repeated": false
+        },
+        "5": {
+          "name": "public_ip",
+          "type": 9,
+          "repeated": false
+        },
+        "6": {
+          "name": "api_key",
+          "type": 9,
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.agentpayload.MetricPayload.MetricPoint": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "value",
+          "type": 1,
+          "repeated": false
+        },
+        "2": {
+          "name": "timestamp",
+          "type": 3,
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.agentpayload.MetricPayload.Resource": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "type",
+          "type": 9,
+          "repeated": false
+        },
+        "2": {
+          "name": "name",
+          "type": 9,
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.agentpayload.MetricPayload.MetricSeries": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "resources",
+          "type": 11,
+          "repeated": true,
+          "message": ".datadog.agentpayload.MetricPayload.Resource"
+        },
+        "2": {
+          "name": "metric",
+          "type": 9,
+          "repeated": false
+        },
+        "3": {
+          "name": "tags",
+          "type": 9,
+          "repeated": true
+        },
+        "4": {
+          "name": "points",
+          "type": 11,
+          "repeated": true,
+          "message": ".datadog.agentpayload.MetricPayload.MetricPoint"
+        },
+        "5": {
+          "name": "type",
+          "type": 14,
+          "repeated": false
+        },
+        "6": {
+          "name": "unit",
+          "type": 9,
+          "repeated": false
+        },
+        "7": {
+          "name": "source_type_name",
+          "type": 9,
+          "repeated": false
+        },
+        "8": {
+          "name": "interval",
+          "type": 3,
+          "repeated": false
+        },
+        "9": {
+          "name": "metadata",
+          "type": 11,
+          "repeated": false,
+          "message": ".datadog.agentpayload.Metadata"
+        }
+      }
+    },
+    ".datadog.agentpayload.MetricPayload": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "series",
+          "type": 11,
+          "repeated": true,
+          "message": ".datadog.agentpayload.MetricPayload.MetricSeries"
+        }
+      }
+    },
+    ".datadog.agentpayload.SketchPayload.Sketch.Distribution": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "ts",
+          "type": 3,
+          "repeated": false
+        },
+        "2": {
+          "name": "cnt",
+          "type": 3,
+          "repeated": false
+        },
+        "3": {
+          "name": "min",
+          "type": 1,
+          "repeated": false
+        },
+        "4": {
+          "name": "max",
+          "type": 1,
+          "repeated": false
+        },
+        "5": {
+          "name": "avg",
+          "type": 1,
+          "repeated": false
+        },
+        "6": {
+          "name": "sum",
+          "type": 1,
+          "repeated": false
+        },
+        "7": {
+          "name": "v",
+          "type": 1,
+          "repeated": true
+        },
+        "8": {
+          "name": "g",
+          "type": 13,
+          "repeated": true
+        },
+        "9": {
+          "name": "delta",
+          "type": 13,
+          "repeated": true
+        },
+        "10": {
+          "name": "buf",
+          "type": 1,
+          "repeated": true
+        }
+      }
+    },
+    ".datadog.agentpayload.SketchPayload.Sketch.Dogsketch": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "ts",
+          "type": 3,
+          "repeated": false
+        },
+        "2": {
+          "name": "cnt",
+          "type": 3,
+          "repeated": false
+        },
+        "3": {
+          "name": "min",
+          "type": 1,
+          "repeated": false
+        },
+        "4": {
+          "name": "max",
+          "type": 1,
+          "repeated": false
+        },
+        "5": {
+          "name": "avg",
+          "type": 1,
+          "repeated": false
+        },
+        "6": {
+          "name": "sum",
+          "type": 1,
+          "repeated": false
+        },
+        "7": {
+          "name": "k",
+          "type": 17,
+          "repeated": true
+        },
+        "8": {
+          "name": "n",
+          "type": 13,
+          "repeated": true
+        }
+      }
+    },
+    ".datadog.agentpayload.SketchPayload.Sketch": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "metric",
+          "type": 9,
+          "repeated": false
+        },
+        "2": {
+          "name": "host",
+          "type": 9,
+          "repeated": false
+        },
+        "3": {
+          "name": "distributions",
+          "type": 11,
+          "repeated": true,
+          "message": ".datadog.agentpayload.SketchPayload.Sketch.Distribution"
+        },
+        "4": {
+          "name": "tags",
+          "type": 9,
+          "repeated": true
+        },
+        "7": {
+          "name": "dogsketches",
+          "type": 11,
+          "repeated": true,
+          "message": ".datadog.agentpayload.SketchPayload.Sketch.Dogsketch"
+        },
+        "8": {
+          "name": "metadata",
+          "type": 11,
+          "repeated": false,
+          "message": ".datadog.agentpayload.Metadata"
+        }
+      }
+    },
+    ".datadog.agentpayload.SketchPayload": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "sketches",
+          "type": 11,
+          "repeated": true,
+          "message": ".datadog.agentpayload.SketchPayload.Sketch"
+        },
+        "2": {
+          "name": "metadata",
+          "type": 11,
+          "repeated": false,
+          "message": ".datadog.agentpayload.CommonMetadata"
+        }
+      }
+    }
+  }
+}

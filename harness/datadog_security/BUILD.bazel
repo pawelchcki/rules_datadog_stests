@@ -1,0 +1,17 @@
+load("@rules_python//python:defs.bzl", "py_binary", "py_test")
+package(default_visibility = ["//visibility:public"])
+exports_files(["app.py", "security_views.py"])
+py_binary(
+    name = "probe",
+    srcs = ["probe.py", "schema.py", "telemetry.py"],
+    main = "probe.py",
+    deps = ["//harness/datadog_backend:backend_lib"],
+    data = ["iast-schema.json", "waf-controls.json", "rasp-controls.json"],
+)
+py_test(
+    name = "probe_test",
+    srcs = ["probe.py", "probe_test.py", "schema.py", "telemetry.py"],
+    main = "probe_test.py",
+    deps = ["//harness/datadog_backend:backend_lib"],
+    data = ["iast-schema.json", "waf-controls.json", "rasp-controls.json"],
+)

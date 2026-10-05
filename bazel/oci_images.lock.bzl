@@ -1,6 +1,12 @@
 """Digest locks for the independently reviewed Datadog fixtures."""
 
 OCI_IMAGES = {
+    # Same Agent release and manifest index as system-tests at 098fe0967c58.
+    "datadog_agent": struct(
+        repository = "docker.io/datadog/agent",
+        digest = "sha256:ed0bd588e955d82f661d1b8dd1cdf179c1023e74a2817e7a812c99d52f05c319",
+        version = "7.83.1",
+    ),
     "gin_datadog_realworld": struct(
         repository = "ghcr.io/pawelchcki/rules_stest_apps",
         digest = "sha256:ee6a879cae36694b99a967fc4ba62b797a269422bd80249f8c7939de07cd0166",

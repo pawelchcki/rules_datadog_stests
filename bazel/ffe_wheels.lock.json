@@ -1,0 +1,13 @@
+{
+  "python": "3.11",
+  "platform": "manylinux2014_x86_64",
+  "wheels": [
+    {
+      "filename": "openfeature_sdk-0.8.3-py3-none-any.whl",
+      "name": "openfeature-sdk",
+      "version": "0.8.3",
+      "url": "https://files.pythonhosted.org/packages/f0/f5/707a5b144115de1a49bf5761a63af2545fef0a1824f72db39ddea0a3438f/openfeature_sdk-0.8.3-py3-none-any.whl",
+      "sha256": "28e817514c5398e2243d0a158f3306624383757ba833032336ceba2b3cbcddd6"
+    }
+  ]
+}

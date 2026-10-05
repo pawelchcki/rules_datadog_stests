@@ -1,0 +1,1435 @@
+{
+  "requests": [
+    {
+      "client": {
+        "state": {
+          "root_version": 1,
+          "targets_version": 0,
+          "config_states": [],
+          "has_error": false,
+          "error": "",
+          "backend_client_state": []
+        },
+        "id": "14f84303-633f-4574-aabb-3aed45f6f852",
+        "products": [],
+        "is_tracer": true,
+        "client_tracer": {
+          "runtime_id": "ccbfaff21dee4473a5cdf037d9d0bd72",
+          "language": "python",
+          "tracer_version": "4.14.0",
+          "service": "rc-lab",
+          "extra_services": [],
+          "env": "rc-env",
+          "app_version": "rc-version",
+          "tags": [
+            "local_tag:local-value",
+            "env:rc-env",
+            "version:rc-version",
+            "tracer_version:4.14.0",
+            "host_name:bazzite"
+          ],
+          "process_tags": [
+            "entrypoint.basedir:moar_coverage",
+            "entrypoint.name:-c",
+            "entrypoint.type:script",
+            "entrypoint.workdir:moar_coverage",
+            "svc.user:true"
+          ],
+          "container_tags": []
+        },
+        "is_agent": false,
+        "last_seen": 0,
+        "capabilities": [],
+        "is_updater": false,
+        "client_updater": null
+      },
+      "cached_target_files": []
+    },
+    {
+      "client": {
+        "state": {
+          "root_version": 1,
+          "targets_version": 2,
+          "config_states": [
+            {
+              "id": "lab-dynamic",
+              "version": 2,
+              "product": "APM_TRACING",
+              "apply_state": 2,
+              "apply_error": ""
+            }
+          ],
+          "has_error": false,
+          "error": "",
+          "backend_client_state": [
+            101,
+            121,
+            74,
+            109,
+            98,
+            50,
+            56,
+            105,
+            79,
+            105,
+            65,
+            105,
+            89,
+            109,
+            70,
+            121,
+            73,
+            110,
+            48,
+            61
+          ]
+        },
+        "id": "14f84303-633f-4574-aabb-3aed45f6f852",
+        "products": [
+          "LIVE_DEBUGGING_SYMBOL_DB",
+          "AGENT_TASK",
+          "AGENT_CONFIG",
+          "APM_TRACING"
+        ],
+        "is_tracer": true,
+        "client_tracer": {
+          "runtime_id": "ccbfaff21dee4473a5cdf037d9d0bd72",
+          "language": "python",
+          "tracer_version": "4.14.0",
+          "service": "rc-lab",
+          "extra_services": [],
+          "env": "rc-env",
+          "app_version": "rc-version",
+          "tags": [
+            "local_tag:local-value",
+            "env:rc-env",
+            "version:rc-version",
+            "tracer_version:4.14.0",
+            "host_name:bazzite"
+          ],
+          "process_tags": [
+            "entrypoint.basedir:moar_coverage",
+            "entrypoint.name:-c",
+            "entrypoint.type:script",
+            "entrypoint.workdir:moar_coverage",
+            "svc.user:true"
+          ],
+          "container_tags": []
+        },
+        "is_agent": false,
+        "last_seen": 0,
+        "capabilities": [
+          1,
+          33,
+          192,
+          32,
+          8,
+          240,
+          0
+        ],
+        "is_updater": false,
+        "client_updater": null
+      },
+      "cached_target_files": [
+        {
+          "path": "datadog/2/APM_TRACING/lab-dynamic/config",
+          "length": 268,
+          "hashes": [
+            {
+              "algorithm": "sha256",
+              "hash": "a44747893c0459a9eeb324e751b75d55479b7d64038572b77df94576db4f38fe"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "client": {
+        "state": {
+          "root_version": 1,
+          "targets_version": 3,
+          "config_states": [
+            {
+              "id": "lab-dynamic",
+              "version": 3,
+              "product": "APM_TRACING",
+              "apply_state": 2,
+              "apply_error": ""
+            }
+          ],
+          "has_error": false,
+          "error": "",
+          "backend_client_state": [
+            101,
+            121,
+            74,
+            109,
+            98,
+            50,
+            56,
+            105,
+            79,
+            105,
+            65,
+            105,
+            89,
+            109,
+            70,
+            121,
+            73,
+            110,
+            48,
+            61
+          ]
+        },
+        "id": "14f84303-633f-4574-aabb-3aed45f6f852",
+        "products": [
+          "LIVE_DEBUGGING_SYMBOL_DB",
+          "AGENT_TASK",
+          "AGENT_CONFIG",
+          "APM_TRACING"
+        ],
+        "is_tracer": true,
+        "client_tracer": {
+          "runtime_id": "ccbfaff21dee4473a5cdf037d9d0bd72",
+          "language": "python",
+          "tracer_version": "4.14.0",
+          "service": "rc-lab",
+          "extra_services": [],
+          "env": "rc-env",
+          "app_version": "rc-version",
+          "tags": [
+            "local_tag:local-value",
+            "env:rc-env",
+            "version:rc-version",
+            "tracer_version:4.14.0",
+            "host_name:bazzite"
+          ],
+          "process_tags": [
+            "entrypoint.basedir:moar_coverage",
+            "entrypoint.name:-c",
+            "entrypoint.type:script",
+            "entrypoint.workdir:moar_coverage",
+            "svc.user:true"
+          ],
+          "container_tags": []
+        },
+        "is_agent": false,
+        "last_seen": 0,
+        "capabilities": [
+          1,
+          33,
+          192,
+          32,
+          8,
+          240,
+          0
+        ],
+        "is_updater": false,
+        "client_updater": null
+      },
+      "cached_target_files": [
+        {
+          "path": "datadog/2/APM_TRACING/lab-dynamic/config",
+          "length": 101,
+          "hashes": [
+            {
+              "algorithm": "sha256",
+              "hash": "773b3a0797f43c194e293e2c9ee21f8c6475acbb4f3bb17393fbf5c9a78430df"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "ready": {
+    "runtime_id": "ccbfaff21dee4473a5cdf037d9d0bd72",
+    "tracer_version": "4.14.0"
+  },
+  "identities": [
+    {
+      "trace_id": "141902309483999482014859982491295843345",
+      "span_id": "8505891912970785792",
+      "stage": 1,
+      "log": {}
+    },
+    {
+      "trace_id": "141902309880140294583939375021710943386",
+      "span_id": "14304056669544452030",
+      "stage": 2,
+      "log": {
+        "dd.trace_id": "6ac1640a00000000c44869179c70a49a",
+        "dd.span_id": "14304056669544452030",
+        "dd.service": "rc-lab",
+        "dd.version": "rc-version",
+        "dd.env": "rc-env"
+      }
+    },
+    {
+      "trace_id": "141902310276281107149783766228486044436",
+      "span_id": "13659399616303419814",
+      "stage": 3,
+      "log": {}
+    }
+  ],
+  "spans": [
+    {
+      "service": "rc-lab",
+      "name": "rc.lab.stage",
+      "resource": "stage-1",
+      "trace_id": 16385965617191486481,
+      "span_id": 8505891912970785792,
+      "start": 1791058949379202685,
+      "duration": 3921641,
+      "meta": {
+        "language": "python",
+        "runtime-id": "ccbfaff21dee4473a5cdf037d9d0bd72",
+        "_dd.p.tid": "6ac1640500000000",
+        "_dd.p.dm": "-0",
+        "_dd.tags.process": "entrypoint.basedir:moar_coverage,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:moar_coverage,svc.user:true",
+        "env": "rc-env",
+        "version": "rc-version",
+        "local_tag": "local-value"
+      },
+      "metrics": {
+        "process_id": 1385918.0,
+        "_dd.tracer_kr": 1.0,
+        "_sampling_priority_v1": 1.0,
+        "_dd.top_level": 1.0
+      }
+    },
+    {
+      "service": "rc-lab",
+      "name": "aiohttp.request",
+      "resource": "aiohttp.request",
+      "trace_id": 16385965617191486481,
+      "span_id": 10913034066619213453,
+      "parent_id": 8505891912970785792,
+      "start": 1791058949379894721,
+      "duration": 2949320,
+      "meta": {
+        "http.method": "GET",
+        "http.status_msg": "OK",
+        "_dd.svc_src": "aiohttp_client",
+        "component": "aiohttp_client",
+        "env": "rc-env",
+        "out.host": "127.0.0.1",
+        "version": "rc-version",
+        "http.status_code": "200",
+        "span.kind": "client",
+        "http.url": "http://127.0.0.1:36265/info",
+        "local_tag": "local-value"
+      },
+      "type": "http"
+    },
+    {
+      "service": "rc-lab",
+      "name": "TCPConnector.connect",
+      "resource": "TCPConnector.connect",
+      "trace_id": 16385965617191486481,
+      "span_id": 15597583251388818477,
+      "parent_id": 10913034066619213453,
+      "start": 1791058949380104213,
+      "duration": 313957,
+      "meta": {
+        "_dd.p.tid": "6ac1640500000000",
+        "_dd.svc_src": "aiohttp",
+        "component": "aiohttp",
+        "env": "rc-env",
+        "version": "rc-version",
+        "span.kind": "client",
+        "local_tag": "local-value"
+      }
+    },
+    {
+      "service": "rc-lab",
+      "name": "rc.lab.stage",
+      "resource": "stage-2",
+      "trace_id": 14143670179886834842,
+      "span_id": 14304056669544452030,
+      "start": 1791058954501943387,
+      "duration": 4310117,
+      "meta": {
+        "runtime-id": "ccbfaff21dee4473a5cdf037d9d0bd72",
+        "_dd.p.tid": "6ac1640a00000000",
+        "_dd.p.dm": "-3",
+        "_dd.tags.process": "entrypoint.basedir:moar_coverage,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:moar_coverage,svc.user:true",
+        "_dd.p.ksr": "0",
+        "env": "rc-env",
+        "rc_tag": "remote-value",
+        "version": "rc-version",
+        "language": "python"
+      },
+      "metrics": {
+        "_dd.rule_psr": 0.0,
+        "process_id": 1385918.0,
+        "_sampling_priority_v1": -1.0,
+        "_dd.top_level": 1.0,
+        "_dd.tracer_kr": 1.0
+      }
+    },
+    {
+      "service": "rc-lab",
+      "name": "aiohttp.request",
+      "resource": "aiohttp.request",
+      "trace_id": 14143670179886834842,
+      "span_id": 9512832855829454919,
+      "parent_id": 14304056669544452030,
+      "start": 1791058954502572695,
+      "duration": 3333579,
+      "meta": {
+        "http.method": "GET",
+        "http.status_msg": "OK",
+        "_dd.svc_src": "aiohttp_client",
+        "component": "aiohttp_client",
+        "rc_tag": "remote-value",
+        "env": "rc-env",
+        "out.host": "127.0.0.1",
+        "version": "rc-version",
+        "rc.header": "header-value",
+        "http.status_code": "200",
+        "span.kind": "client",
+        "http.url": "http://127.0.0.1:36265/info"
+      },
+      "type": "http"
+    },
+    {
+      "service": "rc-lab",
+      "name": "TCPConnector.connect",
+      "resource": "TCPConnector.connect",
+      "trace_id": 14143670179886834842,
+      "span_id": 11559955209540823281,
+      "parent_id": 9512832855829454919,
+      "start": 1791058954502970840,
+      "duration": 356467,
+      "meta": {
+        "_dd.p.tid": "6ac1640a00000000",
+        "_dd.svc_src": "aiohttp",
+        "component": "aiohttp",
+        "env": "rc-env",
+        "rc_tag": "remote-value",
+        "version": "rc-version",
+        "span.kind": "client"
+      }
+    },
+    {
+      "service": "rc-lab",
+      "name": "rc.lab.stage",
+      "resource": "stage-3",
+      "trace_id": 8666373418942184212,
+      "span_id": 13659399616303419814,
+      "start": 1791058959578050772,
+      "duration": 3881416,
+      "meta": {
+        "language": "python",
+        "runtime-id": "ccbfaff21dee4473a5cdf037d9d0bd72",
+        "_dd.p.tid": "6ac1640f00000000",
+        "_dd.p.dm": "-0",
+        "_dd.tags.process": "entrypoint.basedir:moar_coverage,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:moar_coverage,svc.user:true",
+        "env": "rc-env",
+        "version": "rc-version",
+        "local_tag": "local-value"
+      },
+      "metrics": {
+        "process_id": 1385918.0,
+        "_dd.tracer_kr": 1.0,
+        "_sampling_priority_v1": 1.0,
+        "_dd.top_level": 1.0
+      }
+    },
+    {
+      "service": "rc-lab",
+      "name": "aiohttp.request",
+      "resource": "aiohttp.request",
+      "trace_id": 8666373418942184212,
+      "span_id": 11793321639466274564,
+      "parent_id": 13659399616303419814,
+      "start": 1791058959578558182,
+      "duration": 3105062,
+      "meta": {
+        "http.method": "GET",
+        "http.status_msg": "OK",
+        "_dd.svc_src": "aiohttp_client",
+        "component": "aiohttp_client",
+        "env": "rc-env",
+        "out.host": "127.0.0.1",
+        "version": "rc-version",
+        "http.status_code": "200",
+        "span.kind": "client",
+        "http.url": "http://127.0.0.1:36265/info",
+        "local_tag": "local-value"
+      },
+      "type": "http"
+    },
+    {
+      "service": "rc-lab",
+      "name": "TCPConnector.connect",
+      "resource": "TCPConnector.connect",
+      "trace_id": 8666373418942184212,
+      "span_id": 15308516786231646389,
+      "parent_id": 11793321639466274564,
+      "start": 1791058959578754740,
+      "duration": 326311,
+      "meta": {
+        "_dd.p.tid": "6ac1640f00000000",
+        "_dd.svc_src": "aiohttp",
+        "component": "aiohttp",
+        "env": "rc-env",
+        "version": "rc-version",
+        "span.kind": "client",
+        "local_tag": "local-value"
+      }
+    }
+  ],
+  "agent_spans": [
+    {
+      "service": "rc-lab",
+      "name": "rc.lab.stage",
+      "resource": "stage-1",
+      "trace_id": 16385965617191486481,
+      "span_id": 8505891912970785792,
+      "start": 1791058949379202685,
+      "duration": 3921641,
+      "meta": {
+        "runtime-id": "ccbfaff21dee4473a5cdf037d9d0bd72",
+        "local_tag": "local-value",
+        "_dd.tags.process": "entrypoint.basedir:moar_coverage,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:moar_coverage,svc.user:true",
+        "_dd.p.dm": "-0",
+        "language": "python",
+        "_dd.install.time": "1791058948",
+        "_dd.install.type": "manual",
+        "_dd.install.id": "2de96287-b0bd-4f79-bf12-440172e34b79",
+        "version": "rc-version",
+        "env": "rc-env",
+        "_dd.p.tid": "6ac1640500000000"
+      },
+      "metrics": {
+        "_sampling_priority_v1": 1.0,
+        "_dd.tracer_kr": 1.0,
+        "process_id": 1385918.0,
+        "_sampling_priority_rate_v1": 1.0,
+        "_top_level": 1.0,
+        "_dd.top_level": 1.0
+      }
+    },
+    {
+      "service": "rc-lab",
+      "name": "aiohttp.request",
+      "resource": "aiohttp.request",
+      "trace_id": 16385965617191486481,
+      "span_id": 10913034066619213453,
+      "parent_id": 8505891912970785792,
+      "start": 1791058949379894721,
+      "duration": 2949320,
+      "meta": {
+        "local_tag": "local-value",
+        "http.url": "http://127.0.0.1:36265/info",
+        "version": "rc-version",
+        "out.host": "127.0.0.1",
+        "component": "aiohttp_client",
+        "_dd.svc_src": "aiohttp_client",
+        "http.status_msg": "OK",
+        "http.method": "GET",
+        "span.kind": "client",
+        "http.status_code": "200",
+        "env": "rc-env"
+      },
+      "type": "http"
+    },
+    {
+      "service": "rc-lab",
+      "name": "TCPConnector.connect",
+      "resource": "TCPConnector.connect",
+      "trace_id": 16385965617191486481,
+      "span_id": 15597583251388818477,
+      "parent_id": 10913034066619213453,
+      "start": 1791058949380104213,
+      "duration": 313957,
+      "meta": {
+        "_dd.svc_src": "aiohttp",
+        "_dd.p.tid": "6ac1640500000000",
+        "local_tag": "local-value",
+        "span.kind": "client",
+        "version": "rc-version",
+        "env": "rc-env",
+        "component": "aiohttp"
+      }
+    },
+    {
+      "service": "rc-lab",
+      "name": "rc.lab.stage",
+      "resource": "stage-3",
+      "trace_id": 8666373418942184212,
+      "span_id": 13659399616303419814,
+      "start": 1791058959578050772,
+      "duration": 3881416,
+      "meta": {
+        "version": "rc-version",
+        "env": "rc-env",
+        "_dd.tags.process": "entrypoint.basedir:moar_coverage,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:moar_coverage,svc.user:true",
+        "_dd.p.tid": "6ac1640f00000000",
+        "runtime-id": "ccbfaff21dee4473a5cdf037d9d0bd72",
+        "language": "python",
+        "local_tag": "local-value",
+        "_dd.p.dm": "-0"
+      },
+      "metrics": {
+        "_sampling_priority_rate_v1": 1.0,
+        "_top_level": 1.0,
+        "_dd.top_level": 1.0,
+        "_sampling_priority_v1": 1.0,
+        "_dd.tracer_kr": 1.0,
+        "process_id": 1385918.0
+      }
+    },
+    {
+      "service": "rc-lab",
+      "name": "aiohttp.request",
+      "resource": "aiohttp.request",
+      "trace_id": 8666373418942184212,
+      "span_id": 11793321639466274564,
+      "parent_id": 13659399616303419814,
+      "start": 1791058959578558182,
+      "duration": 3105062,
+      "meta": {
+        "http.status_msg": "OK",
+        "http.method": "GET",
+        "local_tag": "local-value",
+        "http.url": "http://127.0.0.1:36265/info",
+        "version": "rc-version",
+        "env": "rc-env",
+        "component": "aiohttp_client",
+        "_dd.svc_src": "aiohttp_client",
+        "span.kind": "client",
+        "http.status_code": "200",
+        "out.host": "127.0.0.1"
+      },
+      "type": "http"
+    },
+    {
+      "service": "rc-lab",
+      "name": "TCPConnector.connect",
+      "resource": "TCPConnector.connect",
+      "trace_id": 8666373418942184212,
+      "span_id": 15308516786231646389,
+      "parent_id": 11793321639466274564,
+      "start": 1791058959578754740,
+      "duration": 326311,
+      "meta": {
+        "env": "rc-env",
+        "component": "aiohttp",
+        "_dd.svc_src": "aiohttp",
+        "_dd.p.tid": "6ac1640f00000000",
+        "local_tag": "local-value",
+        "span.kind": "client",
+        "version": "rc-version"
+      }
+    }
+  ],
+  "backend": [
+    {
+      "index": 3,
+      "path": "/api/v0.1/configurations",
+      "headers": {
+        "host": "127.0.0.1:35291",
+        "user-agent": "datadog-agent/unknown (go1.26.7)",
+        "content-length": "115",
+        "content-type": "application/x-protobuf",
+        "accept-encoding": "gzip"
+      },
+      "status": 200,
+      "raw_sha256": "6880cf8b0f463cbb76bd5b8088a747d28085b5cf479d2365882bf9c0ac5fe2ce",
+      "raw_size": 115,
+      "raw_file": "request-000003.body",
+      "payload": {
+        "request": {
+          "hostname": "rc-agent",
+          "agentVersion": "7.83.1",
+          "trace_agent_env": "rc-env",
+          "org_uuid": "00000000-0000-0000-0000-000000000001",
+          "tags": [
+            "env:rc-env"
+          ],
+          "agent_uuid": "ddf85087-e40d-4084-92d8-f22f2512470e"
+        },
+        "version": 1,
+        "response_file": "rc-response-9c92f6fa0e39da6804b7c8a2e1b8f5ae49e5c7e7f96c25038ab87342f9a94498.body",
+        "response_sha256": "9c92f6fa0e39da6804b7c8a2e1b8f5ae49e5c7e7f96c25038ab87342f9a94498"
+      }
+    },
+    {
+      "index": 4,
+      "path": "/api/v0.1/configurations",
+      "headers": {
+        "host": "127.0.0.1:35291",
+        "user-agent": "datadog-agent/unknown (go1.26.7)",
+        "content-length": "281",
+        "content-type": "application/x-protobuf",
+        "accept-encoding": "gzip"
+      },
+      "status": 200,
+      "raw_sha256": "78fcd8f629cc49b4deef20ec3b6e49c586ddfb12236985e62bdbb7fc55977689",
+      "raw_size": 281,
+      "raw_file": "request-000004.body",
+      "payload": {
+        "request": {
+          "hostname": "rc-agent",
+          "agentVersion": "7.83.1",
+          "current_config_snapshot_version": 1,
+          "new_products": [
+            "AGENT_CONFIG",
+            "METRIC_CONTROL",
+            "AGENT_TASK"
+          ],
+          "active_clients": [
+            {
+              "state": {
+                "root_version": 1
+              },
+              "id": "a_73AxwT8MHPrc197CB1e",
+              "products": [
+                "AGENT_CONFIG",
+                "METRIC_CONTROL",
+                "AGENT_TASK"
+              ],
+              "is_agent": true,
+              "client_agent": {
+                "name": "core-agent",
+                "version": "7.83.1"
+              },
+              "last_seen": 1791058936495
+            }
+          ],
+          "current_director_root_version": 1,
+          "current_config_root_version": 1,
+          "backend_client_state": {
+            "base64": "eyJmb28iOiAiYmFyIn0="
+          },
+          "trace_agent_env": "rc-env",
+          "org_uuid": "00000000-0000-0000-0000-000000000001",
+          "tags": [
+            "env:rc-env"
+          ],
+          "agent_uuid": "ddf85087-e40d-4084-92d8-f22f2512470e"
+        },
+        "version": 1,
+        "response_file": "rc-response-9c92f6fa0e39da6804b7c8a2e1b8f5ae49e5c7e7f96c25038ab87342f9a94498.body",
+        "response_sha256": "9c92f6fa0e39da6804b7c8a2e1b8f5ae49e5c7e7f96c25038ab87342f9a94498"
+      }
+    },
+    {
+      "index": 6,
+      "path": "/api/v0.1/configurations",
+      "headers": {
+        "host": "127.0.0.1:35291",
+        "user-agent": "datadog-agent/unknown (go1.26.7)",
+        "content-length": "281",
+        "content-type": "application/x-protobuf",
+        "accept-encoding": "gzip"
+      },
+      "status": 200,
+      "raw_sha256": "125540c07ebd9a350be14e68a9c136b36b52cfef8396c1884cfbbbeed36560f4",
+      "raw_size": 281,
+      "raw_file": "request-000006.body",
+      "payload": {
+        "request": {
+          "hostname": "rc-agent",
+          "agentVersion": "7.83.1",
+          "current_config_snapshot_version": 1,
+          "products": [
+            "METRIC_CONTROL",
+            "AGENT_TASK",
+            "AGENT_CONFIG"
+          ],
+          "active_clients": [
+            {
+              "state": {
+                "root_version": 1
+              },
+              "id": "a_73AxwT8MHPrc197CB1e",
+              "products": [
+                "AGENT_CONFIG",
+                "METRIC_CONTROL",
+                "AGENT_TASK"
+              ],
+              "is_agent": true,
+              "client_agent": {
+                "name": "core-agent",
+                "version": "7.83.1"
+              },
+              "last_seen": 1791058936499
+            }
+          ],
+          "current_director_root_version": 1,
+          "current_config_root_version": 1,
+          "backend_client_state": {
+            "base64": "eyJmb28iOiAiYmFyIn0="
+          },
+          "trace_agent_env": "rc-env",
+          "org_uuid": "00000000-0000-0000-0000-000000000001",
+          "tags": [
+            "env:rc-env"
+          ],
+          "agent_uuid": "ddf85087-e40d-4084-92d8-f22f2512470e"
+        },
+        "version": 1,
+        "response_file": "rc-response-9c92f6fa0e39da6804b7c8a2e1b8f5ae49e5c7e7f96c25038ab87342f9a94498.body",
+        "response_sha256": "9c92f6fa0e39da6804b7c8a2e1b8f5ae49e5c7e7f96c25038ab87342f9a94498"
+      }
+    },
+    {
+      "index": 8,
+      "path": "/api/v0.1/configurations",
+      "headers": {
+        "host": "127.0.0.1:35291",
+        "user-agent": "datadog-agent/unknown (go1.26.7)",
+        "content-length": "299",
+        "content-type": "application/x-protobuf",
+        "accept-encoding": "gzip"
+      },
+      "status": 200,
+      "raw_sha256": "5c9dcf94ff56887fe9d23f80efdef6d60b5c868297c0e7243de252e260c38f7e",
+      "raw_size": 299,
+      "raw_file": "request-000008.body",
+      "payload": {
+        "request": {
+          "hostname": "rc-agent",
+          "agentVersion": "7.83.1",
+          "current_config_snapshot_version": 1,
+          "products": [
+            "METRIC_CONTROL",
+            "AGENT_TASK",
+            "AGENT_CONFIG"
+          ],
+          "active_clients": [
+            {
+              "state": {
+                "root_version": 1,
+                "targets_version": 1,
+                "backend_client_state": {
+                  "base64": "eyJmb28iOiAiYmFyIn0="
+                }
+              },
+              "id": "a_73AxwT8MHPrc197CB1e",
+              "products": [
+                "AGENT_CONFIG",
+                "METRIC_CONTROL",
+                "AGENT_TASK"
+              ],
+              "is_agent": true,
+              "client_agent": {
+                "name": "core-agent",
+                "version": "7.83.1"
+              },
+              "last_seen": 1791058946501
+            }
+          ],
+          "current_director_root_version": 1,
+          "current_config_root_version": 1,
+          "backend_client_state": {
+            "base64": "eyJmb28iOiAiYmFyIn0="
+          },
+          "trace_agent_env": "rc-env",
+          "org_uuid": "00000000-0000-0000-0000-000000000001",
+          "tags": [
+            "env:rc-env"
+          ],
+          "agent_uuid": "ddf85087-e40d-4084-92d8-f22f2512470e"
+        },
+        "version": 1,
+        "response_file": "rc-response-9c92f6fa0e39da6804b7c8a2e1b8f5ae49e5c7e7f96c25038ab87342f9a94498.body",
+        "response_sha256": "9c92f6fa0e39da6804b7c8a2e1b8f5ae49e5c7e7f96c25038ab87342f9a94498"
+      }
+    },
+    {
+      "index": 12,
+      "path": "/api/v0.1/configurations",
+      "headers": {
+        "host": "127.0.0.1:35291",
+        "user-agent": "datadog-agent/unknown (go1.26.7)",
+        "content-length": "402",
+        "content-type": "application/x-protobuf",
+        "accept-encoding": "gzip"
+      },
+      "status": 200,
+      "raw_sha256": "65f2022db414436d66457939756c7253ba478878286e11582212f655552957e7",
+      "raw_size": 402,
+      "raw_file": "request-000012.body",
+      "payload": {
+        "request": {
+          "hostname": "rc-agent",
+          "agentVersion": "7.83.1",
+          "current_config_snapshot_version": 1,
+          "products": [
+            "METRIC_CONTROL",
+            "AGENT_TASK",
+            "AGENT_CONFIG"
+          ],
+          "new_products": [
+            "APM_SAMPLING"
+          ],
+          "active_clients": [
+            {
+              "state": {
+                "root_version": 1,
+                "targets_version": 1,
+                "backend_client_state": {
+                  "base64": "eyJmb28iOiAiYmFyIn0="
+                }
+              },
+              "id": "a_73AxwT8MHPrc197CB1e",
+              "products": [
+                "AGENT_CONFIG",
+                "METRIC_CONTROL",
+                "AGENT_TASK"
+              ],
+              "is_agent": true,
+              "client_agent": {
+                "name": "core-agent",
+                "version": "7.83.1"
+              },
+              "last_seen": 1791058946501
+            },
+            {
+              "state": {
+                "root_version": 1
+              },
+              "id": "1JJRlAIuz80nS6YtrITFy",
+              "products": [
+                "APM_SAMPLING",
+                "AGENT_CONFIG"
+              ],
+              "is_agent": true,
+              "client_agent": {
+                "name": "trace-agent",
+                "version": "7.83.1"
+              },
+              "last_seen": 1791058948102
+            }
+          ],
+          "current_director_root_version": 1,
+          "current_config_root_version": 1,
+          "backend_client_state": {
+            "base64": "eyJmb28iOiAiYmFyIn0="
+          },
+          "trace_agent_env": "rc-env",
+          "org_uuid": "00000000-0000-0000-0000-000000000001",
+          "tags": [
+            "env:rc-env"
+          ],
+          "agent_uuid": "ddf85087-e40d-4084-92d8-f22f2512470e"
+        },
+        "version": 1,
+        "response_file": "rc-response-9c92f6fa0e39da6804b7c8a2e1b8f5ae49e5c7e7f96c25038ab87342f9a94498.body",
+        "response_sha256": "9c92f6fa0e39da6804b7c8a2e1b8f5ae49e5c7e7f96c25038ab87342f9a94498"
+      }
+    },
+    {
+      "index": 14,
+      "path": "/api/v0.1/configurations",
+      "headers": {
+        "host": "127.0.0.1:35291",
+        "user-agent": "datadog-agent/unknown (go1.26.7)",
+        "content-length": "761",
+        "content-type": "application/x-protobuf",
+        "accept-encoding": "gzip"
+      },
+      "status": 200,
+      "raw_sha256": "8da252b289a151d90f361736c58c8eedbe9bffa0591388a5337fe40193ceb02e",
+      "raw_size": 761,
+      "raw_file": "request-000014.body",
+      "payload": {
+        "request": {
+          "hostname": "rc-agent",
+          "agentVersion": "7.83.1",
+          "current_config_snapshot_version": 1,
+          "products": [
+            "AGENT_CONFIG",
+            "APM_SAMPLING",
+            "METRIC_CONTROL",
+            "AGENT_TASK"
+          ],
+          "active_clients": [
+            {
+              "state": {
+                "root_version": 1,
+                "targets_version": 1,
+                "backend_client_state": {
+                  "base64": "eyJmb28iOiAiYmFyIn0="
+                }
+              },
+              "id": "a_73AxwT8MHPrc197CB1e",
+              "products": [
+                "AGENT_CONFIG",
+                "METRIC_CONTROL",
+                "AGENT_TASK"
+              ],
+              "is_agent": true,
+              "client_agent": {
+                "name": "core-agent",
+                "version": "7.83.1"
+              },
+              "last_seen": 1791058946501
+            },
+            {
+              "state": {
+                "root_version": 1
+              },
+              "id": "1JJRlAIuz80nS6YtrITFy",
+              "products": [
+                "APM_SAMPLING",
+                "AGENT_CONFIG"
+              ],
+              "is_agent": true,
+              "client_agent": {
+                "name": "trace-agent",
+                "version": "7.83.1"
+              },
+              "last_seen": 1791058948133
+            },
+            {
+              "state": {
+                "root_version": 1
+              },
+              "id": "14f84303-633f-4574-aabb-3aed45f6f852",
+              "is_tracer": true,
+              "client_tracer": {
+                "runtime_id": "ccbfaff21dee4473a5cdf037d9d0bd72",
+                "language": "python",
+                "tracer_version": "4.14.0",
+                "service": "rc-lab",
+                "env": "rc-env",
+                "app_version": "rc-version",
+                "tags": [
+                  "local_tag:local-value",
+                  "env:rc-env",
+                  "version:rc-version",
+                  "tracer_version:4.14.0",
+                  "host_name:bazzite"
+                ],
+                "process_tags": [
+                  "entrypoint.basedir:moar_coverage",
+                  "entrypoint.name:-c",
+                  "entrypoint.type:script",
+                  "entrypoint.workdir:moar_coverage",
+                  "svc.user:true"
+                ]
+              },
+              "last_seen": 1791058948713
+            }
+          ],
+          "current_director_root_version": 1,
+          "current_config_root_version": 1,
+          "backend_client_state": {
+            "base64": "eyJmb28iOiAiYmFyIn0="
+          },
+          "trace_agent_env": "rc-env",
+          "org_uuid": "00000000-0000-0000-0000-000000000001",
+          "tags": [
+            "env:rc-env"
+          ],
+          "agent_uuid": "ddf85087-e40d-4084-92d8-f22f2512470e"
+        },
+        "version": 1,
+        "response_file": "rc-response-9c92f6fa0e39da6804b7c8a2e1b8f5ae49e5c7e7f96c25038ab87342f9a94498.body",
+        "response_sha256": "9c92f6fa0e39da6804b7c8a2e1b8f5ae49e5c7e7f96c25038ab87342f9a94498"
+      }
+    },
+    {
+      "index": 17,
+      "path": "/api/v0.1/configurations",
+      "headers": {
+        "host": "127.0.0.1:35291",
+        "user-agent": "datadog-agent/unknown (go1.26.7)",
+        "content-length": "898",
+        "content-type": "application/x-protobuf",
+        "accept-encoding": "gzip"
+      },
+      "status": 200,
+      "raw_sha256": "81177b7b8df39c56e683865313c5203774ae71f7881ced0dc232de4d07d00a6d",
+      "raw_size": 898,
+      "raw_file": "request-000017.body",
+      "payload": {
+        "request": {
+          "hostname": "rc-agent",
+          "agentVersion": "7.83.1",
+          "current_config_snapshot_version": 1,
+          "products": [
+            "AGENT_TASK",
+            "AGENT_CONFIG",
+            "APM_SAMPLING",
+            "METRIC_CONTROL"
+          ],
+          "new_products": [
+            "LIVE_DEBUGGING_SYMBOL_DB",
+            "APM_TRACING"
+          ],
+          "active_clients": [
+            {
+              "state": {
+                "root_version": 1,
+                "targets_version": 1,
+                "backend_client_state": {
+                  "base64": "eyJmb28iOiAiYmFyIn0="
+                }
+              },
+              "id": "a_73AxwT8MHPrc197CB1e",
+              "products": [
+                "AGENT_CONFIG",
+                "METRIC_CONTROL",
+                "AGENT_TASK"
+              ],
+              "is_agent": true,
+              "client_agent": {
+                "name": "core-agent",
+                "version": "7.83.1"
+              },
+              "last_seen": 1791058951502
+            },
+            {
+              "state": {
+                "root_version": 1
+              },
+              "id": "1JJRlAIuz80nS6YtrITFy",
+              "products": [
+                "APM_SAMPLING",
+                "AGENT_CONFIG"
+              ],
+              "is_agent": true,
+              "client_agent": {
+                "name": "trace-agent",
+                "version": "7.83.1"
+              },
+              "last_seen": 1791058953149
+            },
+            {
+              "state": {
+                "root_version": 1,
+                "targets_version": 1,
+                "backend_client_state": {
+                  "base64": "ZXlKbWIyOGlPaUFpWW1GeUluMD0="
+                }
+              },
+              "id": "14f84303-633f-4574-aabb-3aed45f6f852",
+              "products": [
+                "LIVE_DEBUGGING_SYMBOL_DB",
+                "AGENT_TASK",
+                "AGENT_CONFIG",
+                "APM_TRACING"
+              ],
+              "is_tracer": true,
+              "client_tracer": {
+                "runtime_id": "ccbfaff21dee4473a5cdf037d9d0bd72",
+                "language": "python",
+                "tracer_version": "4.14.0",
+                "service": "rc-lab",
+                "env": "rc-env",
+                "app_version": "rc-version",
+                "tags": [
+                  "local_tag:local-value",
+                  "env:rc-env",
+                  "version:rc-version",
+                  "tracer_version:4.14.0",
+                  "host_name:bazzite"
+                ],
+                "process_tags": [
+                  "entrypoint.basedir:moar_coverage",
+                  "entrypoint.name:-c",
+                  "entrypoint.type:script",
+                  "entrypoint.workdir:moar_coverage",
+                  "svc.user:true"
+                ]
+              },
+              "last_seen": 1791058954002,
+              "capabilities": {
+                "base64": "ASHAIAjwAA=="
+              }
+            }
+          ],
+          "current_director_root_version": 1,
+          "current_config_root_version": 1,
+          "backend_client_state": {
+            "base64": "eyJmb28iOiAiYmFyIn0="
+          },
+          "trace_agent_env": "rc-env",
+          "org_uuid": "00000000-0000-0000-0000-000000000001",
+          "tags": [
+            "env:rc-env"
+          ],
+          "agent_uuid": "ddf85087-e40d-4084-92d8-f22f2512470e"
+        },
+        "version": 2,
+        "response_file": "rc-response-89cabeb52d8a4c797f6f41f952d8266d55d4c307f43742b2caf582cda8318709.body",
+        "response_sha256": "89cabeb52d8a4c797f6f41f952d8266d55d4c307f43742b2caf582cda8318709"
+      }
+    },
+    {
+      "index": 19,
+      "path": "/api/v0.1/configurations",
+      "headers": {
+        "host": "127.0.0.1:35291",
+        "user-agent": "datadog-agent/unknown (go1.26.7)",
+        "content-length": "930",
+        "content-type": "application/x-protobuf",
+        "accept-encoding": "gzip"
+      },
+      "status": 200,
+      "raw_sha256": "0595b9a94faba7ba03e8209e653ddaeeb4c803ef58f2fd7be90c46faf7677f17",
+      "raw_size": 930,
+      "raw_file": "request-000019.body",
+      "payload": {
+        "request": {
+          "hostname": "rc-agent",
+          "agentVersion": "7.83.1",
+          "current_config_snapshot_version": 2,
+          "products": [
+            "APM_TRACING",
+            "METRIC_CONTROL",
+            "AGENT_TASK",
+            "AGENT_CONFIG",
+            "APM_SAMPLING",
+            "LIVE_DEBUGGING_SYMBOL_DB"
+          ],
+          "active_clients": [
+            {
+              "state": {
+                "root_version": 1,
+                "targets_version": 1,
+                "backend_client_state": {
+                  "base64": "eyJmb28iOiAiYmFyIn0="
+                }
+              },
+              "id": "a_73AxwT8MHPrc197CB1e",
+              "products": [
+                "AGENT_CONFIG",
+                "METRIC_CONTROL",
+                "AGENT_TASK"
+              ],
+              "is_agent": true,
+              "client_agent": {
+                "name": "core-agent",
+                "version": "7.83.1"
+              },
+              "last_seen": 1791058956503
+            },
+            {
+              "state": {
+                "root_version": 1
+              },
+              "id": "1JJRlAIuz80nS6YtrITFy",
+              "products": [
+                "APM_SAMPLING",
+                "AGENT_CONFIG"
+              ],
+              "is_agent": true,
+              "client_agent": {
+                "name": "trace-agent",
+                "version": "7.83.1"
+              },
+              "last_seen": 1791058958160
+            },
+            {
+              "state": {
+                "root_version": 1,
+                "targets_version": 2,
+                "config_states": [
+                  {
+                    "id": "lab-dynamic",
+                    "version": 2,
+                    "product": "APM_TRACING",
+                    "apply_state": 2
+                  }
+                ],
+                "backend_client_state": {
+                  "base64": "ZXlKbWIyOGlPaUFpWW1GeUluMD0="
+                }
+              },
+              "id": "14f84303-633f-4574-aabb-3aed45f6f852",
+              "products": [
+                "LIVE_DEBUGGING_SYMBOL_DB",
+                "AGENT_TASK",
+                "AGENT_CONFIG",
+                "APM_TRACING"
+              ],
+              "is_tracer": true,
+              "client_tracer": {
+                "runtime_id": "ccbfaff21dee4473a5cdf037d9d0bd72",
+                "language": "python",
+                "tracer_version": "4.14.0",
+                "service": "rc-lab",
+                "env": "rc-env",
+                "app_version": "rc-version",
+                "tags": [
+                  "local_tag:local-value",
+                  "env:rc-env",
+                  "version:rc-version",
+                  "tracer_version:4.14.0",
+                  "host_name:bazzite"
+                ],
+                "process_tags": [
+                  "entrypoint.basedir:moar_coverage",
+                  "entrypoint.name:-c",
+                  "entrypoint.type:script",
+                  "entrypoint.workdir:moar_coverage",
+                  "svc.user:true"
+                ]
+              },
+              "last_seen": 1791058959076,
+              "capabilities": {
+                "base64": "ASHAIAjwAA=="
+              }
+            }
+          ],
+          "current_director_root_version": 1,
+          "current_config_root_version": 1,
+          "backend_client_state": {
+            "base64": "eyJmb28iOiAiYmFyIn0="
+          },
+          "trace_agent_env": "rc-env",
+          "org_uuid": "00000000-0000-0000-0000-000000000001",
+          "tags": [
+            "env:rc-env"
+          ],
+          "agent_uuid": "ddf85087-e40d-4084-92d8-f22f2512470e"
+        },
+        "version": 3,
+        "response_file": "rc-response-c2c4ca4fea9c5b98b95f2094ddada0127f223e99cd4c7c31625b276530ae158b.body",
+        "response_sha256": "c2c4ca4fea9c5b98b95f2094ddada0127f223e99cd4c7c31625b276530ae158b"
+      }
+    },
+    {
+      "index": 24,
+      "path": "/api/v0.1/configurations",
+      "headers": {
+        "host": "127.0.0.1:35291",
+        "user-agent": "datadog-agent/unknown (go1.26.7)",
+        "content-length": "930",
+        "content-type": "application/x-protobuf",
+        "accept-encoding": "gzip"
+      },
+      "status": 200,
+      "raw_sha256": "e2adfc1601305d7e374412955450838cc19994f6292485046107bafceab581fe",
+      "raw_size": 930,
+      "raw_file": "request-000024.body",
+      "payload": {
+        "request": {
+          "hostname": "rc-agent",
+          "agentVersion": "7.83.1",
+          "current_config_snapshot_version": 3,
+          "products": [
+            "METRIC_CONTROL",
+            "AGENT_TASK",
+            "AGENT_CONFIG",
+            "APM_SAMPLING",
+            "LIVE_DEBUGGING_SYMBOL_DB",
+            "APM_TRACING"
+          ],
+          "active_clients": [
+            {
+              "state": {
+                "root_version": 1
+              },
+              "id": "1JJRlAIuz80nS6YtrITFy",
+              "products": [
+                "APM_SAMPLING",
+                "AGENT_CONFIG"
+              ],
+              "is_agent": true,
+              "client_agent": {
+                "name": "trace-agent",
+                "version": "7.83.1"
+              },
+              "last_seen": 1791058963170
+            },
+            {
+              "state": {
+                "root_version": 1,
+                "targets_version": 3,
+                "config_states": [
+                  {
+                    "id": "lab-dynamic",
+                    "version": 3,
+                    "product": "APM_TRACING",
+                    "apply_state": 2
+                  }
+                ],
+                "backend_client_state": {
+                  "base64": "ZXlKbWIyOGlPaUFpWW1GeUluMD0="
+                }
+              },
+              "id": "14f84303-633f-4574-aabb-3aed45f6f852",
+              "products": [
+                "LIVE_DEBUGGING_SYMBOL_DB",
+                "AGENT_TASK",
+                "AGENT_CONFIG",
+                "APM_TRACING"
+              ],
+              "is_tracer": true,
+              "client_tracer": {
+                "runtime_id": "ccbfaff21dee4473a5cdf037d9d0bd72",
+                "language": "python",
+                "tracer_version": "4.14.0",
+                "service": "rc-lab",
+                "env": "rc-env",
+                "app_version": "rc-version",
+                "tags": [
+                  "local_tag:local-value",
+                  "env:rc-env",
+                  "version:rc-version",
+                  "tracer_version:4.14.0",
+                  "host_name:bazzite"
+                ],
+                "process_tags": [
+                  "entrypoint.basedir:moar_coverage",
+                  "entrypoint.name:-c",
+                  "entrypoint.type:script",
+                  "entrypoint.workdir:moar_coverage",
+                  "svc.user:true"
+                ]
+              },
+              "last_seen": 1791058959484,
+              "capabilities": {
+                "base64": "ASHAIAjwAA=="
+              }
+            },
+            {
+              "state": {
+                "root_version": 1,
+                "targets_version": 2,
+                "backend_client_state": {
+                  "base64": "eyJmb28iOiAiYmFyIn0="
+                }
+              },
+              "id": "a_73AxwT8MHPrc197CB1e",
+              "products": [
+                "AGENT_CONFIG",
+                "METRIC_CONTROL",
+                "AGENT_TASK"
+              ],
+              "is_agent": true,
+              "client_agent": {
+                "name": "core-agent",
+                "version": "7.83.1"
+              },
+              "last_seen": 1791058961505
+            }
+          ],
+          "current_director_root_version": 1,
+          "current_config_root_version": 1,
+          "backend_client_state": {
+            "base64": "eyJmb28iOiAiYmFyIn0="
+          },
+          "trace_agent_env": "rc-env",
+          "org_uuid": "00000000-0000-0000-0000-000000000001",
+          "tags": [
+            "env:rc-env"
+          ],
+          "agent_uuid": "ddf85087-e40d-4084-92d8-f22f2512470e"
+        },
+        "version": 3,
+        "response_file": "rc-response-c2c4ca4fea9c5b98b95f2094ddada0127f223e99cd4c7c31625b276530ae158b.body",
+        "response_sha256": "c2c4ca4fea9c5b98b95f2094ddada0127f223e99cd4c7c31625b276530ae158b"
+      }
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "agent_lib",
+    srcs = ["probe.py", "proxy.py"],
+    deps = ["//harness/datadog_backend:backend_lib"],
+)
+
+py_binary(
+    name = "probe",
+    srcs = ["probe.py"],
+    main = "probe.py",
+    deps = [":agent_lib"],
+)

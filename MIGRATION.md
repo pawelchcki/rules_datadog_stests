@@ -15,8 +15,9 @@ records retain their original revisions and links; they do not claim that the
 new repository has produced fresh acceptance evidence.
 
 The infrastructure pin and external-consumer example both reference
-`7958ee822daeaba400b3b26bfab371c9fea015d1` from the
-[infrastructure removal PR](https://github.com/pawelchcki/rules_stests/pull/47).
+`db94b7ae98d1c8765b2ec236f6732683bbbfb54d`, which includes the
+[infrastructure removal](https://github.com/pawelchcki/rules_stests/pull/47)
+and [native intake fixes](https://github.com/pawelchcki/rules_stests/pull/50).
 
 Validated after extraction:
 

@@ -1,0 +1,10 @@
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
+package(default_visibility = ["//visibility:public"])
+exports_files(["workload.py"])
+py_library(
+    name = "profiling_lib",
+    srcs = ["probe.py", "wire.py"],
+    deps = ["//harness/datadog_agent:agent_lib", "//harness/datadog_backend:backend_lib", "//harness/datadog_telemetry:telemetry_lib"],
+)
+py_binary(name = "probe", srcs = ["probe.py"], deps = [":profiling_lib"])
+py_test(name = "wire_test", srcs = ["wire_test.py"], deps = [":profiling_lib"])

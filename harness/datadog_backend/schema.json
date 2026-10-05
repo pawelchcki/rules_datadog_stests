@@ -1,0 +1,1077 @@
+{
+  "source": "https://github.com/DataDog/system-tests/blob/098fe0967c587db8a16b74a1e711777d0a9d5867/utils/proxy/_decoders/agent.descriptor",
+  "sha256": "f0ece4d8c9dac7a83b2a4586557005c850458824da04cfc284adb6262081cecd",
+  "messages": {
+    ".datadog.trace.SpanLink": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "trace_id",
+          "type": 4,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "trace_id_high",
+          "type": 4,
+          "message": "",
+          "repeated": false
+        },
+        "3": {
+          "name": "span_id",
+          "type": 4,
+          "message": "",
+          "repeated": false
+        },
+        "4": {
+          "name": "attributes",
+          "type": 11,
+          "message": ".datadog.trace.SpanLink.AttributesEntry",
+          "repeated": true
+        },
+        "5": {
+          "name": "tracestate",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "6": {
+          "name": "flags",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.trace.SpanLink.AttributesEntry": {
+      "map": true,
+      "fields": {
+        "1": {
+          "name": "key",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "value",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.trace.SpanEvent": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "time_unix_nano",
+          "type": 6,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "name",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "3": {
+          "name": "attributes",
+          "type": 11,
+          "message": ".datadog.trace.SpanEvent.AttributesEntry",
+          "repeated": true
+        }
+      }
+    },
+    ".datadog.trace.SpanEvent.AttributesEntry": {
+      "map": true,
+      "fields": {
+        "1": {
+          "name": "key",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "value",
+          "type": 11,
+          "message": ".datadog.trace.AttributeAnyValue",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.trace.AttributeAnyValue": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "type",
+          "type": 14,
+          "message": ".datadog.trace.AttributeAnyValue.AttributeAnyValueType",
+          "repeated": false
+        },
+        "2": {
+          "name": "string_value",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "3": {
+          "name": "bool_value",
+          "type": 8,
+          "message": "",
+          "repeated": false
+        },
+        "4": {
+          "name": "int_value",
+          "type": 3,
+          "message": "",
+          "repeated": false
+        },
+        "5": {
+          "name": "double_value",
+          "type": 1,
+          "message": "",
+          "repeated": false
+        },
+        "6": {
+          "name": "array_value",
+          "type": 11,
+          "message": ".datadog.trace.AttributeArray",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.trace.AttributeArray": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "values",
+          "type": 11,
+          "message": ".datadog.trace.AttributeArrayValue",
+          "repeated": true
+        }
+      }
+    },
+    ".datadog.trace.AttributeArrayValue": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "type",
+          "type": 14,
+          "message": ".datadog.trace.AttributeArrayValue.AttributeArrayValueType",
+          "repeated": false
+        },
+        "2": {
+          "name": "string_value",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "3": {
+          "name": "bool_value",
+          "type": 8,
+          "message": "",
+          "repeated": false
+        },
+        "4": {
+          "name": "int_value",
+          "type": 3,
+          "message": "",
+          "repeated": false
+        },
+        "5": {
+          "name": "double_value",
+          "type": 1,
+          "message": "",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.trace.Span": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "service",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "name",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "3": {
+          "name": "resource",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "4": {
+          "name": "trace_id",
+          "type": 4,
+          "message": "",
+          "repeated": false
+        },
+        "5": {
+          "name": "span_id",
+          "type": 4,
+          "message": "",
+          "repeated": false
+        },
+        "6": {
+          "name": "parent_id",
+          "type": 4,
+          "message": "",
+          "repeated": false
+        },
+        "7": {
+          "name": "start",
+          "type": 3,
+          "message": "",
+          "repeated": false
+        },
+        "8": {
+          "name": "duration",
+          "type": 3,
+          "message": "",
+          "repeated": false
+        },
+        "9": {
+          "name": "error",
+          "type": 5,
+          "message": "",
+          "repeated": false
+        },
+        "10": {
+          "name": "meta",
+          "type": 11,
+          "message": ".datadog.trace.Span.MetaEntry",
+          "repeated": true
+        },
+        "11": {
+          "name": "metrics",
+          "type": 11,
+          "message": ".datadog.trace.Span.MetricsEntry",
+          "repeated": true
+        },
+        "12": {
+          "name": "type",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "13": {
+          "name": "meta_struct",
+          "type": 11,
+          "message": ".datadog.trace.Span.MetaStructEntry",
+          "repeated": true
+        },
+        "14": {
+          "name": "span_links",
+          "type": 11,
+          "message": ".datadog.trace.SpanLink",
+          "repeated": true
+        },
+        "15": {
+          "name": "span_events",
+          "type": 11,
+          "message": ".datadog.trace.SpanEvent",
+          "repeated": true
+        }
+      }
+    },
+    ".datadog.trace.Span.MetaEntry": {
+      "map": true,
+      "fields": {
+        "1": {
+          "name": "key",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "value",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.trace.Span.MetricsEntry": {
+      "map": true,
+      "fields": {
+        "1": {
+          "name": "key",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "value",
+          "type": 1,
+          "message": "",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.trace.Span.MetaStructEntry": {
+      "map": true,
+      "fields": {
+        "1": {
+          "name": "key",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "value",
+          "type": 12,
+          "message": "",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.trace.TraceChunk": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "priority",
+          "type": 5,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "origin",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "3": {
+          "name": "spans",
+          "type": 11,
+          "message": ".datadog.trace.Span",
+          "repeated": true
+        },
+        "4": {
+          "name": "tags",
+          "type": 11,
+          "message": ".datadog.trace.TraceChunk.TagsEntry",
+          "repeated": true
+        },
+        "5": {
+          "name": "dropped_trace",
+          "type": 8,
+          "message": "",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.trace.TraceChunk.TagsEntry": {
+      "map": true,
+      "fields": {
+        "1": {
+          "name": "key",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "value",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.trace.TracerPayload": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "container_id",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "language_name",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "3": {
+          "name": "language_version",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "4": {
+          "name": "tracer_version",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "5": {
+          "name": "runtime_id",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "6": {
+          "name": "chunks",
+          "type": 11,
+          "message": ".datadog.trace.TraceChunk",
+          "repeated": true
+        },
+        "7": {
+          "name": "tags",
+          "type": 11,
+          "message": ".datadog.trace.TracerPayload.TagsEntry",
+          "repeated": true
+        },
+        "8": {
+          "name": "env",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "9": {
+          "name": "hostname",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "10": {
+          "name": "app_version",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "11": {
+          "name": "container_debug",
+          "type": 11,
+          "message": ".datadog.trace.ContainerDebug",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.trace.TracerPayload.TagsEntry": {
+      "map": true,
+      "fields": {
+        "1": {
+          "name": "key",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "value",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.trace.ContainerDebug": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "error",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "latency_ms",
+          "type": 3,
+          "message": "",
+          "repeated": false
+        },
+        "3": {
+          "name": "was_buffered",
+          "type": 8,
+          "message": "",
+          "repeated": false
+        },
+        "4": {
+          "name": "buffer_ms",
+          "type": 3,
+          "message": "",
+          "repeated": false
+        },
+        "5": {
+          "name": "buffer_eviction_reason",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.trace.idx.AnyValue": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "string_value_ref",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "bool_value",
+          "type": 8,
+          "message": "",
+          "repeated": false
+        },
+        "3": {
+          "name": "double_value",
+          "type": 1,
+          "message": "",
+          "repeated": false
+        },
+        "4": {
+          "name": "int_value",
+          "type": 3,
+          "message": "",
+          "repeated": false
+        },
+        "5": {
+          "name": "bytes_value",
+          "type": 12,
+          "message": "",
+          "repeated": false
+        },
+        "6": {
+          "name": "array_value",
+          "type": 11,
+          "message": ".datadog.trace.idx.ArrayValue",
+          "repeated": false
+        },
+        "7": {
+          "name": "key_value_list",
+          "type": 11,
+          "message": ".datadog.trace.idx.KeyValueList",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.trace.idx.KeyValue": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "key",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "value",
+          "type": 11,
+          "message": ".datadog.trace.idx.AnyValue",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.trace.idx.ArrayValue": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "values",
+          "type": 11,
+          "message": ".datadog.trace.idx.AnyValue",
+          "repeated": true
+        }
+      }
+    },
+    ".datadog.trace.idx.KeyValueList": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "key_values",
+          "type": 11,
+          "message": ".datadog.trace.idx.KeyValue",
+          "repeated": true
+        }
+      }
+    },
+    ".datadog.trace.idx.SpanLink": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "trace_id",
+          "type": 12,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "span_id",
+          "type": 6,
+          "message": "",
+          "repeated": false
+        },
+        "3": {
+          "name": "attributes",
+          "type": 11,
+          "message": ".datadog.trace.idx.SpanLink.AttributesEntry",
+          "repeated": true
+        },
+        "4": {
+          "name": "tracestate_ref",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        },
+        "5": {
+          "name": "flags",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.trace.idx.SpanLink.AttributesEntry": {
+      "map": true,
+      "fields": {
+        "1": {
+          "name": "key",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "value",
+          "type": 11,
+          "message": ".datadog.trace.idx.AnyValue",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.trace.idx.SpanEvent": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "time",
+          "type": 6,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "name_ref",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        },
+        "3": {
+          "name": "attributes",
+          "type": 11,
+          "message": ".datadog.trace.idx.SpanEvent.AttributesEntry",
+          "repeated": true
+        }
+      }
+    },
+    ".datadog.trace.idx.SpanEvent.AttributesEntry": {
+      "map": true,
+      "fields": {
+        "1": {
+          "name": "key",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "value",
+          "type": 11,
+          "message": ".datadog.trace.idx.AnyValue",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.trace.idx.Span": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "service_ref",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "name_ref",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        },
+        "3": {
+          "name": "resource_ref",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        },
+        "4": {
+          "name": "span_id",
+          "type": 6,
+          "message": "",
+          "repeated": false
+        },
+        "5": {
+          "name": "parent_id",
+          "type": 4,
+          "message": "",
+          "repeated": false
+        },
+        "6": {
+          "name": "start",
+          "type": 6,
+          "message": "",
+          "repeated": false
+        },
+        "7": {
+          "name": "duration",
+          "type": 4,
+          "message": "",
+          "repeated": false
+        },
+        "8": {
+          "name": "error",
+          "type": 8,
+          "message": "",
+          "repeated": false
+        },
+        "9": {
+          "name": "attributes",
+          "type": 11,
+          "message": ".datadog.trace.idx.Span.AttributesEntry",
+          "repeated": true
+        },
+        "10": {
+          "name": "type_ref",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        },
+        "11": {
+          "name": "links",
+          "type": 11,
+          "message": ".datadog.trace.idx.SpanLink",
+          "repeated": true
+        },
+        "12": {
+          "name": "events",
+          "type": 11,
+          "message": ".datadog.trace.idx.SpanEvent",
+          "repeated": true
+        },
+        "13": {
+          "name": "env_ref",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        },
+        "14": {
+          "name": "version_ref",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        },
+        "15": {
+          "name": "component_ref",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        },
+        "16": {
+          "name": "kind",
+          "type": 14,
+          "message": ".datadog.trace.idx.SpanKind",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.trace.idx.Span.AttributesEntry": {
+      "map": true,
+      "fields": {
+        "1": {
+          "name": "key",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "value",
+          "type": 11,
+          "message": ".datadog.trace.idx.AnyValue",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.trace.idx.TraceChunk": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "priority",
+          "type": 5,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "origin_ref",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        },
+        "3": {
+          "name": "attributes",
+          "type": 11,
+          "message": ".datadog.trace.idx.TraceChunk.AttributesEntry",
+          "repeated": true
+        },
+        "4": {
+          "name": "spans",
+          "type": 11,
+          "message": ".datadog.trace.idx.Span",
+          "repeated": true
+        },
+        "5": {
+          "name": "dropped_trace",
+          "type": 8,
+          "message": "",
+          "repeated": false
+        },
+        "6": {
+          "name": "trace_id",
+          "type": 12,
+          "message": "",
+          "repeated": false
+        },
+        "7": {
+          "name": "sampling_mechanism",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.trace.idx.TraceChunk.AttributesEntry": {
+      "map": true,
+      "fields": {
+        "1": {
+          "name": "key",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "value",
+          "type": 11,
+          "message": ".datadog.trace.idx.AnyValue",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.trace.idx.TracerPayload": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "strings",
+          "type": 9,
+          "message": "",
+          "repeated": true
+        },
+        "2": {
+          "name": "container_idref",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        },
+        "3": {
+          "name": "language_name_ref",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        },
+        "4": {
+          "name": "language_version_ref",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        },
+        "5": {
+          "name": "tracer_version_ref",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        },
+        "6": {
+          "name": "runtime_idref",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        },
+        "7": {
+          "name": "env_ref",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        },
+        "8": {
+          "name": "hostname_ref",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        },
+        "9": {
+          "name": "app_version_ref",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        },
+        "10": {
+          "name": "attributes",
+          "type": 11,
+          "message": ".datadog.trace.idx.TracerPayload.AttributesEntry",
+          "repeated": true
+        },
+        "11": {
+          "name": "chunks",
+          "type": 11,
+          "message": ".datadog.trace.idx.TraceChunk",
+          "repeated": true
+        },
+        "12": {
+          "name": "container_debug",
+          "type": 11,
+          "message": ".datadog.trace.idx.ContainerDebug",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.trace.idx.TracerPayload.AttributesEntry": {
+      "map": true,
+      "fields": {
+        "1": {
+          "name": "key",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "value",
+          "type": 11,
+          "message": ".datadog.trace.idx.AnyValue",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.trace.idx.ContainerDebug": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "error_ref",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "latency_ms",
+          "type": 3,
+          "message": "",
+          "repeated": false
+        },
+        "3": {
+          "name": "was_buffered",
+          "type": 8,
+          "message": "",
+          "repeated": false
+        },
+        "4": {
+          "name": "buffer_ms",
+          "type": 3,
+          "message": "",
+          "repeated": false
+        },
+        "5": {
+          "name": "buffer_eviction_reason_ref",
+          "type": 13,
+          "message": "",
+          "repeated": false
+        }
+      }
+    },
+    ".datadog.trace.AgentPayload": {
+      "map": false,
+      "fields": {
+        "1": {
+          "name": "host_name",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "env",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "5": {
+          "name": "tracer_payloads",
+          "type": 11,
+          "message": ".datadog.trace.TracerPayload",
+          "repeated": true
+        },
+        "6": {
+          "name": "tags",
+          "type": 11,
+          "message": ".datadog.trace.AgentPayload.TagsEntry",
+          "repeated": true
+        },
+        "7": {
+          "name": "agent_version",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "8": {
+          "name": "target_tps",
+          "type": 1,
+          "message": "",
+          "repeated": false
+        },
+        "9": {
+          "name": "error_tps",
+          "type": 1,
+          "message": "",
+          "repeated": false
+        },
+        "10": {
+          "name": "rare_sampler_enabled",
+          "type": 8,
+          "message": "",
+          "repeated": false
+        },
+        "11": {
+          "name": "idx_tracer_payloads",
+          "type": 11,
+          "message": ".datadog.trace.idx.TracerPayload",
+          "repeated": true
+        }
+      }
+    },
+    ".datadog.trace.AgentPayload.TagsEntry": {
+      "map": true,
+      "fields": {
+        "1": {
+          "name": "key",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        },
+        "2": {
+          "name": "value",
+          "type": 9,
+          "message": "",
+          "repeated": false
+        }
+      }
+    }
+  }
+}

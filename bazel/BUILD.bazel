@@ -1,1 +1,7 @@
 exports_files(["oci_deps.bzl", "oci_images.lock.bzl"])
+
+exports_files(["wheel_deps.bzl", "openai_wheels.lock.json"])
+
+exports_files(["otel_wheels.lock.json"])
+
+exports_files(["ffe_wheels.lock.json"])

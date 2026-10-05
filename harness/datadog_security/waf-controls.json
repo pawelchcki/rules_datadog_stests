@@ -1,0 +1,181 @@
+{
+  "version": "2.2",
+  "metadata": {
+    "rules_version": "security-lab-1"
+  },
+  "rules": [
+    {
+      "id": "lab-detect",
+      "name": "Security lab detect",
+      "tags": {
+        "type": "security_lab",
+        "category": "attack_attempt"
+      },
+      "conditions": [
+        {
+          "operator": "match_regex",
+          "parameters": {
+            "inputs": [
+              {
+                "address": "server.request.query",
+                "key_path": [
+                  "attack"
+                ]
+              }
+            ],
+            "regex": "^detect$"
+          }
+        }
+      ]
+    },
+    {
+      "id": "lab-block",
+      "name": "Security lab block",
+      "tags": {
+        "type": "security_lab",
+        "category": "attack_attempt"
+      },
+      "conditions": [
+        {
+          "operator": "match_regex",
+          "parameters": {
+            "inputs": [
+              {
+                "address": "server.request.query",
+                "key_path": [
+                  "attack"
+                ]
+              }
+            ],
+            "regex": "^block$"
+          }
+        }
+      ],
+      "on_match": [
+        "block"
+      ]
+    },
+    {
+      "id": "lab-client-ip",
+      "name": "Security lab client-ip",
+      "tags": {
+        "type": "security_lab",
+        "category": "security_response"
+      },
+      "conditions": [
+        {
+          "operator": "match_regex",
+          "parameters": {
+            "inputs": [
+              {
+                "address": "http.client_ip"
+              }
+            ],
+            "regex": "^42\\.42\\.42\\.42$"
+          }
+        },
+        {
+          "operator": "match_regex",
+          "parameters": {
+            "inputs": [
+              {
+                "address": "server.request.query",
+                "key_path": [
+                  "block_target"
+                ]
+              }
+            ],
+            "regex": "^ip$"
+          }
+        }
+      ],
+      "on_match": [
+        "block"
+      ]
+    },
+    {
+      "id": "lab-user",
+      "name": "Security lab user",
+      "tags": {
+        "type": "security_lab",
+        "category": "security_response"
+      },
+      "conditions": [
+        {
+          "operator": "match_regex",
+          "parameters": {
+            "inputs": [
+              {
+                "address": "usr.id"
+              }
+            ],
+            "regex": "^security-blocked-user$"
+          }
+        }
+      ],
+      "on_match": [
+        "block"
+      ]
+    },
+    {
+      "id": "lab-response",
+      "name": "Security lab response",
+      "tags": {
+        "type": "security_lab",
+        "category": "security_response"
+      },
+      "conditions": [
+        {
+          "operator": "match_regex",
+          "parameters": {
+            "inputs": [
+              {
+                "address": "server.response.status"
+              }
+            ],
+            "regex": "^201$"
+          }
+        }
+      ],
+      "on_match": [
+        "block"
+      ]
+    }
+  ],
+  "exclusions": [
+    {
+      "id": "lab-exclusion",
+      "rules_target": [
+        {
+          "rule_id": "lab-detect"
+        }
+      ],
+      "conditions": [
+        {
+          "operator": "match_regex",
+          "parameters": {
+            "inputs": [
+              {
+                "address": "server.request.query",
+                "key_path": [
+                  "exclude"
+                ]
+              }
+            ],
+            "regex": "^yes$"
+          }
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "block",
+      "type": "block_request",
+      "parameters": {
+        "status_code": 403,
+        "type": "json"
+      }
+    }
+  ]
+}

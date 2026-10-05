@@ -1,0 +1,313 @@
+{
+  "root": {
+    "signed": {
+      "_type": "root",
+      "consistent_snapshot": true,
+      "expires": "3000-01-01T00:00:00Z",
+      "keys": {
+        "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070": {
+          "keyid_hash_algorithms": [
+            "sha256"
+          ],
+          "keytype": "ed25519",
+          "keyval": {
+            "public": "3b6a27bcceb6a42d62a3a8d02a6f0d73653215771de243a63ac048a18b59da29"
+          },
+          "scheme": "ed25519"
+        }
+      },
+      "roles": {
+        "root": {
+          "keyids": [
+            "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070"
+          ],
+          "threshold": 1
+        },
+        "snapshot": {
+          "keyids": [
+            "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070"
+          ],
+          "threshold": 1
+        },
+        "targets": {
+          "keyids": [
+            "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070"
+          ],
+          "threshold": 1
+        },
+        "timestamp": {
+          "keyids": [
+            "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070"
+          ],
+          "threshold": 1
+        }
+      },
+      "spec_version": "1.0",
+      "version": 1
+    },
+    "signatures": [
+      {
+        "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+        "sig": "3e618ffd9a271cb3084d6047e29121f4cc2c85561106317eb4d19469267a7d7563b7026c0235ced18ad643bdef9c22c69e0371331c82106eed38061d62dc970a"
+      }
+    ]
+  },
+  "stages": [
+    {
+      "version": 1,
+      "targets": {
+        "signed": {
+          "_type": "targets",
+          "custom": {
+            "opaque_backend_state": "eyJmb28iOiAiYmFyIn0="
+          },
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 1,
+          "targets": {}
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "0e6aec8a611902c10bdb1a404e4f4939ec51057cf93e42f222215f4f1878bfa0804bd38cd3846ff24c94b963c9396b0e953a1a46275b45aa1103fc9f53442b04"
+          }
+        ]
+      },
+      "snapshot": {
+        "signed": {
+          "_type": "snapshot",
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 1,
+          "meta": {
+            "targets.json": {
+              "hashes": {
+                "sha256": "08cdcb606097685d4deea1e0bd75e1a4c53d3fce8de8dccfc81cd9571462ed1f"
+              },
+              "length": 395,
+              "version": 1
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "f3a7b00b7022ec0cb9498c521ea0c5a6dd05f19dee66249ae485cf023de61a7982a44c41baa0bc7fde6267c3cf105cbebec01def16e799680c19116a7a11140d"
+          }
+        ]
+      },
+      "timestamp": {
+        "signed": {
+          "_type": "timestamp",
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 1,
+          "meta": {
+            "snapshot.json": {
+              "hashes": {
+                "sha256": "723a3746e5a1141d98e86e4307f41c2313f877e40041957aab9312f3a4d11315"
+              },
+              "length": 464,
+              "version": 1
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "3eb658100be48c514c90b6454163589f2c72c9da0b003027f6a793951eef87fab5c630d995658e893bca26061eea2002f0600c0bd71b675d44e1403adafbc609"
+          }
+        ]
+      },
+      "files": {}
+    },
+    {
+      "version": 2,
+      "targets": {
+        "signed": {
+          "_type": "targets",
+          "custom": {
+            "opaque_backend_state": "eyJmb28iOiAiYmFyIn0="
+          },
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 2,
+          "targets": {
+            "datadog/2/APM_TRACING/lab-dynamic/config": {
+              "custom": {
+                "v": 2
+              },
+              "length": 268,
+              "hashes": {
+                "sha256": "a44747893c0459a9eeb324e751b75d55479b7d64038572b77df94576db4f38fe"
+              }
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "60c187e0bfe04bb92c57eb627ffdc4dcd204cbdb9e9095914376bce1915a57a38dca7df50ae17637f94b708fac794acebf40d8e7308045388a6e7598c5292504"
+          }
+        ]
+      },
+      "snapshot": {
+        "signed": {
+          "_type": "snapshot",
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 2,
+          "meta": {
+            "targets.json": {
+              "hashes": {
+                "sha256": "d3bdb239ba6669d85d3f48492cf565cd15eaafb76af30881d3bfd13125a138fa"
+              },
+              "length": 556,
+              "version": 2
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "6604275425618b07c972078dc8243a070e2f676b74496f3b8461242d962e266e04f232b11fb742ebec48a834d909c3653fc28197b2f17472e16f0199d278e803"
+          }
+        ]
+      },
+      "timestamp": {
+        "signed": {
+          "_type": "timestamp",
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 2,
+          "meta": {
+            "snapshot.json": {
+              "hashes": {
+                "sha256": "e10448d601bf5a12a034df68733b5e50397cd8129450c4b6586b9ddf503af132"
+              },
+              "length": 464,
+              "version": 2
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "34375e1681b34842b09d1e8a91f3b2b2c3bb0b175cff1932f1b2de91d37315f20424e9193aad84fc2bd740ae138f057989e347d30ba2a0d5538379d90f1cf401"
+          }
+        ]
+      },
+      "files": {
+        "datadog/2/APM_TRACING/lab-dynamic/config": {
+          "action": "enable",
+          "revision": 2,
+          "service_target": {
+            "service": "rc-lab",
+            "env": "rc-env"
+          },
+          "lib_config": {
+            "tracing_sampling_rate": 0.0,
+            "tracing_tags": [
+              "rc_tag:remote-value"
+            ],
+            "log_injection_enabled": true,
+            "tracing_header_tags": [
+              {
+                "header": "x-rc-header",
+                "tag_name": "rc.header"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "version": 3,
+      "targets": {
+        "signed": {
+          "_type": "targets",
+          "custom": {
+            "opaque_backend_state": "eyJmb28iOiAiYmFyIn0="
+          },
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 3,
+          "targets": {
+            "datadog/2/APM_TRACING/lab-dynamic/config": {
+              "custom": {
+                "v": 3
+              },
+              "length": 101,
+              "hashes": {
+                "sha256": "773b3a0797f43c194e293e2c9ee21f8c6475acbb4f3bb17393fbf5c9a78430df"
+              }
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "b82156143bd1ef61d84b56339dd8ff6adc98a026f067eeb22d0a0f90bac4dc56dc4d707809a3ef97d1e591f70129acd9046d50e38ba34b4f9320977d3420c30a"
+          }
+        ]
+      },
+      "snapshot": {
+        "signed": {
+          "_type": "snapshot",
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 3,
+          "meta": {
+            "targets.json": {
+              "hashes": {
+                "sha256": "ce412d1a126e9afcc6b386fd0b0415ecb9e0666a018ef92aa37dfb7166580652"
+              },
+              "length": 556,
+              "version": 3
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "2dbe74b1bfb128d0541cd395b3a89434b68157e539f4f526cbec745db7a515e45b8d0efd5996b28217e95a2f02b562a406faaaa481a734efba16b5ff5005f907"
+          }
+        ]
+      },
+      "timestamp": {
+        "signed": {
+          "_type": "timestamp",
+          "expires": "3000-01-01T00:00:00Z",
+          "spec_version": "1.0",
+          "version": 3,
+          "meta": {
+            "snapshot.json": {
+              "hashes": {
+                "sha256": "1eda8c809e04d85d5c7f4f2f6702350c1016abcbd942353e554c075abc22bf34"
+              },
+              "length": 464,
+              "version": 3
+            }
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070",
+            "sig": "7a65c8acf7a173ff94aaab9726ebba422c7d3b60897bded154d84a297838d08aac1b95aa6c753c2208965eb639a586221b59e8c2d90f83545a5dd51aa0ff720e"
+          }
+        ]
+      },
+      "files": {
+        "datadog/2/APM_TRACING/lab-dynamic/config": {
+          "action": "enable",
+          "revision": 3,
+          "service_target": {
+            "service": "rc-lab",
+            "env": "rc-env"
+          },
+          "lib_config": {}
+        }
+      }
+    }
+  ]
+}

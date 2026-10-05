@@ -1,0 +1,824 @@
+{
+  "events": [
+    {
+      "service": "rc-lab",
+      "timestamp": 1791060460866,
+      "message": "Probe budget-probe has been received correctly",
+      "ddsource": "dd_debugger",
+      "type": "diagnostic",
+      "debugger": {
+        "diagnostics": {
+          "probeId": "budget-probe",
+          "probeVersion": 1,
+          "runtimeId": "18dcfd7ac0f747d0bb3baa33d238b7cf",
+          "parentId": null,
+          "status": "RECEIVED"
+        }
+      }
+    },
+    {
+      "service": "rc-lab",
+      "timestamp": 1791060460870,
+      "message": "Probe budget-probe instrumented correctly",
+      "ddsource": "dd_debugger",
+      "type": "diagnostic",
+      "debugger": {
+        "diagnostics": {
+          "probeId": "budget-probe",
+          "probeVersion": 1,
+          "runtimeId": "18dcfd7ac0f747d0bb3baa33d238b7cf",
+          "parentId": null,
+          "status": "INSTALLED"
+        }
+      }
+    },
+    {
+      "service": "rc-lab",
+      "timestamp": 1791060460871,
+      "message": "Probe method-probe has been received correctly",
+      "ddsource": "dd_debugger",
+      "type": "diagnostic",
+      "debugger": {
+        "diagnostics": {
+          "probeId": "method-probe",
+          "probeVersion": 1,
+          "runtimeId": "18dcfd7ac0f747d0bb3baa33d238b7cf",
+          "parentId": null,
+          "status": "RECEIVED"
+        }
+      }
+    },
+    {
+      "service": "rc-lab",
+      "timestamp": 1791060460874,
+      "message": "Probe method-probe instrumented correctly",
+      "ddsource": "dd_debugger",
+      "type": "diagnostic",
+      "debugger": {
+        "diagnostics": {
+          "probeId": "method-probe",
+          "probeVersion": 1,
+          "runtimeId": "18dcfd7ac0f747d0bb3baa33d238b7cf",
+          "parentId": null,
+          "status": "INSTALLED"
+        }
+      }
+    },
+    {
+      "service": "rc-lab",
+      "timestamp": 1791060460874,
+      "message": "Probe expression-probe has been received correctly",
+      "ddsource": "dd_debugger",
+      "type": "diagnostic",
+      "debugger": {
+        "diagnostics": {
+          "probeId": "expression-probe",
+          "probeVersion": 1,
+          "runtimeId": "18dcfd7ac0f747d0bb3baa33d238b7cf",
+          "parentId": null,
+          "status": "RECEIVED"
+        }
+      }
+    },
+    {
+      "service": "rc-lab",
+      "timestamp": 1791060460874,
+      "message": "Probe expression-probe instrumented correctly",
+      "ddsource": "dd_debugger",
+      "type": "diagnostic",
+      "debugger": {
+        "diagnostics": {
+          "probeId": "expression-probe",
+          "probeVersion": 1,
+          "runtimeId": "18dcfd7ac0f747d0bb3baa33d238b7cf",
+          "parentId": null,
+          "status": "INSTALLED"
+        }
+      }
+    },
+    {
+      "service": "rc-lab",
+      "timestamp": 1791060460874,
+      "message": "Probe line-probe has been received correctly",
+      "ddsource": "dd_debugger",
+      "type": "diagnostic",
+      "debugger": {
+        "diagnostics": {
+          "probeId": "line-probe",
+          "probeVersion": 1,
+          "runtimeId": "18dcfd7ac0f747d0bb3baa33d238b7cf",
+          "parentId": null,
+          "status": "RECEIVED"
+        }
+      }
+    },
+    {
+      "service": "rc-lab",
+      "timestamp": 1791060460875,
+      "message": "Probe line-probe instrumented correctly",
+      "ddsource": "dd_debugger",
+      "type": "diagnostic",
+      "debugger": {
+        "diagnostics": {
+          "probeId": "line-probe",
+          "probeVersion": 1,
+          "runtimeId": "18dcfd7ac0f747d0bb3baa33d238b7cf",
+          "parentId": null,
+          "status": "INSTALLED"
+        }
+      }
+    },
+    {
+      "service": "rc-lab",
+      "debugger": {
+        "snapshot": {
+          "id": "13999388-5c69-4026-8e00-6a536ef65b7b",
+          "timestamp": 1791060461200,
+          "evaluationErrors": [],
+          "probe": {
+            "id": "line-probe",
+            "version": 1,
+            "location": {
+              "file": "/var/home/pawel/work/rules_datadog_stests/moar_coverage/harness/datadog_debugger/probe_target.py",
+              "lines": [
+                "5"
+              ]
+            }
+          },
+          "language": "python",
+          "type": "snapshot",
+          "stack": [
+            {
+              "fileName": "/var/home/pawel/work/rules_datadog_stests/moar_coverage/harness/datadog_debugger/probe_target.py",
+              "function": "calculate",
+              "lineNumber": 5
+            },
+            {
+              "fileName": "/var/home/pawel/work/rules_datadog_stests/moar_coverage/harness/datadog_debugger/workload.py",
+              "function": "<module>",
+              "lineNumber": 26
+            },
+            {
+              "fileName": "<frozen runpy>",
+              "function": "_run_code",
+              "lineNumber": 88
+            },
+            {
+              "fileName": "/tmp/datadog-parity-output/execroot/_main/bazel-out/k8-fastbuild/bin/harness/datadog_python_rootfs/ddtrace_pkgs/site-packages-ddtrace-py3.11-manylinux2014-x86_64/ddtrace/internal/module.py",
+              "function": "_wrapped_run_code",
+              "lineNumber": 58
+            },
+            {
+              "fileName": "<frozen runpy>",
+              "function": "_run_module_code",
+              "lineNumber": 98
+            },
+            {
+              "fileName": "<frozen runpy>",
+              "function": "run_path",
+              "lineNumber": 291
+            },
+            {
+              "fileName": "<string>",
+              "function": "<module>",
+              "lineNumber": 237
+            }
+          ],
+          "captures": {
+            "lines": {
+              "5": {
+                "arguments": {
+                  "value": {
+                    "type": "int",
+                    "value": "1"
+                  },
+                  "password": {
+                    "type": "str",
+                    "notCapturedReason": "redactedIdent"
+                  }
+                },
+                "locals": {
+                  "doubled": {
+                    "type": "int",
+                    "value": "2"
+                  },
+                  "message": {
+                    "type": "NoneType",
+                    "isNull": true
+                  }
+                },
+                "staticFields": {},
+                "throwable": null
+              }
+            }
+          },
+          "duration": null
+        }
+      },
+      "logger": {
+        "name": "/var/home/pawel/work/rules_datadog_stests/moar_coverage/harness/datadog_debugger/probe_target.py",
+        "method": "calculate",
+        "thread_name": "MainThread;pid:1485941",
+        "thread_id": 140622739542208,
+        "version": 2
+      },
+      "ddsource": "dd_debugger",
+      "message": "",
+      "timestamp": 1791060461200,
+      "process_tags": "entrypoint.basedir:moar_coverage,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:moar_coverage,svc.user:true",
+      "dd": {
+        "trace_id": "6ac169ed00000000e889eab9f7f79a22",
+        "span_id": "16245785812628729191"
+      }
+    },
+    {
+      "service": "rc-lab",
+      "debugger": {
+        "snapshot": {
+          "id": "a91fffec-7f9a-4252-acf7-f7a940026588",
+          "timestamp": 1791060461200,
+          "evaluationErrors": [],
+          "probe": {
+            "id": "method-probe",
+            "version": 1,
+            "location": {
+              "type": "probe_target",
+              "method": "calculate"
+            }
+          },
+          "language": "python",
+          "type": "snapshot",
+          "stack": [
+            {
+              "fileName": "/var/home/pawel/work/rules_datadog_stests/moar_coverage/harness/datadog_debugger/probe_target.py",
+              "function": "calculate",
+              "lineNumber": 6
+            },
+            {
+              "fileName": "/var/home/pawel/work/rules_datadog_stests/moar_coverage/harness/datadog_debugger/workload.py",
+              "function": "<module>",
+              "lineNumber": 26
+            },
+            {
+              "fileName": "<frozen runpy>",
+              "function": "_run_code",
+              "lineNumber": 88
+            },
+            {
+              "fileName": "/tmp/datadog-parity-output/execroot/_main/bazel-out/k8-fastbuild/bin/harness/datadog_python_rootfs/ddtrace_pkgs/site-packages-ddtrace-py3.11-manylinux2014-x86_64/ddtrace/internal/module.py",
+              "function": "_wrapped_run_code",
+              "lineNumber": 58
+            },
+            {
+              "fileName": "<frozen runpy>",
+              "function": "_run_module_code",
+              "lineNumber": 98
+            },
+            {
+              "fileName": "<frozen runpy>",
+              "function": "run_path",
+              "lineNumber": 291
+            },
+            {
+              "fileName": "<string>",
+              "function": "<module>",
+              "lineNumber": 237
+            }
+          ],
+          "captures": {
+            "entry": {
+              "arguments": {},
+              "locals": {},
+              "staticFields": {},
+              "throwable": null
+            },
+            "return": {
+              "arguments": {
+                "value": {
+                  "type": "int",
+                  "value": "1"
+                },
+                "password": {
+                  "type": "str",
+                  "notCapturedReason": "redactedIdent"
+                }
+              },
+              "locals": {
+                "doubled": {
+                  "type": "int",
+                  "value": "2"
+                },
+                "message": {
+                  "type": "str",
+                  "value": "'result:2'"
+                },
+                "@return": {
+                  "type": "str",
+                  "value": "'result:2'"
+                }
+              },
+              "staticFields": {},
+              "throwable": null
+            }
+          },
+          "duration": 272571
+        }
+      },
+      "logger": {
+        "name": "/var/home/pawel/work/rules_datadog_stests/moar_coverage/harness/datadog_debugger/probe_target.py",
+        "method": "calculate",
+        "thread_name": "MainThread;pid:1485941",
+        "thread_id": 140622739542208,
+        "version": 2
+      },
+      "ddsource": "dd_debugger",
+      "message": "",
+      "timestamp": 1791060461200,
+      "process_tags": "entrypoint.basedir:moar_coverage,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:moar_coverage,svc.user:true",
+      "dd": {
+        "trace_id": "6ac169ed00000000e889eab9f7f79a22",
+        "span_id": "16245785812628729191"
+      }
+    },
+    {
+      "service": "rc-lab",
+      "timestamp": 1791060461200,
+      "message": "Probe line-probe is emitting data",
+      "ddsource": "dd_debugger",
+      "type": "diagnostic",
+      "debugger": {
+        "diagnostics": {
+          "probeId": "line-probe",
+          "probeVersion": 1,
+          "runtimeId": "18dcfd7ac0f747d0bb3baa33d238b7cf",
+          "parentId": null,
+          "status": "EMITTING"
+        }
+      }
+    },
+    {
+      "service": "rc-lab",
+      "timestamp": 1791060461200,
+      "message": "Probe method-probe is emitting data",
+      "ddsource": "dd_debugger",
+      "type": "diagnostic",
+      "debugger": {
+        "diagnostics": {
+          "probeId": "method-probe",
+          "probeVersion": 1,
+          "runtimeId": "18dcfd7ac0f747d0bb3baa33d238b7cf",
+          "parentId": null,
+          "status": "EMITTING"
+        }
+      }
+    },
+    {
+      "service": "rc-lab",
+      "timestamp": 1791060461231,
+      "message": "Probe expression-probe is emitting data",
+      "ddsource": "dd_debugger",
+      "type": "diagnostic",
+      "debugger": {
+        "diagnostics": {
+          "probeId": "expression-probe",
+          "probeVersion": 1,
+          "runtimeId": "18dcfd7ac0f747d0bb3baa33d238b7cf",
+          "parentId": null,
+          "status": "EMITTING"
+        }
+      }
+    },
+    {
+      "service": "rc-lab",
+      "timestamp": 1791060461261,
+      "message": "Probe budget-probe is emitting data",
+      "ddsource": "dd_debugger",
+      "type": "diagnostic",
+      "debugger": {
+        "diagnostics": {
+          "probeId": "budget-probe",
+          "probeVersion": 1,
+          "runtimeId": "18dcfd7ac0f747d0bb3baa33d238b7cf",
+          "parentId": null,
+          "status": "EMITTING"
+        }
+      }
+    },
+    {
+      "service": "rc-lab",
+      "debugger": {
+        "snapshot": {
+          "id": "4677fbf1-9581-4f60-8366-9e86b9a79ac2",
+          "timestamp": 1791060461231,
+          "evaluationErrors": [],
+          "probe": {
+            "id": "line-probe",
+            "version": 1,
+            "location": {
+              "file": "/var/home/pawel/work/rules_datadog_stests/moar_coverage/harness/datadog_debugger/probe_target.py",
+              "lines": [
+                "5"
+              ]
+            }
+          },
+          "language": "python",
+          "type": "snapshot",
+          "stack": [
+            {
+              "fileName": "/var/home/pawel/work/rules_datadog_stests/moar_coverage/harness/datadog_debugger/probe_target.py",
+              "function": "calculate",
+              "lineNumber": 5
+            },
+            {
+              "fileName": "/var/home/pawel/work/rules_datadog_stests/moar_coverage/harness/datadog_debugger/workload.py",
+              "function": "<module>",
+              "lineNumber": 26
+            },
+            {
+              "fileName": "<frozen runpy>",
+              "function": "_run_code",
+              "lineNumber": 88
+            },
+            {
+              "fileName": "/tmp/datadog-parity-output/execroot/_main/bazel-out/k8-fastbuild/bin/harness/datadog_python_rootfs/ddtrace_pkgs/site-packages-ddtrace-py3.11-manylinux2014-x86_64/ddtrace/internal/module.py",
+              "function": "_wrapped_run_code",
+              "lineNumber": 58
+            },
+            {
+              "fileName": "<frozen runpy>",
+              "function": "_run_module_code",
+              "lineNumber": 98
+            },
+            {
+              "fileName": "<frozen runpy>",
+              "function": "run_path",
+              "lineNumber": 291
+            },
+            {
+              "fileName": "<string>",
+              "function": "<module>",
+              "lineNumber": 237
+            }
+          ],
+          "captures": {
+            "lines": {
+              "5": {
+                "arguments": {
+                  "value": {
+                    "type": "int",
+                    "value": "3"
+                  },
+                  "password": {
+                    "type": "str",
+                    "notCapturedReason": "redactedIdent"
+                  }
+                },
+                "locals": {
+                  "doubled": {
+                    "type": "int",
+                    "value": "6"
+                  },
+                  "message": {
+                    "type": "NoneType",
+                    "isNull": true
+                  }
+                },
+                "staticFields": {},
+                "throwable": null
+              }
+            }
+          },
+          "duration": null
+        }
+      },
+      "logger": {
+        "name": "/var/home/pawel/work/rules_datadog_stests/moar_coverage/harness/datadog_debugger/probe_target.py",
+        "method": "calculate",
+        "thread_name": "MainThread;pid:1485941",
+        "thread_id": 140622739542208,
+        "version": 2
+      },
+      "ddsource": "dd_debugger",
+      "message": "",
+      "timestamp": 1791060461231,
+      "process_tags": "entrypoint.basedir:moar_coverage,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:moar_coverage,svc.user:true",
+      "dd": {
+        "trace_id": "6ac169ed00000000e889eab9f7f79a22",
+        "span_id": "16245785812628729191"
+      }
+    },
+    {
+      "service": "rc-lab",
+      "debugger": {
+        "snapshot": {
+          "id": "a92743c8-a08a-41e4-a60b-7c2965d0c7aa",
+          "timestamp": 1791060461230,
+          "evaluationErrors": [],
+          "probe": {
+            "id": "expression-probe",
+            "version": 1,
+            "location": {
+              "type": "probe_target",
+              "method": "calculate"
+            }
+          },
+          "language": "python",
+          "type": "snapshot",
+          "stack": [
+            {
+              "fileName": "/var/home/pawel/work/rules_datadog_stests/moar_coverage/harness/datadog_debugger/probe_target.py",
+              "function": "calculate",
+              "lineNumber": 6
+            },
+            {
+              "fileName": "/var/home/pawel/work/rules_datadog_stests/moar_coverage/harness/datadog_debugger/workload.py",
+              "function": "<module>",
+              "lineNumber": 26
+            },
+            {
+              "fileName": "<frozen runpy>",
+              "function": "_run_code",
+              "lineNumber": 88
+            },
+            {
+              "fileName": "/tmp/datadog-parity-output/execroot/_main/bazel-out/k8-fastbuild/bin/harness/datadog_python_rootfs/ddtrace_pkgs/site-packages-ddtrace-py3.11-manylinux2014-x86_64/ddtrace/internal/module.py",
+              "function": "_wrapped_run_code",
+              "lineNumber": 58
+            },
+            {
+              "fileName": "<frozen runpy>",
+              "function": "_run_module_code",
+              "lineNumber": 98
+            },
+            {
+              "fileName": "<frozen runpy>",
+              "function": "run_path",
+              "lineNumber": 291
+            },
+            {
+              "fileName": "<string>",
+              "function": "<module>",
+              "lineNumber": 237
+            }
+          ],
+          "captures": {},
+          "duration": 175548
+        }
+      },
+      "logger": {
+        "name": "/var/home/pawel/work/rules_datadog_stests/moar_coverage/harness/datadog_debugger/probe_target.py",
+        "method": "calculate",
+        "thread_name": "MainThread;pid:1485941",
+        "thread_id": 140622739542208,
+        "version": 2
+      },
+      "ddsource": "dd_debugger",
+      "message": "value=3",
+      "timestamp": 1791060461230,
+      "process_tags": "entrypoint.basedir:moar_coverage,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:moar_coverage,svc.user:true",
+      "dd": {
+        "trace_id": "6ac169ed00000000e889eab9f7f79a22",
+        "span_id": "16245785812628729191"
+      }
+    },
+    {
+      "service": "rc-lab",
+      "debugger": {
+        "snapshot": {
+          "id": "9d5dfd3e-d6ba-4bc3-b037-e1a234945715",
+          "timestamp": 1791060461230,
+          "evaluationErrors": [],
+          "probe": {
+            "id": "method-probe",
+            "version": 1,
+            "location": {
+              "type": "probe_target",
+              "method": "calculate"
+            }
+          },
+          "language": "python",
+          "type": "snapshot",
+          "stack": [
+            {
+              "fileName": "/var/home/pawel/work/rules_datadog_stests/moar_coverage/harness/datadog_debugger/probe_target.py",
+              "function": "calculate",
+              "lineNumber": 6
+            },
+            {
+              "fileName": "/var/home/pawel/work/rules_datadog_stests/moar_coverage/harness/datadog_debugger/workload.py",
+              "function": "<module>",
+              "lineNumber": 26
+            },
+            {
+              "fileName": "<frozen runpy>",
+              "function": "_run_code",
+              "lineNumber": 88
+            },
+            {
+              "fileName": "/tmp/datadog-parity-output/execroot/_main/bazel-out/k8-fastbuild/bin/harness/datadog_python_rootfs/ddtrace_pkgs/site-packages-ddtrace-py3.11-manylinux2014-x86_64/ddtrace/internal/module.py",
+              "function": "_wrapped_run_code",
+              "lineNumber": 58
+            },
+            {
+              "fileName": "<frozen runpy>",
+              "function": "_run_module_code",
+              "lineNumber": 98
+            },
+            {
+              "fileName": "<frozen runpy>",
+              "function": "run_path",
+              "lineNumber": 291
+            },
+            {
+              "fileName": "<string>",
+              "function": "<module>",
+              "lineNumber": 237
+            }
+          ],
+          "captures": {
+            "entry": {
+              "arguments": {},
+              "locals": {},
+              "staticFields": {},
+              "throwable": null
+            },
+            "return": {
+              "arguments": {
+                "value": {
+                  "type": "int",
+                  "value": "3"
+                },
+                "password": {
+                  "type": "str",
+                  "notCapturedReason": "redactedIdent"
+                }
+              },
+              "locals": {
+                "doubled": {
+                  "type": "int",
+                  "value": "6"
+                },
+                "message": {
+                  "type": "str",
+                  "value": "'result:6'"
+                },
+                "@return": {
+                  "type": "str",
+                  "value": "'result:6'"
+                }
+              },
+              "staticFields": {},
+              "throwable": null
+            }
+          },
+          "duration": 175548
+        }
+      },
+      "logger": {
+        "name": "/var/home/pawel/work/rules_datadog_stests/moar_coverage/harness/datadog_debugger/probe_target.py",
+        "method": "calculate",
+        "thread_name": "MainThread;pid:1485941",
+        "thread_id": 140622739542208,
+        "version": 2
+      },
+      "ddsource": "dd_debugger",
+      "message": "",
+      "timestamp": 1791060461230,
+      "process_tags": "entrypoint.basedir:moar_coverage,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:moar_coverage,svc.user:true",
+      "dd": {
+        "trace_id": "6ac169ed00000000e889eab9f7f79a22",
+        "span_id": "16245785812628729191"
+      }
+    },
+    {
+      "service": "rc-lab",
+      "debugger": {
+        "snapshot": {
+          "id": "7684d60a-5bd5-4ff0-bd71-76a620ac634f",
+          "timestamp": 1791060461261,
+          "evaluationErrors": [],
+          "probe": {
+            "id": "budget-probe",
+            "version": 1,
+            "location": {
+              "file": "/var/home/pawel/work/rules_datadog_stests/moar_coverage/harness/datadog_debugger/probe_target.py",
+              "lines": [
+                "10"
+              ]
+            }
+          },
+          "language": "python",
+          "type": "snapshot",
+          "stack": [
+            {
+              "fileName": "/var/home/pawel/work/rules_datadog_stests/moar_coverage/harness/datadog_debugger/probe_target.py",
+              "function": "budget",
+              "lineNumber": 10
+            },
+            {
+              "fileName": "/var/home/pawel/work/rules_datadog_stests/moar_coverage/harness/datadog_debugger/workload.py",
+              "function": "<module>",
+              "lineNumber": 32
+            },
+            {
+              "fileName": "<frozen runpy>",
+              "function": "_run_code",
+              "lineNumber": 88
+            },
+            {
+              "fileName": "/tmp/datadog-parity-output/execroot/_main/bazel-out/k8-fastbuild/bin/harness/datadog_python_rootfs/ddtrace_pkgs/site-packages-ddtrace-py3.11-manylinux2014-x86_64/ddtrace/internal/module.py",
+              "function": "_wrapped_run_code",
+              "lineNumber": 58
+            },
+            {
+              "fileName": "<frozen runpy>",
+              "function": "_run_module_code",
+              "lineNumber": 98
+            },
+            {
+              "fileName": "<frozen runpy>",
+              "function": "run_path",
+              "lineNumber": 291
+            },
+            {
+              "fileName": "<string>",
+              "function": "<module>",
+              "lineNumber": 237
+            }
+          ],
+          "captures": {
+            "lines": {
+              "10": {
+                "arguments": {
+                  "value": {
+                    "type": "int",
+                    "value": "0"
+                  }
+                },
+                "locals": {
+                  "result": {
+                    "type": "NoneType",
+                    "isNull": true
+                  }
+                },
+                "staticFields": {},
+                "throwable": null
+              }
+            }
+          },
+          "duration": null
+        }
+      },
+      "logger": {
+        "name": "/var/home/pawel/work/rules_datadog_stests/moar_coverage/harness/datadog_debugger/probe_target.py",
+        "method": "budget",
+        "thread_name": "MainThread;pid:1485941",
+        "thread_id": 140622739542208,
+        "version": 2
+      },
+      "ddsource": "dd_debugger",
+      "message": "",
+      "timestamp": 1791060461261,
+      "process_tags": "entrypoint.basedir:moar_coverage,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:moar_coverage,svc.user:true",
+      "dd": {
+        "trace_id": "6ac169ed00000000e889eab9f7f79a22",
+        "span_id": "16245785812628729191"
+      }
+    }
+  ],
+  "identities": [
+    {
+      "stage": 1,
+      "trace_id": "141902428801612228491345240684228440441",
+      "span_id": "7179181999954658818",
+      "result": [
+        "result:2",
+        "result:6"
+      ],
+      "budget_calls": 0,
+      "budget_elapsed_seconds": 1.0221265256404877e-06
+    },
+    {
+      "stage": 2,
+      "trace_id": "141902429276981203582908640285615954466",
+      "span_id": "16245785812628729191",
+      "result": [
+        "result:2",
+        "result:6"
+      ],
+      "budget_calls": 150,
+      "budget_elapsed_seconds": 0.0015479580033570528
+    },
+    {
+      "stage": 3,
+      "trace_id": "141902429673122016145289158563030895401",
+      "span_id": "9649780814834048820",
+      "result": [
+        "result:2",
+        "result:6"
+      ],
+      "budget_calls": 0,
+      "budget_elapsed_seconds": 1.593027263879776e-06
+    }
+  ]
+}

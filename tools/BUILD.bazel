@@ -98,6 +98,25 @@ py_test(
     deps = [":datadog_shapes_lib"],
 )
 
+# Pinned upstream feature inventory and evidence-based capability progress gate.
+py_library(
+    name = "datadog_capabilities_lib",
+    srcs = ["datadog_capabilities.py"],
+    imports = ["."],
+)
+
+py_binary(
+    name = "datadog_capabilities",
+    srcs = ["datadog_capabilities.py"],
+    main = "datadog_capabilities.py",
+)
+
+py_test(
+    name = "datadog_capabilities_test",
+    srcs = ["datadog_capabilities_test.py"],
+    deps = [":datadog_capabilities_lib"],
+)
+
 py_library(
     name = "materialize_shared_app_lib",
     srcs = ["materialize_shared_app.py"],

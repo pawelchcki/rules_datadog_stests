@@ -1,0 +1,26 @@
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files(["workload.py"])
+
+py_library(
+    name = "llmobs_lib",
+    srcs = ["assertions.py", "probe.py", "connect.py"],
+    data = ["localhost-test.crt", "localhost-test.key"],
+    deps = ["//harness/datadog_agent:agent_lib", "//harness/datadog_backend:backend_lib", "//harness/datadog_telemetry:telemetry_lib"],
+)
+
+py_binary(
+    name = "probe",
+    srcs = ["probe.py"],
+    main = "probe.py",
+    deps = [":llmobs_lib"],
+)
+
+py_test(
+    name = "assertions_test",
+    srcs = ["assertions_test.py"],
+    main = "assertions_test.py",
+    deps = [":llmobs_lib"],
+)

@@ -1,0 +1,15 @@
+load("@rules_python//python:defs.bzl", "py_binary")
+load("//harness/wheel_overlay:defs.bzl", "wheel_overlay")
+
+package(default_visibility = ["//visibility:public"])
+
+wheel_overlay(name = "sdk_overlay", wheels = "@otel_wheels//:wheels")
+
+exports_files(["workload.py"])
+
+py_binary(
+    name = "probe",
+    srcs = ["probe.py"],
+    main = "probe.py",
+    deps = ["//harness/datadog_agent:agent_lib"],
+)
