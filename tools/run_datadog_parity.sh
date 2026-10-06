@@ -66,11 +66,21 @@ test_download_args=(
 )
 
 for execution in 1 2; do
+  suite_test_status=0
   bazel test "${bazel_args[@]}" "${test_download_args[@]}" \
     --nocache_test_results \
     --test_env="TELEMETRY_TEST_REVISION=$revision" \
     "${image_flags[@]}" \
-    //fixtures:datadog_suite
+    //fixtures:datadog_suite || suite_test_status=$?
+  if (( suite_test_status != 0 )); then
+    # Retain native captures even when the initial workload suite fails before
+    # producing a gated execution receipt. These are diagnostics, not proof.
+    failed_evidence="$evidence/execution-$execution-failed"
+    mkdir -p "$failed_evidence"
+    find -L bazel-testlogs/fixtures -path '*datadog*hurl_test*/test.outputs/*' -type f -exec cp -L --no-preserve=mode --parents '{}' "$failed_evidence/" \;
+    find -L bazel-testlogs/fixtures -path '*datadog*hurl_test*/test.log' -type f -exec cp -L --no-preserve=mode --parents '{}' "$failed_evidence/" \;
+    exit "$suite_test_status"
+  fi
   tools/retain_datadog_evidence.py \
     --revision "$revision" \
     --output "$evidence/execution-$execution" \
