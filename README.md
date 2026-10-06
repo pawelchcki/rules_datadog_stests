@@ -97,4 +97,6 @@ The `untrusted-html` security profile isolates report HTML. Failed or incomplete
 publish. Reports remain available for 90 days, with five default-branch sets
 retained; PR comments link reports after publication. Complete evidence stays
 in existing GitHub Actions and BuildBuddy CI artifacts. GitHub Pages also hosts
-the report produced by the existing main-branch publisher.
+the report downloaded from the successful main-branch Actions build; publication
+does not rerun the test suite. Manual publication selects a successful main-push
+`Datadog assertions` run by ID.
