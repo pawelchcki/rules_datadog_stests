@@ -33,8 +33,8 @@ For coordinated local development, pass
 
 The shared Scheme contract error and application scenario libraries are imported
 by external labels. Datadog assertion catalogs, native SDK checks, review records,
-receipts and publication workflows stay here. OCI payload digests remain pinned
-at their previously reviewed values. The Go fixture builder imports the pinned
+receipts and publication workflows stay here. OCI payload digests are pinned to reviewed payloads; the current SDK
+upgrade includes a rebuilt and anonymously verified Ruby 2.43.0 payload. The Go fixture builder imports the pinned
 Gin sources from
 `@rules_stests//fixtures/apps/go/realworld-gin:sources` and overlays only the
 Datadog tracer graph and image recipe. The fixture builder records the complete

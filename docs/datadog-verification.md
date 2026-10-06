@@ -1,6 +1,52 @@
 # Datadog verification record
 
-The new capability comparison uses [DataDog/system-tests at `098fe0967c587db8a16b74a1e711777d0a9d5867`](https://github.com/DataDog/system-tests/tree/098fe0967c587db8a16b74a1e711777d0a9d5867), with all **301 named features** as the denominator. Its [generated report](datadog-capabilities-report.md) records the current verified feature scopes and remaining gaps. This is separate from the seven-profile, 112-case shape matrix and its historical acceptance evidence below. Neither metric establishes full upstream test-case parity.
+## Current SDK upgrade and shared-language verification
+
+The active SDKs are **Python 4.15.4, Ruby 2.43.0, and Go 2.10.1**. The seven profiles retain the 112-scenario exact-shape matrix. Python 4.15.5 was announced during verification, but its PyPI package and official Linux OCI payload were unavailable at the publication check; [issue #15](https://github.com/pawelchcki/rules_datadog_stests/issues/15) tracks that upgrade. The authoritative payload identities remain in [bazel/oci_images.lock.bzl](../bazel/oci_images.lock.bzl).
+
+| Active fixture | Repository | Manifest/index SHA-256 |
+| --- | --- | --- |
+| Python 4.15.4-1 | `install.datadoghq.com/apm-library-python-package` | `3d60232ee00db7265ea855fcbee34e306f55c41f3b9fe4847342835cdeb67338` |
+| Ruby 2.43.0 | `ghcr.io/pawelchcki/rules_stest_agents` | `9b59812e1c1c95523ae82265c78e87d612a840a8ebf1140fb0c90cbb2df8640f` |
+| Gin / Go 2.10.1 | `ghcr.io/pawelchcki/rules_stest_apps` | `ee6a879cae36694b99a967fc4ba62b797a269422bd80249f8c7939de07cd0166` |
+
+The upgraded Ruby payload was published and anonymously pulled with its reviewed rootfs and source-tree identities. Its source tree is `719cdf96e8569b8c39c841f3b8c9cb3d55191673`. Falcon uses the shared `@rules_stests//harness:falcon_rootfs` with Ruby 2.43.0 injection; the older Falcon image below belongs to historical publication evidence.
+
+Verification on 2026-10-06 used implementation commit `bf22a3af9960d7b547395ab3156e77bff0e07a8f`:
+
+| Acceptance check | Result and evidence |
+| --- | --- |
+| Repository tests | **214/214 passed locally**; [BuildBuddy full CI](https://pawel.buildbuddy.io/invocation/f43c73b1-8980-4388-b9a2-8e98ad60048a) also passed all 214 targets. |
+| Two fresh exact-shape executions | **112/112 passed in each execution**, independently retained and gated by that BuildBuddy run. |
+| Concurrent isolation | **7/7 profiles passed** in the CI four-worker execution. |
+| Shared external-feature suite | **7/7 profiles passed**; the same 53 cases each execute twice in fresh processes. Local retained receipts contain **370 passed outcomes and one precisely matched unsupported Go manual-drop/keep-rule defect**. Python origin propagation now passes on both wires. |
+| Shared capability gate | Rechecked capture/control/artifact hashes verify **19/301 in each of Python, Ruby, and Go**. The remaining **282** are tracked missing implementations, not verified capabilities. |
+| Broader capability suite | **60/60 targets passed in full CI**, retaining the independent 75% full-inventory gate. |
+| GitHub Actions | [Source checks and assertions passed](https://github.com/pawelchcki/rules_datadog_stests/actions/runs/37466719845) on the same implementation commit. |
+
+Local shared captures, responses, test logs, and the JSON/Markdown report are retained at `/tmp/datadog-shared-acceptance-bf22a3a`. CI retains its evidence and publishes a [revision-specific proof report](https://ci-toolkit.pawelchcki.workers.dev/artifacts/pawelchcki/rules_datadog_stests/bf22a3af9960d7b547395ab3156e77bff0e07a8f/). These results describe that tested implementation; later documentation-only changes require their own CI evaluation. Neither the shared mapping nor the broader Python mapping establishes full upstream test-case parity.
+
+The original shape-review hashes remain unchanged in [datadog-shape-review-historical.json](datadog-shape-review-historical.json). They record 64 pre-upgrade candidate reviews and retain their original profile names. Current revision-bound captures and receipts come from the fresh executions above; renaming an old review entry would not establish verification of a new capture.
+
+## Reproduce the current evidence with the active locks
+
+The full driver runs the two exact-shape executions, their retention gates, report generation, the four-worker concurrent suite, the repeated shared external-feature suite and its per-language gate, and the complete broader capability suite with its 75% full-inventory gate. Capability fixtures run with four-worker concurrency on both local and remote executors. Use an empty image-override file to consume the published locks:
+
+```sh
+images=$(mktemp -d /tmp/datadog-images.XXXXXX)
+evidence=$(mktemp -d /tmp/datadog-evidence.XXXXXX)
+: > "$images/bazel.flags"
+tools/run_datadog_parity.sh "$images" "$(git rev-parse HEAD)" "$evidence"
+# Set DATADOG_BAZEL_CONFIG=local for four local build/test jobs instead of RBE.
+```
+
+Each execution is retained and gated before the next starts. Report generation rechecks the current bytes instead of trusting stored success logs. Unit mutations reject changed capture/bytecode, wrong revision, missing proofs, xfails, unclassified fields, reused directories, missing receipts, and differing contracts between executions. Scenario and feature counts remain distinct across repeated runs; occurrence counts explicitly describe the final run.
+
+## Historical evidence before the SDK upgrade
+
+All acceptance records below were produced before the Python 4.15.4/Ruby 2.43.0 upgrade. Their SDK versions, digests, profile names, pass counts, and local paths describe those earlier implementations. The checked-in [generated broad capability report](datadog-capabilities-report.md) is the 2026-10-05 snapshot, separate from current CI and the shared-language report.
+
+The new capability comparison uses [DataDog/system-tests at `098fe0967c587db8a16b74a1e711777d0a9d5867`](https://github.com/DataDog/system-tests/tree/098fe0967c587db8a16b74a1e711777d0a9d5867), with all **301 named features** as the denominator. Its [generated report](datadog-capabilities-report.md) records the then-verified feature scopes and remaining gaps. This is separate from the seven-profile, 112-case shape matrix and its historical acceptance evidence below. Neither metric establishes full upstream test-case parity.
 
 Local coverage expansion acceptance on 2026-10-05 verifies **228/301 capabilities (75.7%)**, adding **74** to the earlier 154-feature baseline and passing the 75% gate against the complete inventory. Every implemented mapping has passing required cases and valid capture/artifact hashes in the final fresh suite's **60 retained receipts**. The run contains **965 passed, 310 explicitly unsupported, and zero failed outcomes**; unsupported outcomes contribute no coverage. Assertion scopes and excluded behaviors are recorded per feature in the generated report.
 
@@ -12,7 +58,7 @@ Local coverage expansion acceptance on 2026-10-05 verifies **228/301 capabilitie
 | Retained captures and artifacts | **Passed**: every declared hash revalidated from the retained bytes |
 | Source syntax, diff, and parity-driver shell syntax | **Passed** |
 
-Raw captures, effective configurations, source copies, identities, Agent/backend requests, receipts, test results, and both report formats are retained under `/tmp/datadog-75-final-acceptance-20261005`. The uncached invocation log is `datadog-75-final-suite.log` in that directory. Initial debugger startup and crash-delivery failures were preserved separately under `/tmp/datadog-75-failed-debugger-startup` and `/tmp/datadog-75-failed-debugger-crash`; they are excluded from acceptance. The fixtures now wait for native initialization and startup telemetry before the controlled transitions. Both debugger targets also passed twice concurrently under four-worker load before the final complete run. This evidence is local; CI for this worktree has not been observed.
+Raw captures, effective configurations, source copies, identities, Agent/backend requests, receipts, test results, and both report formats are retained under `/tmp/datadog-75-final-acceptance-20261005`. The uncached invocation log is `datadog-75-final-suite.log` in that directory. Initial debugger startup and crash-delivery failures were preserved separately under `/tmp/datadog-75-failed-debugger-startup` and `/tmp/datadog-75-failed-debugger-crash`; they are excluded from acceptance. The fixtures now wait for native initialization and startup telemetry before the controlled transitions. Both debugger targets also passed twice concurrently under four-worker load before the final complete run. This evidence was local; CI for that historical worktree was not observed.
 
 The earlier PR integration run verified 154/301 features (51.2%) and passed 191 repository targets and 37 independent-consumer targets uncached. That historical evidence remains at `/tmp/datadog-pr-local-acceptance-20261005`. The preceding full local inventory run passed 308 repository targets and 69 consumer targets, including manual tests, before the infrastructure pin update; its evidence remains at `/tmp/datadog-local-assertions-20261005`. These broader historical checks were not rerun as part of the current 65-target coverage acceptance.
 
@@ -22,7 +68,7 @@ The shared native intake fixes landed in [rules_stests PR #50](https://github.co
 
 Run `bazel test --config=local //fixtures:datadog_capability_suite` for the focused integration suite. The parity driver retains its raw outputs and gates the complete capability inventory at 75%. See [capability measurement](datadog-capabilities.md) for receipt generation and revalidation.
 
-## Current matrix and publication
+## Historical matrix and publication
 
 The matrix contains **seven profiles and 112 scenarios**: aiohttp and Django each run 16 scenarios on both v0.4 and v0.5; Rails, Falcon, and Gin each run 16 on v0.4. The implementation was updated from `origin/main` at `a9c7e40794755fe78f04b45b27a778b2e3c22aee`, whose [Full test suite](https://pawel.buildbuddy.io/invocation/7adf096e-97b5-4cef-adb0-62bb61ffe20d) and [Pages publication](https://github.com/pawelchcki/rules_stests/actions/runs/36547338400) passed.
 
@@ -38,11 +84,11 @@ PR #43 incorporates `origin/main` at `4467edf`, including native Ruby support an
 
 BuildBuddy now consumes these published locks without rebuilding local fixtures. Its parity driver retains two uncached executions and generates a standalone Datadog HTML report after independently rechecking both with the coverage gate. The Pages workflow publishes the report at `datadog-report.html` after fresh local acceptance and retains its raw evidence in an Actions artifact. Publication from the new workflow starts when the change reaches `main`.
 
-## Configuration and SDK lab integration verification
+## Historical configuration and SDK lab integration verification
 
 After merging `4467edf`, all 12 focused targets passed uncached against the published fixtures. The [seven-profile external-feature run](https://pawel.buildbuddy.io/invocation/52dbb9d0-bc82-413a-98f9-935c4e4094ef) passed every profile target. The [SDK lab and unit-test run](https://pawel.buildbuddy.io/invocation/0b122409-9d9c-4119-a832-28109499118a) passed both wire versions, all 36 lab cases, the Python lab mutations, the Go feature mutations, and the report unit tests. Shell syntax and diff checks also passed. These focused executions do not replace full CI acceptance.
 
-## Publication acceptance evidence
+## Historical publication acceptance evidence
 
 These executions used implementation commit `e6ea9196e120ea1f682fc163ddebff299a1beff5`, consuming the published images without local repository overrides. Subsequent verification-document changes do not alter the tested implementation.
 
@@ -61,20 +107,6 @@ These executions used implementation commit `e6ea9196e120ea1f682fc163ddebff299a1
 Both receipt gates report `7 profiles, 112 scenarios`; each gate-log SHA-256 is `baed8f2ade1ca64d2e8506908b8851f5b07cf9d467413fd80dbbe9243482fca7`. The complete manifests, bytecode, captures, receipts, logs, and timings remain in their separate retention directories.
 
 An initial [112-case attempt](https://pawel.buildbuddy.io/invocation/c5827bd2-f999-45c3-a6ab-b5ceac6b3b33) passed 111 cases and failed Rails `feed` when Puma encountered `EADDRINUSE` on its assigned port. That attempt was excluded from acceptance; its log and test artifacts were preserved at `/tmp/datadog-closeout-port-collision.log` and `/tmp/datadog-closeout-failed-feed`. Both complete executions above then passed without test retries or changes to validation.
-
-## Reproduce the current evidence
-
-The full driver runs the two exact-shape executions, their retention gates, report generation, the four-worker concurrent suite, the external-feature suite, and the complete capability suite with its 75% full-inventory gate. Capability fixtures run with four-worker concurrency on both local and remote executors. Use an empty image-override file to consume the published locks:
-
-```sh
-images=$(mktemp -d /tmp/datadog-images.XXXXXX)
-evidence=$(mktemp -d /tmp/datadog-evidence.XXXXXX)
-: > "$images/bazel.flags"
-tools/run_datadog_parity.sh "$images" "$(git rev-parse HEAD)" "$evidence"
-# Set DATADOG_BAZEL_CONFIG=local for four local build/test jobs instead of RBE.
-```
-
-Each execution is retained and gated before the next starts. Report generation rechecks the current bytes instead of trusting stored success logs. Unit mutations reject changed capture/bytecode, wrong revision, missing proofs, xfails, unclassified fields, reused directories, missing receipts, and differing contracts between executions. Scenario and feature counts remain distinct across repeated runs; occurrence counts explicitly describe the final run.
 
 ## Prior configuration and SDK lab verification
 
@@ -194,4 +226,4 @@ tools/benchmark_datadog.py \
   --cold-output-root /tmp/dd-benchmark/cold-builds
 ```
 
-All locally executable checks in the earlier acceptance table passed. The three explicitly unsupported feature results remain unsupported and do not count as passes. The new configuration and lab checks passed in the separate remote runs recorded above. The full CI workflow and its evidence archive have not yet been observed for this worktree.
+All locally executable checks in the earlier acceptance table passed. At that time, the three explicitly unsupported feature results did not count as passes. The new configuration and lab checks passed in the separate remote runs recorded above. The full CI workflow and its evidence archive were not observed for that historical worktree; current implementation evidence is recorded above.
