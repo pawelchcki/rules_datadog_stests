@@ -114,6 +114,42 @@ func ddRuntimeID(value string) bool {
 	return err == nil
 }
 
+func ddValidateFreshRuntimeIDs(c ddCase, first, second []ddNativeSpan) error {
+	if !c.RuntimeIdentity {
+		return nil
+	}
+	identity := func(spans []ddNativeSpan) (string, error) {
+		id := ""
+		for _, span := range ddServers(spans) {
+			value := span.Meta["runtime-id"]
+			if !ddRuntimeID(value) {
+				return "", fmt.Errorf("invalid native runtime identity")
+			}
+			value = strings.ToLower(strings.ReplaceAll(value, "-", ""))
+			if id != "" && value != id {
+				return "", fmt.Errorf("unstable native runtime identity")
+			}
+			id = value
+		}
+		if id == "" {
+			return "", fmt.Errorf("missing native runtime identity")
+		}
+		return id, nil
+	}
+	a, err := identity(first)
+	if err != nil {
+		return err
+	}
+	b, err := identity(second)
+	if err != nil {
+		return err
+	}
+	if a == b {
+		return fmt.Errorf("fresh SDK processes reused runtime identity %s", a)
+	}
+	return nil
+}
+
 // Groups state the exact shared claim; other behaviors in the same upstream
 // capability remain outside this scope and never become passing evidence.
 func ddSharedGroups() map[string][]string {

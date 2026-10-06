@@ -6,6 +6,7 @@ _SRCS = [
     "main.go",
     "datadog.go",
     "datadog_probes.go",
+    "datadog_outbound.go",
     "datadog_shared.go",
     "@rules_stests//harness/external_features:probe_runtime",
 ]
@@ -14,7 +15,7 @@ go_binary(name = "probe", srcs = _SRCS)
 
 go_test(
     name = "probe_test",
-    srcs = _SRCS + ["datadog_test.go", "datadog_probes_test.go", "datadog_shared_test.go"],
+    srcs = _SRCS + ["datadog_test.go", "datadog_probes_test.go", "datadog_shared_test.go", "datadog_outbound_test.go"],
     data = [
         "//fixtures:external_features.bzl",
         "//docs:datadog-capabilities-inventory.json",

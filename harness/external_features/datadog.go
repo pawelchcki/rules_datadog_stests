@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -190,6 +191,15 @@ func protocolEndpoint(sink, path string) string {
 }
 
 func datadogWorkload(base string, ownership func() error) error {
+	echoBase := base
+	if activeDatadogCase.Kind == "outbound" {
+		observer, err := ddObserveOutbound(base, filepath.Join(ddProbeOutput, activeDatadogCase.Name+".headers.json"))
+		if err != nil {
+			return err
+		}
+		defer observer.Close()
+		echoBase = observer.URL
+	}
 	count := 4
 	if activeDatadogCase.Kind == "partial" {
 		count = 1
@@ -201,6 +211,9 @@ func datadogWorkload(base string, ownership func() error) error {
 		target := base + "/api/tags"
 		if activeDatadogCase.Kind != "" {
 			target = ddProbeURL(base, activeDatadogCase.Kind)
+			if activeDatadogCase.Kind == "outbound" {
+				target = base + "/__rules_stests/outbound?url=" + url.QueryEscape(echoBase+"/__rules_stests/echo?probe_request_id="+strconv.Itoa(i+1))
+			}
 		}
 		if activeDatadogCase.Query != "" {
 			target += "?" + activeDatadogCase.Query
@@ -559,9 +572,22 @@ func runDatadog(app, launcher string, args []string) error {
 		result.RepeatCaptureFile = repeat.Name + ".capture.json"
 		result.Artifacts = append(result.Artifacts, ddArtifact{File: result.RepeatCaptureFile, SHA256: result.RepeatCaptureSHA256})
 		_, repeatErr := ddValidateExecution(c, control, repeated, ddEarlyCapture)
+		if repeatErr == nil {
+			repeatErr = ddValidateFreshRuntimeIDs(c, spans, repeated)
+		}
 		repeatStatus, repeatErr := ddCaseOutcome(defects[c.Name], c, control, repeated, repeatErr)
 		if ddEarlyCapture != nil {
 			result.Artifacts = append(result.Artifacts, ddArtifact{File: repeat.Name + ".early.capture.json", SHA256: fmt.Sprintf("%x", sha256.Sum256(ddEarlyCapture))})
+		}
+		if c.Kind == "outbound" {
+			for _, name := range []string{controlName, c.Name, repeat.Name} {
+				file := name + ".headers.json"
+				data, err := os.ReadFile(filepath.Join(out, file))
+				if err != nil {
+					return err
+				}
+				result.Artifacts = append(result.Artifacts, ddArtifact{File: file, SHA256: fmt.Sprintf("%x", sha256.Sum256(data))})
+			}
 		}
 		second, err := ddNormalizedResponse(c, repeated)
 		if err != nil {
@@ -623,6 +649,13 @@ func ddValidateExecution(c ddCase, baseline, spans []ddNativeSpan, early []byte)
 	sourceHash, err := validateWithUpstream(c, spans)
 	if err == nil && c.Kind != "" {
 		err = validateDatadogProbes(c, spans, early)
+	}
+	if err == nil && c.Kind == "outbound" {
+		data, readErr := os.ReadFile(filepath.Join(ddProbeOutput, activeDatadogCase.Name+".headers.json"))
+		if readErr != nil {
+			return sourceHash, readErr
+		}
+		err = ddValidateOutboundHeaders(c, spans, data)
 	}
 	return sourceHash, err
 }

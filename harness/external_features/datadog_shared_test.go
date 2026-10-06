@@ -236,6 +236,34 @@ func TestSharedRepeatedExecutionNormalizesFreshIdentityButKeepsBehavior(t *testi
 	}
 }
 
+func TestFreshRuntimeIdentityRejectsReusedUUIDAcrossProcesses(t *testing.T) {
+	fixture := func(id string) []ddNativeSpan {
+		spans := ddBaselineFixture()
+		for i := range spans {
+			spans[i].Meta["runtime-id"] = id
+			spans[i].Metrics["process_id"] = 123
+		}
+		return spans
+	}
+	c := ddCase{RuntimeIdentity: true}
+	first := fixture("37e6f28b-d416-438e-8e8a-ccaf0d1a6e51")
+	second := fixture("27e6f28b-d416-438e-8e8a-ccaf0d1a6e51")
+	if err := ddValidateFreshRuntimeIDs(c, first, second); err != nil {
+		t.Fatal(err)
+	}
+	for _, second := range [][]ddNativeSpan{first, fixture("37E6F28BD416438E8E8ACCAF0D1A6E51"), fixture(""), nil} {
+		if ddValidateFreshRuntimeIDs(c, first, second) == nil {
+			t.Fatal("reused or missing runtime ID accepted across fresh SDK processes")
+		}
+	}
+	if ddValidateFreshRuntimeIDs(c, nil, second) == nil {
+		t.Fatal("missing first-process identity accepted")
+	}
+	if err := ddValidateFreshRuntimeIDs(ddCase{}, nil, nil); err != nil {
+		t.Fatal("unrelated contracts require runtime identity")
+	}
+}
+
 func TestSharedResponsePreservesNonFixturePortsAndURLForm(t *testing.T) {
 	response := func(value string) []byte {
 		t.Helper()
