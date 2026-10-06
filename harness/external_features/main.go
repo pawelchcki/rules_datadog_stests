@@ -19,8 +19,15 @@ func main() {
 	if *protocol != "datadog" || (datadogWire != "v0.4" && datadogWire != "v0.5") {
 		fail(fmt.Errorf("unsupported Datadog protocol or wire version"))
 	}
-	if *app == "" || *launcher == "" || *adapter == "" || *source == "" {
-		fail(fmt.Errorf("app, launcher, upstream adapter and test source are required"))
+	if *app == "" || *launcher == "" {
+		fail(fmt.Errorf("app and launcher are required"))
+	}
+	cases, err := ddSelectCases(datadogCaseName)
+	if err != nil {
+		fail(err)
+	}
+	if err := ddValidateUpstreamInputs(cases, *adapter, *source); err != nil {
+		fail(err)
 	}
 	var args []string
 	if err := json.Unmarshal([]byte(*launchJSON), &args); err != nil {
@@ -29,7 +36,12 @@ func main() {
 	if len(args) == 0 {
 		fail(fmt.Errorf("launch arguments are required"))
 	}
-	datadogUpstreamAdapter, datadogUpstreamTest = resolve(*adapter), resolve(*source)
+	if *adapter != "" {
+		datadogUpstreamAdapter = resolve(*adapter)
+	}
+	if *source != "" {
+		datadogUpstreamTest = resolve(*source)
+	}
 	if err := runDatadog(*app, resolve(*launcher), args); err != nil {
 		fail(err)
 	}

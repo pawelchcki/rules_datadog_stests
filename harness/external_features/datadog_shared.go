@@ -26,6 +26,15 @@ func ddSelectCases(name string) ([]ddCase, error) {
 	return nil, fmt.Errorf("unknown shared Datadog contract: %q", name)
 }
 
+func ddValidateUpstreamInputs(cases []ddCase, adapter, source string) error {
+	for _, c := range cases {
+		if c.UpstreamMethod != "" && (adapter == "" || source == "") {
+			return fmt.Errorf("%s requires its upstream adapter and pinned test source", c.Name)
+		}
+	}
+	return nil
+}
+
 // These workloads and assertions are identical for every native SDK fixture.
 // Fixture launch/configuration adaptation belongs in runDatadog, not here.
 func ddSharedCases() []ddCase {

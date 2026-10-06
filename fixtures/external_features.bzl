@@ -78,6 +78,9 @@ _DATADOG_SHARED_CASES = [
     "partial-disabled",
 ]
 
+# Only these contracts execute original upstream Python method bodies.
+_DATADOG_UPSTREAM_CASES = ["origin", "malformed-zero"]
+
 def _datadog_fixture(app):
     if app == "falcon":
         return struct(
@@ -106,7 +109,7 @@ def datadog_external_feature_tests():
     for app in _DATADOG_APPS:
         config = _datadog_fixture(app)
         args = ["--runtime=" + config.runtime, "--rootfs=$(rlocationpath {})".format(config.rootfs)]
-        data = [config.rootfs, "@rules_stests//harness:app_launcher", adapter, adapter_runfiles, "@datadog_system_tests_headers//file"]
+        data = [config.rootfs, "@rules_stests//harness:app_launcher"]
         if config.injection:
             args += config.injection.flags
             data.append(config.injection.rootfs)
@@ -116,22 +119,28 @@ def datadog_external_feature_tests():
             profile_tests = []
             for case in _DATADOG_SHARED_CASES:
                 case_name = name + "_" + case.replace("-", "_")
+                case_data = data
+                upstream_args = []
+                if case in _DATADOG_UPSTREAM_CASES:
+                    case_data = data + [adapter, adapter_runfiles, "@datadog_system_tests_headers//file"]
+                    upstream_args = [
+                        "--upstream-datadog-adapter=$(rlocationpath {})".format(adapter),
+                        "--upstream-datadog-test=$(rlocationpath @datadog_system_tests_headers//file)",
+                    ]
                 service_test(
                     name = case_name,
                     timeout = "long",
                     services = ["@rules_stests//harness:otel_sink_service"],
                     test = "//harness/external_features:probe",
-                    data = data,
+                    data = case_data,
                     args = [
                         "--protocol=datadog",
                         "--wire-version=" + wire,
                         "--app=" + app,
                         "--case=" + case,
                         "--launcher=$(rlocationpath @rules_stests//harness:app_launcher)",
-                        "--upstream-datadog-adapter=$(rlocationpath {})".format(adapter),
-                        "--upstream-datadog-test=$(rlocationpath @datadog_system_tests_headers//file)",
                         "--launch-args='" + json.encode(args) + "'",
-                    ],
+                    ] + upstream_args,
                     tags = ["datadog", "external-features"] + (["manual"] if app in _LOCAL_DATADOG_APPS else []),
                 )
                 profile_tests.append(":" + case_name)

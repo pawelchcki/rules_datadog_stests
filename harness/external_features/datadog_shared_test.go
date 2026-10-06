@@ -29,6 +29,14 @@ func TestIndependentBazelContractsMatchRunnerAndRejectUnknownCases(t *testing.T)
 		t.Fatalf("Bazel registry has %d cases, runner has %d: %v", len(names), len(cases), err)
 	}
 	seen := map[string]bool{}
+	upstream := regexp.MustCompile(`_DATADOG_UPSTREAM_CASES = \[(.*?)\]`).FindSubmatch(data)
+	if len(upstream) != 2 {
+		t.Fatal("missing upstream method dependency registry")
+	}
+	upstreamNames := map[string]bool{}
+	for _, item := range regexp.MustCompile(`"([a-z0-9-]+)"`).FindAllSubmatch(upstream[1], -1) {
+		upstreamNames[string(item[1])] = true
+	}
 	for _, name := range names {
 		key := string(name[1])
 		if seen[key] {
@@ -45,6 +53,21 @@ func TestIndependentBazelContractsMatchRunnerAndRejectUnknownCases(t *testing.T)
 		if !seen[c.Name] || err != nil || !reflect.DeepEqual(selected, []ddCase{c}) {
 			t.Fatalf("case %q differs between independent and diagnostic runs", c.Name)
 		}
+		needsUpstream := c.UpstreamMethod != ""
+		if upstreamNames[c.Name] != needsUpstream {
+			t.Fatalf("Bazel adapter dependencies disagree with %q's executed method", c.Name)
+		}
+		for _, inputs := range [][2]string{{"", ""}, {"adapter", ""}, {"", "source"}, {"adapter", "source"}} {
+			err := ddValidateUpstreamInputs(selected, inputs[0], inputs[1])
+			wantError := needsUpstream && (inputs[0] == "" || inputs[1] == "")
+			if (err != nil) != wantError {
+				t.Fatalf("upstream requirements for %q with %v: %v", c.Name, inputs, err)
+			}
+		}
+		delete(upstreamNames, c.Name)
+	}
+	if len(upstreamNames) != 0 {
+		t.Fatalf("unknown upstream dependency cases: %v", upstreamNames)
 	}
 	for _, name := range []string{"unknown", "shared-origin", "origin,identity", "origin/identity"} {
 		if selected, err := ddSelectCases(name); err == nil || len(selected) != 0 {
