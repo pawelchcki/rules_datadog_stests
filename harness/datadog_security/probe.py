@@ -443,6 +443,9 @@ def run(args):
         telemetry_thread.start()
         env.update(DD_TRACE_AGENT_URL="http://127.0.0.1:" + str(telemetry.server_port),
                    DD_API_SECURITY_ENABLED=str(args.profile == "api-enabled").lower(), DD_API_SECURITY_SAMPLE_DELAY="0",
+                   # API schema assertions require a completed WAF evaluation.
+                   # The SDK's default 5 ms budget expires under shared CI load.
+                   DD_APPSEC_WAF_TIMEOUT="500",
                    DD_INSTRUMENTATION_TELEMETRY_ENABLED="true", DD_TELEMETRY_HEARTBEAT_INTERVAL="0.2",
                    DD_IAST_ENABLED="false")
     if args.profile in ("waf-controls", "rasp-controls"):
