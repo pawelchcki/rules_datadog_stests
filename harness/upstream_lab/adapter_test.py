@@ -25,7 +25,8 @@ class AdapterChecks(unittest.TestCase):
                 self.assertTrue(match(row))
                 for change in (
                     lambda value: value.update(name="different.case[0]"),
-                    lambda value: value.update(sdkVersion="4.15.5"),
+                    lambda value: value.update(sdkVersion="4.15.4"),
+                    lambda value: value.update(sdkVersion="unvalidated-sdk"),
                     lambda value: value.update(sourceSha256="changed source"),
                     lambda value: value["failure"].update(type="ConnectionError"),
                     lambda value: value["failure"].update(function="different_failure"),

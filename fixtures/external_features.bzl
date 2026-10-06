@@ -98,7 +98,7 @@ def _datadog_fixture(app):
         command = ["opt/app/bin/realworld-gin-datadog"] + config.command if app == "gin" else config.command,
         injection = datadog_ruby_injection() if app == "rails" else (None if app == "gin" else datadog_python_injection(aiohttp = app == "aiohttp")),
         wires = ["v0.4"] if app in ["rails", "gin"] else ["v0.4", "v0.5"],
-        profile = {"rails": "ruby-rails-datadog-v2-43-0-", "gin": "go-gin-datadog-v2-10-1-"}.get(app, "python-" + app + "-datadog-v4-15-4-"),
+        profile = {"rails": "ruby-rails-datadog-v2-43-0-", "gin": "go-gin-datadog-v2-10-1-"}.get(app, "python-" + app + "-datadog-v4-15-5-"),
     )
 
 def datadog_external_feature_tests():

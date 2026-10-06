@@ -1,7 +1,7 @@
-"""Runtime-verify llm_observability_datasets with the pinned ddtrace 4.15.4 SDK and a real trace-agent.
+"""Runtime-verify llm_observability_datasets with the pinned ddtrace 4.15.5 SDK and a real trace-agent.
 
 Upstream: tests/parametric/test_llm_observability/test_llm_observability_dne.py::Test_Dataset::test_dataset_create_delete.
-The pinned SDK's experiments client is hardcoded agentless in ddtrace 4.15.4, so the workload
+The pinned SDK's experiments client is hardcoded agentless in ddtrace 4.15.5, so the workload
 routes it through the real agent EVP proxy via DD_LLMOBS_OVERRIDE_ORIGIN plus the private
 agentless flag flip it records in the identity file; this probe answers the SDK's
 /api/unstable/llm-obs/v1 dataset API on the loopback backend and asserts both wire boundaries.
@@ -33,7 +33,7 @@ MAX_BODY = 32 * 1024 * 1024
 class DatasetsBackendHandler(TelemetryBackendHandler):
     """Answers the pinned SDK's llm-obs DNE API on top of the shared fake intake.
 
-    Responses carry the shapes ddtrace 4.15.4 parses: project create returns
+    Responses carry the shapes ddtrace 4.15.5 parses: project create returns
     data.id, dataset create returns data.id plus data.attributes.current_version,
     delete only needs a 200. Everything else delegates to the stock intake.
     """

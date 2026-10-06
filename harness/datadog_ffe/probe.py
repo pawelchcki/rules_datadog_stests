@@ -24,7 +24,7 @@ def attrs(values):
 
 
 def verify(capture, identity, vendor):
-    assert identity["ddtraceVersion"] == "4.15.4"
+    assert identity["ddtraceVersion"] == "4.15.5"
     assert identity["openfeatureVersion"] == "0.8.3" and identity["otelVersion"] == "1.44.0"
     native = [span for record in capture["datadog"] for trace in record["payload"]["traces"] for span in trace]
     assert len(native) == len(identity["identities"]) == 3
@@ -42,7 +42,7 @@ def verify(capture, identity, vendor):
     assert any(record["headers"].get("if-none-match") == '"ufc-1"' for record in configuration[1:])
     assert all("dd-api-key" not in record["headers"] for record in configuration)
     assert all(record["headers"]["dd-client-library-language"] == "python" and
-        record["headers"]["dd-client-library-version"] == "4.15.4" for record in configuration)
+        record["headers"]["dd-client-library-version"] == "4.15.5" for record in configuration)
     assert configuration[0]["payload"]["data"]["attributes"]["flags"]["basic-flag"]["variations"]["on"]["value"] is True
     assert [record for record in configuration if record["status"] == 200][-1]["payload"]["data"]["attributes"]["flags"]["basic-flag"]["variations"]["on"]["value"] is False
 

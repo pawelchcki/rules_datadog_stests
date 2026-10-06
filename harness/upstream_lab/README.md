@@ -14,7 +14,7 @@ The vendor manifest pins upstream revision
 `098fe0967c587db8a16b74a1e711777d0a9d5867`, records every source hash and retains
 the upstream license. The probe verifies those hashes before loading any test.
 It also requires assertions to be enabled and checks the running tracer is
-`ddtrace` 4.15.4. Updating either pin requires reviewing the vendor manifest,
+`ddtrace` 4.15.5. Updating either pin requires reviewing the vendor manifest,
 the matching Python support manifest and the explicit exclusions.
 
 The adapter replaces infrastructure imports and decorators with fixture routing
@@ -44,7 +44,7 @@ to v0.4, so the original v0.5 span-event case is explicitly unsupported rather
 than accepted under the wrong wire version. `sourceSelection` documents the
 config-consistency file boundary for separate stable-config fixtures.
 
-Six SDK-specific exclusions were revalidated on Python 4.15.4 by enabling the
+Six SDK-specific exclusions were revalidated on Python 4.15.5 by enabling the
 unchanged original methods on both applicable wire formats. All ten applicable
 method/wire combinations reproduce their recorded differences; the other two
 combinations require the opposite wire. The diagnostic hashes are retained in
@@ -61,3 +61,5 @@ The six compatibility differences are tracked in [issue #16](https://github.com/
 For focused runtime discovery, pass `--select=<case-name-substring>` to the
 probe. These reduced receipts are diagnostic evidence and do not replace the
 complete suite's acceptance results.
+
+The original 4.15.4 diagnostic record remains in [the historical revalidation file](../../docs/datadog-sdk-exclusion-revalidation-4.15.4-historical.json). Its native matcher fixture bytes are preserved in `expected_failure_fixtures-4.15.4-historical.json`; current matcher vectors come from new 4.15.5 captures.

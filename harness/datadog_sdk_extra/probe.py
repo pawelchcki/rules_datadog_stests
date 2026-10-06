@@ -19,7 +19,7 @@ from harness.datadog_agent.probe import BASE_ENV, resolve, server_thread
 from harness.datadog_backend.wire import msgpack
 
 REVISION = '098fe0967c587db8a16b74a1e711777d0a9d5867'
-SDK_VERSION = '4.15.4'
+SDK_VERSION = '4.15.5'
 
 
 def sha(data):

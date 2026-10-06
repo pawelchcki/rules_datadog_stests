@@ -1,108 +1,178 @@
 {
   "schemaVersion": 1,
-  "sdkVersion": "4.15.4",
+  "sdkVersion": "4.15.5",
   "sourceRevision": "098fe0967c587db8a16b74a1e711777d0a9d5867",
-  "validatedAt": "2026-10-06T17:45:04Z",
-  "diagnosticMode": "SDK-specific exclusions removed; unchanged original assertions executed against real SDK and native intake",
+  "validatedAt": "2026-10-06T19:18:12.534870+00:00",
+  "diagnosticMode": "Original methods executed against the published SDK; previous-version expected failures reject the new SDK until native revalidation",
   "cases": [
     {
       "name": "local_cases.Test_Lab_Http.test_independent_client_status_ranges[0]",
-      "wire": "v0.4",
-      "sdkVersion": "4.15.4",
+      "sdkVersion": "4.15.5",
       "sourceSha256": "5bec38863513511038e84e60647544dd6deda7a960dc7be9d8628f5208e6fb51",
       "workloadSha256": "4038bfafde65d27c87dc75c8d3c6ff40fe2aff009014cf5bd73ba1a9b1d15986",
-      "captureSha256": "360681ec898bbcefeb75d691d685efbd480de69dfa7e4c72d4d728d2560f31d2",
-      "operationsSha256": "6fd16e9611701b2bcf32cdfbcaff0288db5556ebfc5978360c7d2ba69c6f51ef",
+      "captureSha256": "2f28ff34667380b3f04358527939b41d9a6f7d642b4c5fcb6cd66e338c9b901b",
+      "operationsSha256": "9d9f8bd120711e6a0d7cb3ef4118769782295334b6556f022d9e19c5e2bf1ff2",
+      "failureSignature": {
+        "type": "AssertionError",
+        "file": "local_cases.py",
+        "function": "test_independent_client_status_ranges",
+        "line": 59,
+        "message": ""
+      },
+      "wire": "v0.4",
       "status": "failed"
     },
     {
       "name": "local_cases.Test_Lab_Http.test_query_redaction_empty[0]",
-      "wire": "v0.4",
-      "sdkVersion": "4.15.4",
+      "sdkVersion": "4.15.5",
       "sourceSha256": "5bec38863513511038e84e60647544dd6deda7a960dc7be9d8628f5208e6fb51",
       "workloadSha256": "4038bfafde65d27c87dc75c8d3c6ff40fe2aff009014cf5bd73ba1a9b1d15986",
-      "captureSha256": "7db55e56e744b11377bbb39d71e950622d26f01b2af3425f506f02d3d9384d77",
-      "operationsSha256": "f464c453d98ddcad0ceb7cce9dbb04005f0decb15460ea55960c4b343d859f83",
+      "captureSha256": "6790d0fc122f5f286dacd7196c9fd937114bd784ed961f874ef4b3caf7bbf6f4",
+      "operationsSha256": "8747d6acc0632edfd2db37cee330f36182b8ef4c33582bf8d355f9c72d8664b5",
+      "failureSignature": {
+        "type": "AssertionError",
+        "file": "local_cases.py",
+        "function": "test_query_redaction_empty",
+        "line": 76,
+        "message": "{'duration': 830607, 'meta': {'_dd.base_service': 'datadog-lab', '_dd.svc_src': 'aiohttp_client', 'component': 'aiohttp_client', 'http.method': 'GET', 'http.status_code': '200', 'http.status_msg': 'OK', 'http.url': 'http://127.0.0.1:51135/target/200', 'out.host': '127.0.0.1', 'span.kind': 'client'}, 'name': 'aiohttp.request', 'parent_id': 9907118223241311538, 'resource': 'aiohttp.request', 'service': 'aiohttp-web', 'span_id': 1650143201112283140, 'start': 1791314189028920713, 'trace_id': 5905129230927836640, 'type': 'http', 'metrics': {}}"
+      },
+      "wire": "v0.4",
       "status": "failed"
     },
     {
       "name": "test_partial_flushing.Test_Partial_Flushing.test_partial_flushing_propagation_tags[0]",
-      "wire": "v0.4",
-      "sdkVersion": "4.15.4",
+      "sdkVersion": "4.15.5",
       "sourceSha256": "2c8a445acdc133f41a5323f6ed7ec9f955661f2233c253c30215100658747bd2",
       "workloadSha256": "4038bfafde65d27c87dc75c8d3c6ff40fe2aff009014cf5bd73ba1a9b1d15986",
-      "captureSha256": "c49327045b70af8f4c378732e61569a27a9688e6d46ba58786116fc256221f96",
-      "operationsSha256": "8581b7c6ca0276d0269b8d4cfb31f461b42b7e48155cff156424d5bdd67e559e",
+      "captureSha256": "59d9395a4c4cda4c3d9d0c21dc53f2bd309a26ef1605e635f4c80b560af3cb4e",
+      "operationsSha256": "ae4e82103cef340a5e16d3e7062cbd7a80446b9f57d24513361a3685778ccbac",
+      "failureSignature": {
+        "type": "AssertionError",
+        "file": "test_partial_flushing.py",
+        "function": "do_propagation_tags_test",
+        "line": 102,
+        "message": ""
+      },
+      "wire": "v0.4",
       "status": "failed"
     },
     {
       "name": "test_span_events.Test_Span_Events.test_span_with_invalid_event_attributes[0]",
-      "wire": "v0.4",
-      "sdkVersion": "4.15.4",
+      "sdkVersion": "4.15.5",
       "sourceSha256": "04c623e842d40c5bd8ac73201515a7e2abcaf0ea957cae829920400cefd91f7d",
       "workloadSha256": "4038bfafde65d27c87dc75c8d3c6ff40fe2aff009014cf5bd73ba1a9b1d15986",
       "captureSha256": "5fe96f82a6dfbdb2f83629b011b2eb4670b583c34f95649ab00a38c2fa20dd4a",
-      "operationsSha256": "5fdb41801469f770cf880f8b3d92f2706df3454c46d01499475dfd23fe5cdfc3",
+      "operationsSha256": "ebf9591bc2ee6972a9fd719c89ab8dbb69905a4bcd711caee6fc912252fc10a5",
+      "failureSignature": {
+        "type": "ValueError",
+        "file": "adapter.py",
+        "function": "wait_for_num_traces",
+        "line": 347,
+        "message": "1 traces not available from test agent, got 0: []"
+      },
+      "wire": "v0.4",
       "status": "failed"
     },
     {
       "name": "test_tracer.Test_TracerServiceNameSource.test_tracer_no_srv_src_when_service_not_manually_set[0]",
-      "wire": "v0.4",
-      "sdkVersion": "4.15.4",
+      "sdkVersion": "4.15.5",
       "sourceSha256": "12dddb4972865a8a3a2e6dc9457dc40c640eeaaa529e5af9a4af98ef62feebb3",
       "workloadSha256": "4038bfafde65d27c87dc75c8d3c6ff40fe2aff009014cf5bd73ba1a9b1d15986",
-      "captureSha256": "a2143ddd4ab36395993ee3cb5d401c3a05eb0bbb99648318b2f8553893760791",
-      "operationsSha256": "35af772e4fabf88704c1679efbebbd9855af4bf974abb5b2ddd2fe8c620a587d",
+      "captureSha256": "3025c73c2f448da63fcaf0bb4b43602bf0e9262f0441c7a39e32b189ddee7a69",
+      "operationsSha256": "bef778ebfd024eba33aa9a2e1e0ee380c6b05669c40ebf96448a89e363287f86",
+      "failureSignature": {
+        "type": "AssertionError",
+        "file": "test_tracer.py",
+        "function": "test_tracer_no_srv_src_when_service_not_manually_set",
+        "line": 234,
+        "message": ""
+      },
+      "wire": "v0.4",
       "status": "failed"
     },
     {
       "name": "local_cases.Test_Lab_Http.test_independent_client_status_ranges[0]",
-      "wire": "v0.5",
-      "sdkVersion": "4.15.4",
+      "sdkVersion": "4.15.5",
       "sourceSha256": "5bec38863513511038e84e60647544dd6deda7a960dc7be9d8628f5208e6fb51",
       "workloadSha256": "4038bfafde65d27c87dc75c8d3c6ff40fe2aff009014cf5bd73ba1a9b1d15986",
-      "captureSha256": "0495aea57036ed68e334504acd3f349be9ed5a7a9a93c5142b5c8e034cf88b6e",
-      "operationsSha256": "cbcfe89a2f630a4b5be0e6c83ddb757a48d32e3506fba2b46512a95c40fb3bd7",
+      "captureSha256": "5ffe9939554c35b228f5bcb95c43b6e03bd0444512af9c426561d61d28e928dd",
+      "operationsSha256": "1c684ca593c6d02d3822d8e81b81aed0b758a708f6ec1030ca2e905f2298ed8a",
+      "failureSignature": {
+        "type": "AssertionError",
+        "file": "local_cases.py",
+        "function": "test_independent_client_status_ranges",
+        "line": 59,
+        "message": ""
+      },
+      "wire": "v0.5",
       "status": "failed"
     },
     {
       "name": "local_cases.Test_Lab_Http.test_query_redaction_empty[0]",
-      "wire": "v0.5",
-      "sdkVersion": "4.15.4",
+      "sdkVersion": "4.15.5",
       "sourceSha256": "5bec38863513511038e84e60647544dd6deda7a960dc7be9d8628f5208e6fb51",
       "workloadSha256": "4038bfafde65d27c87dc75c8d3c6ff40fe2aff009014cf5bd73ba1a9b1d15986",
-      "captureSha256": "31cf3917f579622c3136f1e098c5d1c0fc71db40e2dea9f30d9f40e8ed58a783",
-      "operationsSha256": "ea2eaef51732c417784bf946004e1d6283f56921dd06c3590e227d3aeabee943",
+      "captureSha256": "7995f56d54dc33bd481cf4a9bd804dc9fd7b9bc3a7b87ea991442d507958cb4a",
+      "operationsSha256": "f7c498edf12100eb9660fe6b09964f4598ae45f75fceecd242c9acbfe3be49d0",
+      "failureSignature": {
+        "type": "AssertionError",
+        "file": "local_cases.py",
+        "function": "test_query_redaction_empty",
+        "line": 76,
+        "message": "{'duration': 883666, 'error': 0, 'meta': {'_dd.base_service': 'datadog-lab', '_dd.svc_src': 'aiohttp_client', 'component': 'aiohttp_client', 'http.method': 'GET', 'http.status_code': '200', 'http.status_msg': 'OK', 'http.url': 'http://127.0.0.1:57281/target/200', 'out.host': '127.0.0.1', 'span.kind': 'client'}, 'metrics': {}, 'name': 'aiohttp.request', 'parent_id': 2455389138067084261, 'resource': 'aiohttp.request', 'service': 'aiohttp-web', 'span_id': 12896542692339939064, 'start': 1791314187111972138, 'trace_id': 15217210355218564335, 'type': 'http'}"
+      },
+      "wire": "v0.5",
       "status": "failed"
     },
     {
       "name": "test_partial_flushing.Test_Partial_Flushing.test_partial_flushing_propagation_tags[0]",
-      "wire": "v0.5",
-      "sdkVersion": "4.15.4",
+      "sdkVersion": "4.15.5",
       "sourceSha256": "2c8a445acdc133f41a5323f6ed7ec9f955661f2233c253c30215100658747bd2",
       "workloadSha256": "4038bfafde65d27c87dc75c8d3c6ff40fe2aff009014cf5bd73ba1a9b1d15986",
-      "captureSha256": "50ad0f6fd00a2a0906ad6bf4d9ebd14d4cefe8161bf951cf1dbf97d83f9a8e6c",
-      "operationsSha256": "018f7a73f2d995e15742812fd5a4484d29622a339bba2908e19ecb943558708d",
+      "captureSha256": "5b75be2488037b27a7f7f550d878f0539fb3d7dfc85f599b8d85f4db2be802b1",
+      "operationsSha256": "6ae43a51d7d415ffff7c0718684ce4d8221f27d8ccff35dacf6526613c0e719c",
+      "failureSignature": {
+        "type": "AssertionError",
+        "file": "test_partial_flushing.py",
+        "function": "do_propagation_tags_test",
+        "line": 102,
+        "message": ""
+      },
+      "wire": "v0.5",
       "status": "failed"
     },
     {
       "name": "test_span_events.Test_Span_Events.test_span_with_event_v05[0]",
-      "wire": "v0.5",
-      "sdkVersion": "4.15.4",
+      "sdkVersion": "4.15.5",
       "sourceSha256": "04c623e842d40c5bd8ac73201515a7e2abcaf0ea957cae829920400cefd91f7d",
       "workloadSha256": "4038bfafde65d27c87dc75c8d3c6ff40fe2aff009014cf5bd73ba1a9b1d15986",
-      "captureSha256": "65ca9121f41f4ed4fd27fa38cbb6f07727e9363043bd003e79fcdd6b3b582b6c",
-      "operationsSha256": "66b7d39815f4fd127cc380113020d46ecca513fdfac6ae6ae584c04934cc7649",
+      "captureSha256": "db547886178499827f7002205ce0204128955befb7f57fb9cd8a174c34a8668f",
+      "operationsSha256": "dce8cbc879927ba9e24aac7201732173663122c3841f77f6331b41cc7b992bbc",
+      "failureSignature": {
+        "type": "AssertionError",
+        "file": "adapter.py",
+        "function": "traces",
+        "line": 316,
+        "message": "{'traces': [[{'duration': 1231167, 'meta': {'_dd.p.dm': '-0', '_dd.p.tid': '6ac548ef00000000', '_dd.svc_src': 'otel', '_dd.tags.process': 'entrypoint.basedir:main,entrypoint.name:-c,entrypoint.type:script,entrypoint.workdir:main,svc.auto:datadog-lab', 'language': 'python', 'runtime-id': 'fcdf8a0bbcb747d887f8256ca0b581c6'}, 'metrics': {'_dd.top_level': 1.0, '_dd.tracer_kr': 1.0, '_sampling_priority_v1': 1.0, 'process_id': 3138.0}, 'name': 'internal', 'resource': 'test', 'service': 'datadog-lab', 'span_events': [{'attributes': {'bool': {'string_value': 'true', 'type': 0}, 'bool_arr': {'array_value': {'values': [{'string_value': 'true', 'type': 0}, {'string_value': 'false', 'type': 0}]}, 'type': 4}, 'double': {'string_value': '2.3', 'type': 0}, 'double_arr': {'array_value': {'values': [{'string_value': '1.1', 'type': 0}, {'string_value': '2.2', 'type': 0}]}, 'type': 4}, 'int': {'string_value': '1', 'type': 0}, 'int_arr': {'array_value': {'values': [{'string_value': '5', 'type': 0}, {'string_value': '6', 'type': 0}]}, 'type': 4}, 'str_arr': {'array_value': {'values': [{'string_value': 'a', 'type': 0}, {'string_value': 'b', 'type': 0}, {'string_value': 'c', 'type': 0}]}, 'type': 4}, 'string': {'string_value': 'bar', 'type': 0}}, 'name': 'event_name', 'time_unix_nano': 123450000}, {'attributes': {'bool': {'string_value': 'false', 'type': 0}, 'double': {'string_value': '0.0', 'type': 0}, 'int': {'string_value': '0', 'type': 0}}, 'name': 'other_event', 'time_unix_nano': 123451000}], 'span_id': 14048661808702768947, 'start': 1791314159154650494, 'trace_id': 6589771373843395179}]], 'wire_version': 'v0.4'}"
+      },
+      "wire": "v0.5",
       "status": "failed"
     },
     {
       "name": "test_tracer.Test_TracerServiceNameSource.test_tracer_no_srv_src_when_service_not_manually_set[0]",
-      "wire": "v0.5",
-      "sdkVersion": "4.15.4",
+      "sdkVersion": "4.15.5",
       "sourceSha256": "12dddb4972865a8a3a2e6dc9457dc40c640eeaaa529e5af9a4af98ef62feebb3",
       "workloadSha256": "4038bfafde65d27c87dc75c8d3c6ff40fe2aff009014cf5bd73ba1a9b1d15986",
-      "captureSha256": "0cb6523601ab082b6606e366d9008494abd6ae826061b5df74c803d48eb01260",
-      "operationsSha256": "cd9061a57ced3ae25f99d048002ddfa50edf0d20a02f42b81af19de2adbf8e99",
+      "captureSha256": "39910f3a43c99532e5ac07d7130567c2fb9eabe966f4e1a5ea1a02a7371fca5e",
+      "operationsSha256": "2685642aeb0af31a936c1bf67b2e3ac95ca6d585575d3ff05fafdccad263acaa",
+      "failureSignature": {
+        "type": "AssertionError",
+        "file": "test_tracer.py",
+        "function": "test_tracer_no_srv_src_when_service_not_manually_set",
+        "line": 234,
+        "message": ""
+      },
+      "wire": "v0.5",
       "status": "failed"
     }
   ],

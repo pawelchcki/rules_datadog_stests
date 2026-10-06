@@ -1,8 +1,8 @@
-"""Narrow, executed SDK differences revalidated against ddtrace 4.15.4."""
+"""Narrow, executed SDK differences revalidated against ddtrace 4.15.5."""
 from pathlib import Path
 import traceback
 
-SDK_VERSION = "4.15.4"
+SDK_VERSION = "4.15.5"
 EXPECTED_FAILURES = {
     "test_partial_flushing.Test_Partial_Flushing.test_partial_flushing_propagation_tags[0]": (
         "test_partial_flushing.py", "do_propagation_tags_test", 102, "AssertionError", "sampling",

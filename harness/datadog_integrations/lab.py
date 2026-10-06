@@ -1,7 +1,7 @@
 """Shared orchestration for integration labs: real Agent, launcher, captured SDK traffic.
 
 Every cluster probe in this package reuses the same boundaries as
-harness/datadog_openai: the pinned ddtrace 4.15.4 SDK runs inside the rootfs via
+harness/datadog_openai: the pinned ddtrace 4.15.5 SDK runs inside the rootfs via
 the app launcher, talks to the real trace-agent through a loopback capture
 proxy, and the agent forwards to a local backend whose records are decoded
 independently.

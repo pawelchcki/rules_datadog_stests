@@ -94,7 +94,7 @@ corpus_service(
 realworld_service_tests(
     name = "aiohttp_datadog",
     service = ":aiohttp_datadog_service",
-    telemetry_profile = "//corpus:python-aiohttp-datadog-v4-15-4-v05",
+    telemetry_profile = "//corpus:python-aiohttp-datadog-v4-15-5-v05",
     telemetry_sink = "@rules_stests//harness:telemetry_sink_service",
     scenarios = REALWORLD_BASE_HURL_CASES + ["propagation_datadog"],
     tags = ["datadog"],
@@ -121,7 +121,7 @@ corpus_service(
 realworld_service_tests(
     name = "aiohttp_datadog_v04",
     service = ":aiohttp_datadog_v04_service",
-    telemetry_profile = "//corpus:python-aiohttp-datadog-v4-15-4-v04",
+    telemetry_profile = "//corpus:python-aiohttp-datadog-v4-15-5-v04",
     telemetry_sink = "@rules_stests//harness:telemetry_sink_service",
     scenarios = REALWORLD_BASE_HURL_CASES + ["propagation_datadog"],
     tags = ["datadog"],
@@ -148,7 +148,7 @@ corpus_service(
 realworld_service_tests(
     name = "django_datadog",
     service = ":django_datadog_service",
-    telemetry_profile = "//corpus:python-django-datadog-v4-15-4-v05",
+    telemetry_profile = "//corpus:python-django-datadog-v4-15-5-v05",
     telemetry_sink = "@rules_stests//harness:telemetry_sink_service",
     scenarios = REALWORLD_BASE_HURL_CASES + ["propagation_datadog"],
     tags = ["datadog"],
@@ -175,7 +175,7 @@ corpus_service(
 realworld_service_tests(
     name = "django_datadog_v04",
     service = ":django_datadog_v04_service",
-    telemetry_profile = "//corpus:python-django-datadog-v4-15-4-v04",
+    telemetry_profile = "//corpus:python-django-datadog-v4-15-5-v04",
     telemetry_sink = "@rules_stests//harness:telemetry_sink_service",
     scenarios = REALWORLD_BASE_HURL_CASES + ["propagation_datadog"],
     tags = ["datadog"],

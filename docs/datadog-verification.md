@@ -2,11 +2,11 @@
 
 ## Current SDK upgrade and shared-language verification
 
-The active SDKs are **Python 4.15.4, Ruby 2.43.0, and Go 2.10.1**. The seven profiles retain the 112-scenario exact-shape matrix. Python 4.15.5 was announced during verification, but its PyPI package and official Linux OCI payload were unavailable at the publication check; [issue #15](https://github.com/pawelchcki/rules_datadog_stests/issues/15) tracks that upgrade. The authoritative payload identities remain in [bazel/oci_images.lock.bzl](../bazel/oci_images.lock.bzl).
+The active SDKs are **Python 4.15.5, Ruby 2.43.0, and Go 2.10.1**. The seven profiles retain the 112-scenario exact-shape matrix. Python 4.15.5 became installable during verification on 2026-10-06; its PyPI distribution and official Linux OCI index were checked at 19:13 UTC. The source upgrade and payload publication are tracked in [issue #15](https://github.com/pawelchcki/rules_datadog_stests/issues/15). The authoritative payload identities remain in [bazel/oci_images.lock.bzl](../bazel/oci_images.lock.bzl).
 
 | Active fixture | Repository | Manifest/index SHA-256 |
 | --- | --- | --- |
-| Python 4.15.4-1 | `install.datadoghq.com/apm-library-python-package` | `3d60232ee00db7265ea855fcbee34e306f55c41f3b9fe4847342835cdeb67338` |
+| Python 4.15.5-1 | `install.datadoghq.com/apm-library-python-package` | `9249d9395e5e4ea643bcfe1f3d5c8472d62ed1fc3404dbbde8d2a3e5b394f13b` |
 | Ruby 2.43.0 | `ghcr.io/pawelchcki/rules_stest_agents` | `9b59812e1c1c95523ae82265c78e87d612a840a8ebf1140fb0c90cbb2df8640f` |
 | Gin / Go 2.10.1 | `ghcr.io/pawelchcki/rules_stest_apps` | `ee6a879cae36694b99a967fc4ba62b797a269422bd80249f8c7939de07cd0166` |
 
@@ -14,7 +14,7 @@ The upgraded Ruby payload was published and anonymously pulled with its reviewed
 
 The current layout registers **371 independent Bazel service tests** (53 contracts × seven profiles), following [rules_stests #57](https://github.com/pawelchcki/rules_stests/pull/57). Each contract retains its own baseline and twice-repeated native captures/responses. The acceptance below was recorded before that layout change and identifies its tested revision explicitly.
 
-Verification on 2026-10-06 used implementation commit `bf22a3af9960d7b547395ab3156e77bff0e07a8f`:
+The following completed verification on 2026-10-06 used Python 4.15.4 and implementation commit `bf22a3af9960d7b547395ab3156e77bff0e07a8f`:
 
 | Acceptance check | Result and evidence |
 | --- | --- |

@@ -3,7 +3,7 @@ import unittest
 
 from harness.datadog_telemetry import assertions as check
 
-IDENTITY = {"runtime_id": "123456781234123412341234567890ab", "tracer_version": "4.15.4", "language_version": "3.11.15",
+IDENTITY = {"runtime_id": "123456781234123412341234567890ab", "tracer_version": "4.15.5", "language_version": "3.11.15",
             "dependency": {"name": "aiohttp", "version": "3.13.2"}, "spans": [{"span_id": str(index)} for index in range(3)]}
 
 
@@ -22,7 +22,7 @@ def fixture(dependencies=True):
              {"request_type": "generate-metrics", "payload": {"series": metrics}}]
     if dependencies:
         batch.append({"request_type": "app-dependencies-loaded", "payload": {"dependencies": [dependency]}})
-    items = [("app-started", {"configuration": configuration, "products": {"tracer": {"enabled": True, "version": "4.15.4"}}}),
+    items = [("app-started", {"configuration": configuration, "products": {"tracer": {"enabled": True, "version": "4.15.5"}}}),
              ("message-batch", batch)]
     items += [("app-heartbeat", {})] * 6
     items += [("app-extended-heartbeat", {"configuration": configuration, "dependencies": [dependency] if dependencies else [],
@@ -31,13 +31,13 @@ def fixture(dependencies=True):
     for index, (kind, payload) in enumerate(items):
         document = {"api_version": "v2", "runtime_id": IDENTITY["runtime_id"], "seq_id": index + 1, "tracer_time": 100 + index,
                     "application": {"service_name": "telemetry-lab", "env": "telemetry-env", "service_version": "telemetry-version",
-                        "language_name": "python", "language_version": "3.11.15", "tracer_version": "4.15.4",
+                        "language_name": "python", "language_version": "3.11.15", "tracer_version": "4.15.5",
                         "runtime_name": "CPython", "runtime_version": "3.11.15"},
                     "host": {"hostname": "local", "os": "Linux", "architecture": "x86_64", "kernel_name": "Linux"},
                     "request_type": kind, "payload": copy.deepcopy(payload)}
         records.append({"path": check.TELEMETRY_PATH, "status": 200, "raw_sha256": str(index), "raw_size": 100,
                         "headers": {"content-type": "application/json", "dd-telemetry-api-version": "v2",
-                            "dd-telemetry-request-type": kind, "dd-client-library-language": "python", "dd-client-library-version": "4.15.4"},
+                            "dd-telemetry-request-type": kind, "dd-client-library-language": "python", "dd-client-library-version": "4.15.5"},
                         "payload": {"document": document, "received_at": float(index * check.HEARTBEAT_INTERVAL)}})
     return records
 

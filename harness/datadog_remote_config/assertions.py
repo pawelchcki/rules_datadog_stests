@@ -1,7 +1,7 @@
 """Assert runtime effects and protocol state from independently retained evidence."""
 import re
 
-SDK_VERSION = "4.15.4"
+SDK_VERSION = "4.15.5"
 
 
 def check_client(requests, ready):

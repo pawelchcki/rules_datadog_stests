@@ -42,10 +42,10 @@ else
   test_download_outputs=minimal
 fi
 profiles=(
-  //corpus:python-aiohttp-datadog-v4-15-4-v04
-  //corpus:python-aiohttp-datadog-v4-15-4-v05
-  //corpus:python-django-datadog-v4-15-4-v04
-  //corpus:python-django-datadog-v4-15-4-v05
+  //corpus:python-aiohttp-datadog-v4-15-5-v04
+  //corpus:python-aiohttp-datadog-v4-15-5-v05
+  //corpus:python-django-datadog-v4-15-5-v04
+  //corpus:python-django-datadog-v4-15-5-v05
   //corpus:ruby-rails-datadog-v2-43-0-v04
   //corpus:ruby-falcon-datadog-v2-43-0-v04
   //corpus:go-gin-datadog-v2-10-1-v04

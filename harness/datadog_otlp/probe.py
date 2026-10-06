@@ -41,7 +41,7 @@ def metrics(records):
 
 
 def check_pipeline(records, traces, identity):
-    assert identity["ddtraceVersion"] == "4.15.4"
+    assert identity["ddtraceVersion"] == "4.15.5"
     assert identity["apiVersion"] == identity["exporterVersion"] == "1.44.0"
     assert identity["meterProvider"] == "MeterProvider" and identity["loggerProvider"] == "LoggerProvider"
     assert identity["metricFlush"] and identity["logFlush"]
@@ -164,7 +164,7 @@ def execute(args):
             print(name, "passed", flush=True)
     finally:
         (out / "datadog-otlp-results.json").write_text(json.dumps({"schemaVersion": 1, "results": results,
-            "unsupported": [{"name": "otel_logs_exporter", "reason": "Previously observed on Datadog 4.14.0: OTEL_LOGS_EXPORTER=none still exports all 5 records; a fresh disabled-exporter control is needed on 4.15.4"},
+            "unsupported": [{"name": "otel_logs_exporter", "reason": "Previously observed on Datadog 4.14.0: OTEL_LOGS_EXPORTER=none still exports all 5 records; a fresh disabled-exporter control is needed on 4.15.5"},
                 {"name": "otel_blrp_export_timeout", "reason": "Pinned OTelSDK1.44 batch processor stores export timeout but explicitly does not use it"}]}, indent=2) + "\n")
     assert len(results) == len(profiles)
 

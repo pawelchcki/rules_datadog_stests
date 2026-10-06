@@ -74,10 +74,10 @@ DATADOG_PROFILES = {
     "go-gin-datadog-v2-10-1-v04": struct(implementation = "go-v2.10.1", wire_version = "v0.4"),
     "ruby-rails-datadog-v2-43-0-v04": struct(implementation = "ruby-v2.43.0", wire_version = "v0.4"),
     "ruby-falcon-datadog-v2-43-0-v04": struct(implementation = "ruby-v2.43.0", wire_version = "v0.4"),
-    "python-aiohttp-datadog-v4-15-4-v05": struct(implementation = "python-v4.15.4", wire_version = "v0.5"),
-    "python-django-datadog-v4-15-4-v05": struct(implementation = "python-v4.15.4", wire_version = "v0.5"),
-    "python-aiohttp-datadog-v4-15-4-v04": struct(implementation = "python-v4.15.4", wire_version = "v0.4"),
-    "python-django-datadog-v4-15-4-v04": struct(implementation = "python-v4.15.4", wire_version = "v0.4"),
+    "python-aiohttp-datadog-v4-15-5-v05": struct(implementation = "python-v4.15.5", wire_version = "v0.5"),
+    "python-django-datadog-v4-15-5-v05": struct(implementation = "python-v4.15.5", wire_version = "v0.5"),
+    "python-aiohttp-datadog-v4-15-5-v04": struct(implementation = "python-v4.15.5", wire_version = "v0.4"),
+    "python-django-datadog-v4-15-5-v04": struct(implementation = "python-v4.15.5", wire_version = "v0.4"),
 }
 
 def declare_datadog_profiles(datadog_realworld_profile):

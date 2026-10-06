@@ -21,8 +21,8 @@ OCI_IMAGES = {
 
 DATADOG_PYTHON = struct(
     repository = "install.datadoghq.com/apm-library-python-package",
-    digest = "sha256:3d60232ee00db7265ea855fcbee34e306f55c41f3b9fe4847342835cdeb67338",
-    version = "4.15.4-1",
+    digest = "sha256:9249d9395e5e4ea643bcfe1f3d5c8472d62ed1fc3404dbbde8d2a3e5b394f13b",
+    version = "4.15.5-1",
 )
 
 # Published after verifying the reviewed payload digest and anonymous pull.
