@@ -222,11 +222,13 @@ def validate_mapping(data, mapping, local_root=None):
     return {row["name"]: row for row in rows}
 
 
-def evidence_results(paths):
+def evidence_results(paths, require_independent_cases=False):
     for path in paths:
         doc = json.loads(Path(path).read_text())
         if not isinstance(doc, dict) or not isinstance(doc.get("results"), list):
             raise ValueError("Evidence requires a results array: " + str(path))
+        if require_independent_cases and len(doc["results"]) != 1:
+            raise ValueError("Independent evidence requires exactly one case per receipt: " + str(path))
         for original in doc["results"]:
             result = dict(original)
             # Verify retained capture bytes, rather than trusting a hash string.
@@ -238,6 +240,7 @@ def evidence_results(paths):
             result["_captureVerified"] = (capture.is_file() and
                 sha256(capture.read_bytes()) == result.get("captureSha256"))
             result["_repeatVerified"] = False
+            result["_baselineVerified"] = False
             repeat_file = result.get("repeatCaptureFile", str(Path(capture_file).with_name("repeat-" + Path(capture_file).name)))
             artifacts = result.get("artifacts", [])
             if not isinstance(artifacts, list):
@@ -256,6 +259,10 @@ def evidence_results(paths):
                         and artifact["file"] != capture_file
                         and artifact["sha256"] == result.get("repeatCaptureSha256")):
                     result["_repeatVerified"] = True
+                if (artifact_valid and artifact["file"] not in (capture_file, repeat_file)
+                        and artifact["file"].endswith(".capture.json")
+                        and artifact["sha256"] == result.get("baselineSha256")):
+                    result["_baselineVerified"] = True
             yield result
 
 
@@ -284,7 +291,9 @@ def coverage(data, mapping, scope="all", results=(), local_root=None, language=N
                  and result.get("capabilityInventoryRevision") == data["revision"]
                  and result.get("_captureVerified") is True)
         if language is not None:
-            valid = valid and result.get("repetitions") == 2 and result.get("_repeatVerified") is True
+            valid = (valid and result.get("repetitions") == 2
+                     and result.get("_repeatVerified") is True
+                     and result.get("_baselineVerified") is True)
         # Failed assertions usually leave capabilityNames empty. Index every
         # outcome so a passing duplicate cannot hide an earlier failure.
         observation = (valid, set(names))
@@ -434,6 +443,8 @@ def main(argv=None):
                         help="Require the same mapped assertions separately in each language; repeat for a matrix")
     report.add_argument("--require-all-implemented", action="store_true",
                         help="Require every implemented mapping to have verified runtime evidence")
+    report.add_argument("--require-independent-cases", action="store_true",
+                        help="Require exactly one independent case in each supplied evidence receipt")
     report.add_argument("--gap-issues", type=Path,
                         help="Link issues and require tracking for every missing capability")
     args = parser.parse_args(argv)
@@ -450,9 +461,12 @@ def main(argv=None):
     mapping = json.loads(args.mapping.read_text())
     if args.require_language:
         result = coverage_matrix(data, mapping, args.require_language, args.scope,
-                                 evidence_results(args.evidence), args.local_root)
+                                 evidence_results(args.evidence, args.require_independent_cases), args.local_root)
     else:
-        result = coverage(data, mapping, args.scope, evidence_results(args.evidence), args.local_root)
+        result = coverage(data, mapping, args.scope,
+                          evidence_results(args.evidence, args.require_independent_cases), args.local_root)
+    if args.require_independent_cases:
+        result["requiredIndependentCases"] = True
     if args.gap_issues:
         annotate_gap_issues(result, json.loads(args.gap_issues.read_text()))
     result["evidenceReceipts"] = [{"file": path.name, "sha256": sha256(path.read_bytes())} for path in args.evidence]

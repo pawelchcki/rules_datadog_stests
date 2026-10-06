@@ -101,8 +101,8 @@ bazel test "${bazel_args[@]}" "${test_download_args[@]}" \
   "${image_flags[@]}" \
   //fixtures:datadog_external_features_suite || shared_test_status=$?
 mkdir -p "$evidence/features"
-find -L bazel-testlogs/fixtures -path '*datadog_external_features*/test.outputs/*' -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/features/" \;
-find -L bazel-testlogs/fixtures -path '*datadog_external_features*/test.log' -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/features/" \;
+find -L bazel-testlogs/fixtures -path '*datadog_external_features_v0?_*/test.outputs/*' -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/features/" \;
+find -L bazel-testlogs/fixtures -path '*datadog_external_features_v0?_*/test.log' -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/features/" \;
 if (( shared_test_status != 0 )); then
   exit "$shared_test_status"
 fi
@@ -122,6 +122,7 @@ shared_report=(
   --mapping docs/datadog-shared-capabilities-mapping.json --local-root "$PWD"
   --gap-issues docs/datadog-coverage-gaps.json
   --require-language python --require-language ruby --require-language go
+  --require-independent-cases
   "${shared_evidence[@]}"
 )
 python3 tools/datadog_capabilities.py "${shared_report[@]}" \

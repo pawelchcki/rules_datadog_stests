@@ -9,6 +9,7 @@ import (
 func main() {
 	protocol := flag.String("protocol", "datadog", "telemetry protocol")
 	flag.StringVar(&datadogWire, "wire-version", "v0.5", "Datadog intake wire version")
+	flag.StringVar(&datadogCaseName, "case", "", "shared contract to run independently (empty runs all for diagnostics)")
 	app := flag.String("app", "", "fixture application")
 	launcher := flag.String("launcher", "", "app launcher runfile")
 	adapter := flag.String("upstream-datadog-adapter", "", "upstream adapter runfile")

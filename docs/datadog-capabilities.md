@@ -53,6 +53,11 @@ The [shared mapping](datadog-shared-capabilities-mapping.json) records the
 specific common assertion scopes: 19 capabilities exercised by 53 common cases
 across seven SDK/framework/wire profiles. The remaining 282 capabilities need
 shared assertions and adapters before the full-inventory gate can pass.
+Following [rules_stests PR #57](https://github.com/pawelchcki/rules_stests/pull/57),
+each contract/profile combination runs as its own Bazel service test: 371
+independent targets. Each owns its baseline/control, two fresh SDK executions,
+and a receipt containing exactly one case. A failed case cannot prevent the
+other targets from producing their evidence.
 The suite retains
 `datadog-shared-results.json` alongside the existing `datadog-features.json`.
 Each new receipt carries explicit `language`, `application`, `wire`, canonical
@@ -68,7 +73,8 @@ Generated IDs, timing, ports, and process/runtime identities vary between
 processes; validity and parentage are checked on each raw capture. Both raw
 captures, responses, and partial-flush captures are retained and hash-bound.
 Language coverage requires `repetitions: 2` and a verified separate repeated
-capture. The exact Go 2.10.1 manual-drop-under-keep-rule defect remains
+capture and a hash-verified distinct baseline/control artifact. Omitting the
+control declaration cannot leave a passing shared claim. The exact Go 2.10.1 manual-drop-under-keep-rule defect remains
 unsupported with no passing claim; a different failure or unexpected pass
 fails the suite and requires review of [issue #13](https://github.com/pawelchcki/rules_datadog_stests/issues/13).
 The historical Python duplicate-origin waiver was removed after the upgraded
@@ -78,14 +84,17 @@ Require independent evidence for each language with repeated
 `--require-language` options:
 
 ```sh
+evidence_args=()
+while IFS= read -r -d '' receipt; do
+  evidence_args+=(--evidence "$receipt")
+done < <(find PATH/TO/features -name datadog-shared-results.json -print0)
 python3 tools/datadog_capabilities.py report \
   --inventory docs/datadog-capabilities-inventory.json \
   --mapping docs/datadog-shared-capabilities-mapping.json --local-root . \
   --gap-issues docs/datadog-coverage-gaps.json \
   --require-language ruby --require-language python --require-language go \
-  --evidence PATH/TO/python/datadog-shared-results.json \
-  --evidence PATH/TO/ruby/datadog-shared-results.json \
-  --evidence PATH/TO/go/datadog-shared-results.json \
+  --require-independent-cases \
+  "${evidence_args[@]}" \
   --require-all-implemented --format markdown
 ```
 
@@ -95,6 +104,10 @@ receipts contribute no language proof. Every supplied occurrence of a required
 case within a language must pass, including different frameworks and wire
 versions. Missing languages, unsupported results, failed duplicates, and
 tampered baselines prevent verification.
+
+The input directory must contain every independent receipt from the complete
+371-case suite. `--require-independent-cases`
+rejects grouped or empty receipts, including stale pre-isolation outputs.
 
 The parity driver retains JSON and Markdown matrices and requires every
 implemented shared mapping to pass across all three languages. The existing

@@ -12,6 +12,8 @@ The active SDKs are **Python 4.15.4, Ruby 2.43.0, and Go 2.10.1**. The seven pro
 
 The upgraded Ruby payload was published and anonymously pulled with its reviewed rootfs and source-tree identities. Its source tree is `719cdf96e8569b8c39c841f3b8c9cb3d55191673`. Falcon uses the shared `@rules_stests//harness:falcon_rootfs` with Ruby 2.43.0 injection; the older Falcon image below belongs to historical publication evidence.
 
+The current layout registers **371 independent Bazel service tests** (53 contracts × seven profiles), following [rules_stests #57](https://github.com/pawelchcki/rules_stests/pull/57). Each contract retains its own baseline and twice-repeated native captures/responses. The acceptance below was recorded before that layout change and identifies its tested revision explicitly.
+
 Verification on 2026-10-06 used implementation commit `bf22a3af9960d7b547395ab3156e77bff0e07a8f`:
 
 | Acceptance check | Result and evidence |
@@ -24,7 +26,7 @@ Verification on 2026-10-06 used implementation commit `bf22a3af9960d7b547395ab31
 | Broader capability suite | **60/60 targets passed in full CI**, retaining the independent 75% full-inventory gate. |
 | GitHub Actions | [Source checks and assertions passed](https://github.com/pawelchcki/rules_datadog_stests/actions/runs/37466719845) on the same implementation commit. |
 
-Local shared captures, responses, test logs, and the JSON/Markdown report are retained at `/tmp/datadog-shared-acceptance-bf22a3a`. CI retains its evidence and publishes a [revision-specific proof report](https://ci-toolkit.pawelchcki.workers.dev/artifacts/pawelchcki/rules_datadog_stests/bf22a3af9960d7b547395ab3156e77bff0e07a8f/). These results describe that tested implementation; later documentation-only changes require their own CI evaluation. Neither the shared mapping nor the broader Python mapping establishes full upstream test-case parity.
+Local shared captures, responses, test logs, and the JSON/Markdown report are retained at `/tmp/datadog-shared-acceptance-bf22a3a`. CI retains its evidence and publishes a [revision-specific proof report](https://ci-toolkit.pawelchcki.workers.dev/artifacts/pawelchcki/rules_datadog_stests/bf22a3af9960d7b547395ab3156e77bff0e07a8f/). These results describe that tested implementation; subsequent changes require their own CI evaluation. Neither the shared mapping nor the broader Python mapping establishes full upstream test-case parity.
 
 The original shape-review hashes remain unchanged in [datadog-shape-review-historical.json](datadog-shape-review-historical.json). They record 64 pre-upgrade candidate reviews and retain their original profile names. Current revision-bound captures and receipts come from the fresh executions above; renaming an old review entry would not establish verification of a new capture.
 

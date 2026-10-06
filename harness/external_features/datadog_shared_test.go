@@ -8,9 +8,50 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"regexp"
 	"sort"
 	"testing"
 )
+
+func TestIndependentBazelContractsMatchRunnerAndRejectUnknownCases(t *testing.T) {
+	root := filepath.Join(os.Getenv("TEST_SRCDIR"), os.Getenv("TEST_WORKSPACE"))
+	data, err := os.ReadFile(filepath.Join(root, "fixtures", "external_features.bzl"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	registry := regexp.MustCompile(`(?s)_DATADOG_SHARED_CASES = \[(.*?)\n\]`).FindSubmatch(data)
+	if len(registry) != 2 {
+		t.Fatal("missing independent Bazel contract registry")
+	}
+	names := regexp.MustCompile(`"([a-z0-9-]+)"`).FindAllSubmatch(registry[1], -1)
+	cases, err := ddSelectCases("")
+	if err != nil || len(names) != len(cases) {
+		t.Fatalf("Bazel registry has %d cases, runner has %d: %v", len(names), len(cases), err)
+	}
+	seen := map[string]bool{}
+	for _, name := range names {
+		key := string(name[1])
+		if seen[key] {
+			t.Fatalf("duplicate Bazel contract %q", key)
+		}
+		seen[key] = true
+		selected, err := ddSelectCases(key)
+		if err != nil || len(selected) != 1 || selected[0].Name != key {
+			t.Fatalf("independent contract %q did not select exactly one case: %v", key, err)
+		}
+	}
+	for _, c := range cases {
+		selected, err := ddSelectCases(c.Name)
+		if !seen[c.Name] || err != nil || !reflect.DeepEqual(selected, []ddCase{c}) {
+			t.Fatalf("case %q differs between independent and diagnostic runs", c.Name)
+		}
+	}
+	for _, name := range []string{"unknown", "shared-origin", "origin,identity", "origin/identity"} {
+		if selected, err := ddSelectCases(name); err == nil || len(selected) != 0 {
+			t.Fatalf("unknown selector %q must fail, not run another case", name)
+		}
+	}
+}
 
 func TestSharedCatalogMatchesExecutableCasesAndPinnedInventory(t *testing.T) {
 	read := func(name string, dst any) {

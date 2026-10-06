@@ -20,6 +20,7 @@ const datadogHeadersSourceSHA256 = "eae879d44ecf020bb1f4a2899d78f2027c9942e556ba
 
 var telemetryProtocol = "datadog"
 var datadogWire = "v0.5"
+var datadogCaseName string
 var activeDatadogCase ddCase
 var datadogUpstreamAdapter, datadogUpstreamTest string
 
@@ -438,6 +439,10 @@ func validateUpstreamReceipt(method string, output []byte) (string, error) {
 }
 
 func runDatadog(app, launcher string, args []string) error {
+	cases, err := ddSelectCases(datadogCaseName)
+	if err != nil {
+		return err
+	}
 	sink, err := sinkEndpoint()
 	if err != nil {
 		return err
@@ -487,7 +492,6 @@ func runDatadog(app, launcher string, args []string) error {
 	defects := ddFixtureDefects(app)
 	var results []ddResult
 	var failures []string
-	cases := append(ddCases(), ddProbeCases()...)
 	for caseIndex, c := range cases {
 		if c.AgentURLPrecedence {
 			// The effective URL must be present in the case itself, so the

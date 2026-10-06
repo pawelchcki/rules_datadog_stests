@@ -13,6 +13,19 @@ import (
 
 const datadogInventoryRevision = "098fe0967c587db8a16b74a1e711777d0a9d5867"
 
+func ddSelectCases(name string) ([]ddCase, error) {
+	cases := append(ddCases(), ddProbeCases()...)
+	if name == "" {
+		return cases, nil
+	}
+	for _, c := range cases {
+		if c.Name == name {
+			return []ddCase{c}, nil
+		}
+	}
+	return nil, fmt.Errorf("unknown shared Datadog contract: %q", name)
+}
+
 // These workloads and assertions are identical for every native SDK fixture.
 // Fixture launch/configuration adaptation belongs in runDatadog, not here.
 func ddSharedCases() []ddCase {

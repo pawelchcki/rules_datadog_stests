@@ -12,7 +12,8 @@ bazel test --config=local //fixtures:datadog_external_features_suite //fixtures:
 bazel test --config=local //fixtures:datadog_capability_suite
 ```
 
-The shared external-feature suite applies identical native assertions to Ruby,
+The shared external-feature suite runs each contract as an independent Bazel
+service test and applies identical native assertions to Ruby,
 Python, and Go. Its retained language matrix requires independent passing
 evidence in each SDK and includes all 301 upstream capabilities, with missing
 and unsupported coverage kept explicit. See

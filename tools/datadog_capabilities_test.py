@@ -73,7 +73,7 @@ class CoverageTest(unittest.TestCase):
         self.result = {"name": "case-a", "status": "passed", "capabilityNames": ["first"],
                        "capabilityInventoryRevision": REVISION, "captureSha256": "a" * 64,
                        "configuration": {}, "_captureVerified": True,
-                       "repetitions": 2, "_repeatVerified": True}
+                       "repetitions": 2, "_repeatVerified": True, "_baselineVerified": True}
 
     def test_scope_and_numeric_id_collision_keep_distinct_named_features(self):
         all_scope = coverage(self.data, self.mapping)
@@ -83,6 +83,65 @@ class CoverageTest(unittest.TestCase):
         self.assertEqual(1, narrow["denominator"])
         self.assertEqual(0, all_scope["verifiedCapabilities"])
         self.assertFalse(all_scope["fullUpstreamCaseParity"])
+
+    def _write_shared_case(self, root, name):
+        files = {kind: root / f"{name}-{kind}.capture.json" for kind in ("primary", "repeat", "baseline")}
+        for kind, path in files.items():
+            path.write_bytes(f"{name} {kind} capture".encode())
+        return dict(self.result, name=name, language="python",
+                    captureFile=files["primary"].name, captureSha256=sha256(files["primary"].read_bytes()),
+                    repeatCaptureFile=files["repeat"].name, repeatCaptureSha256=sha256(files["repeat"].read_bytes()),
+                    baselineSha256=sha256(files["baseline"].read_bytes()),
+                    artifacts=[{"file": files[kind].name, "sha256": sha256(files[kind].read_bytes())}
+                               for kind in ("repeat", "baseline")])
+
+    def test_shared_gate_rejects_omitted_or_reused_control_artifacts(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            row = self._write_shared_case(root, "case-a")
+            receipt = root / "receipt.json"
+            mapping = copy.deepcopy(self.mapping)
+            mapping["capabilities"][0]["requiredCases"] = ["case-a"]
+
+            def verified(value):
+                receipt.write_text(json.dumps({"results": [value]}))
+                return coverage_matrix(self.data, mapping, ["python"],
+                                       results=evidence_results([receipt], True))["verifiedCapabilities"]
+
+            self.assertEqual(1, verified(row))
+            self.assertEqual(0, verified(dict(row, artifacts=row["artifacts"][:1])))
+            self.assertEqual(0, verified(dict(row, baselineSha256="0" * 64)))
+            reused = dict(row, baselineSha256=row["captureSha256"],
+                          artifacts=row["artifacts"][:1] + [{"file": row["captureFile"], "sha256": row["captureSha256"]}])
+            self.assertEqual(0, verified(reused))
+
+    def test_cli_independent_case_gate_accepts_split_receipts_and_rejects_grouping(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "inventory.json").write_text(json.dumps(self.data))
+            (root / "mapping.json").write_text(json.dumps(self.mapping))
+            rows = [self._write_shared_case(root, name) for name in ("case-a", "case-b")]
+            receipts = []
+            for row in rows:
+                path = root / (row["name"] + ".json")
+                path.write_text(json.dumps({"results": [row]}))
+                receipts += ["--evidence", str(path)]
+            args = ["report", "--inventory", str(root / "inventory.json"),
+                    "--mapping", str(root / "mapping.json"), "--require-language", "python",
+                    "--require-independent-cases", "--require-all-implemented",
+                    "--output", str(root / "report.json")]
+            self.assertEqual(0, main(args + receipts))
+            report = json.loads((root / "report.json").read_text())
+            self.assertTrue(report["requiredIndependentCases"])
+            self.assertEqual(1, report["verifiedCapabilities"])
+            grouped = root / "grouped.json"
+            for values in (rows, []):
+                grouped.write_text(json.dumps({"results": values}))
+                with self.assertRaisesRegex(ValueError, "exactly one case per receipt"):
+                    main(args + ["--evidence", str(grouped)])
+            grouped.write_text(json.dumps({"results": rows}))
+            # Historical and broader suites may still use grouped receipts.
+            self.assertEqual(2, len(list(evidence_results([grouped]))))
 
     def test_gap_issues_track_missing_features_without_increasing_coverage(self):
         report = coverage_matrix(self.data, self.mapping, ["python", "ruby", "go"])
@@ -112,7 +171,7 @@ class CoverageTest(unittest.TestCase):
         self.assertEqual(50, report["verifiedPercent"])
         for mutation in ({"status": "unsupported"}, {"status": "failed"},
                          {"language": None}, {"_captureVerified": False},
-                         {"repetitions": 1}, {"_repeatVerified": False}):
+                         {"repetitions": 1}, {"_repeatVerified": False}, {"_baselineVerified": False}):
             with self.subTest(mutation=mutation):
                 changed = results[:-1] + [dict(results[-1], **mutation)]
                 report = coverage_matrix(self.data, self.mapping, languages, results=changed)
