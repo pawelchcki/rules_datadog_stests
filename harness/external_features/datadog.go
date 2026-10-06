@@ -458,6 +458,15 @@ func runDatadog(app, launcher string, args []string) error {
 		ddEarlyCapture = nil
 		data, err := collect(app, launcher, args, sink, out, experiment{Name: c.Name, Env: c.Env})
 		if err != nil {
+			logPath := filepath.Join(out, c.Name+".app.log")
+			if contents, readErr := os.ReadFile(logPath); readErr == nil && len(contents) > 0 {
+				// Keep the full file as evidence; bound its tail in CI failure logs.
+				const tailLimit = 16 * 1024
+				if len(contents) > tailLimit {
+					contents = contents[len(contents)-tailLimit:]
+				}
+				return nil, nil, fmt.Errorf("%w\napplication log (%s):\n%s", err, logPath, contents)
+			}
 			return nil, nil, err
 		}
 		if err = os.WriteFile(filepath.Join(out, c.Name+".capture.json"), data, 0644); err != nil {

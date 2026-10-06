@@ -95,12 +95,17 @@ find -L bazel-testlogs/fixtures -path '*/test.outputs/stress.*.json' -exec cp -L
 
 # This suite includes manual Rails and Gin feature probes, whose individual
 # tests are intentionally absent from the wildcard full-suite expansion.
+shared_test_status=0
 bazel test "${bazel_args[@]}" "${test_download_args[@]}" \
   --nocache_test_results \
   "${image_flags[@]}" \
-  //fixtures:datadog_external_features_suite
+  //fixtures:datadog_external_features_suite || shared_test_status=$?
 mkdir -p "$evidence/features"
 find -L bazel-testlogs/fixtures -path '*datadog_external_features*/test.outputs/*' -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/features/" \;
+find -L bazel-testlogs/fixtures -path '*datadog_external_features*/test.log' -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/features/" \;
+if (( shared_test_status != 0 )); then
+  exit "$shared_test_status"
+fi
 
 # Shared assertions require independent evidence from all three SDK languages.
 # Keep the entire 301-feature denominator and publish every missing cell.
