@@ -478,7 +478,8 @@ func runDatadog(app, launcher string, args []string) error {
 	defects := ddFixtureDefects(app)
 	var results []ddResult
 	var failures []string
-	for _, c := range append(ddCases(), ddProbeCases()...) {
+	cases := append(ddCases(), ddProbeCases()...)
+	for caseIndex, c := range cases {
 		if c.AgentURLPrecedence {
 			// The effective URL must be present in the case itself, so the
 			// retained configuration proves which endpoint won precedence.
@@ -579,6 +580,7 @@ func runDatadog(app, launcher string, args []string) error {
 			result.CapabilityNames = []string{}
 		}
 		results = append(results, result)
+		fmt.Printf("%s: %s (%d/%d)\n", result.Name, result.Status, caseIndex+1, len(cases))
 	}
 	// Keep the original external-feature artifact for existing consumers.
 	legacy := append([]ddResult(nil), results...)

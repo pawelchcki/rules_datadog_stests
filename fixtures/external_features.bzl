@@ -57,7 +57,9 @@ def datadog_external_feature_tests():
             name = app + "_datadog_external_features_" + wire.replace(".", "")
             service_test(
                 name = name,
-                timeout = "long",
+                # Every case starts fresh SDK processes twice, plus controls.
+                # Ruby startup on a shared executor can exceed fifteen minutes.
+                timeout = "eternal",
                 services = ["@rules_stests//harness:otel_sink_service"],
                 test = "//harness/external_features:probe",
                 data = data,
