@@ -16,6 +16,7 @@ from urllib.request import urlopen
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from adapter import AgentIntake, Library, load_cases
 from local_cases import cases as local_cases
+from expected_failures import EXPECTED_FAILURES, SDK_VERSION, failure_signature, matches_expected_failure
 
 REVISION = "098fe0967c587db8a16b74a1e711777d0a9d5867"
 BASE_ENV = {
@@ -139,6 +140,29 @@ def assert_sdk_evidence(library, agent):
         assert int(span["start"]) > 0 and int(span["duration"]) > 0, span
 
 
+def expected_failure_control(library, sink, wire, out, name, phase, result):
+    """Prove a healthy export around a known missing-payload failure."""
+    agent = AgentIntake(sink, wire)
+    agent.clear()
+    library.rpc("reset")
+    library.operations.clear()
+    with library.dd_start_span("upstream.expected-failure-control." + phase):
+        pass
+    library.dd_flush()
+    agent.traces()
+    assert_sdk_evidence(library, agent)
+    stem = digest(name.encode())[:16] + "." + phase + ".control"
+    for suffix, data in (("capture", agent.captures), ("operations", library.operations)):
+        payload = json.dumps(data, sort_keys=True).encode()
+        filename = stem + "." + suffix + ".json"
+        (out / filename).write_bytes(payload)
+        result.setdefault("artifacts", []).append({"file": filename, "sha256": digest(payload)})
+    library.operations.clear()
+    agent.clear()
+    library.rpc("reset")
+    library.operations.clear()
+
+
 def execute(args):
     out = Path(os.environ["TEST_UNDECLARED_OUTPUTS_DIR"])
     out.mkdir(parents=True, exist_ok=True)
@@ -191,6 +215,10 @@ def execute(args):
                     agent.clear()
                     library.rpc("reset")
                     library.operations.clear()
+                    expected = EXPECTED_FAILURES.get(case["name"])
+                    missing_events = expected is not None and expected[4] == "event-overflow"
+                    if missing_events:
+                        expected_failure_control(library, sink, args.wire, out, case["name"], "before", result)
                     try:
                         values = dict(case["parameters"], test_agent=agent, test_library=library)
                         signature = inspect.signature(case["function"])
@@ -225,9 +253,26 @@ def execute(args):
                             for operation in library.operations)
                         if extracted_w3c and injected_w3c:
                             result["capabilityNames"] = sorted(set(result["capabilityNames"] + ["w3c_headers_injection_and_extraction"]))
-                    except Exception:
-                        result.update(status="failed", detail=traceback.format_exc())
-                        print(result["detail"], file=sys.stderr, flush=True)
+                        if expected:
+                            raise AssertionError("Known SDK difference unexpectedly passed; review its expected failure: " + case["name"])
+                    except Exception as error:
+                        detail = traceback.format_exc()
+                        signature = failure_signature(error)
+                        matched = matches_expected_failure(case["name"], library.sdk_version, args.wire,
+                            signature, agent.captures, library.operations, result["sourceSha256"])
+                        if matched and missing_events:
+                            operations = list(library.operations)
+                            try:
+                                expected_failure_control(library, sink, args.wire, out, case["name"], "after", result)
+                            finally:
+                                library.operations[:] = operations
+                        result.update(status="unsupported" if matched else "failed", detail=detail,
+                                      failureSignature=signature)
+                        if matched:
+                            result.update(expectedFailure={"sdkVersion": SDK_VERSION, "reason": expected[5], "sourceSha256": result["sourceSha256"],
+                                                  "trackingIssue": "https://github.com/pawelchcki/rules_datadog_stests/issues/16"})
+                        else:
+                            print(result["detail"], file=sys.stderr, flush=True)
                     finally:
                         capture = json.dumps(agent.captures, sort_keys=True).encode()
                         stem = digest(case["name"].encode())[:16]
@@ -238,7 +283,7 @@ def execute(args):
                         (out / operation_name).write_bytes(operation_bytes)
                         result.update(captureFile=capture_name, captureSha256=digest(capture),
                                       operationsFile=operation_name, operationsSha256=digest(operation_bytes))
-                        result["artifacts"] = [{"file": operation_name, "sha256": digest(operation_bytes)}]
+                        result.setdefault("artifacts", []).append({"file": operation_name, "sha256": digest(operation_bytes)})
                         results.append(result)
                         print(args.wire, result["status"], case["name"], flush=True)
     finally:

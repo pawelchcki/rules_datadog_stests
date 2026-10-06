@@ -11,7 +11,7 @@ filegroup(
 
 py_binary(
     name = "probe",
-    srcs = ["adapter.py", "local_cases.py", "probe.py"],
+    srcs = ["adapter.py", "expected_failures.py", "local_cases.py", "probe.py"],
     data = ["exclusions.json", ":upstream_sources"],
     main = "probe.py",
     python_version = "PY3",
@@ -19,8 +19,8 @@ py_binary(
 
 py_test(
     name = "adapter_unit_test",
-    srcs = ["adapter.py", "adapter_test.py"],
-    data = [":upstream_sources"],
+    srcs = ["adapter.py", "adapter_test.py", "expected_failures.py"],
+    data = ["expected_failure_fixtures.json", ":upstream_sources"],
     main = "adapter_test.py",
     python_version = "PY3",
 )

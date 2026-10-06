@@ -1,5 +1,6 @@
 """Check upstream provenance and ensure assertions reject corrupt intake evidence."""
 import hashlib
+import copy
 import json
 from pathlib import Path
 import sys
@@ -7,9 +8,41 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from adapter import AgentIntake, Library, load_cases, fixture_namespace
+from expected_failures import EXPECTED_FAILURES, matches_expected_failure
 
 
 class AdapterChecks(unittest.TestCase):
+    def test_executed_sdk_differences_match_only_fresh_native_signatures(self):
+        fixtures = json.loads((Path(__file__).parent / "expected_failure_fixtures.json").read_text())
+        self.assertEqual({row["name"] for row in fixtures}, set(EXPECTED_FAILURES))
+        for row in fixtures:
+            with self.subTest(case=row["name"], wire=row["wire"]):
+                for field, hash_field in (("captures", "captureSha256"), ("operations", "operationsSha256")):
+                    self.assertEqual(hashlib.sha256(json.dumps(row[field], sort_keys=True).encode()).hexdigest(), row[hash_field])
+                def match(value):
+                    return matches_expected_failure(value["name"], value["sdkVersion"], value["wire"],
+                        value["failure"], value["captures"], value["operations"], value["sourceSha256"])
+                self.assertTrue(match(row))
+                for change in (
+                    lambda value: value.update(name="different.case[0]"),
+                    lambda value: value.update(sdkVersion="4.15.5"),
+                    lambda value: value.update(sourceSha256="changed source"),
+                    lambda value: value["failure"].update(type="ConnectionError"),
+                    lambda value: value["failure"].update(function="different_failure"),
+                    lambda value: value["failure"].update(line=1),
+                    lambda value: value["failure"].clear(),
+                    lambda value: value.update(operations=[]),
+                ):
+                    corrupted = copy.deepcopy(row)
+                    change(corrupted)
+                    self.assertFalse(match(corrupted))
+                corrupted = copy.deepcopy(row)
+                if corrupted["captures"] and any(corrupted["captures"]):
+                    corrupted["captures"] = []
+                else:
+                    corrupted["captures"] = [[]]
+                self.assertFalse(match(corrupted))
+
     def test_start_span_retains_explicit_finish_lifecycle(self):
         class Client(Library):
             def rpc(self, operation, **values):

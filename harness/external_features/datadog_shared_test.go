@@ -215,6 +215,14 @@ func TestSharedRepeatedExecutionNormalizesFreshIdentityButKeepsBehavior(t *testi
 		func(s *ddNativeSpan) { s.Error = 1 },
 		func(s *ddNativeSpan) { s.ParentID = 999 },
 		func(s *ddNativeSpan) { s.Meta["http.url"] += "&lost=control" },
+		func(s *ddNativeSpan) { s.Meta["http.url"] = "/api/tags?safe=visible" },
+		func(s *ddNativeSpan) { s.Meta["http.url"] = "//127.0.0.1:1000/api/tags?safe=visible" },
+		func(s *ddNativeSpan) { s.Meta["http.url"] = "https://127.0.0.1:1000/api/tags?safe=visible" },
+		func(s *ddNativeSpan) {
+			s.Meta["http.url"] = "http://user:password@127.0.0.1:1000/api/tags?safe=visible"
+		},
+		func(s *ddNativeSpan) { s.Meta["http.url"] = "http://localhost:1000/api/tags?safe=visible" },
+		func(s *ddNativeSpan) { s.Meta["http.url"] += "#fragment" },
 		func(s *ddNativeSpan) { s.Metrics["_sampling_priority_v1"] = -1 },
 	} {
 		changed := ddBaselineFixture()
@@ -225,6 +233,28 @@ func TestSharedRepeatedExecutionNormalizesFreshIdentityButKeepsBehavior(t *testi
 		if bytes.Equal(response(first), response(changed)) {
 			t.Fatal("behavioral change disappeared during response normalization")
 		}
+	}
+}
+
+func TestSharedResponsePreservesNonFixturePortsAndURLForm(t *testing.T) {
+	response := func(value string) []byte {
+		t.Helper()
+		spans := ddBaselineFixture()
+		spans[0].Meta["http.url"] = value
+		data, err := ddNormalizedResponse(ddCase{}, spans)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return data
+	}
+	if bytes.Equal(response("http://example.invalid:1000/api/tags"), response("http://example.invalid:2000/api/tags")) {
+		t.Fatal("non-fixture authority port disappeared during normalization")
+	}
+	if bytes.Equal(response("/api/tags?"), response("/api/tags")) {
+		t.Fatal("URL form changed during normalization")
+	}
+	if !bytes.Equal(response("http://[::1]:1000/api/tags"), response("http://[::1]:2000/api/tags")) {
+		t.Fatal("fresh IPv6 loopback port changed behavioral response")
 	}
 }
 

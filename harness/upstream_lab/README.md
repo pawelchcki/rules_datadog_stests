@@ -44,6 +44,20 @@ to v0.4, so the original v0.5 span-event case is explicitly unsupported rather
 than accepted under the wrong wire version. `sourceSelection` documents the
 config-consistency file boundary for separate stable-config fixtures.
 
+Six SDK-specific exclusions were revalidated on Python 4.15.4 by enabling the
+unchanged original methods on both applicable wire formats. All ten applicable
+method/wire combinations reproduce their recorded differences; the other two
+combinations require the opposite wire. The diagnostic hashes are retained in
+[`datadog-sdk-exclusion-revalidation.json`](../../docs/datadog-sdk-exclusion-revalidation.json).
+These methods now execute on every suite run. `expected_failures.py` accepts
+only the pinned SDK version, original source hash and failure site, and observed native failure
+signature. Unexpected success, different failures, and SDK version changes fail
+the test. Missing-event-payload evidence also requires healthy SDK exports before
+and after the failed method. Known outcomes remain unsupported and never count
+as passing capability evidence; captures, operations and controls are retained
+with SHA-256 hashes.
+The six compatibility differences are tracked in [issue #16](https://github.com/pawelchcki/rules_datadog_stests/issues/16).
+
 For focused runtime discovery, pass `--select=<case-name-substring>` to the
 probe. These reduced receipts are diagnostic evidence and do not replace the
 complete suite's acceptance results.

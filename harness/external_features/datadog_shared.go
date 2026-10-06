@@ -170,7 +170,7 @@ func ddWriteCapabilityResults(out string, results []ddResult) error {
 }
 
 // Compare observed behavioral fields between fresh processes. Generated IDs,
-// timestamps, durations, ports, process IDs and runtime IDs vary by design;
+// timestamps, durations, fixture loopback ports, process IDs and runtime IDs vary by design;
 // their validity and parentage are checked independently on each execution.
 func ddNormalizedResponse(c ddCase, spans []ddNativeSpan) ([]byte, error) {
 	index := map[uint64]ddNativeSpan{}
@@ -225,15 +225,13 @@ func ddNormalizedResponse(c ddCase, spans []ddNativeSpan) ([]byte, error) {
 						return nil, err
 					}
 					if target.Hostname() == "127.0.0.1" || target.Hostname() == "localhost" {
-						target.Host = target.Hostname()
+						ddNormalizeLoopbackPort(target)
 						query.Set("url", target.String())
 						parsed.RawQuery = query.Encode()
 					}
 				}
-				meta[key] = parsed.EscapedPath()
-				if parsed.RawQuery != "" {
-					meta[key] += "?" + parsed.RawQuery
-				}
+				ddNormalizeLoopbackPort(parsed)
+				meta[key] = parsed.String()
 			}
 		}
 		metrics := map[string]float64{}
@@ -255,6 +253,13 @@ func ddNormalizedResponse(c ddCase, spans []ddNativeSpan) ([]byte, error) {
 	}
 	sort.Strings(rows)
 	return json.MarshalIndent(rows, "", "  ")
+}
+
+func ddNormalizeLoopbackPort(value *url.URL) {
+	host := value.Hostname()
+	if port := value.Port(); port != "" && (host == "127.0.0.1" || host == "localhost" || host == "::1") {
+		value.Host = strings.TrimSuffix(value.Host, ":"+port)
+	}
 }
 
 type ddExpectedDefect struct {
