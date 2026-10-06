@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 import subprocess
+import sys
 import tarfile
 import tempfile
 import unittest
@@ -48,7 +49,7 @@ class OriginalSnapshotTest(unittest.TestCase):
             environment["PATH"] = str(binary_directory) + os.pathsep + environment["PATH"]
 
             command = [
-                str(script), "--original", str(snapshot),
+                sys.executable, str(script), "--original", str(snapshot),
                 "--original-output-base", str(output_base),
                 "--original-revision", revision,
                 "--output", str(root / "results"),

@@ -10,6 +10,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 
 HELPER = Path(__file__).with_name("local_oci_repository.py")
@@ -51,6 +52,18 @@ def add_image_manifest(directory, layer_data, claimed_rootfs_digest=None, gzip_m
 
 
 class LocalOCIRepositoryTest(unittest.TestCase):
+    def setUp(self):
+        # Fixture-building shell scripts invoke python3 themselves. Supply the
+        # same Bazel-managed interpreter instead of depending on the executor.
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        Path(directory.name, "python3").symlink_to(sys.executable)
+        environment = patch.dict(os.environ, {
+            "PATH": directory.name + os.pathsep + os.environ.get("PATH", ""),
+        })
+        environment.start()
+        self.addCleanup(environment.stop)
+
     def run_helper(self, directory, *args):
         return subprocess.run(
             [sys.executable, HELPER, directory, "local_fixture", *args],
