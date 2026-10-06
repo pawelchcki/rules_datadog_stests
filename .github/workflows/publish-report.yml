@@ -27,6 +27,12 @@ jobs:
       - uses: bazel-contrib/setup-bazel@8cb04a772ab4c1eb984e9c1b493a182e96c5e425 # 0.19.0
         with:
           bazelisk-cache: true
+          repository-cache: true
+          disk-cache: true
+      - name: Configure BuildBuddy cache
+        uses: ./.github/actions/buildbuddy-cache
+        with:
+          api-key: ${{ secrets.BUILDBUDDY_API_KEY }}
       - name: Fresh gated evidence
         shell: bash
         run: |
@@ -35,7 +41,7 @@ jobs:
           evidence="$RUNNER_TEMP/datadog-evidence"
           mkdir -p "$images"
           : > "$images/bazel.flags"
-          tools/run_datadog_parity.sh "$images" "$(git rev-parse HEAD)" "$evidence"
+          DATADOG_BAZEL_CONFIG=ci-cache tools/run_datadog_parity.sh "$images" "$(git rev-parse HEAD)" "$evidence"
           mkdir -p _site
           cp "$evidence/datadog-report.html" _site/index.html
           cp "$evidence/datadog-report.html" _site/datadog-report.html

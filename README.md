@@ -72,8 +72,14 @@ contains `bazel.flags`, which can be empty when using published fixtures.
 The driver also retains capability captures and requires at least 75% of the
 full feature inventory; `DATADOG_CAPABILITY_MIN_PERCENT` can override that threshold.
 
-Pull requests run the full assertion suite, an external consumer build and two
-fresh gated parity executions. Local execution eagerly materializes cached
+Same-repository pull requests run the full assertion suite, external consumer
+build and fresh gated evidence in BuildBuddy. Fork pull requests run these in
+GitHub Actions; BuildBuddy only reports the delegation status. Pushes to main
+run both systems. Actions use the BuildBuddy cache through the
+`BUILDBUDDY_API_KEY` repository secret, with remote uploads disabled. Forks
+receive no secret and use the GitHub disk and repository caches. Fresh native
+tests still execute with `--nocache_test_results` on both systems.
+Local execution eagerly materializes cached
 outputs so OCI directory symlink aliases remain intact; remote BuildBuddy
 execution retains minimal downloads with explicit evidence trees. A separate
 `source-checks` job validates GitHub Actions workflows and tracked Python, shell and JSON syntax. Run

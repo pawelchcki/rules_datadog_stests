@@ -34,7 +34,7 @@ mkdir -p "$evidence"
 
 mapfile -t image_flags < "$images/bazel.flags"
 bazel_args=(--config="${DATADOG_BAZEL_CONFIG:-local}")
-if [[ "${DATADOG_BAZEL_CONFIG:-local}" == local ]]; then
+if [[ "${DATADOG_BAZEL_CONFIG:-local}" != buildbuddy ]]; then
   bazel_args+=(--jobs=4 --local_test_jobs=4)
   test_download_outputs=all
 else
