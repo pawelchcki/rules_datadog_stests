@@ -40,7 +40,8 @@ jobs:
         uses: ./.github/actions/buildbuddy-cache
         with:
           api-key: ${{ secrets.BUILDBUDDY_API_KEY }}
-      - run: bazel test --config=ci-cache --build_tests_only //...
+      - name: Tests outside the fresh-evidence suites
+        run: DATADOG_BAZEL_CONFIG=ci-cache tools/run_datadog_preflight.sh
       - name: Verify external consumer
         working-directory: examples/plugin_agent
         run: bazel build --config=ci-cache //:telemetry_api_check

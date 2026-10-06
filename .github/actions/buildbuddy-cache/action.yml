@@ -17,8 +17,10 @@ runs:
           exit 0
         fi
         umask 077
+        touch "$HOME/.bazelrc"
+        chmod 600 "$HOME/.bazelrc"
+        printf '\n' >> "$HOME/.bazelrc"
         cat >> "$HOME/.bazelrc" <<EOF
         common:buildbuddy-cache --remote_cache=grpcs://remote.buildbuddy.io
         common:buildbuddy-cache --remote_header=x-buildbuddy-api-key=$BUILDBUDDY_CACHE_KEY
         EOF
-        chmod 600 "$HOME/.bazelrc"

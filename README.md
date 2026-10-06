@@ -79,6 +79,11 @@ run both systems. Actions use the BuildBuddy cache through the
 `BUILDBUDDY_API_KEY` repository secret, with remote uploads disabled. Forks
 receive no secret and use the GitHub disk and repository caches. Fresh native
 tests still execute with `--nocache_test_results` on both systems.
+The preliminary wildcard pass excludes the four suites that the evidence driver
+runs freshly afterward, so native tests execute once per required evidence run.
+The pinned `rules_stests` runtime has a small compatibility patch recognizing
+Django's proven startup bind-conflict message within its existing three-attempt
+port-allocation budget. Unknown startup failures remain immediate failures.
 Local execution eagerly materializes cached
 outputs so OCI directory symlink aliases remain intact; remote BuildBuddy
 execution retains minimal downloads with explicit evidence trees. A separate

@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/url"
 	"os"
@@ -12,6 +13,57 @@ import (
 	"sort"
 	"testing"
 )
+
+func TestBindConflictClassificationUsesBoundedRetry(t *testing.T) {
+	cause := errors.New("exit status 1")
+	for _, test := range []struct {
+		name, message string
+		retry         bool
+	}{
+		{"django", "Error: That port is already in use.\n", true},
+		{"puma", "Address already in use - bind(2)\n", true},
+		{"errno", "Errno::EADDRINUSE\n", true},
+		{"unknown", "SDK crashed during startup\n", false},
+		{"other-port-error", "Error: That port is not available.\n", false},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			log, err := os.Create(filepath.Join(t.TempDir(), "app.log"))
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer log.Close()
+			if _, err := log.WriteString(test.message); err != nil {
+				t.Fatal(err)
+			}
+			attempts := 0
+			data, err := retryPortConflicts(func() ([]byte, error) {
+				attempts++
+				if attempts == 1 {
+					return nil, classifyProcessExit(cause, log)
+				}
+				return []byte("capture"), nil
+			})
+			if test.retry {
+				if err != nil || attempts != 2 || string(data) != "capture" {
+					t.Fatalf("known bind conflict: attempts=%d data=%q err=%v", attempts, data, err)
+				}
+				attempts = 0
+				_, err = retryPortConflicts(func() ([]byte, error) {
+					attempts++
+					return nil, classifyProcessExit(cause, log)
+				})
+				if attempts != 3 || !errors.Is(err, errPortInUse) {
+					t.Fatalf("bind conflict budget: attempts=%d err=%v", attempts, err)
+				}
+			} else {
+				var startup *startupExit
+				if attempts != 1 || data != nil || !errors.As(err, &startup) || startup.cause != cause {
+					t.Fatalf("unknown exit must fail immediately: attempts=%d data=%q err=%v", attempts, data, err)
+				}
+			}
+		})
+	}
+}
 
 func TestIndependentBazelContractsMatchRunnerAndRejectUnknownCases(t *testing.T) {
 	root := filepath.Join(os.Getenv("TEST_SRCDIR"), os.Getenv("TEST_WORKSPACE"))

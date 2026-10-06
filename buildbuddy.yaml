@@ -47,7 +47,7 @@ actions:
           }
           trap archive_evidence EXIT
           : > "$images/bazel.flags"
-          bazel test --config=buildbuddy --spawn_strategy=remote,local --build_tests_only //...
+          DATADOG_BAZEL_CONFIG=buildbuddy tools/run_datadog_preflight.sh
           DATADOG_BAZEL_CONFIG=buildbuddy tools/run_datadog_parity.sh "$images" "$revision" "$evidence"
           cp "$evidence/datadog-report.html" "$BUILDBUDDY_ARTIFACTS_DIRECTORY/datadog-report.html"
           (cd examples/plugin_agent && bazel build //:telemetry_api_check)
