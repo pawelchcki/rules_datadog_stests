@@ -19,7 +19,7 @@ import (
 const capture = `'((protocol datadog) (semantic-valid #t)
  (requests (((method "POST") (wire-version "v0.5") (path "/v0.5/traces")
   (content-type "application/msgpack") (trace-count "1") (chunk-count 1) (span-count 1)
-  (headers (("X-Datadog-Trace-Count" "1") ("Datadog-Meta-Lang" "python") ("Datadog-Meta-Tracer-Version" "4.14.0"))))))
+  (headers (("X-Datadog-Trace-Count" "1") ("Datadog-Meta-Lang" "python") ("Datadog-Meta-Tracer-Version" "4.15.5"))))))
  (spans (((name "aiohttp.request") (service "test-datadog") (resource "GET /api/profiles/{username}")
   (type "web") (error 0) (trace-id "18446744073709551615") (span-id "18446744073709551614") (parent-id "0")
   (start "18446744073709550000") (duration "1000") (ids-valid #t) (completed #t)
@@ -30,7 +30,7 @@ const program = `
 (import (scheme base) (datadog capture shapes) (datadog profile) (datadog catalog))
 (define capture CAPTURE)
 (define profile
- (realworld-profile (service-name "test-datadog") (language 'python) (tracer-version "4.14.0") (wire-version "v0.5")
+ (realworld-profile (service-name "test-datadog") (language 'python) (tracer-version "4.15.5") (wire-version "v0.5")
   (all (observed span/native-fields span/ids-valid span/completed span/root-present
                  span/http-classification span/exception-metadata span/service-present
                  request/headers-and-counts capture/semantic-valid))))
@@ -162,17 +162,17 @@ func defineCases(run func(name, value, body string, expected int), expect func(n
 	run("wide metric integers remain lossless", strings.Replace(capture,
 		`("_dd.measured" 1)`, `("_dd.measured" 1) ("wide.unsigned" "18446744073709551615") ("wide.signed" "-9223372036854775808")`, 1), program, 200)
 	consumerIdentity := "consumer-tracer/1.0"
-	consumerProgram := strings.Replace(program, `"4.14.0"`, `"`+consumerIdentity+`"`, 1)
-	consumerCapture := strings.Replace(capture, `"4.14.0"`, `"`+consumerIdentity+`"`, 1)
+	consumerProgram := strings.Replace(program, `"4.15.5"`, `"`+consumerIdentity+`"`, 1)
+	consumerCapture := strings.Replace(capture, `"4.15.5"`, `"`+consumerIdentity+`"`, 1)
 	run("declared consumer tracer identity", consumerCapture, consumerProgram, 200)
 	run("incompatible consumer tracer identity", capture, consumerProgram, 409)
 	railsProgram := strings.Replace(program, `(language 'python)`, `(language 'ruby) (tracer-language "c") (server-operation "rack.request")`, 1)
-	railsProgram = strings.Replace(railsProgram, `"4.14.0"`, `"bazel-dev"`, 1)
+	railsProgram = strings.Replace(railsProgram, `"4.15.5"`, `"bazel-dev"`, 1)
 	railsProgram = strings.Replace(railsProgram, `(validate-profile profile 'unicode capture
  (cons 'exact '(((count 1) (roots (((name "aiohttp.request") (children ()))))))))`, `(validate-profile profile 'unicode capture 'contract)`, 1)
 	railsCapture := strings.Replace(capture, `"aiohttp.request"`, `"rack.request"`, -1)
 	railsCapture = strings.Replace(railsCapture, `"python"`, `"c"`, 1)
-	railsCapture = strings.Replace(railsCapture, `"4.14.0"`, `"bazel-dev"`, 1)
+	railsCapture = strings.Replace(railsCapture, `"4.15.5"`, `"bazel-dev"`, 1)
 	run("Rails rack.request server operation", railsCapture, railsProgram, 200)
 	controllerBody := `(import (scheme base) (datadog capture shapes))
  (define capture CAPTURE)
@@ -194,7 +194,7 @@ func defineCases(run func(name, value, body string, expected int), expect func(n
 		{"zero start", `(start "18446744073709550000")`, `(start "0")`},
 		{"semantic violation", `(semantic-valid #t)`, `(semantic-valid #f)`},
 		{"wrong intake count", `(trace-count "1")`, `(trace-count "2")`},
-		{"wrong tracer version", `"4.14.0"`, `"0.0.0"`},
+		{"wrong tracer version", `"4.15.5"`, `"0.0.0"`},
 		{"undeclared tracer language", `("Datadog-Meta-Lang" "python")`, `("Datadog-Meta-Lang" "ruby")`},
 		{"duplicate tracer header", `("Datadog-Meta-Lang" "python")`, `("Datadog-Meta-Lang" "python") ("datadog-meta-lang" "python")`},
 		{"duplicate count header", `("X-Datadog-Trace-Count" "1")`, `("X-Datadog-Trace-Count" "1") ("x-datadog-trace-count" "1")`},
@@ -277,7 +277,7 @@ func defineCases(run func(name, value, body string, expected int), expect func(n
 // A capture that satisfies every themed contract assertion, and one mutation
 // per assertion that must fail that assertion by name.
 const contractCapture = `'((requests (((headers (("Datadog-Meta-Lang" "python") ("Datadog-Meta-Lang-Interpreter" "CPython")
-  ("Datadog-Meta-Lang-Version" "3.12.1") ("Datadog-Meta-Tracer-Version" "4.14.0"))))))
+  ("Datadog-Meta-Lang-Version" "3.12.1") ("Datadog-Meta-Tracer-Version" "4.15.5"))))))
  (spans (
   ((name "django.request") (resource "GET api/articles/<slug>") (service "svc") (type "web")
    (trace-id "11803532876627986230") (span-id "1") (parent-id "0") (parent-kind "root") (chunk-index 0) (error 0)

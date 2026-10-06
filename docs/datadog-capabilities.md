@@ -40,3 +40,96 @@ python3 tools/datadog_capabilities.py report \
 ```
 
 Repeat `--evidence` to combine suites or independently retained runs. Use `--scope parametric` only when explicitly measuring that subset; the default denominator remains all capabilities. A report generated without evidence lists implemented assertions and reports **0 runtime verified**, so it cannot pass a 75% gate.
+
+## Shared Ruby, Python, and Go assertions
+
+`//fixtures:datadog_external_features_suite` runs the same HTTP workloads and
+native span assertions against all seven pinned profiles: aiohttp and Django on
+both wire versions, Rails and Falcon on v0.4, and Gin on v0.4. Fixture startup
+and the Go spelling of the B3 configuration are adapted separately; assertion
+predicates, case names, and required cases stay identical across languages.
+
+The [shared mapping](datadog-shared-capabilities-mapping.json) records the
+specific common assertion scopes: 19 capabilities exercised by 53 common cases
+across seven SDK/framework/wire profiles. The remaining 282 capabilities need
+shared assertions and adapters before the full-inventory gate can pass.
+Following [rules_stests PR #57](https://github.com/pawelchcki/rules_stests/pull/57),
+each contract/profile combination runs as its own Bazel service test: 371
+independent targets. Each owns its baseline/control, two fresh SDK executions,
+and a receipt containing exactly one case. A failed case cannot prevent the
+other targets from producing their evidence.
+The suite retains
+`datadog-shared-results.json` alongside the existing `datadog-features.json`.
+Each new receipt carries explicit `language`, `application`, `wire`, canonical
+capability names, and the pinned inventory revision. Its capture, baseline,
+partial-flush captures, and any intake rejection log are bound by SHA-256 and
+rechecked from retained files. Failed cases retain their language and case
+identity even when their capability claims are empty.
+
+Following [rules_stests PR #56](https://github.com/pawelchcki/rules_stests/pull/56),
+each case runs twice in fresh application/SDK processes. Both executions must
+pass the same validators and produce the same normalized behavioral response.
+Generated IDs, timing, ports, and process/runtime identities vary between
+processes; validity and parentage are checked on each raw capture. Both raw
+captures, responses, and partial-flush captures are retained and hash-bound.
+Language coverage requires `repetitions: 2` and a verified separate repeated
+capture and a hash-verified distinct baseline/control artifact. Omitting the
+control declaration cannot leave a passing shared claim. The exact Go 2.10.1 manual-drop-under-keep-rule defect remains
+unsupported with no passing claim; a different failure or unexpected pass
+fails the suite and requires review of [issue #13](https://github.com/pawelchcki/rules_datadog_stests/issues/13).
+The historical Python duplicate-origin waiver was removed after the upgraded
+SDK passed that case on both wire versions.
+
+Require independent evidence for each language with repeated
+`--require-language` options:
+
+```sh
+evidence_args=()
+while IFS= read -r -d '' receipt; do
+  evidence_args+=(--evidence "$receipt")
+done < <(find PATH/TO/features -name datadog-shared-results.json -print0)
+python3 tools/datadog_capabilities.py report \
+  --inventory docs/datadog-capabilities-inventory.json \
+  --mapping docs/datadog-shared-capabilities-mapping.json --local-root . \
+  --gap-issues docs/datadog-coverage-gaps.json \
+  --require-language ruby --require-language python --require-language go \
+  --require-independent-cases \
+  "${evidence_args[@]}" \
+  --require-all-implemented --format markdown
+```
+
+The combined verified count is the intersection of the three language results.
+A Python pass cannot replace missing Ruby or Go evidence. Unlabelled legacy
+receipts contribute no language proof. Every supplied occurrence of a required
+case within a language must pass, including different frameworks and wire
+versions. Missing languages, unsupported results, failed duplicates, and
+tampered baselines prevent verification.
+
+The input directory must contain every independent receipt from the complete
+371-case suite. `--require-independent-cases`
+rejects grouped or empty receipts, including stale pre-isolation outputs.
+
+The parity driver retains JSON and Markdown matrices and requires every
+implemented shared mapping to pass across all three languages. The existing
+75% broad capability gate remains independent. All 301 features remain visible
+in both reports, including features outside the shared suite's scope.
+
+For the requested full-inventory target, add `--require-percent 100`, or set
+`DATADOG_SHARED_CAPABILITY_MIN_PERCENT=100` when running the parity driver.
+This gate fails until every inventory feature has a mapped executable assertion
+and passing evidence in every required language. The shared native tracing
+suite does not supply assertions for every AppSec, OTLP, injection, database,
+or Kubernetes capability. Existing Python-only labs cannot establish Ruby or
+Go support for those features. The capability inventory also does not establish
+SDK support for all of its named features in all three languages; exclusions
+never reduce the coverage denominator.
+
+The [gap tracker](datadog-coverage-gaps.json) links every missing feature to an
+issue and is checked by the shared report gate. Issues
+[#4](https://github.com/pawelchcki/rules_datadog_stests/issues/4) through
+[#11](https://github.com/pawelchcki/rules_datadog_stests/issues/11) cover the 73
+missing broad-suite capabilities. [Issue #12](https://github.com/pawelchcki/rules_datadog_stests/issues/12)
+tracks the 209 existing Python capability checks still needing shared Ruby/Go
+adapters. Missing adapters are not labelled as SDK unsupported. The separate
+[Runnerless request](https://github.com/pawelchcki/my-infra/issues/114) asks for
+periodic dependency-update PRs similar to Renovate.

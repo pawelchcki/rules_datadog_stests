@@ -20,6 +20,7 @@ load(":datadog_integrations.bzl", "datadog_integrations_tests")
 load(":datadog_debugger_extra.bzl", "datadog_debugger_extra_tests")
 load(":datadog_security_extra.bzl", "datadog_security_extra_tests")
 package(default_visibility = ["//visibility:public"])
+exports_files(["external_features.bzl"], visibility = ["//harness/external_features:__pkg__"])
 datadog_external_feature_tests()
 datadog_parallel_tests()
 datadog_lab_tests()
@@ -93,7 +94,7 @@ corpus_service(
 realworld_service_tests(
     name = "aiohttp_datadog",
     service = ":aiohttp_datadog_service",
-    telemetry_profile = "//corpus:python-aiohttp-datadog-v4-14-0-v05",
+    telemetry_profile = "//corpus:python-aiohttp-datadog-v4-15-5-v05",
     telemetry_sink = "@rules_stests//harness:telemetry_sink_service",
     scenarios = REALWORLD_BASE_HURL_CASES + ["propagation_datadog"],
     tags = ["datadog"],
@@ -120,7 +121,7 @@ corpus_service(
 realworld_service_tests(
     name = "aiohttp_datadog_v04",
     service = ":aiohttp_datadog_v04_service",
-    telemetry_profile = "//corpus:python-aiohttp-datadog-v4-14-0-v04",
+    telemetry_profile = "//corpus:python-aiohttp-datadog-v4-15-5-v04",
     telemetry_sink = "@rules_stests//harness:telemetry_sink_service",
     scenarios = REALWORLD_BASE_HURL_CASES + ["propagation_datadog"],
     tags = ["datadog"],
@@ -147,7 +148,7 @@ corpus_service(
 realworld_service_tests(
     name = "django_datadog",
     service = ":django_datadog_service",
-    telemetry_profile = "//corpus:python-django-datadog-v4-14-0-v05",
+    telemetry_profile = "//corpus:python-django-datadog-v4-15-5-v05",
     telemetry_sink = "@rules_stests//harness:telemetry_sink_service",
     scenarios = REALWORLD_BASE_HURL_CASES + ["propagation_datadog"],
     tags = ["datadog"],
@@ -174,7 +175,7 @@ corpus_service(
 realworld_service_tests(
     name = "django_datadog_v04",
     service = ":django_datadog_v04_service",
-    telemetry_profile = "//corpus:python-django-datadog-v4-14-0-v04",
+    telemetry_profile = "//corpus:python-django-datadog-v4-15-5-v04",
     telemetry_sink = "@rules_stests//harness:telemetry_sink_service",
     scenarios = REALWORLD_BASE_HURL_CASES + ["propagation_datadog"],
     tags = ["datadog"],
@@ -216,7 +217,7 @@ corpus_service(
 realworld_service_tests(
     name = "rails_datadog",
     service = ":rails_datadog_service",
-    telemetry_profile = "//corpus:ruby-rails-datadog-v2-42-0-v04",
+    telemetry_profile = "//corpus:ruby-rails-datadog-v2-43-0-v04",
     telemetry_sink = "@rules_stests//harness:telemetry_sink_service",
     scenarios = REALWORLD_BASE_HURL_CASES + ["propagation_datadog"],
     tags = ["datadog", "manual"],
@@ -246,7 +247,7 @@ corpus_service(
 realworld_service_tests(
     name = "falcon_datadog",
     service = ":falcon_datadog_service",
-    telemetry_profile = "//corpus:ruby-falcon-datadog-v2-42-0-v04",
+    telemetry_profile = "//corpus:ruby-falcon-datadog-v2-43-0-v04",
     telemetry_sink = "@rules_stests//harness:telemetry_sink_service",
     scenarios = REALWORLD_BASE_HURL_CASES + ["propagation_datadog"],
     tags = ["datadog", "manual"],

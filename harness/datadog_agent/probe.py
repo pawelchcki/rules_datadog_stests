@@ -2,6 +2,7 @@
 import argparse
 from contextlib import contextmanager
 import hashlib
+from http.client import RemoteDisconnected
 import json
 import os
 from pathlib import Path
@@ -92,7 +93,7 @@ def wait_ready(proc, url, log_path):
         assert proc.poll() is None, log_path.read_text(errors="replace")
         try:
             return json.loads(get(url))
-        except URLError:
+        except (URLError, RemoteDisconnected):
             time.sleep(0.1)
     raise AssertionError("readiness timeout: " + log_path.read_text(errors="replace"))
 

@@ -1,6 +1,8 @@
 """Assert runtime effects and protocol state from independently retained evidence."""
 import re
 
+SDK_VERSION = "4.15.5"
+
 
 def check_client(requests, ready):
     assert requests, "no native RC polls"
@@ -21,7 +23,7 @@ def check_version(requests, ready):
     check_client(requests, ready)
     for request in requests:
         value = request["client"]["client_tracer"]["tracer_version"]
-        assert value == ready["tracer_version"] == "4.14.0", value
+        assert value == ready["tracer_version"] == SDK_VERSION, value
         assert re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?", value), value
 
 

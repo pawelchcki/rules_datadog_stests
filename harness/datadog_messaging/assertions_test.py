@@ -5,10 +5,14 @@ from pathlib import Path
 import unittest
 from unittest.mock import patch
 from harness.datadog_messaging import probe
+from harness.datadog_sdk_extra import probe as sdk_probe
 
 class MessagingAssertions(unittest.TestCase):
     def setUp(self):
         self.data = json.loads(Path(__file__).with_name('golden.json').read_text())
+        version = patch.object(sdk_probe, 'SDK_VERSION', '4.14.0')
+        version.start()
+        self.addCleanup(version.stop)
 
     def check(self):
         probe.check_messaging(self.data['records'], self.data['identity'], self.data['env'])

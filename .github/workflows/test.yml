@@ -22,6 +22,9 @@ jobs:
       - name: Validate tracked Python, shell and JSON sources
         run: python3 tools/check_sources.py
   assertions:
+    # Same-repository PRs are tested by BuildBuddy's required Full test suite.
+    # Forks cannot access the trusted remote-execution credentials.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
     runs-on: ubuntu-24.04
     timeout-minutes: 90
     steps:
@@ -33,10 +36,15 @@ jobs:
           bazelisk-cache: true
           repository-cache: true
           disk-cache: true
-      - run: bazel test --config=local --build_tests_only //...
+      - name: Configure BuildBuddy cache
+        uses: ./.github/actions/buildbuddy-cache
+        with:
+          api-key: ${{ secrets.BUILDBUDDY_API_KEY }}
+      - name: Tests outside the fresh-evidence suites
+        run: DATADOG_BAZEL_CONFIG=ci-cache tools/run_datadog_preflight.sh
       - name: Verify external consumer
         working-directory: examples/plugin_agent
-        run: bazel build //:telemetry_api_check
+        run: bazel build --config=ci-cache //:telemetry_api_check
       - name: Fresh gated Datadog evidence
         shell: bash
         run: |
@@ -45,7 +53,7 @@ jobs:
           evidence="$RUNNER_TEMP/datadog-evidence"
           mkdir -p "$images"
           : > "$images/bazel.flags"
-          DATADOG_BAZEL_CONFIG=local tools/run_datadog_parity.sh "$images" "$(git rev-parse HEAD)" "$evidence"
+          DATADOG_BAZEL_CONFIG=ci-cache tools/run_datadog_parity.sh "$images" "$(git rev-parse HEAD)" "$evidence"
       - name: Retain publishable proof report
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:

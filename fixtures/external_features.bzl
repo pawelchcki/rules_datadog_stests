@@ -20,6 +20,67 @@ _runfiles_data = rule(
 _DATADOG_APPS = ["aiohttp", "django", "rails", "falcon", "gin"]
 _LOCAL_DATADOG_APPS = ["rails", "falcon", "gin"]
 
+# Each shared contract has independent startup, controls, receipts and failure
+# status. The runner regression test binds this registry to its executable cases.
+_DATADOG_SHARED_CASES = [
+    "generate-128",
+    "generate-64",
+    "extract-64",
+    "malformed-zero",
+    "malformed-overflow",
+    "datadog",
+    "origin",
+    "tracecontext",
+    "b3",
+    "b3multi",
+    "none",
+    "malformed",
+    "precedence",
+    "identity",
+    "tags-comma",
+    "tags-space",
+    "tags-colon-value",
+    "tags-identity-precedence",
+    "agent-url-precedence",
+    "sample-one",
+    "sample-zero",
+    "rule-precedence",
+    "disabled",
+    "runtime-identity",
+    "tags-unicode",
+    "sample-service-glob",
+    "server-custom-error",
+    "client-ip-override",
+    "tracecontext-zero-trace",
+    "tracecontext-zero-parent",
+    "tracecontext-invalid-hex",
+    "tracecontext-forbidden-version",
+    "tracecontext-short-trace",
+    "b3-zero",
+    "b3-invalid-hex",
+    "b3multi-zero",
+    "b3multi-invalid-hex",
+    "outbound-datadog",
+    "outbound-tracecontext",
+    "outbound-b3",
+    "outbound-b3multi",
+    "head",
+    "query-redaction",
+    "nested",
+    "manual-keep",
+    "manual-drop",
+    "manual-drop-rule",
+    "exception",
+    "outbound",
+    "partial-1",
+    "partial-2",
+    "partial-1000",
+    "partial-disabled",
+]
+
+# Only these contracts execute original upstream Python method bodies.
+_DATADOG_UPSTREAM_CASES = ["origin", "malformed-zero"]
+
 def _datadog_fixture(app):
     if app == "falcon":
         return struct(
@@ -28,7 +89,7 @@ def _datadog_fixture(app):
             command = ["bin/server", "--host", "127.0.0.1", "--port", "$${PORT}"],
             injection = datadog_ruby_injection(),
             wires = ["v0.4"],
-            profile = "ruby-falcon-datadog-v2-42-0-",
+            profile = "ruby-falcon-datadog-v2-43-0-",
         )
     config = REALWORLD_APPS[app]
     return struct(
@@ -37,7 +98,7 @@ def _datadog_fixture(app):
         command = ["opt/app/bin/realworld-gin-datadog"] + config.command if app == "gin" else config.command,
         injection = datadog_ruby_injection() if app == "rails" else (None if app == "gin" else datadog_python_injection(aiohttp = app == "aiohttp")),
         wires = ["v0.4"] if app in ["rails", "gin"] else ["v0.4", "v0.5"],
-        profile = {"rails": "ruby-rails-datadog-v2-42-0-", "gin": "go-gin-datadog-v2-10-1-"}.get(app, "python-" + app + "-datadog-v4-14-0-"),
+        profile = {"rails": "ruby-rails-datadog-v2-43-0-", "gin": "go-gin-datadog-v2-10-1-"}.get(app, "python-" + app + "-datadog-v4-15-5-"),
     )
 
 def datadog_external_feature_tests():
@@ -48,31 +109,43 @@ def datadog_external_feature_tests():
     for app in _DATADOG_APPS:
         config = _datadog_fixture(app)
         args = ["--runtime=" + config.runtime, "--rootfs=$(rlocationpath {})".format(config.rootfs)]
-        data = [config.rootfs, "@rules_stests//harness:app_launcher", adapter, adapter_runfiles, "@datadog_system_tests_headers//file"]
+        data = [config.rootfs, "@rules_stests//harness:app_launcher"]
         if config.injection:
             args += config.injection.flags
             data.append(config.injection.rootfs)
         args += ["--"] + [arg.replace("$${PORT}", "{PORT}") for arg in config.command]
         for wire in config.wires:
             name = app + "_datadog_external_features_" + wire.replace(".", "")
-            service_test(
-                name = name,
-                timeout = "long",
-                services = ["@rules_stests//harness:otel_sink_service"],
-                test = "//harness/external_features:probe",
-                data = data,
-                args = [
-                    "--protocol=datadog",
-                    "--wire-version=" + wire,
-                    "--app=" + app,
-                    "--launcher=$(rlocationpath @rules_stests//harness:app_launcher)",
-                    "--upstream-datadog-adapter=$(rlocationpath {})".format(adapter),
-                    "--upstream-datadog-test=$(rlocationpath @datadog_system_tests_headers//file)",
-                    "--launch-args='" + json.encode(args) + "'",
-                ],
-                tags = ["datadog", "external-features"] + (["manual"] if app in _LOCAL_DATADOG_APPS else []),
-            )
-            tests.append(":" + name)
+            profile_tests = []
+            for case in _DATADOG_SHARED_CASES:
+                case_name = name + "_" + case.replace("-", "_")
+                case_data = data
+                upstream_args = []
+                if case in _DATADOG_UPSTREAM_CASES:
+                    case_data = data + [adapter, adapter_runfiles, "@datadog_system_tests_headers//file"]
+                    upstream_args = [
+                        "--upstream-datadog-adapter=$(rlocationpath {})".format(adapter),
+                        "--upstream-datadog-test=$(rlocationpath @datadog_system_tests_headers//file)",
+                    ]
+                service_test(
+                    name = case_name,
+                    timeout = "long",
+                    services = ["@rules_stests//harness:otel_sink_service"],
+                    test = "//harness/external_features:probe",
+                    data = case_data,
+                    args = [
+                        "--protocol=datadog",
+                        "--wire-version=" + wire,
+                        "--app=" + app,
+                        "--case=" + case,
+                        "--launcher=$(rlocationpath @rules_stests//harness:app_launcher)",
+                        "--launch-args='" + json.encode(args) + "'",
+                    ] + upstream_args,
+                    tags = ["datadog", "external-features"] + (["manual"] if app in _LOCAL_DATADOG_APPS else []),
+                )
+                profile_tests.append(":" + case_name)
+            native.test_suite(name = name, tests = profile_tests)
+            tests.extend(profile_tests)
     native.test_suite(name = "datadog_external_features_suite", tests = tests)
 
 def datadog_parallel_tests():

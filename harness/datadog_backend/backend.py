@@ -7,6 +7,7 @@ import io
 import json
 import os
 from pathlib import Path
+import re
 import threading
 from urllib.parse import parse_qs, urlsplit
 import zlib
@@ -20,6 +21,46 @@ MAX_BODY = 32 * 1024 * 1024
 JSON_PATHS = {"/api/v2/apmtelemetry", "/api/v2/apmtelemetry/", "/api/v2/llmobs", "/api/v2/series", "/api/v1/series", "/api/v1/check_run", "/api/v1/metadata", "/intake/"}
 METRIC_SCHEMA = json.loads(Path(__file__).with_name("metrics_schema.json").read_text())["messages"]
 PROTOBUF_PATHS = {"/api/v2/series": ".datadog.agentpayload.MetricPayload", "/api/beta/sketches": ".datadog.agentpayload.SketchPayload"}
+
+
+def read_request_body(headers, stream, limit):
+    """Read bounded SDK bodies, including native writer chunked uploads."""
+    lengths = headers.get_all("Content-Length", [])
+    encodings = headers.get_all("Transfer-Encoding", [])
+    if encodings:
+        if lengths or len(encodings) != 1 or encodings[0].lower() != "chunked":
+            raise ValueError("ambiguous or unsupported request framing")
+        chunks, total = [], 0
+        while True:
+            line = stream.readline(1025)
+            if not line.endswith(b"\r\n") or len(line) > 1024:
+                raise ValueError("invalid chunk size line")
+            size_text = line[:-2].split(b";", 1)[0]
+            if not re.fullmatch(rb"[0-9a-fA-F]{1,16}", size_text):
+                raise ValueError("invalid chunk size")
+            size = int(size_text, 16)
+            if size == 0:
+                # The native SDK writer emits no trailers. Do not silently
+                # discard additional request metadata from an unknown sender.
+                if stream.readline(1025) != b"\r\n":
+                    raise ValueError("unsupported or truncated chunk trailers")
+                return b"".join(chunks)
+            total += size
+            if total > limit:
+                raise ValueError("oversized chunked request")
+            chunk = stream.read(size)
+            if len(chunk) != size or stream.read(2) != b"\r\n":
+                raise ValueError("truncated chunk")
+            chunks.append(chunk)
+    if len(lengths) > 1 or (lengths and not re.fullmatch(r"[0-9]+", lengths[0])):
+        raise ValueError("invalid Content-Length")
+    size = int(lengths[0]) if lengths else 0
+    if size > limit:
+        raise ValueError("oversized request")
+    body = stream.read(size)
+    if len(body) != size:
+        raise ValueError("truncated request")
+    return body
 
 
 def decompress(body, encoding):

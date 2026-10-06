@@ -5,7 +5,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from datadog_capabilities import REVISION, coverage, evidence_results, inventory, sha256, validate_mapping
+from datadog_capabilities import REVISION, annotate_gap_issues, coverage, coverage_matrix, evidence_results, inventory, main, sha256, validate_mapping
 
 
 class InventoryTest(unittest.TestCase):
@@ -72,7 +72,8 @@ class CoverageTest(unittest.TestCase):
         }]}
         self.result = {"name": "case-a", "status": "passed", "capabilityNames": ["first"],
                        "capabilityInventoryRevision": REVISION, "captureSha256": "a" * 64,
-                       "configuration": {}, "_captureVerified": True}
+                       "configuration": {}, "_captureVerified": True,
+                       "repetitions": 2, "_repeatVerified": True, "_baselineVerified": True}
 
     def test_scope_and_numeric_id_collision_keep_distinct_named_features(self):
         all_scope = coverage(self.data, self.mapping)
@@ -82,6 +83,139 @@ class CoverageTest(unittest.TestCase):
         self.assertEqual(1, narrow["denominator"])
         self.assertEqual(0, all_scope["verifiedCapabilities"])
         self.assertFalse(all_scope["fullUpstreamCaseParity"])
+
+    def _write_shared_case(self, root, name):
+        files = {kind: root / f"{name}-{kind}.capture.json" for kind in ("primary", "repeat", "baseline")}
+        for kind, path in files.items():
+            path.write_bytes(f"{name} {kind} capture".encode())
+        return dict(self.result, name=name, language="python",
+                    captureFile=files["primary"].name, captureSha256=sha256(files["primary"].read_bytes()),
+                    repeatCaptureFile=files["repeat"].name, repeatCaptureSha256=sha256(files["repeat"].read_bytes()),
+                    baselineSha256=sha256(files["baseline"].read_bytes()),
+                    artifacts=[{"file": files[kind].name, "sha256": sha256(files[kind].read_bytes())}
+                               for kind in ("repeat", "baseline")])
+
+    def test_shared_gate_rejects_omitted_or_reused_control_artifacts(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            row = self._write_shared_case(root, "case-a")
+            receipt = root / "receipt.json"
+            mapping = copy.deepcopy(self.mapping)
+            mapping["capabilities"][0]["requiredCases"] = ["case-a"]
+
+            def verified(value):
+                receipt.write_text(json.dumps({"results": [value]}))
+                return coverage_matrix(self.data, mapping, ["python"],
+                                       results=evidence_results([receipt], True))["verifiedCapabilities"]
+
+            self.assertEqual(1, verified(row))
+            self.assertEqual(0, verified(dict(row, artifacts=row["artifacts"][:1])))
+            self.assertEqual(0, verified(dict(row, baselineSha256="0" * 64)))
+            reused = dict(row, baselineSha256=row["captureSha256"],
+                          artifacts=row["artifacts"][:1] + [{"file": row["captureFile"], "sha256": row["captureSha256"]}])
+            self.assertEqual(0, verified(reused))
+
+    def test_cli_independent_case_gate_accepts_split_receipts_and_rejects_grouping(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "inventory.json").write_text(json.dumps(self.data))
+            (root / "mapping.json").write_text(json.dumps(self.mapping))
+            rows = [self._write_shared_case(root, name) for name in ("case-a", "case-b")]
+            receipts = []
+            for row in rows:
+                path = root / (row["name"] + ".json")
+                path.write_text(json.dumps({"results": [row]}))
+                receipts += ["--evidence", str(path)]
+            args = ["report", "--inventory", str(root / "inventory.json"),
+                    "--mapping", str(root / "mapping.json"), "--require-language", "python",
+                    "--require-independent-cases", "--require-all-implemented",
+                    "--output", str(root / "report.json")]
+            self.assertEqual(0, main(args + receipts))
+            report = json.loads((root / "report.json").read_text())
+            self.assertTrue(report["requiredIndependentCases"])
+            self.assertEqual(1, report["verifiedCapabilities"])
+            grouped = root / "grouped.json"
+            for values in (rows, []):
+                grouped.write_text(json.dumps({"results": values}))
+                with self.assertRaisesRegex(ValueError, "exactly one case per receipt"):
+                    main(args + ["--evidence", str(grouped)])
+            grouped.write_text(json.dumps({"results": rows}))
+            # Historical and broader suites may still use grouped receipts.
+            self.assertEqual(2, len(list(evidence_results([grouped]))))
+
+    def test_gap_issues_track_missing_features_without_increasing_coverage(self):
+        report = coverage_matrix(self.data, self.mapping, ["python", "ruby", "go"])
+        gaps = {"upstreamRevision": REVISION, "issues": [{
+            "scope": ["shared"], "capabilities": ["second"],
+            "url": "https://github.com/owner/repo/issues/12",
+        }]}
+        annotate_gap_issues(report, gaps)
+        self.assertEqual(0, report["verifiedCapabilities"])
+        self.assertEqual(2, report["denominator"])
+        self.assertEqual([gaps["issues"][0]["url"]], report["capabilities"][1]["gapIssues"])
+        for change in ("missing", "unknown", "revision"):
+            broken = copy.deepcopy(gaps)
+            if change == "missing": broken["issues"] = []
+            if change == "unknown": broken["issues"][0]["capabilities"] = ["invented"]
+            if change == "revision": broken["upstreamRevision"] = "wrong"
+            fresh = coverage_matrix(self.data, self.mapping, ["python", "ruby", "go"])
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                annotate_gap_issues(fresh, broken)
+
+    def test_cross_language_gate_requires_every_case_in_every_language(self):
+        languages = ["python", "ruby", "go"]
+        results = [dict(self.result, language=language, name=name)
+                   for language in languages for name in ["case-a", "case-b"]]
+        report = coverage_matrix(self.data, self.mapping, languages, results=results)
+        self.assertEqual(1, report["verifiedCapabilities"])
+        self.assertEqual(50, report["verifiedPercent"])
+        for mutation in ({"status": "unsupported"}, {"status": "failed"},
+                         {"language": None}, {"_captureVerified": False},
+                         {"repetitions": 1}, {"_repeatVerified": False}, {"_baselineVerified": False}):
+            with self.subTest(mutation=mutation):
+                changed = results[:-1] + [dict(results[-1], **mutation)]
+                report = coverage_matrix(self.data, self.mapping, languages, results=changed)
+                self.assertEqual(0, report["verifiedCapabilities"])
+                self.assertEqual(1, report["languageCoverage"]["python"]["verifiedCapabilities"])
+                self.assertEqual(1, report["languageCoverage"]["ruby"]["verifiedCapabilities"])
+                self.assertEqual(0, report["languageCoverage"]["go"]["verifiedCapabilities"])
+        # A duplicate Python pass cannot fill the missing Go cell.
+        self.assertEqual(0, coverage_matrix(self.data, self.mapping, languages,
+                         results=results[:-1] + [results[0]])["verifiedCapabilities"])
+        # Neither empty claims nor a successful duplicate can hide a failure.
+        bad = dict(results[-1], status="failed", capabilityNames=[])
+        self.assertEqual(0, coverage_matrix(self.data, self.mapping, languages,
+                         results=results + [bad])["verifiedCapabilities"])
+
+    def test_cross_language_gate_never_counts_unlabelled_legacy_receipts(self):
+        results = [self.result, dict(self.result, name="case-b")]
+        self.assertEqual(1, coverage(self.data, self.mapping, results=results)["verifiedCapabilities"])
+        report = coverage_matrix(self.data, self.mapping, ["python", "ruby", "go"], results=results)
+        self.assertEqual(2, report["denominator"])
+        self.assertEqual(0, report["verifiedCapabilities"])
+        for languages in ([], ["go", "go"], ["javascript"]):
+            with self.subTest(languages=languages), self.assertRaises(ValueError):
+                coverage_matrix(self.data, self.mapping, languages, results=results)
+
+    def test_cli_100_percent_matrix_gate_fails_with_missing_language(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "inventory.json").write_text(json.dumps(self.data))
+            (root / "mapping.json").write_text(json.dumps(self.mapping))
+            capture = b"native capture"
+            (root / "capture.json").write_bytes(capture)
+            results = [dict(self.result, name=name, language="python", captureFile="capture.json",
+                            captureSha256=sha256(capture)) for name in ["case-a", "case-b"]]
+            (root / "results.json").write_text(json.dumps({"results": results}))
+            status = main(["report", "--inventory", str(root / "inventory.json"),
+                           "--mapping", str(root / "mapping.json"), "--evidence", str(root / "results.json"),
+                           "--require-language", "python", "--require-language", "ruby",
+                           "--require-language", "go", "--require-percent", "100",
+                           "--output", str(root / "report.json")])
+            self.assertEqual(1, status)
+            report = json.loads((root / "report.json").read_text())
+            self.assertEqual(["python", "ruby", "go"], report["requiredLanguages"])
+            self.assertEqual(0, report["verifiedPercent"])
 
     def test_every_required_case_must_pass_with_verified_capture(self):
         second = dict(self.result, name="case-b")
@@ -181,6 +315,25 @@ class CoverageTest(unittest.TestCase):
             receipt.write_text(json.dumps({"results": [result]}))
             with self.assertRaisesRegex(ValueError, "evidence directory"):
                 list(evidence_results([receipt]))
+
+    def test_repeat_proof_requires_a_separate_retained_capture(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            capture, repeat = b"first native capture", b"second native capture"
+            (root / "case-a.capture.json").write_bytes(capture)
+            (root / "repeat.capture.json").write_bytes(repeat)
+            result = dict(self.result, captureSha256=sha256(capture),
+                          repeatCaptureFile="repeat.capture.json", repeatCaptureSha256=sha256(repeat),
+                          artifacts=[{"file": "repeat.capture.json", "sha256": sha256(repeat)}])
+            receipt = root / "results.json"
+            receipt.write_text(json.dumps({"results": [result]}))
+            self.assertTrue(list(evidence_results([receipt]))[0]["_repeatVerified"])
+            (root / "repeat.capture.json").write_bytes(repeat + b"tampering")
+            self.assertFalse(list(evidence_results([receipt]))[0]["_repeatVerified"])
+            result.update(repeatCaptureFile="case-a.capture.json", repeatCaptureSha256=sha256(capture),
+                          artifacts=[{"file": "case-a.capture.json", "sha256": sha256(capture)}])
+            receipt.write_text(json.dumps({"results": [result]}))
+            self.assertFalse(list(evidence_results([receipt]))[0]["_repeatVerified"])
 
     def test_retained_capture_hash_is_checked_and_traversal_rejected(self):
         with tempfile.TemporaryDirectory() as directory:

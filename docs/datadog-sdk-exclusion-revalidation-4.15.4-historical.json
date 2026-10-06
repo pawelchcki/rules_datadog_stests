@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "sdkVersion": "4.15.4",
+  "sourceRevision": "098fe0967c587db8a16b74a1e711777d0a9d5867",
+  "validatedAt": "2026-10-06T17:45:04Z",
+  "diagnosticMode": "SDK-specific exclusions removed; unchanged original assertions executed against real SDK and native intake",
+  "cases": [
+    {
+      "name": "local_cases.Test_Lab_Http.test_independent_client_status_ranges[0]",
+      "wire": "v0.4",
+      "sdkVersion": "4.15.4",
+      "sourceSha256": "5bec38863513511038e84e60647544dd6deda7a960dc7be9d8628f5208e6fb51",
+      "workloadSha256": "4038bfafde65d27c87dc75c8d3c6ff40fe2aff009014cf5bd73ba1a9b1d15986",
+      "captureSha256": "360681ec898bbcefeb75d691d685efbd480de69dfa7e4c72d4d728d2560f31d2",
+      "operationsSha256": "6fd16e9611701b2bcf32cdfbcaff0288db5556ebfc5978360c7d2ba69c6f51ef",
+      "status": "failed"
+    },
+    {
+      "name": "local_cases.Test_Lab_Http.test_query_redaction_empty[0]",
+      "wire": "v0.4",
+      "sdkVersion": "4.15.4",
+      "sourceSha256": "5bec38863513511038e84e60647544dd6deda7a960dc7be9d8628f5208e6fb51",
+      "workloadSha256": "4038bfafde65d27c87dc75c8d3c6ff40fe2aff009014cf5bd73ba1a9b1d15986",
+      "captureSha256": "7db55e56e744b11377bbb39d71e950622d26f01b2af3425f506f02d3d9384d77",
+      "operationsSha256": "f464c453d98ddcad0ceb7cce9dbb04005f0decb15460ea55960c4b343d859f83",
+      "status": "failed"
+    },
+    {
+      "name": "test_partial_flushing.Test_Partial_Flushing.test_partial_flushing_propagation_tags[0]",
+      "wire": "v0.4",
+      "sdkVersion": "4.15.4",
+      "sourceSha256": "2c8a445acdc133f41a5323f6ed7ec9f955661f2233c253c30215100658747bd2",
+      "workloadSha256": "4038bfafde65d27c87dc75c8d3c6ff40fe2aff009014cf5bd73ba1a9b1d15986",
+      "captureSha256": "c49327045b70af8f4c378732e61569a27a9688e6d46ba58786116fc256221f96",
+      "operationsSha256": "8581b7c6ca0276d0269b8d4cfb31f461b42b7e48155cff156424d5bdd67e559e",
+      "status": "failed"
+    },
+    {
+      "name": "test_span_events.Test_Span_Events.test_span_with_invalid_event_attributes[0]",
+      "wire": "v0.4",
+      "sdkVersion": "4.15.4",
+      "sourceSha256": "04c623e842d40c5bd8ac73201515a7e2abcaf0ea957cae829920400cefd91f7d",
+      "workloadSha256": "4038bfafde65d27c87dc75c8d3c6ff40fe2aff009014cf5bd73ba1a9b1d15986",
+      "captureSha256": "5fe96f82a6dfbdb2f83629b011b2eb4670b583c34f95649ab00a38c2fa20dd4a",
+      "operationsSha256": "5fdb41801469f770cf880f8b3d92f2706df3454c46d01499475dfd23fe5cdfc3",
+      "status": "failed"
+    },
+    {
+      "name": "test_tracer.Test_TracerServiceNameSource.test_tracer_no_srv_src_when_service_not_manually_set[0]",
+      "wire": "v0.4",
+      "sdkVersion": "4.15.4",
+      "sourceSha256": "12dddb4972865a8a3a2e6dc9457dc40c640eeaaa529e5af9a4af98ef62feebb3",
+      "workloadSha256": "4038bfafde65d27c87dc75c8d3c6ff40fe2aff009014cf5bd73ba1a9b1d15986",
+      "captureSha256": "a2143ddd4ab36395993ee3cb5d401c3a05eb0bbb99648318b2f8553893760791",
+      "operationsSha256": "35af772e4fabf88704c1679efbebbd9855af4bf974abb5b2ddd2fe8c620a587d",
+      "status": "failed"
+    },
+    {
+      "name": "local_cases.Test_Lab_Http.test_independent_client_status_ranges[0]",
+      "wire": "v0.5",
+      "sdkVersion": "4.15.4",
+      "sourceSha256": "5bec38863513511038e84e60647544dd6deda7a960dc7be9d8628f5208e6fb51",
+      "workloadSha256": "4038bfafde65d27c87dc75c8d3c6ff40fe2aff009014cf5bd73ba1a9b1d15986",
+      "captureSha256": "0495aea57036ed68e334504acd3f349be9ed5a7a9a93c5142b5c8e034cf88b6e",
+      "operationsSha256": "cbcfe89a2f630a4b5be0e6c83ddb757a48d32e3506fba2b46512a95c40fb3bd7",
+      "status": "failed"
+    },
+    {
+      "name": "local_cases.Test_Lab_Http.test_query_redaction_empty[0]",
+      "wire": "v0.5",
+      "sdkVersion": "4.15.4",
+      "sourceSha256": "5bec38863513511038e84e60647544dd6deda7a960dc7be9d8628f5208e6fb51",
+      "workloadSha256": "4038bfafde65d27c87dc75c8d3c6ff40fe2aff009014cf5bd73ba1a9b1d15986",
+      "captureSha256": "31cf3917f579622c3136f1e098c5d1c0fc71db40e2dea9f30d9f40e8ed58a783",
+      "operationsSha256": "ea2eaef51732c417784bf946004e1d6283f56921dd06c3590e227d3aeabee943",
+      "status": "failed"
+    },
+    {
+      "name": "test_partial_flushing.Test_Partial_Flushing.test_partial_flushing_propagation_tags[0]",
+      "wire": "v0.5",
+      "sdkVersion": "4.15.4",
+      "sourceSha256": "2c8a445acdc133f41a5323f6ed7ec9f955661f2233c253c30215100658747bd2",
+      "workloadSha256": "4038bfafde65d27c87dc75c8d3c6ff40fe2aff009014cf5bd73ba1a9b1d15986",
+      "captureSha256": "50ad0f6fd00a2a0906ad6bf4d9ebd14d4cefe8161bf951cf1dbf97d83f9a8e6c",
+      "operationsSha256": "018f7a73f2d995e15742812fd5a4484d29622a339bba2908e19ecb943558708d",
+      "status": "failed"
+    },
+    {
+      "name": "test_span_events.Test_Span_Events.test_span_with_event_v05[0]",
+      "wire": "v0.5",
+      "sdkVersion": "4.15.4",
+      "sourceSha256": "04c623e842d40c5bd8ac73201515a7e2abcaf0ea957cae829920400cefd91f7d",
+      "workloadSha256": "4038bfafde65d27c87dc75c8d3c6ff40fe2aff009014cf5bd73ba1a9b1d15986",
+      "captureSha256": "65ca9121f41f4ed4fd27fa38cbb6f07727e9363043bd003e79fcdd6b3b582b6c",
+      "operationsSha256": "66b7d39815f4fd127cc380113020d46ecca513fdfac6ae6ae584c04934cc7649",
+      "status": "failed"
+    },
+    {
+      "name": "test_tracer.Test_TracerServiceNameSource.test_tracer_no_srv_src_when_service_not_manually_set[0]",
+      "wire": "v0.5",
+      "sdkVersion": "4.15.4",
+      "sourceSha256": "12dddb4972865a8a3a2e6dc9457dc40c640eeaaa529e5af9a4af98ef62feebb3",
+      "workloadSha256": "4038bfafde65d27c87dc75c8d3c6ff40fe2aff009014cf5bd73ba1a9b1d15986",
+      "captureSha256": "0cb6523601ab082b6606e366d9008494abd6ae826061b5df74c803d48eb01260",
+      "operationsSha256": "cd9061a57ced3ae25f99d048002ddfa50edf0d20a02f42b81af19de2adbf8e99",
+      "status": "failed"
+    }
+  ],
+  "trackingIssue": "https://github.com/pawelchcki/rules_datadog_stests/issues/16"
+}

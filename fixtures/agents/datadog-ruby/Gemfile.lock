@@ -2,7 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     cgi (0.5.2)
-    datadog (2.42.0)
+    datadog (2.43.0)
       cgi
       datadog-ruby_core_source (~> 3.5, >= 3.5.5)
       libdatadog (~> 40.0.0.2.0)
@@ -53,10 +53,10 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  datadog (= 2.42.0)
+  datadog (= 2.43.0)
 
 RUBY VERSION
-   ruby 3.3.12p206
+  ruby 3.3.12p206
 
 BUNDLED WITH
-   4.0.3
+  4.0.3

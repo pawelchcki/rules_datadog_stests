@@ -21,6 +21,12 @@ actions:
     steps:
       - run: |
           set -euo pipefail
+          # ci_runner sets this from the pushed repository on every run. Keep
+          # the required status context, but delegate fork builds to Actions.
+          if [[ "$(git config --get extensions.partialClone || true)" == fork ]]; then
+            echo 'Fork PR: full tests and fresh evidence run in GitHub Actions.'
+            exit 0
+          fi
           revision="$(git rev-parse HEAD)"
           if [ "$(git show -s --format=%ce HEAD)" = "ci-runner@buildbuddy.io" ]; then
             revision="$(git rev-parse HEAD^1)"
@@ -41,7 +47,7 @@ actions:
           }
           trap archive_evidence EXIT
           : > "$images/bazel.flags"
-          bazel test --config=buildbuddy --spawn_strategy=remote,local --build_tests_only //...
+          DATADOG_BAZEL_CONFIG=buildbuddy tools/run_datadog_preflight.sh
           DATADOG_BAZEL_CONFIG=buildbuddy tools/run_datadog_parity.sh "$images" "$revision" "$evidence"
           cp "$evidence/datadog-report.html" "$BUILDBUDDY_ARTIFACTS_DIRECTORY/datadog-report.html"
           (cd examples/plugin_agent && bazel build //:telemetry_api_check)

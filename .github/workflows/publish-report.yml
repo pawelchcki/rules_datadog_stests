@@ -1,9 +1,16 @@
 name: Publish Datadog report
 
 on:
-  push:
+  workflow_run:
+    workflows: [Datadog assertions]
+    types: [completed]
     branches: [main]
   workflow_dispatch:
+    inputs:
+      run-id:
+        description: Successful main-push Datadog assertions run containing the report
+        type: number
+        required: true
 
 concurrency:
   group: datadog-report-pages
@@ -11,41 +18,46 @@ concurrency:
 
 permissions:
   contents: read
+  actions: read
   pages: write
   id-token: write
 
 jobs:
   publish:
-    if: github.ref == 'refs/heads/main'
+    if: >-
+      (github.event_name == 'workflow_run' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.conclusion == 'success') ||
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-24.04
-    timeout-minutes: 90
+    timeout-minutes: 10
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-      - uses: bazel-contrib/setup-bazel@8cb04a772ab4c1eb984e9c1b493a182e96c5e425 # 0.19.0
-        with:
-          bazelisk-cache: true
-      - name: Fresh gated evidence
-        shell: bash
+      - name: Verify report source
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPORT_RUN_ID: ${{ github.event.workflow_run.id || inputs.run-id }}
         run: |
           set -euo pipefail
-          images="$RUNNER_TEMP/datadog-images"
-          evidence="$RUNNER_TEMP/datadog-evidence"
-          mkdir -p "$images"
-          : > "$images/bazel.flags"
-          tools/run_datadog_parity.sh "$images" "$(git rev-parse HEAD)" "$evidence"
-          mkdir -p _site
-          cp "$evidence/datadog-report.html" _site/index.html
-          cp "$evidence/datadog-report.html" _site/datadog-report.html
-      - name: Retain proof artifacts
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$REPORT_RUN_ID" > "$RUNNER_TEMP/source-run.json"
+          python3 - <<'PYCODE'
+          import json, os, pathlib
+          run = json.loads((pathlib.Path(os.environ["RUNNER_TEMP"]) / "source-run.json").read_text())
+          assert run["head_repository"]["full_name"] == os.environ["GITHUB_REPOSITORY"]
+          assert run["head_branch"] == "main" and run["event"] == "push"
+          assert run["path"] == ".github/workflows/test.yml" and run["conclusion"] == "success"
+          PYCODE
+      - name: Download verified report
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
-          name: datadog-evidence
-          path: ${{ runner.temp }}/datadog-evidence
-          if-no-files-found: ignore
+          name: datadog-report
+          path: _site
+          github-token: ${{ github.token }}
+          run-id: ${{ github.event.workflow_run.id || inputs.run-id }}
+      - name: Prepare Pages index
+        run: cp _site/datadog-report.html _site/index.html
       - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
       - uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
         with:

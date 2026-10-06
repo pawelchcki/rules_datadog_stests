@@ -18,7 +18,7 @@ class DsmBackendHandler(TelemetryBackendHandler):
         from harness.datadog_backend.backend import API_KEY
         assert headers['dd-api-key']==API_KEY
         payload=msgpack(decompress(raw,headers.get('content-encoding','')))
-        assert payload['Lang']=='python' and payload['TracerVersion']=='4.14.0'
+        assert payload['Lang']=='python' and payload['TracerVersion']=='4.15.5'
         self.server.capture(self.path,headers,raw,200,payload,None)
         self.send_response(200);self.send_header('Content-Length','2');self.end_headers();self.wfile.write(b'{}')
 
@@ -46,11 +46,11 @@ def execute(args,out):
                         raw=(case/'tracer'/r['raw_file']).read_bytes();assert sha(raw)==r['raw_sha256']
                         if r['path']=='/v0.1/pipeline_stats':
                             payload=msgpack(decompress(raw,r['headers'].get('content-encoding','')))
-                            assert payload['Service']=='dsm-lab' and payload['TracerVersion'].startswith('4.14.')
+                            assert payload['Service']=='dsm-lab' and payload['TracerVersion'] == '4.15.5'
                             points.extend(p for bucket in payload['Stats'] for p in bucket['Stats'])
                         elif r['path']=='/v0.4/traces':spans.extend(s for trace in msgpack(raw) for s in trace)
                     identity=json.loads((case/'identity.json').read_text())
-                    assert identity['client_version']=='1.38.22' and identity['tracer_version'].startswith('4.14.')
+                    assert identity['client_version']=='1.38.22' and identity['tracer_version'] == '4.15.5'
                     (case/'events.json').write_text(json.dumps({'points':points,'spans':spans},indent=2)+'\n')
                     evidence[mode]=(identity,aws.snapshot()[first:],points,spans,records,env)
                 assert not evidence['disabled'][2],'disabled control emitted DSM stats'

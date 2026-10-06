@@ -21,14 +21,14 @@ OCI_IMAGES = {
 
 DATADOG_PYTHON = struct(
     repository = "install.datadoghq.com/apm-library-python-package",
-    digest = "sha256:8276af62a8236cb92a3bd64710271b5f2a537cb586e4633d92f1742f3c4ff3a0",
-    version = "4.14.0-1",
+    digest = "sha256:9249d9395e5e4ea643bcfe1f3d5c8472d62ed1fc3404dbbde8d2a3e5b394f13b",
+    version = "4.15.5-1",
 )
 
 # Published after verifying the reviewed payload digest and anonymous pull.
 DATADOG_RUBY = struct(
     repository = "ghcr.io/pawelchcki/rules_stest_agents",
-    digest = "sha256:eb96229a846b2335a56e0fa2a4b6b454bceebcfe2cfb92b5a7b2841888fb61a8",
-    tree = "1f1b230330b94d6d5198b9efcfebd4e4844bd3ef",
-    version = "2.42.0",
+    digest = "sha256:9b59812e1c1c95523ae82265c78e87d612a840a8ebf1140fb0c90cbb2df8640f",
+    tree = "719cdf96e8569b8c39c841f3b8c9cb3d55191673",
+    version = "2.43.0",
 )

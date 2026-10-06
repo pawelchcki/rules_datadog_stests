@@ -375,8 +375,6 @@ def dd_trace_py(wire: str, process_tags: str) -> Tracer:
                    *process_identity("python"), metric("_dd.tracer_kr", 1), priority(caller)]
         if not caller:
             clauses += kept_by_sampling_rule()
-        elif caller.style == "w3c":
-            clauses.append(tag("traceparent", caller.header))
         return clauses
 
     def every(caller):

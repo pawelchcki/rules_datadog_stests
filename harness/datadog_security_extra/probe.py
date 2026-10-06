@@ -114,7 +114,7 @@ def native_spans(records):
     for record in records:
         if record["path"] == "/v0.4/traces":
             headers = {k.lower(): v for k, v in record["headers"].items()}
-            assert headers["datadog-meta-tracer-version"] == "4.14.0"
+            assert headers["datadog-meta-tracer-version"] == "4.15.5"
             assert headers["datadog-meta-lang"] == "python"
     return [span for record in records if record["path"] == "/v0.4/traces" for chunk in decoded(record) for span in chunk]
 
@@ -345,7 +345,7 @@ def check_onboarding(rows, records, log):
     assert event(root) and root["metrics"]["_dd.appsec.enabled"] == 1
     assert any(t["rule"]["id"] == "ua0-600-12x" for t in structured(root, "appsec")["triggers"])
     requests = rc_requests(records)
-    assert requests and all(r["client"]["client_tracer"]["tracer_version"] == "4.14.0" for r in requests)
+    assert requests and all(r["client"]["client_tracer"]["tracer_version"] == "4.15.5" for r in requests)
     assert any("ASM_FEATURES" in r["client"]["products"] for r in requests)
     path = "datadog/2/ASM_FEATURES/ASM_FEATURES-base/config"
     for version, config_version, size, digest in [(2, 1, 47, "9221dfd9f6084151313e3e4920121ae843614c328e4630ea371ba66e2f15a0a6"),

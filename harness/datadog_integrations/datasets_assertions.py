@@ -1,7 +1,7 @@
 """Assert the pinned SDK's dataset create/delete reached the backend through the real Agent EVP proxy.
 
 The SDK posts dataset API calls at <override origin>/evp_proxy/v2/api/unstable/llm-obs/v1/...
-(ddtrace 4.14 LLMObsExperimentsClient). The trace-agent strips the /evp_proxy/v2 prefix and
+(ddtrace 4.15.5 LLMObsExperimentsClient). The trace-agent strips the /evp_proxy/v2 prefix and
 forwards to https://api.<evp dd_url> with Via / X-Datadog-Hostname / X-Datadog-AgentDefaultEnv
 headers. These checks mirror Test_Dataset.test_dataset_create_delete while also verifying both
 wire boundaries.
@@ -27,7 +27,7 @@ def check(identity, sdk_requests, backend_requests, relay_records, agent_version
     assert dataset["project_name"] == PROJECT_NAME, "upstream: dataset.get('project_name') == 'test-project'"
     assert identity["delete"]["success"] is True, "upstream: result.get('success') is True"
     assert identity["delete"]["dataset_id"] == dataset["dataset_id"], identity
-    assert identity["tracer_version"].startswith("4.14."), identity
+    assert identity["tracer_version"] == "4.15.5", identity
 
     # The SDK issued exactly the three pinned DNE calls, all through the agent EVP proxy path.
     projects, creates, deletes, other = [], [], [], []

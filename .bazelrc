@@ -5,6 +5,13 @@ common:local --spawn_strategy=sandboxed,local
 # Lazy cached tree inputs can replace OCI directory aliases with partial directories.
 common:local --remote_download_outputs=all
 common:local --extra_execution_platforms= --host_platform=@platforms//host
+# Actions execute locally while sharing BuildBuddy's authenticated cache when
+# available. Forks have no API key and retain the setup-bazel disk cache.
+common:ci-cache --config=local
+common:ci-cache --config=buildbuddy-cache
+common:buildbuddy-cache --remote_upload_local_results=false
+# The credential and remote_cache endpoint are installed in the runner's
+# user bazelrc, never in this public repository.
 test --test_output=errors
 
 # Optional BuildBuddy fleet, using the shared execution platform.

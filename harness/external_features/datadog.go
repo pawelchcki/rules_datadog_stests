@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -20,6 +21,7 @@ const datadogHeadersSourceSHA256 = "eae879d44ecf020bb1f4a2899d78f2027c9942e556ba
 
 var telemetryProtocol = "datadog"
 var datadogWire = "v0.5"
+var datadogCaseName string
 var activeDatadogCase ddCase
 var datadogUpstreamAdapter, datadogUpstreamTest string
 
@@ -39,9 +41,12 @@ type ddCase struct {
 	Partial                       bool
 	UpstreamMethod                string
 	SourceRevision                string
+	ReferencePath                 string
 	ReferenceClass, ReferenceTest string
 	ExpectedTags                  map[string]string
 	AgentURLPrecedence            bool
+	RuntimeIdentity               bool
+	HTTPError                     *int
 }
 
 type ddNativeSpan struct {
@@ -67,6 +72,7 @@ type ddResult struct {
 	Source                 string            `json:"source"`
 	BaselineSHA256         string            `json:"baselineSha256"`
 	CaptureSHA256          string            `json:"captureSha256"`
+	CaptureFile            string            `json:"captureFile"`
 	Configuration          ddCase            `json:"configuration"`
 	EffectiveConfiguration map[string]string `json:"effectiveConfiguration,omitempty"`
 	Detail                 string            `json:"detail,omitempty"`
@@ -74,6 +80,20 @@ type ddResult struct {
 	RejectionLogSHA256     string            `json:"rejectionLogSha256,omitempty"`
 	UpstreamMethod         string            `json:"upstreamMethod,omitempty"`
 	UpstreamSourceSHA256   string            `json:"upstreamSourceSha256,omitempty"`
+	CapabilityNames        []string          `json:"capabilityNames"`
+	InventoryRevision      string            `json:"capabilityInventoryRevision"`
+	Language               string            `json:"language"`
+	Application            string            `json:"application"`
+	Wire                   string            `json:"wire"`
+	Artifacts              []ddArtifact      `json:"artifacts"`
+	Repetitions            int               `json:"repetitions"`
+	RepeatCaptureSHA256    string            `json:"repeatCaptureSha256"`
+	RepeatCaptureFile      string            `json:"repeatCaptureFile"`
+}
+
+type ddArtifact struct {
+	File   string `json:"file"`
+	SHA256 string `json:"sha256"`
 }
 
 func ddCases() []ddCase {
@@ -81,7 +101,7 @@ func ddCases() []ddCase {
 	propagated := map[string]string{"x-datadog-trace-id": "123456789", "x-datadog-parent-id": "987654321", "x-datadog-sampling-priority": "2", "x-datadog-tags": "_dd.p.tid=1234567890abcdef"}
 	originHeaders := map[string]string{"x-datadog-trace-id": "123456789", "x-datadog-parent-id": "987654321", "x-datadog-sampling-priority": "2", "x-datadog-origin": "synthetics;=web,z", "x-datadog-tags": "_dd.p.dm=-4"}
 	traceparent := "00-1234567890abcdef00000000075bcd15-000000003ade68b1-01"
-	return []ddCase{
+	cases := []ddCase{
 		{Name: "generate-128", Source: "test_128_bit_traceids.py", Bits: 128, Env: map[string]string{"DD_TRACE_128_BIT_TRACEID_GENERATION_ENABLED": "true"}},
 		{Name: "generate-64", Source: "test_128_bit_traceids.py", Bits: 64, Env: map[string]string{"DD_TRACE_128_BIT_TRACEID_GENERATION_ENABLED": "false"}},
 		{Name: "extract-64", Source: "test_headers_datadog.py", Bits: 64, Propagated: true, Headers: map[string]string{"x-datadog-trace-id": "123456789", "x-datadog-parent-id": "987654321"}},
@@ -106,6 +126,7 @@ func ddCases() []ddCase {
 		{Name: "rule-precedence", Source: "test_trace_sampling.py", Env: map[string]string{"DD_TRACE_SAMPLING_RULES": "[{\"service\":\"external-probe\",\"sample_rate\":0},{\"sample_rate\":1}]"}, Priority: &drop},
 		{Name: "disabled", Source: "test_tracer.py", Env: map[string]string{"DD_TRACE_ENABLED": "false"}, Disabled: true},
 	}
+	return append(cases, ddSharedCases()...)
 }
 
 func datadogEnvironment(sink string) map[string]string {
@@ -143,6 +164,9 @@ func ddEffectiveEnvironment(sink string, c ddCase, launchArgs []string) map[stri
 }
 
 func ddSourceURL(c ddCase) string {
+	if c.ReferencePath != "" {
+		return "https://github.com/DataDog/system-tests/blob/" + c.SourceRevision + "/" + c.ReferencePath
+	}
 	if c.SourceRevision != "" {
 		return "https://github.com/DataDog/system-tests/blob/" + c.SourceRevision + "/tests/parametric/" + c.Source
 	}
@@ -167,6 +191,15 @@ func protocolEndpoint(sink, path string) string {
 }
 
 func datadogWorkload(base string, ownership func() error) error {
+	echoBase := base
+	if activeDatadogCase.Kind == "outbound" {
+		observer, err := ddObserveOutbound(base, filepath.Join(ddProbeOutput, activeDatadogCase.Name+".headers.json"))
+		if err != nil {
+			return err
+		}
+		defer observer.Close()
+		echoBase = observer.URL
+	}
 	count := 4
 	if activeDatadogCase.Kind == "partial" {
 		count = 1
@@ -178,6 +211,9 @@ func datadogWorkload(base string, ownership func() error) error {
 		target := base + "/api/tags"
 		if activeDatadogCase.Kind != "" {
 			target = ddProbeURL(base, activeDatadogCase.Kind)
+			if activeDatadogCase.Kind == "outbound" {
+				target = base + "/__rules_stests/outbound?url=" + url.QueryEscape(echoBase+"/__rules_stests/echo?probe_request_id="+strconv.Itoa(i+1))
+			}
 		}
 		if activeDatadogCase.Query != "" {
 			target += "?" + activeDatadogCase.Query
@@ -288,12 +324,25 @@ func validateDatadogCase(c ddCase, baseline, spans []ddNativeSpan) error {
 		return fmt.Errorf("expected four native server spans, got %d; transport omission is not sampling-decision evidence", len(servers))
 	}
 	seen := map[string]bool{}
+	spanIDs := map[uint64]bool{}
+	runtimeID := ""
 	for _, s := range servers {
 		id := s.Meta["probe.request_id"]
 		if seen[id] || (id != "1" && id != "2" && id != "3" && id != "4") {
 			return fmt.Errorf("duplicate or unexpected request identifier %q", id)
 		}
 		seen[id] = true
+		if s.TraceID == 0 || s.SpanID == 0 || spanIDs[s.SpanID] {
+			return fmt.Errorf("zero trace/span identity or reused server span ID")
+		}
+		spanIDs[s.SpanID] = true
+		if c.RuntimeIdentity {
+			value := s.Meta["runtime-id"]
+			if !ddRuntimeID(value) || (runtimeID != "" && value != runtimeID) || s.Metrics["process_id"] <= 0 {
+				return fmt.Errorf("invalid or unstable native runtime identity")
+			}
+			runtimeID = value
+		}
 		service, env, version := c.Service, c.Environment, c.Version
 		if service == "" {
 			service = "external-probe"
@@ -315,6 +364,9 @@ func validateDatadogCase(c ddCase, baseline, spans []ddNativeSpan) error {
 		status, errorFlag := "200", 0
 		if c.Kind == "exception" {
 			status, errorFlag = "500", 1
+		}
+		if c.HTTPError != nil {
+			errorFlag = *c.HTTPError
 		}
 		if s.Start <= 0 || s.Duration <= 0 || s.Type != "web" || s.Error != errorFlag || s.Meta["http.method"] != ddMethod(c) || s.Meta["http.status_code"] != status || s.Meta["probe.header"] != "visible" || s.Meta["http.useragent"] != "datadog-external-probe" {
 			return fmt.Errorf("incorrect native HTTP metadata or header tags")
@@ -400,6 +452,10 @@ func validateUpstreamReceipt(method string, output []byte) (string, error) {
 }
 
 func runDatadog(app, launcher string, args []string) error {
+	cases, err := ddSelectCases(datadogCaseName)
+	if err != nil {
+		return err
+	}
 	sink, err := sinkEndpoint()
 	if err != nil {
 		return err
@@ -409,13 +465,26 @@ func runDatadog(app, launcher string, args []string) error {
 		return fmt.Errorf("Datadog probes require an evidence directory")
 	}
 	collectCase := func(c ddCase) ([]byte, []ddNativeSpan, error) {
-		if app == "gin" && c.Name == "b3" {
-			c.Env["DD_TRACE_PROPAGATION_STYLE_EXTRACT"] = "b3 single header"
+		if app == "gin" {
+			for _, key := range []string{"DD_TRACE_PROPAGATION_STYLE_EXTRACT", "DD_TRACE_PROPAGATION_STYLE_INJECT"} {
+				if c.Env[key] == "b3" {
+					c.Env[key] = "b3 single header"
+				}
+			}
 		}
 		activeDatadogCase = c
 		ddEarlyCapture = nil
 		data, err := collect(app, launcher, args, sink, out, experiment{Name: c.Name, Env: c.Env})
 		if err != nil {
+			logPath := filepath.Join(out, c.Name+".app.log")
+			if contents, readErr := os.ReadFile(logPath); readErr == nil && len(contents) > 0 {
+				// Keep the full file as evidence; bound its tail in CI failure logs.
+				const tailLimit = 16 * 1024
+				if len(contents) > tailLimit {
+					contents = contents[len(contents)-tailLimit:]
+				}
+				return nil, nil, fmt.Errorf("%w\napplication log (%s):\n%s", err, logPath, contents)
+			}
 			return nil, nil, err
 		}
 		if err = os.WriteFile(filepath.Join(out, c.Name+".capture.json"), data, 0644); err != nil {
@@ -433,9 +502,10 @@ func runDatadog(app, launcher string, args []string) error {
 		return fmt.Errorf("baseline: %w", err)
 	}
 	baselineHash := fmt.Sprintf("%x", sha256.Sum256(data))
+	defects := ddFixtureDefects(app)
 	var results []ddResult
 	var failures []string
-	for _, c := range append(ddCases(), ddProbeCases()...) {
+	for caseIndex, c := range cases {
 		if c.AgentURLPrecedence {
 			// The effective URL must be present in the case itself, so the
 			// retained configuration proves which endpoint won precedence.
@@ -464,47 +534,106 @@ func runDatadog(app, launcher string, args []string) error {
 		if err != nil {
 			return fmt.Errorf("%s: %w", c.Name, err)
 		}
-		result := ddResult{Name: c.Name, Status: "passed", Source: ddSourceURL(c), BaselineSHA256: controlHash, CaptureSHA256: fmt.Sprintf("%x", sha256.Sum256(data)), Configuration: c}
-		if c.SourceRevision != "" {
-			result.EffectiveConfiguration = ddEffectiveEnvironment(sink, c, args)
+		controlName := "baseline"
+		if c.Kind != "" {
+			controlName = "control-" + c.Name
 		}
-		validationErr := validateDatadogCase(c, control, spans)
-		upstreamSHA := ""
-		if validationErr == nil {
-			upstreamSHA, validationErr = validateWithUpstream(c, spans)
-		}
-		if c.Kind != "" && validationErr == nil {
-			validationErr = validateDatadogProbes(c, spans, ddEarlyCapture)
-		}
+		result := ddResult{Name: "shared-" + c.Name, Status: "passed", Source: ddSourceURL(c), BaselineSHA256: controlHash, CaptureSHA256: fmt.Sprintf("%x", sha256.Sum256(data)), CaptureFile: c.Name + ".capture.json", Configuration: c,
+			InventoryRevision: datadogInventoryRevision, Language: ddLanguage(app), Application: app, Wire: datadogWire,
+			Artifacts: []ddArtifact{{File: controlName + ".capture.json", SHA256: controlHash}}}
+		result.EffectiveConfiguration = ddEffectiveEnvironment(sink, c, args)
+		upstreamSHA, validationErr := ddValidateExecution(c, control, spans, ddEarlyCapture)
 		if ddEarlyCapture != nil {
 			result.EarlyCaptureSHA256 = fmt.Sprintf("%x", sha256.Sum256(ddEarlyCapture))
+			result.Artifacts = append(result.Artifacts, ddArtifact{File: c.Name + ".early.capture.json", SHA256: result.EarlyCaptureSHA256})
 		}
 		if upstreamSHA != "" {
 			result.UpstreamMethod = c.UpstreamMethod
 			result.UpstreamSourceSHA256 = upstreamSHA
 		}
-		if err := validationErr; err != nil {
-			result.Status = "failed"
-			result.Detail = err.Error()
-			log, readErr := os.ReadFile(filepath.Join(out, c.Name+".app.log"))
-			if knownPythonDuplicateOrigin(app, c, log, readErr) {
-				result.Status = "unsupported"
-				result.Detail = "Pinned Python tracer encodes duplicate origin metadata in v0.4; native intake rejects it. This is not a passing propagation check."
-				result.RejectionLogSHA256 = fmt.Sprintf("%x", sha256.Sum256(log))
-			} else if app == "gin" && c.Name == "manual-drop-rule" && knownGoManualDropRule(c, control, spans) {
-				result.Status = "unsupported"
-				result.Detail = "Pinned Go tracer reapplies the keep rule when the HTTP root finishes: children retain manual-drop priority -1, while the root exports priority 2. Standalone manual-drop is checked separately."
-			} else {
-				failures = append(failures, c.Name+": "+err.Error())
+		result.Status, validationErr = ddCaseOutcome(defects[c.Name], c, control, spans, validationErr)
+		if validationErr != nil {
+			result.Detail = validationErr.Error()
+		}
+		first, err := ddNormalizedResponse(c, spans)
+		if err != nil {
+			return err
+		}
+		// collect starts a new process/provider and resets the native intake.
+		// Preserve both executions and require the same behavioral response.
+		repeat := c
+		repeat.Name = "repeat-" + c.Name
+		repeatData, repeated, err := collectCase(repeat)
+		if err != nil {
+			return fmt.Errorf("%s repeated execution: %w", c.Name, err)
+		}
+		result.Repetitions = 2
+		result.RepeatCaptureSHA256 = fmt.Sprintf("%x", sha256.Sum256(repeatData))
+		result.RepeatCaptureFile = repeat.Name + ".capture.json"
+		result.Artifacts = append(result.Artifacts, ddArtifact{File: result.RepeatCaptureFile, SHA256: result.RepeatCaptureSHA256})
+		_, repeatErr := ddValidateExecution(c, control, repeated, ddEarlyCapture)
+		if repeatErr == nil {
+			repeatErr = ddValidateFreshRuntimeIDs(c, spans, repeated)
+		}
+		repeatStatus, repeatErr := ddCaseOutcome(defects[c.Name], c, control, repeated, repeatErr)
+		if ddEarlyCapture != nil {
+			result.Artifacts = append(result.Artifacts, ddArtifact{File: repeat.Name + ".early.capture.json", SHA256: fmt.Sprintf("%x", sha256.Sum256(ddEarlyCapture))})
+		}
+		if c.Kind == "outbound" {
+			for _, name := range []string{controlName, c.Name, repeat.Name} {
+				file := name + ".headers.json"
+				data, err := os.ReadFile(filepath.Join(out, file))
+				if err != nil {
+					return err
+				}
+				result.Artifacts = append(result.Artifacts, ddArtifact{File: file, SHA256: fmt.Sprintf("%x", sha256.Sum256(data))})
 			}
 		}
+		second, err := ddNormalizedResponse(c, repeated)
+		if err != nil {
+			return err
+		}
+		for _, response := range []struct {
+			name string
+			data []byte
+		}{{c.Name, first}, {repeat.Name, second}} {
+			file := response.name + ".response.json"
+			if err := os.WriteFile(filepath.Join(out, file), response.data, 0644); err != nil {
+				return err
+			}
+			result.Artifacts = append(result.Artifacts, ddArtifact{File: file, SHA256: fmt.Sprintf("%x", sha256.Sum256(response.data))})
+		}
+		if repeatErr != nil {
+			result.Status, result.Detail = "failed", "repeated execution: "+repeatErr.Error()
+		} else if result.Status != repeatStatus || string(first) != string(second) {
+			result.Status, result.Detail = "failed", "behavioral response changed on repeated execution"
+		} else if result.Status == "unsupported" {
+			result.Detail = defects[c.Name].Reason
+		}
+		if result.Status == "failed" {
+			failures = append(failures, c.Name+": "+result.Detail)
+		}
+		if result.Status == "passed" {
+			result.CapabilityNames = ddCapabilities(c.Name)
+		} else {
+			result.CapabilityNames = []string{}
+		}
 		results = append(results, result)
+		fmt.Printf("%s: %s (%d/%d)\n", result.Name, result.Status, caseIndex+1, len(cases))
 	}
-	encoded, err := json.MarshalIndent(results, "", "  ")
+	// Keep the original external-feature artifact for existing consumers.
+	legacy := append([]ddResult(nil), results...)
+	for i := range legacy {
+		legacy[i].Name = strings.TrimPrefix(legacy[i].Name, "shared-")
+	}
+	encoded, err := json.MarshalIndent(legacy, "", "  ")
 	if err != nil {
 		return err
 	}
 	if err = os.WriteFile(filepath.Join(out, "datadog-features.json"), encoded, 0644); err != nil {
+		return err
+	}
+	if err = ddWriteCapabilityResults(out, results); err != nil {
 		return err
 	}
 	if len(failures) > 0 {
@@ -513,12 +642,22 @@ func runDatadog(app, launcher string, args []string) error {
 	return nil
 }
 
-func knownPythonDuplicateOrigin(app string, c ddCase, log []byte, readErr error) bool {
-	return (app == "aiohttp" || app == "django") &&
-		c.Name == "origin" &&
-		datadogWire == "v0.4" &&
-		readErr == nil &&
-		strings.Contains(string(log), "Response: duplicate MessagePack map key")
+func ddValidateExecution(c ddCase, baseline, spans []ddNativeSpan, early []byte) (string, error) {
+	if err := validateDatadogCase(c, baseline, spans); err != nil {
+		return "", err
+	}
+	sourceHash, err := validateWithUpstream(c, spans)
+	if err == nil && c.Kind != "" {
+		err = validateDatadogProbes(c, spans, early)
+	}
+	if err == nil && c.Kind == "outbound" {
+		data, readErr := os.ReadFile(filepath.Join(ddProbeOutput, activeDatadogCase.Name+".headers.json"))
+		if readErr != nil {
+			return sourceHash, readErr
+		}
+		err = ddValidateOutboundHeaders(c, spans, data)
+	}
+	return sourceHash, err
 }
 
 func ddMethod(c ddCase) string {
@@ -547,6 +686,18 @@ func knownGoManualDropRule(c ddCase, baseline, spans []ddNativeSpan) bool {
 		}
 	}
 	return children == 16
+}
+
+// Fixture adapters declare their pinned defects; the common outcome checker
+// keeps the original assertions and rejects unrelated failures and XPASS.
+func ddFixtureDefects(app string) map[string]ddExpectedDefect {
+	if app == "gin" {
+		return map[string]ddExpectedDefect{"manual-drop-rule": {
+			Reason: "Go 2.10.1 reapplies the HTTP root keep rule after manual drop; reproduced twice with exact root/child priorities. Tracked in issue #13. An unexpected pass fails this test.",
+			Match:  knownGoManualDropRule,
+		}}
+	}
+	return nil
 }
 
 // rubyApp reports whether app is traced by dd-trace-rb.

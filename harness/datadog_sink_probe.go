@@ -330,7 +330,7 @@ func request(method, path, contentType string, body []byte, status int) []byte {
 		req.Header.Set("Content-Type", contentType)
 	}
 	req.Header.Set("Datadog-Meta-Lang", "python")
-	req.Header.Set("Datadog-Meta-Tracer-Version", "4.14.0")
+	req.Header.Set("Datadog-Meta-Tracer-Version", "4.15.5")
 	req.Header.Set("X-Datadog-Trace-Count", "1")
 	res, err := ddClient.Do(req)
 	must(err)

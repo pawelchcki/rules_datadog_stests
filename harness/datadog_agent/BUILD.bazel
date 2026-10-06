@@ -14,3 +14,9 @@ py_binary(
     main = "probe.py",
     deps = [":agent_lib"],
 )
+
+py_test(
+    name = "probe_test",
+    srcs = ["probe_test.py"],
+    deps = [":agent_lib"],
+)

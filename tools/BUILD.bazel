@@ -1,17 +1,13 @@
 load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
-load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
 load("//corpus:registry.bzl", "DATADOG_SHAPE_LIBRARIES", "datadog_library_args", "datadog_library_labels")
 
 package(default_visibility = ["//visibility:public"])
 
-sh_test(
+py_test(
     name = "benchmark_datadog_test",
-    srcs = ["benchmark_datadog_test.sh"],
-    data = [
-        "benchmark_datadog.py",
-        "benchmark_datadog_test.py",
-    ],
+    srcs = ["benchmark_datadog_test.py"],
+    data = ["benchmark_datadog.py"],
 )
 
 
@@ -34,13 +30,12 @@ py_test(
     deps = [":datadog_report_lib"],
 )
 
-sh_test(
+py_test(
     name = "local_oci_repository_test",
-    srcs = ["local_oci_repository_test.sh"],
+    srcs = ["local_oci_repository_test.py"],
     data = [
         "build_datadog_fixtures.sh",
         "local_oci_repository.py",
-        "local_oci_repository_test.py",
         "materialize_shared_app.py",
         "context_tree.py",
     ],

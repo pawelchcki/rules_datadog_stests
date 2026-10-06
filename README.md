@@ -12,6 +12,14 @@ bazel test --config=local //fixtures:datadog_external_features_suite //fixtures:
 bazel test --config=local //fixtures:datadog_capability_suite
 ```
 
+The shared external-feature suite runs each contract as an independent Bazel
+service test and applies identical native assertions to Ruby,
+Python, and Go. Its retained language matrix requires independent passing
+evidence in each SDK and includes all 301 upstream capabilities, with missing
+and unsupported coverage kept explicit. See
+[shared capability measurement](docs/datadog-capabilities.md#shared-ruby-python-and-go-assertions)
+for the full-inventory 100% gate and the current scope.
+
 The seven reviewed RealWorld profiles and their Scheme sources were moved
 without changing their contents. Datadog configuration and profile macros are
 exported from `//rules:defs.bzl`. Shared service rules are loaded from
@@ -26,8 +34,8 @@ For coordinated local development, pass
 
 The shared Scheme contract error and application scenario libraries are imported
 by external labels. Datadog assertion catalogs, native SDK checks, review records,
-receipts and publication workflows stay here. OCI payload digests remain pinned
-at their previously reviewed values. The Go fixture builder imports the pinned
+receipts and publication workflows stay here. OCI payload digests are pinned to reviewed payloads; the current SDK
+upgrade includes a rebuilt and anonymously verified Ruby 2.43.0 payload. The Go fixture builder imports the pinned
 Gin sources from
 `@rules_stests//fixtures/apps/go/realworld-gin:sources` and overlays only the
 Datadog tracer graph and image recipe. The fixture builder records the complete
@@ -64,8 +72,19 @@ contains `bazel.flags`, which can be empty when using published fixtures.
 The driver also retains capability captures and requires at least 75% of the
 full feature inventory; `DATADOG_CAPABILITY_MIN_PERCENT` can override that threshold.
 
-Pull requests run the full assertion suite, an external consumer build and two
-fresh gated parity executions. Local execution eagerly materializes cached
+Same-repository pull requests run the full assertion suite, external consumer
+build and fresh gated evidence in BuildBuddy. Fork pull requests run these in
+GitHub Actions; BuildBuddy only reports the delegation status. Pushes to main
+run both systems. Actions use the BuildBuddy cache through the
+`BUILDBUDDY_API_KEY` repository secret, with remote uploads disabled. Forks
+receive no secret and use the GitHub disk and repository caches. Fresh native
+tests still execute with `--nocache_test_results` on both systems.
+The preliminary wildcard pass excludes the four suites that the evidence driver
+runs freshly afterward, so native tests execute once per required evidence run.
+The pinned `rules_stests` runtime has a small compatibility patch recognizing
+Django's proven startup bind-conflict message within its existing three-attempt
+port-allocation budget. Unknown startup failures remain immediate failures.
+Local execution eagerly materializes cached
 outputs so OCI directory symlink aliases remain intact; remote BuildBuddy
 execution retains minimal downloads with explicit evidence trees. A separate
 `source-checks` job validates GitHub Actions workflows and tracked Python, shell and JSON syntax. Run
@@ -83,4 +102,6 @@ The `untrusted-html` security profile isolates report HTML. Failed or incomplete
 publish. Reports remain available for 90 days, with five default-branch sets
 retained; PR comments link reports after publication. Complete evidence stays
 in existing GitHub Actions and BuildBuddy CI artifacts. GitHub Pages also hosts
-the report produced by the existing main-branch publisher.
+the report downloaded from the successful main-branch Actions build; publication
+does not rerun the test suite. Manual publication selects a successful main-push
+`Datadog assertions` run by ID.

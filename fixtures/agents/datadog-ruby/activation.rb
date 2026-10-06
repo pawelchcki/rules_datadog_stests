@@ -21,7 +21,7 @@ module RulesStestsDatadog
       [spec.name, spec]
     end
     tracer = specs.fetch("datadog") { raise LoadError, "missing locked Datadog gem" }
-    raise LoadError, "expected Datadog 2.42.0, got #{tracer.version}" unless tracer.version.to_s == "2.42.0"
+    raise LoadError, "expected Datadog 2.43.0, got #{tracer.version}" unless tracer.version.to_s == "2.43.0"
     if (loaded = Gem.loaded_specs["datadog"]) && loaded.version != tracer.version
       raise LoadError, "incompatible already activated Datadog #{loaded.version}"
     end

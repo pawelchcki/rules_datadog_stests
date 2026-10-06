@@ -78,7 +78,7 @@ def check_budgets(events, identities):
     assert control["budget_calls"] == 150, identities
     elapsed = control["budget_elapsed_seconds"]
     assert math.isfinite(elapsed) and elapsed >= 0, control
-    # Pinned 4.14 RateLimitMixin starts with one token; its jittered refill
+    # The pinned SDK RateLimitMixin starts with one token; its jittered refill
     # rate is strictly below 1.5 * snapshotsPerSecond (configured as one).
     assert 1 <= len(rows) <= 1 + math.floor(1.5 * elapsed), (len(rows), elapsed)
     assert len(rows) < control["budget_calls"], (len(rows), control)

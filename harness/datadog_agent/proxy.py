@@ -6,6 +6,7 @@ from pathlib import Path
 import threading
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
+from harness.datadog_backend.backend import read_request_body
 
 MAX_REQUEST_BYTES = 8 * 1024 * 1024
 MAX_CAPTURE_BYTES = 64 * 1024 * 1024
@@ -43,12 +44,8 @@ class Handler(BaseHTTPRequestHandler):
 
     def forward(self):
         try:
-            length = int(self.headers.get("Content-Length", "0"))
-            if not 0 <= length <= MAX_REQUEST_BYTES or self.headers.get("Transfer-Encoding"):
-                raise ValueError("unsupported or oversized request framing")
-            data = self.rfile.read(length)
-            if len(data) != length:
-                raise ValueError("truncated request")
+            data = read_request_body(self.headers, self.rfile, MAX_REQUEST_BYTES)
+            length = len(data)
             headers = {key: value for key, value in self.headers.items() if key.lower() not in HOP_HEADERS}
             with self.server.lock:
                 self.server.total_bytes += length

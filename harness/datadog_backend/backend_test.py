@@ -4,6 +4,8 @@ import ctypes
 import gzip
 import hashlib
 from http.client import HTTPConnection
+from email.message import Message
+import io
 import json
 from pathlib import Path
 import tempfile
@@ -11,7 +13,7 @@ import threading
 import unittest
 import zlib
 
-from harness.datadog_backend.backend import API_KEY, METRIC_SCHEMA, BackendServer, decompress
+from harness.datadog_backend.backend import API_KEY, METRIC_SCHEMA, BackendServer, decompress, read_request_body
 from harness.datadog_backend.wire import msgpack, protobuf, trace_chunks
 
 # Generated with the pinned system-tests agent.descriptor and google.protobuf,
@@ -22,6 +24,34 @@ LEGACY = bytes.fromhex(
 INDEXED = bytes.fromhex(
     "0a086c61622d686f73743a06372e38332e315a93010a000a036170700a07726571756573740a062f71756572790a037765620a0b687474702e6d6574686f640a034745540a155f73616d706c696e675f7072696f726974795f76315a4b0802223508011002180321c8010000000000003100002a36fe9c971738c0c4074a0d080712091900000000000000404a06080512020806500432101234567890abcdef000000000000007b"
 )
+
+
+class RequestBodyTest(unittest.TestCase):
+    def headers(self, pairs):
+        result = Message()
+        for name, value in pairs:
+            result[name] = value
+        return result
+
+    def test_native_chunked_upload_preserves_payload_bytes(self):
+        headers = self.headers([("Transfer-Encoding", "chunked")])
+        body = b'3\r\nabc\r\n2;writer=native\r\nde\r\n0\r\n\r\n'
+        self.assertEqual(read_request_body(headers, io.BytesIO(body), 5), b"abcde")
+
+    def test_framing_rejects_ambiguity_truncation_and_overflow(self):
+        for pairs, body, limit in [
+            ([("Content-Length", "1"), ("Transfer-Encoding", "chunked")], b"", 5),
+            ([("Content-Length", "1"), ("Content-Length", "1")], b"a", 5),
+            ([("Transfer-Encoding", "gzip, chunked")], b"", 5),
+            ([("Transfer-Encoding", "chunked")], b"6\r\nabcdef\r\n0\r\n\r\n", 5),
+            ([("Transfer-Encoding", "chunked")], b"1\r\na\r\n", 5),
+            ([("Transfer-Encoding", "chunked")], b"2\r\na\r\n0\r\n\r\n", 5),
+            ([("Transfer-Encoding", "chunked")], b"-1\r\na\r\n0\r\n\r\n", 5),
+            ([("Transfer-Encoding", "chunked")], b"0\r\nContent-Length: 0\r\n\r\n", 5),
+            ([("Content-Length", "2")], b"a", 5),
+        ]:
+            with self.subTest(pairs=pairs, body=body), self.assertRaises(ValueError):
+                read_request_body(self.headers(pairs), io.BytesIO(body), limit)
 
 
 class WireTest(unittest.TestCase):

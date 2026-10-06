@@ -10,6 +10,11 @@ from harness.datadog_sdk_extra import probe
 class NativeAssertions(unittest.TestCase):
     def setUp(self):
         self.data = {i['name']: i for i in json.loads(Path(__file__).with_name('golden.json').read_text())}
+        # Replay the original capture version; fresh runtime checks keep the
+        # upgraded pinned version and retain its actual binary exports.
+        version = patch.object(probe, 'SDK_VERSION', '4.14.0')
+        version.start()
+        self.addCleanup(version.stop)
 
     def check(self, name, data=None):
         item = self.data[name] if data is None else data

@@ -2,6 +2,7 @@ load("@rules_stests//rules:defs.bzl", "corpus_service", "realworld_service_tests
 load("@rules_datadog_stests//rules:defs.bzl", "datadog_env", "datadog_python_injection", "datadog_realworld_profile")
 load(":api_check.bzl", "telemetry_api_check")
 package(default_visibility = ["//visibility:public"])
+exports_files(["rules_stests_django_bind.patch"])
 _DATADOG_REFERENCE_SCENARIOS = [
     "articles", "auth", "comments", "errors_articles", "errors_auth",
     "errors_authorization", "errors_comments", "errors_profiles", "favorites",
@@ -11,11 +12,11 @@ _DATADOG_REFERENCE_SCENARIOS = [
 
 # A consumer-owned Datadog profile exercises independent schema-v2 proof plans.
 datadog_realworld_profile(
-    name = "example-aiohttp-datadog-v4-14-0",
-    specification = "profile/example-aiohttp-datadog-v4-14-0.scm",
-    implementation_libraries = ["@rules_datadog_stests//corpus:datadog/implementation/python-v4.14.0.scm"],
+    name = "example-aiohttp-datadog-v4-15-5",
+    specification = "profile/example-aiohttp-datadog-v4-15-5.scm",
+    implementation_libraries = ["@rules_datadog_stests//corpus:datadog/implementation/python-v4.15.5.scm"],
     wire_version = "v0.5",
-    reference_profile = "@rules_datadog_stests//corpus:python-aiohttp-datadog-v4-14-0-v05",
+    reference_profile = "@rules_datadog_stests//corpus:python-aiohttp-datadog-v4-15-5-v05",
 )
 
 corpus_service(
@@ -39,17 +40,17 @@ corpus_service(
 realworld_service_tests(
     name = "example_datadog",
     service = ":example_datadog_service",
-    telemetry_profile = ":example-aiohttp-datadog-v4-14-0",
+    telemetry_profile = ":example-aiohttp-datadog-v4-15-5",
     telemetry_sink = "@rules_stests//harness:telemetry_sink_service",
     scenarios = _DATADOG_REFERENCE_SCENARIOS,
 )
 
 datadog_realworld_profile(
-    name = "example-django-datadog-v4-14-0",
-    specification = "profile/example-django-datadog-v4-14-0.scm",
-    implementation_libraries = ["@rules_datadog_stests//corpus:datadog/implementation/python-v4.14.0.scm"],
+    name = "example-django-datadog-v4-15-5",
+    specification = "profile/example-django-datadog-v4-15-5.scm",
+    implementation_libraries = ["@rules_datadog_stests//corpus:datadog/implementation/python-v4.15.5.scm"],
     wire_version = "v0.5",
-    reference_profile = "@rules_datadog_stests//corpus:python-django-datadog-v4-14-0-v05",
+    reference_profile = "@rules_datadog_stests//corpus:python-django-datadog-v4-15-5-v05",
 )
 
 corpus_service(
@@ -73,7 +74,7 @@ corpus_service(
 realworld_service_tests(
     name = "example_django_datadog",
     service = ":example_django_datadog_service",
-    telemetry_profile = ":example-django-datadog-v4-14-0",
+    telemetry_profile = ":example-django-datadog-v4-15-5",
     telemetry_sink = "@rules_stests//harness:telemetry_sink_service",
     scenarios = _DATADOG_REFERENCE_SCENARIOS,
 )
@@ -85,4 +86,4 @@ test_suite(
     tests = ["@rules_datadog_stests//corpus:datadog_conformance_test"],
 )
 
-telemetry_api_check(name = "telemetry_api_check", datadog_profile = ":example-aiohttp-datadog-v4-14-0")
+telemetry_api_check(name = "telemetry_api_check", datadog_profile = ":example-aiohttp-datadog-v4-15-5")

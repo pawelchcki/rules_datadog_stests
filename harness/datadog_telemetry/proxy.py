@@ -5,7 +5,7 @@ import json
 import time
 from urllib.parse import urlsplit
 
-from harness.datadog_backend.backend import BackendServer, decompress
+from harness.datadog_backend.backend import BackendServer, decompress, read_request_body
 
 MAX_BODY = 8 * 1024 * 1024
 HOP_HEADERS = {"host", "connection", "transfer-encoding", "content-length"}
@@ -32,12 +32,7 @@ class Handler(BaseHTTPRequestHandler):
         headers = {key.lower(): value for key, value in self.headers.items() if key.lower() not in HOP_HEADERS}
         data, payload = b"", None
         try:
-            length = int(self.headers.get("Content-Length", "0"))
-            if not 0 <= length <= MAX_BODY or self.headers.get("Transfer-Encoding"):
-                raise ValueError("unsupported request framing")
-            data = self.rfile.read(length)
-            if len(data) != length:
-                raise ValueError("truncated request")
+            data = read_request_body(self.headers, self.rfile, MAX_BODY)
             if self.path == "/telemetry/proxy/api/v2/apmtelemetry":
                 payload = {"document": json.loads(decompress(data, headers.get("content-encoding", ""))),
                            "received_at": time.monotonic()}

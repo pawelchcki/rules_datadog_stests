@@ -34,7 +34,7 @@ mkdir -p "$evidence"
 
 mapfile -t image_flags < "$images/bazel.flags"
 bazel_args=(--config="${DATADOG_BAZEL_CONFIG:-local}")
-if [[ "${DATADOG_BAZEL_CONFIG:-local}" == local ]]; then
+if [[ "${DATADOG_BAZEL_CONFIG:-local}" != buildbuddy ]]; then
   bazel_args+=(--jobs=4 --local_test_jobs=4)
   test_download_outputs=all
 else
@@ -42,12 +42,12 @@ else
   test_download_outputs=minimal
 fi
 profiles=(
-  //corpus:python-aiohttp-datadog-v4-14-0-v04
-  //corpus:python-aiohttp-datadog-v4-14-0-v05
-  //corpus:python-django-datadog-v4-14-0-v04
-  //corpus:python-django-datadog-v4-14-0-v05
-  //corpus:ruby-rails-datadog-v2-42-0-v04
-  //corpus:ruby-falcon-datadog-v2-42-0-v04
+  //corpus:python-aiohttp-datadog-v4-15-5-v04
+  //corpus:python-aiohttp-datadog-v4-15-5-v05
+  //corpus:python-django-datadog-v4-15-5-v04
+  //corpus:python-django-datadog-v4-15-5-v05
+  //corpus:ruby-rails-datadog-v2-43-0-v04
+  //corpus:ruby-falcon-datadog-v2-43-0-v04
   //corpus:go-gin-datadog-v2-10-1-v04
 )
 # DefaultInfo for each profile carries its manifest and validator runfiles.
@@ -66,11 +66,21 @@ test_download_args=(
 )
 
 for execution in 1 2; do
+  suite_test_status=0
   bazel test "${bazel_args[@]}" "${test_download_args[@]}" \
     --nocache_test_results \
     --test_env="TELEMETRY_TEST_REVISION=$revision" \
     "${image_flags[@]}" \
-    //fixtures:datadog_suite
+    //fixtures:datadog_suite || suite_test_status=$?
+  if (( suite_test_status != 0 )); then
+    # Retain native captures even when the initial workload suite fails before
+    # producing a gated execution receipt. These are diagnostics, not proof.
+    failed_evidence="$evidence/execution-$execution-failed"
+    mkdir -p "$failed_evidence"
+    find -L bazel-testlogs/fixtures -path '*datadog*hurl_test*/test.outputs/*' -type f -exec cp -L --no-preserve=mode --parents '{}' "$failed_evidence/" \;
+    find -L bazel-testlogs/fixtures -path '*datadog*hurl_test*/test.log' -type f -exec cp -L --no-preserve=mode --parents '{}' "$failed_evidence/" \;
+    exit "$suite_test_status"
+  fi
   tools/retain_datadog_evidence.py \
     --revision "$revision" \
     --output "$evidence/execution-$execution" \
@@ -95,12 +105,42 @@ find -L bazel-testlogs/fixtures -path '*/test.outputs/stress.*.json' -exec cp -L
 
 # This suite includes manual Rails and Gin feature probes, whose individual
 # tests are intentionally absent from the wildcard full-suite expansion.
+shared_test_status=0
 bazel test "${bazel_args[@]}" "${test_download_args[@]}" \
   --nocache_test_results \
   "${image_flags[@]}" \
-  //fixtures:datadog_external_features_suite
+  //fixtures:datadog_external_features_suite || shared_test_status=$?
 mkdir -p "$evidence/features"
-find -L bazel-testlogs/fixtures -path '*datadog_external_features*/test.outputs/*' -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/features/" \;
+find -L bazel-testlogs/fixtures -path '*datadog_external_features_v0?_*/test.outputs/*' -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/features/" \;
+find -L bazel-testlogs/fixtures -path '*datadog_external_features_v0?_*/test.log' -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/features/" \;
+if (( shared_test_status != 0 )); then
+  exit "$shared_test_status"
+fi
+
+# Shared assertions require independent evidence from all three SDK languages.
+# Keep the entire 301-feature denominator and publish every missing cell.
+shared_evidence=()
+while IFS= read -r -d '' receipt; do
+  shared_evidence+=(--evidence "$receipt")
+done < <(find "$evidence/features" -name 'datadog-shared-results.json' -type f -print0)
+if [[ ${#shared_evidence[@]} -eq 0 ]]; then
+  echo 'No retained shared Datadog capability receipts' >&2
+  exit 1
+fi
+shared_report=(
+  report --inventory docs/datadog-capabilities-inventory.json
+  --mapping docs/datadog-shared-capabilities-mapping.json --local-root "$PWD"
+  --gap-issues docs/datadog-coverage-gaps.json
+  --require-language python --require-language ruby --require-language go
+  --require-independent-cases
+  "${shared_evidence[@]}"
+)
+python3 tools/datadog_capabilities.py "${shared_report[@]}" \
+  --output "$evidence/datadog-shared-capabilities-report.json"
+python3 tools/datadog_capabilities.py "${shared_report[@]}" \
+  --format markdown --output "$evidence/datadog-shared-capabilities-report.md" \
+  --require-all-implemented \
+  --require-percent "${DATADOG_SHARED_CAPABILITY_MIN_PERCENT:-0}"
 
 # Capability suites reuse existing Python frameworks and include the real Agent
 # and local backend. Retain every raw capture beside its receipt before gating.

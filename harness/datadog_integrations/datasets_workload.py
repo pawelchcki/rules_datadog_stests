@@ -1,4 +1,4 @@
-"""Exercise the pinned ddtrace 4.14 LLMObs dataset APIs in-process.
+"""Exercise the pinned ddtrace 4.15.5 LLMObs dataset APIs in-process.
 
 Replicates the upstream parametric test client
 (tests/parametric/.../apm_test_client/llmobs.py): LLMObs.create_dataset() and
@@ -26,7 +26,7 @@ def main():
     LLMObs.enable(agentless_enabled=False, ml_app=ML_APP)
 
     # The pinned SDK builds its experiments (DNE) client with is_agentless=True
-    # ("agent proxy doesn't seem to work for experiments" in ddtrace 4.14), which
+    # ("agent proxy doesn't seem to work for experiments" in ddtrace 4.15.5), which
     # suppresses the X-Datadog-EVP-Subdomain header the trace-agent EVP proxy
     # requires (agent 7.83.1 rejects subdomain-less requests). Flip the private
     # flag so the pinned client emits exactly the headers it would in

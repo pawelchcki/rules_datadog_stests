@@ -1,4 +1,4 @@
-This lab runs Datadog's real 4.14.0 OpenFeature provider with the pinned
+This lab runs Datadog's real 4.15.5 OpenFeature provider with the pinned
 OpenFeature 0.8.3 and OpenTelemetry 1.44.0 wheels. It uses the existing Python
 rootfs; no additional language or application framework is introduced.
 

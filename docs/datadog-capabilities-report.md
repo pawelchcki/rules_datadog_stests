@@ -1,3 +1,5 @@
+> Historical broad-capability snapshot from 2026-10-05, before the Python 4.15.4/Ruby 2.43.0 upgrade. Its receipt hashes are preserved. See the [current verification record](datadog-verification.md#current-sdk-upgrade-and-shared-language-verification) for active SDKs, CI evidence, and the separate shared Ruby/Python/Go coverage.
+
 # Datadog capability coverage
 
 Pinned upstream: `098fe0967c587db8a16b74a1e711777d0a9d5867`. Scope: `all`.
