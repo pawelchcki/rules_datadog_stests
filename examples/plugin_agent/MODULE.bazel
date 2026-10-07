@@ -7,7 +7,7 @@ local_path_override(module_name = "rules_datadog_stests", path = "../..")
 git_override(
     module_name = "rules_stests",
     remote = "https://github.com/pawelchcki/rules_stests.git",
-    commit = "db94b7ae98d1c8765b2ec236f6732683bbbfb54d",
-    patches = ["//:rules_stests_django_bind.patch"],
+    commit = "402ce4e9eeb9dab79d20ad11b7967c2604ca39a2",
+    patches = ["//:rules_stests_django_bind.patch", "//:rules_stests_ruby_context.patch"],
     patch_strip = 1,
 )

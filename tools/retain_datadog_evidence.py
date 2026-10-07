@@ -11,6 +11,7 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--revision", required=True)
 parser.add_argument("--output", required=True, type=Path)
 parser.add_argument("--gate", required=True, type=Path)
+parser.add_argument("--ruby-matrix-only", action="store_true", help="retain only the versioned Ruby runtime suite")
 args = parser.parse_args()
 if args.output.exists():
     parser.error("output already exists; evidence must never overwrite an earlier run")
@@ -42,7 +43,21 @@ profiles = {
     "ruby-falcon-datadog-v2-43-0-v04": "falcon_datadog",
     "go-gin-datadog-v2-10-1-v04": "gin_datadog",
 }
+if args.ruby_matrix_only:
+    profiles = {}
+
+# Derive the added runtimes from the built compatibility manifest, so a new
+# upstream runtime cannot be silently omitted from retained evidence.
+compatibility = json.loads(Path("bazel-bin/harness/datadog_ruby_compatibility.json").read_text())
+for runtime in compatibility["supported"]:
+    series = runtime["series"]
+    profiles["ruby-sinatra-" + series.replace(".", "-") + "-datadog-v2-43-0-v04"] = "ruby_" + series.replace(".", "_") + "_datadog"
 command = [str(args.gate.resolve()), "--revision", args.revision]
+contract_profiles = ["ruby-sinatra-" + runtime["series"].replace(".", "-") + "-datadog-v2-43-0-v04" for runtime in compatibility["supported"]]
+(args.output / "contract-profiles.json").write_text(json.dumps(contract_profiles) + "\n")
+shutil.copyfile("bazel-bin/harness/datadog_ruby_compatibility.json", args.output / "ruby-compatibility.json")
+for profile in contract_profiles:
+    command += ["--contract-profile", profile]
 for profile, prefix in profiles.items():
     source = Path("bazel-bin/corpus") / (profile + ".profile.json")
     manifest = json.loads(source.read_text())

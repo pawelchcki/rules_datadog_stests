@@ -1,3 +1,4 @@
+load(":datadog_ruby_matrix.bzl", "datadog_ruby_payloads")
 load("@rules_go//go:def.bzl", "go_binary", "go_test")
 load("@rules_itest//:itest.bzl", "service_test")
 load("@rules_stests//rules:defs.bzl", "corpus_service", "oci_rootfs")
@@ -84,4 +85,13 @@ go_test(
     data = ["@rules_stests//harness:rails_rootfs", ":datadog_ruby_rootfs"],
     env = {"RAILS_ROOTFS": "$(rlocationpath @rules_stests//harness:rails_rootfs)", "DATADOG_RUBY_ROOTFS": "$(rlocationpath :datadog_ruby_rootfs)"},
     tags = ["manual"],
+)
+
+datadog_ruby_payloads()
+
+genrule(
+    name = "datadog_ruby_compatibility",
+    srcs = ["@datadog_ruby_matrix_config//:compatibility.json"],
+    outs = ["datadog_ruby_compatibility.json"],
+    cmd = "cp $(location @datadog_ruby_matrix_config//:compatibility.json) $@",
 )

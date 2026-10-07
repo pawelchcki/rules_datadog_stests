@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "tracerVersion": "2.43.0",
+  "rubyRequirement": ">= 2.5.0, < 4.1",
+  "gems": [
+    {
+      "name": "datadog",
+      "version": "2.43.0",
+      "sha256": "47a336525c13621885b567db18ec31b83a2c63c16af2febfb29ac0d3938440a4",
+      "rubyRequirement": ">= 2.5.0, < 4.1",
+      "dependencies": [
+        {
+          "name": "cgi",
+          "requirements": ">= 0"
+        },
+        {
+          "name": "datadog-ruby_core_source",
+          "requirements": "~> 3.5, >= 3.5.5"
+        },
+        {
+          "name": "libdatadog",
+          "requirements": "~> 40.0.0.2.0"
+        },
+        {
+          "name": "libddwaf",
+          "requirements": "~> 1.30.0.0.0"
+        },
+        {
+          "name": "logger",
+          "requirements": ">= 0"
+        },
+        {
+          "name": "msgpack",
+          "requirements": ">= 0"
+        }
+      ]
+    },
+    {
+      "name": "cgi",
+      "version": "0.3.6",
+      "sha256": "c5e2c301437116b28fdfbb565452b9c1ee597901e68611367b4126b5d10feca3",
+      "rubyRequirement": ">= 2.5.0",
+      "dependencies": []
+    },
+    {
+      "name": "datadog-ruby_core_source",
+      "version": "3.5.5",
+      "sha256": "5df55ea06feda22e5d4b7db62a70f19a86660bd06d3a3ff739d2f549eaff45e6",
+      "rubyRequirement": ">= 2.5.0",
+      "dependencies": []
+    },
+    {
+      "name": "libdatadog",
+      "version": "40.0.0.2.0",
+      "sha256": "b63186df77ca5cf471006548e6b06aca13363c13bf9ef74c73c9356490b6f81c",
+      "rubyRequirement": ">= 2.5.0",
+      "dependencies": [],
+      "platform": "x86_64-linux"
+    },
+    {
+      "name": "libddwaf",
+      "version": "1.30.0.0.2",
+      "sha256": "d6f628bfb91a7f89a4ef702c3fce3991ec0678c50031128b70799fde8362111d",
+      "rubyRequirement": ">= 2.5",
+      "dependencies": [
+        {
+          "name": "ffi",
+          "requirements": "~> 1.0"
+        }
+      ],
+      "platform": "x86_64-linux"
+    },
+    {
+      "name": "logger",
+      "version": "1.6.6",
+      "sha256": "dd618d24e637715472732e7eed02e33cfbdf56deaad225edd0f1f89d38024017",
+      "rubyRequirement": ">= 2.5.0",
+      "dependencies": []
+    },
+    {
+      "name": "msgpack",
+      "version": "1.7.2",
+      "sha256": "59ab62fd8a4d0dfbde45009f87eb6f158ab2628a7c48886b0256f175166baaa8",
+      "rubyRequirement": ">= 2.5",
+      "dependencies": []
+    },
+    {
+      "name": "ffi",
+      "version": "1.16.3",
+      "sha256": "6d3242ff10c87271b0675c58d68d3f10148fabc2ad6da52a18123f06078871fb",
+      "rubyRequirement": ">= 2.5",
+      "dependencies": []
+    }
+  ]
+}

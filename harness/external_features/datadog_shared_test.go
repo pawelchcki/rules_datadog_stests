@@ -380,3 +380,16 @@ func TestSharedExpectedDefectRejectsUnexpectedPassAndDifferentFailure(t *testing
 		t.Fatal("Go defect affected another adapter")
 	}
 }
+
+func TestVersionedRubyFixturesUseRubyLanguageAndChunkMetadata(t *testing.T) {
+	for _, app := range []string{"ruby_2_5", "ruby_2_6", "ruby_2_7", "ruby_3_0", "ruby_3_1", "ruby_3_2", "ruby_3_3", "ruby_3_4", "ruby_4_0"} {
+		if !rubyApp(app) || ddLanguage(app) != "ruby" {
+			t.Fatalf("%s lost Ruby fixture adaptation", app)
+		}
+	}
+	for _, app := range []string{"aiohttp", "django", "gin"} {
+		if rubyApp(app) {
+			t.Fatalf("%s incorrectly uses Ruby chunk metadata", app)
+		}
+	}
+}

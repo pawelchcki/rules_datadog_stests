@@ -1,4 +1,5 @@
 """Native Datadog SDK experiments and concurrent RealWorld scenarios."""
+load(":datadog_ruby_matrix.bzl", "DATADOG_RUBY_APPS", "ruby_matrix_fixture")
 load("@rules_itest//:itest.bzl", "service_test")
 load("@rules_stests//rules:defs.bzl", "corpus_service", "REALWORLD_APPS")
 load("@rules_stests//rules:hurl_test.bzl", "realworld_parallel_hurl_test")
@@ -15,10 +16,10 @@ _runfiles_data = rule(
     attrs = {"target": attr.label(mandatory = True)},
 )
 
-# Applications with native Datadog fixtures. Rails, Falcon, and Gin use
-# locally built images, so their targets are manual.
-_DATADOG_APPS = ["aiohttp", "django", "rails", "falcon", "gin"]
-_LOCAL_DATADOG_APPS = ["rails", "falcon", "gin"]
+# Applications with native Datadog fixtures. Image-based Ruby/Go fixtures and
+# the versioned Ruby matrix run through their explicitly selected suites.
+_DATADOG_APPS = ["aiohttp", "django", "rails", "falcon", "gin"] + DATADOG_RUBY_APPS
+_LOCAL_DATADOG_APPS = ["rails", "falcon", "gin"] + DATADOG_RUBY_APPS
 
 # Each shared contract has independent startup, controls, receipts and failure
 # status. The runner regression test binds this registry to its executable cases.
@@ -82,6 +83,8 @@ _DATADOG_SHARED_CASES = [
 _DATADOG_UPSTREAM_CASES = ["origin", "malformed-zero"]
 
 def _datadog_fixture(app):
+    if app in DATADOG_RUBY_APPS:
+        return ruby_matrix_fixture(app)
     if app == "falcon":
         return struct(
             rootfs = "@rules_stests//harness:falcon_rootfs",
@@ -110,6 +113,9 @@ def datadog_external_feature_tests():
         config = _datadog_fixture(app)
         args = ["--runtime=" + config.runtime, "--rootfs=$(rlocationpath {})".format(config.rootfs)]
         data = [config.rootfs, "@rules_stests//harness:app_launcher"]
+        if getattr(config, "ruby_rootfs", None):
+            args.append("--ruby-rootfs=$(rlocationpath {})".format(config.ruby_rootfs))
+            data.append(config.ruby_rootfs)
         if config.injection:
             args += config.injection.flags
             data.append(config.injection.rootfs)
@@ -147,6 +153,7 @@ def datadog_external_feature_tests():
             native.test_suite(name = name, tests = profile_tests)
             tests.extend(profile_tests)
     native.test_suite(name = "datadog_external_features_suite", tests = tests)
+    native.test_suite(name = "datadog_ruby_external_features_suite", tests = [":" + app + "_datadog_external_features_v04" for app in DATADOG_RUBY_APPS], tags = ["manual", "ruby-matrix"])
 
 def datadog_parallel_tests():
     tests = []
@@ -159,6 +166,7 @@ def datadog_parallel_tests():
             corpus_service(
                 name = name + "_service",
                 rootfs = config.rootfs,
+                ruby_rootfs = getattr(config, "ruby_rootfs", None),
                 runtime = config.runtime,
                 instance = app + "-datadog-stress",
                 command = config.command[0],
@@ -169,7 +177,7 @@ def datadog_parallel_tests():
                     "DD_TRACE_HEADER_TAGS": "x-rules-stests-request-id:rules_stests.request_id",
                 }),
                 deps = [sink],
-                so_reuseport_aware = app not in ["rails", "falcon"],
+                so_reuseport_aware = app not in ["rails", "falcon"] + DATADOG_RUBY_APPS,
                 autoassign_port = True,
                 expected_start_duration = "5s",
                 http_health_check_address = "http://127.0.0.1:$${PORT}/api/tags",
@@ -183,6 +191,8 @@ def datadog_parallel_tests():
                 profile = "//corpus:" + config.profile + suffix,
                 sink = sink,
                 cases = REALWORLD_BASE_HURL_CASES + ["propagation_datadog"],
+                tags = ["manual", "ruby-matrix"] if app in DATADOG_RUBY_APPS else [],
             )
             tests.append(":" + name + "_test")
     native.test_suite(name = "datadog_parallel_suite", tests = tests, tags = ["manual"])
+    native.test_suite(name = "datadog_ruby_parallel_suite", tests = [":" + app + "_datadog_v04_parallel_test" for app in DATADOG_RUBY_APPS], tags = ["manual", "ruby-matrix"])

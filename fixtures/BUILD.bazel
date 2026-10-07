@@ -1,3 +1,4 @@
+load(":datadog_ruby_matrix.bzl", "datadog_ruby_matrix_tests")
 load("@rules_stests//corpus:registry.bzl", "REALWORLD_BASE_HURL_CASES")
 load("@rules_stests//rules:defs.bzl", "corpus_service", "realworld_service_tests")
 load("//rules:defs.bzl", "datadog_env", "datadog_python_injection", "datadog_ruby_injection")
@@ -23,6 +24,7 @@ package(default_visibility = ["//visibility:public"])
 exports_files(["external_features.bzl"], visibility = ["//harness/external_features:__pkg__"])
 datadog_external_feature_tests()
 datadog_parallel_tests()
+datadog_ruby_matrix_tests()
 datadog_lab_tests()
 datadog_upstream_lab_tests()
 datadog_agent_tests()
@@ -190,6 +192,7 @@ test_suite(
         ":django_datadog_v04_hurl_test",
         ":rails_datadog_hurl_test",
         ":falcon_datadog_hurl_test",
+        ":datadog_ruby_matrix_suite",
         ":gin_datadog_hurl_test",
     ],
     tags = ["datadog"],

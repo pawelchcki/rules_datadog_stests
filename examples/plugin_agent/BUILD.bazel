@@ -2,7 +2,7 @@ load("@rules_stests//rules:defs.bzl", "corpus_service", "realworld_service_tests
 load("@rules_datadog_stests//rules:defs.bzl", "datadog_env", "datadog_python_injection", "datadog_realworld_profile")
 load(":api_check.bzl", "telemetry_api_check")
 package(default_visibility = ["//visibility:public"])
-exports_files(["rules_stests_django_bind.patch"])
+exports_files(["rules_stests_django_bind.patch", "rules_stests_ruby_context.patch"])
 _DATADOG_REFERENCE_SCENARIOS = [
     "articles", "auth", "comments", "errors_articles", "errors_auth",
     "errors_authorization", "errors_comments", "errors_profiles", "favorites",

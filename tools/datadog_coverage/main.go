@@ -120,6 +120,12 @@ func verifyCompiledArtifacts(manifestPath string, m manifest) error {
 }
 
 func validate(revision string, manifests []manifest, receipts []receipt, captures [][]byte) error {
+	return validateProfiles(revision, manifests, receipts, captures, nil)
+}
+
+// Exact evidence remains the default. Callers must explicitly name each
+// profile allowed to supply contracts without reviewed native trace shapes.
+func validateProfiles(revision string, manifests []manifest, receipts []receipt, captures [][]byte, contractProfiles []string) error {
 	if !revisionRE.MatchString(revision) {
 		return fmt.Errorf("revision must be a lowercase 40-character commit")
 	}
@@ -129,14 +135,14 @@ func validate(revision string, manifests []manifest, receipts []receipt, capture
 	expected := map[string]manifest{}
 	for _, m := range manifests {
 		hasReference := m.ReferenceProfile != "" || m.ReferenceProofPlanSHA256 != ""
-		if m.Family != "datadog" || (m.WireVersion != "v0.4" && m.WireVersion != "v0.5") || m.Profile == "" || m.Application == "" || m.ProofPlan == "" || len(m.Scenarios) == 0 || len(m.ScenarioShapes) != len(m.Scenarios) ||
+		if m.Family != "datadog" || (m.WireVersion != "v0.4" && m.WireVersion != "v0.5") || m.Profile == "" || m.Application == "" || m.ProofPlan == "" || len(m.Scenarios) == 0 || (len(m.ScenarioShapes) != len(m.Scenarios) && !(contains(contractProfiles, m.Profile) && len(m.ScenarioShapes) == 0 && !hasReference)) ||
 			!digestRE.MatchString(m.ValidationPolicySHA256) || !digestRE.MatchString(m.CandidateImplementationSHA256) ||
 			(hasReference && (m.ReferenceProfile == "" || !digestRE.MatchString(m.ReferenceProofPlanSHA256))) {
 			return fmt.Errorf("incomplete Datadog manifest")
 		}
 		declaredScenarios := map[string]bool{}
 		for _, scenario := range m.Scenarios {
-			if scenario == "" || declaredScenarios[scenario] || m.ScenarioShapes[scenario] == "" {
+			if scenario == "" || declaredScenarios[scenario] || (m.ScenarioShapes[scenario] == "" && !(contains(contractProfiles, m.Profile) && len(m.ScenarioShapes) == 0)) {
 				return fmt.Errorf("incomplete or duplicate Datadog scenario %s/%s", m.Profile, scenario)
 			}
 			if _, compiled := m.CompiledValidators[scenario]; !compiled {
@@ -161,17 +167,22 @@ func validate(revision string, manifests []manifest, receipts []receipt, capture
 			return fmt.Errorf("unexpected or duplicate receipt %s/%s", r.Profile, r.Scenario)
 		}
 		seen[key] = true
-		if r.Family != "datadog" || r.WireVersion != m.WireVersion || r.SchemaVersion != 2 || r.Revision != revision || r.ValidationMode != "exact" || r.Outcome != "verified" {
+		if r.Family != "datadog" || r.WireVersion != m.WireVersion || r.SchemaVersion != 2 || r.Revision != revision || (r.ValidationMode != "exact" && !(contains(contractProfiles, m.Profile) && len(m.ScenarioShapes) == 0 && r.ValidationMode == "contract")) || r.Outcome != "verified" {
 			return fmt.Errorf("non-verifying receipt %s/%s", r.Profile, r.Scenario)
 		}
-		for _, value := range []string{r.ProofPlanSHA256, r.CaptureSHA256, r.ScenarioShapeSHA256, r.ValidationPolicySHA256, r.CandidateImplementationSHA256} {
+		for _, value := range []string{r.ProofPlanSHA256, r.CaptureSHA256, r.ValidationPolicySHA256, r.CandidateImplementationSHA256} {
 			if !digestRE.MatchString(value) {
 				return fmt.Errorf("unbound receipt %s/%s", r.Profile, r.Scenario)
 			}
 		}
 		proofPlanDigest := fmt.Sprintf("%x", sha256.Sum256([]byte(m.ProofPlan)))
 		captureDigest := fmt.Sprintf("%x", sha256.Sum256(captures[index]))
-		shapeDigest := fmt.Sprintf("%x", sha256.Sum256([]byte(m.ScenarioShapes[r.Scenario])))
+		shapeDigest := ""
+		if len(m.ScenarioShapes) != 0 {
+			shapeDigest = fmt.Sprintf("%x", sha256.Sum256([]byte(m.ScenarioShapes[r.Scenario])))
+		} else if r.ValidationMode != "contract" {
+			return fmt.Errorf("shape-free manifest requires contract evidence %s/%s", r.Profile, r.Scenario)
+		}
 		if r.ProofPlanSHA256 != proofPlanDigest || r.CaptureSHA256 != captureDigest || r.ScenarioShapeSHA256 != shapeDigest ||
 			r.ValidationPolicySHA256 != m.ValidationPolicySHA256 || r.CandidateImplementationSHA256 != m.CandidateImplementationSHA256 ||
 			r.ReferenceProfile != m.ReferenceProfile || r.ReferenceProofPlanSHA256 != m.ReferenceProofPlanSHA256 {
@@ -251,7 +262,8 @@ func contains(values []string, wanted string) bool {
 
 func main() {
 	revision := flag.String("revision", "", "expected repository revision")
-	var manifestPaths, receiptPaths, capturePaths stringsFlag
+	var manifestPaths, receiptPaths, capturePaths, contractProfiles stringsFlag
+	flag.Var(&contractProfiles, "contract-profile", "profile explicitly allowed to validate contracts without reviewed shapes (repeatable)")
 	flag.Var(&manifestPaths, "manifest", "profile manifest (repeatable)")
 	flag.Var(&receiptPaths, "receipt", "verified receipt (repeatable)")
 	flag.Var(&capturePaths, "capture", "accepted capture paired with a receipt (repeatable)")
@@ -279,7 +291,7 @@ func main() {
 		}
 		captures[i] = contents
 	}
-	if err := validate(*revision, manifests, receipts, captures); err != nil {
+	if err := validateProfiles(*revision, manifests, receipts, captures, contractProfiles); err != nil {
 		fatal(err)
 	}
 	fmt.Printf("Datadog coverage gate passed: %d profiles, %d scenarios\n", len(manifests), len(receipts))

@@ -64,6 +64,28 @@ class ReportTest(unittest.TestCase):
             self.assertNotIn("<script>alert(1)</script>", rendered)
             self.assertIn("&lt;script&gt;alert(1)&lt;/script&gt;", rendered)
 
+    def test_contract_evidence_is_explicit_and_labeled(self):
+        with tempfile.TemporaryDirectory() as root:
+            path = Path(root) / "execution"
+            receipt_path, _ = fixture(path)
+            manifest_path = path / "ruby-test.profile.json"
+            manifest = json.loads(manifest_path.read_text())
+            manifest["scenarioShapes"] = {}
+            manifest_path.write_text(json.dumps(manifest))
+            receipt = json.loads(receipt_path.read_text())
+            receipt["validationMode"] = "contract"
+            receipt.pop("scenarioShapeSha256")
+            receipt_path.write_text(json.dumps(receipt))
+            with self.assertRaises(subprocess.CalledProcessError):
+                datadog_report.build_report([path], REVISION, GATE)
+            (path / "contract-profiles.json").write_text(json.dumps(["ruby-test"]))
+            report = datadog_report.build_report([path], REVISION, GATE)
+            self.assertEqual(report["executions"][0][0]["validationMode"], "contract")
+            self.assertIn("contract verified", datadog_report.render(report))
+            receipt_path.with_name("tags.capture.json").write_text("changed")
+            with self.assertRaises(subprocess.CalledProcessError):
+                datadog_report.build_report([path], REVISION, GATE)
+
     def test_gate_rejects_mutated_evidence(self):
         for mutation in ["revision", "capture", "bytecode", "proof", "xfail", "coverage"]:
             with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as root:

@@ -1,5 +1,6 @@
 module(name = "rules_datadog_stests", version = "0.0.0")
 bazel_dep(name = "rules_stests", version = "0.0.0")
+bazel_dep(name = "rules_cc", version = "0.2.22")
 bazel_dep(name = "rules_go", version = "0.63.0")
 bazel_dep(name = "rules_itest", version = "0.0.59")
 bazel_dep(name = "rules_oci", version = "2.3.0")
@@ -8,12 +9,12 @@ bazel_dep(name = "rules_python", version = "1.8.0")
 bazel_dep(name = "platforms", version = "1.1.0")
 bazel_dep(name = "package_metadata", version = "0.0.7")
 bazel_dep(name = "aspect_bazel_lib", version = "2.21.1")
-# Pin the shared infrastructure and cache-safe OCI materializer from the split.
+# Pin the latest shared infrastructure, including the versioned Ruby runtime matrix.
 git_override(
     module_name = "rules_stests",
     remote = "https://github.com/pawelchcki/rules_stests.git",
-    commit = "db94b7ae98d1c8765b2ec236f6732683bbbfb54d",
-    patches = ["//bazel:rules_stests_django_bind.patch"],
+    commit = "402ce4e9eeb9dab79d20ad11b7967c2604ca39a2",
+    patches = ["//bazel:rules_stests_django_bind.patch", "//bazel:rules_stests_ruby_context.patch"],
     patch_strip = 1,
 )
 images = use_extension("//bazel:oci_deps.bzl", "oci_deps")
@@ -34,3 +35,6 @@ http_file(
     sha256 = "eae879d44ecf020bb1f4a2899d78f2027c9942e556baf406932c2f9ad6905b43",
     urls = ["https://raw.githubusercontent.com/DataDog/system-tests/ea8a5976064509df0a5232e314b22e7e90ca4d40/tests/parametric/test_headers_datadog.py"],
 )
+
+ruby_datadog = use_extension("//bazel:datadog_ruby.bzl", "datadog_ruby")
+use_repo(ruby_datadog, "datadog_ruby_matrix_config", "datadog_gem_datadog", "datadog_gem_cgi", "datadog_gem_datadog_ruby_core_source", "datadog_gem_libdatadog", "datadog_gem_libddwaf", "datadog_gem_logger", "datadog_gem_msgpack", "datadog_gem_ffi")
