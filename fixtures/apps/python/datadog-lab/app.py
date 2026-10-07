@@ -253,7 +253,8 @@ def http_application(ready_file):
     async def health(request):
         return web.json_response({"ready": True, "ddtraceVersion": DDTRACE_VERSION})
     async def target(request):
-        return web.json_response({"active": identity(tracer.current_span())},
+        active = tracer.current_span()
+        return web.json_response({"active": identity(active), "baggage": active.context.get_all_baggage_items() if active else {}},
             status=int(request.match_info["status"]), headers={"X-Lab-Response": "response-value"})
     async def sdk(request):
         args = await request.json()
@@ -262,12 +263,19 @@ def http_application(ready_file):
             tracer.flush()
             return web.json_response({"result": True})
         assert operation == "http_request", operation
-        with tracer.trace("http.lab.export-control") as control:
+        # aiohttp replaces manually supplied baggage during injection. Start
+        # from the real extracted SDK context so the instrumented client
+        # carries that baggage and its SDK-derived metadata naturally.
+        incoming = HTTPPropagator.extract(args.get("headers", {}))
+        control_span = (tracer.start_span("http.lab.export-control", child_of=incoming, activate=True)
+                        if incoming.get_all_baggage_items() else tracer.trace("http.lab.export-control"))
+        with control_span as control:
             url = f"http://127.0.0.1:{port}/target/{args['status']}"
             async with ClientSession() as session:
                 async with session.get(url, params=args.get("query", {}), headers=args.get("headers", {})) as response:
                     payload = await response.json()
-                    result = {"control": identity(control), "target": payload["active"], "status": response.status, "url": url}
+                    result = {"control": identity(control), "target": payload["active"], "status": response.status, "url": url,
+                              "target_baggage": payload["baggage"], "extracted_baggage": incoming.get_all_baggage_items()}
         tracer.flush()
         return web.json_response({"result": result})
     async def ready(application):

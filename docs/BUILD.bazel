@@ -3,4 +3,5 @@ package(default_visibility = ["//visibility:public"])
 exports_files([
     "datadog-capabilities-inventory.json",
     "datadog-shared-capabilities-mapping.json",
+    "datadog-shared-sdk-capabilities-mapping.json",
 ])

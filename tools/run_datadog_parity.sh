@@ -142,6 +142,31 @@ python3 tools/datadog_capabilities.py "${shared_report[@]}" \
   --require-all-implemented \
   --require-percent "${DATADOG_SHARED_CAPABILITY_MIN_PERCENT:-0}"
 
+# The native SDK lab runs identical independent cases in Python and Go. Pinned
+# upstream manifest exclusions are executed xfails, never capability passes.
+shared_sdk_status=0
+bazel test "${bazel_args[@]}" "${test_download_args[@]}" \
+  --jobs=4 --nocache_test_results "${image_flags[@]}" \
+  //fixtures:datadog_shared_sdk_suite || shared_sdk_status=$?
+mkdir -p "$evidence/shared-sdk"
+for directory in bazel-testlogs/fixtures/datadog_shared_sdk_*_test; do
+  if [[ -d "$directory/test.outputs" ]]; then
+    find -L "$directory/test.outputs" -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/shared-sdk/" \;
+    cp -L --no-preserve=mode --parents "$directory/test.log" "$evidence/shared-sdk/"
+  fi
+done
+for format in json markdown; do
+  suffix="$format"
+  if [[ "$format" == markdown ]]; then suffix=md; fi
+  python3 tools/datadog_shared_sdk_report.py \
+    --evidence-dir "$evidence/shared-sdk" --evidence-dir "$evidence/features" \
+    --format "$format" --output "$evidence/datadog-shared-sdk-report.$suffix"
+done
+if (( shared_sdk_status != 0 )); then exit "$shared_sdk_status"; fi
+python3 tools/datadog_shared_sdk_report.py \
+  --evidence-dir "$evidence/shared-sdk" --evidence-dir "$evidence/features" \
+  --output "$evidence/datadog-shared-sdk-report.json" --require-complete-matrix
+
 # Capability suites reuse existing Python frameworks and include the real Agent
 # and local backend. Retain every raw capture beside its receipt before gating.
 capability_test_status=0

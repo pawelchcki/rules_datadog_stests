@@ -112,6 +112,19 @@ py_test(
     deps = [":datadog_capabilities_lib"],
 )
 
+py_binary(
+    name = "datadog_shared_sdk_report",
+    srcs = ["datadog_shared_sdk_report.py"],
+    deps = [":datadog_capabilities_lib"],
+)
+
+py_test(
+    name = "datadog_shared_sdk_report_test",
+    srcs = ["datadog_shared_sdk_report_test.py", "datadog_shared_sdk_report.py", "update_shared_sdk_cases.py"],
+    data = ["//harness/shared_sdk:cases.json", "//harness/shared_sdk:cases.bzl", "//docs:datadog-shared-sdk-capabilities-mapping.json"],
+    deps = [":datadog_capabilities_lib", "//harness/upstream_lab:runtime", "//harness/shared_sdk:portable_cases"],
+)
+
 py_library(
     name = "materialize_shared_app_lib",
     srcs = ["materialize_shared_app.py"],
