@@ -1,8 +1,17 @@
 load("@rules_stests//rules:defs.bzl", "corpus_service", "realworld_service_tests")
-load("@rules_datadog_stests//rules:defs.bzl", "datadog_env", "datadog_python_injection", "datadog_realworld_profile")
+load("@rules_datadog_stests//rules:defs.bzl", "datadog_env", "datadog_python_injection", "datadog_realworld_profile", "go_runtime_capability_tests")
 load(":api_check.bzl", "telemetry_api_check")
 package(default_visibility = ["//visibility:public"])
 exports_files(["rules_stests_django_bind.patch"])
+
+# A downstream module selects runtime releases through the public capability API.
+# Set backend="custom" plus library/attacher to test replacement instrumentation.
+go_runtime_capability_tests(
+    name = "go_runtime_controls",
+    backend = "plain",
+    versions = ["go1.17.13", "go1.27.1"],
+    tags = ["manual"],
+)
 _DATADOG_REFERENCE_SCENARIOS = [
     "articles", "auth", "comments", "errors_articles", "errors_auth",
     "errors_authorization", "errors_comments", "errors_profiles", "favorites",

@@ -43,6 +43,6 @@ def datadog_shared_sdk_tests():
     native.test_suite(name = "datadog_shared_sdk_suite", tests = suites["go"] + suites["python"])
     native.test_suite(
         name = "datadog_go_capability_suite",
-        tests = suites["go"] + [":gin_datadog_external_features_v04"],
+        tests = suites["go"] + [":gin_datadog_external_features_v04", ":go_runtime_capability_suite"],
         tags = ["manual"],
     )

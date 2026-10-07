@@ -20,6 +20,11 @@ and unsupported coverage kept explicit. See
 [shared capability measurement](docs/datadog-capabilities.md#shared-ruby-python-and-go-assertions)
 for the full-inventory 100% gate and the current scope.
 
+The [Go runtime capability matrix](docs/go-runtime-capabilities.md) covers every
+minor from Go 1.4 through 1.27 on Linux amd64, with configurable arm64. It retains
+Orchestrion and Alibaba automatic tracing and exposes replacement instrumentation
+through startup `LD_PRELOAD` or a controller attached to the running app's PID.
+
 The seven reviewed RealWorld profiles and their Scheme sources were moved
 without changing their contents. Datadog configuration and profile macros are
 exported from `//rules:defs.bzl`. Shared service rules are loaded from

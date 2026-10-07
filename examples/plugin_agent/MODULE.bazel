@@ -3,6 +3,10 @@ bazel_dep(name = "rules_datadog_stests", version = "0.0.0")
 bazel_dep(name = "rules_stests", version = "0.0.0")
 bazel_dep(name = "platforms", version = "1.1.0")
 local_path_override(module_name = "rules_datadog_stests", path = "../..")
+
+# Make the prepared Go app repository visible to --override_repository.
+go_runtime = use_extension("@rules_datadog_stests//bazel:go_runtime_deps.bzl", "go_runtime_deps")
+use_repo(go_runtime, "go_runtime_apps")
 # Overrides only apply in root modules; mirror the infrastructure pin.
 git_override(
     module_name = "rules_stests",

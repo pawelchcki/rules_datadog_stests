@@ -30,54 +30,59 @@ wheel_deps.bundle(name = "sca_wheels", lock = "//bazel:sca_wheels.lock.json")
 use_repo(wheel_deps, "sca_wheels", "messaging_wheels", "openai_wheels", "otel_wheels", "ffe_wheels", "integrations_wheels", "security_extra_wheels")
 go_deps = use_extension("@gazelle//:extensions.bzl", "go_deps")
 go_deps.from_file(go_mod = "//harness/shared_sdk/go:go.mod")
-go_deps.gazelle_default_attributes(build_extra_args = ["-proto=disable_global"])
+# Gazelle overrides are root-only. Keep public dependency discovery available
+# to consumers while ignoring these build preferences in non-root modules.
+go_deps_config = use_extension("@gazelle//:extensions.bzl", "go_deps", dev_dependency = True)
+go_deps_config.gazelle_default_attributes(build_extra_args = ["-proto=disable_global"])
 # Agent modules ship monorepo BUILD files; generate module-local targets instead.
-go_deps.gazelle_override(
+go_deps_config.gazelle_override(
     path = "github.com/DataDog/datadog-agent/comp/core/tagger/origindetection",
     build_file_generation = "clean",
     build_extra_args = ["-proto=disable_global"],
 )
-go_deps.gazelle_override(
+go_deps_config.gazelle_override(
     path = "github.com/DataDog/datadog-agent/pkg/obfuscate",
     build_file_generation = "clean",
     build_extra_args = ["-proto=disable_global"],
 )
-go_deps.gazelle_override(
+go_deps_config.gazelle_override(
     path = "github.com/DataDog/datadog-agent/pkg/opentelemetry-mapping-go/otlp/attributes",
     build_file_generation = "clean",
     build_extra_args = ["-proto=disable_global"],
 )
-go_deps.gazelle_override(
+go_deps_config.gazelle_override(
     path = "github.com/DataDog/datadog-agent/pkg/proto",
     build_file_generation = "clean",
     build_extra_args = ["-proto=disable_global"],
 )
-go_deps.gazelle_override(
+go_deps_config.gazelle_override(
     path = "github.com/DataDog/datadog-agent/pkg/remoteconfig/state",
     build_file_generation = "clean",
     build_extra_args = ["-proto=disable_global"],
 )
-go_deps.gazelle_override(
+go_deps_config.gazelle_override(
     path = "github.com/DataDog/datadog-agent/pkg/trace",
     build_file_generation = "clean",
     build_extra_args = ["-proto=disable_global"],
 )
-go_deps.gazelle_override(
+go_deps_config.gazelle_override(
     path = "github.com/DataDog/datadog-agent/pkg/trace/log",
     build_file_generation = "clean",
     build_extra_args = ["-proto=disable_global"],
 )
-go_deps.gazelle_override(
+go_deps_config.gazelle_override(
     path = "github.com/DataDog/datadog-agent/pkg/trace/stats",
     build_file_generation = "clean",
     build_extra_args = ["-proto=disable_global"],
 )
-go_deps.gazelle_override(
+go_deps_config.gazelle_override(
     path = "github.com/DataDog/datadog-agent/pkg/trace/traceutil",
     build_file_generation = "clean",
     build_extra_args = ["-proto=disable_global"],
 )
 use_repo(go_deps, "com_github_datadog_dd_trace_go_v2", "com_github_datadog_dd_trace_go_contrib_net_http_v2", "io_opentelemetry_go_otel", "io_opentelemetry_go_otel_trace")
+go_runtime_apps = use_extension("//bazel:go_runtime_deps.bzl", "go_runtime_deps")
+use_repo(go_runtime_apps, "go_runtime_apps")
 http_file = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
 http_file(
     name = "datadog_system_tests_headers",

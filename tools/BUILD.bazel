@@ -4,6 +4,20 @@ load("//corpus:registry.bzl", "DATADOG_SHAPE_LIBRARIES", "datadog_library_args",
 
 package(default_visibility = ["//visibility:public"])
 
+py_binary(
+    name = "go_runtime_report",
+    srcs = ["go_runtime_report.py"],
+    deps = ["//harness/go_runtime:probe_lib"],
+)
+
+py_test(
+    name = "go_runtime_report_test",
+    srcs = ["go_runtime_report.py", "go_runtime_report_test.py", "retain_go_runtime_evidence.py"],
+    main = "go_runtime_report_test.py",
+    imports = ["."],
+    deps = ["//harness/go_runtime:probe_lib"],
+)
+
 py_test(
     name = "benchmark_datadog_test",
     srcs = ["benchmark_datadog_test.py"],
