@@ -108,9 +108,10 @@ find -L bazel-testlogs/fixtures -path '*/test.outputs/stress.*.json' -exec cp -L
 
 # This suite includes manual Rails and Gin feature probes, whose individual
 # tests are intentionally absent from the wildcard full-suite expansion.
+# Bound native app startup to the same fleet concurrency as the SDK lab.
 shared_test_status=0
 bazel test "${bazel_args[@]}" "${test_download_args[@]}" \
-  --nocache_test_results \
+  --jobs=4 --nocache_test_results \
   "${image_flags[@]}" \
   //fixtures:datadog_external_features_suite || shared_test_status=$?
 mkdir -p "$evidence/features"

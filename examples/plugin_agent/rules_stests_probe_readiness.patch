@@ -1,0 +1,27 @@
+--- a/harness/external_features/probe_runtime.go
++++ b/harness/external_features/probe_runtime.go
+@@ -120,7 +120,9 @@
+ 			if response.StatusCode == 200 || response.StatusCode == 500 {
+ 				owned, shared, err := processTCPPortOwnership(cmd.Process.Pid, port)
+ 				if err != nil {
+-					return nil, err
++					// The child can exit after the HTTP reply but before /proc
++					// inspection. Preserve the existing bind-conflict retry.
++					return nil, classifyReadinessOwnershipError(err, log)
+ 				}
+ 				if shared {
+ 					return nil, errPortInUse
+@@ -278,6 +280,13 @@
+ 	return target && !foreign, target && foreign
+ }
+ 
++func classifyReadinessOwnershipError(cause error, log *os.File) error {
++	if exitErr := classifyProcessExit(cause, log); errors.Is(exitErr, errPortInUse) {
++		return exitErr
++	}
++	return cause
++}
++
+ func classifyProcessExit(cause error, log *os.File) error {
+ 	if err := log.Sync(); err != nil {
+ 		return err

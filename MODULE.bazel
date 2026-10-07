@@ -15,7 +15,7 @@ git_override(
     module_name = "rules_stests",
     remote = "https://github.com/pawelchcki/rules_stests.git",
     commit = "402ce4e9eeb9dab79d20ad11b7967c2604ca39a2",
-    patches = ["//bazel:rules_stests_django_bind.patch", "//bazel:rules_stests_ruby_context.patch"],
+    patches = ["//bazel:rules_stests_django_bind.patch", "//bazel:rules_stests_ruby_context.patch", "//bazel:rules_stests_probe_readiness.patch"],
     patch_strip = 1,
 )
 images = use_extension("//bazel:oci_deps.bzl", "oci_deps")

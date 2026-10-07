@@ -12,6 +12,6 @@ git_override(
     module_name = "rules_stests",
     remote = "https://github.com/pawelchcki/rules_stests.git",
     commit = "402ce4e9eeb9dab79d20ad11b7967c2604ca39a2",
-    patches = ["//:rules_stests_django_bind.patch", "//:rules_stests_ruby_context.patch"],
+    patches = ["//:rules_stests_django_bind.patch", "//:rules_stests_ruby_context.patch", "//:rules_stests_probe_readiness.patch"],
     patch_strip = 1,
 )
