@@ -50,6 +50,9 @@ profiles=(
   //corpus:ruby-falcon-datadog-v2-43-0-v04
   //corpus:go-gin-datadog-v2-10-1-v04
 )
+bazel build "${bazel_args[@]}" --remote_download_outputs=toplevel "${image_flags[@]}" //harness:datadog_ruby_compatibility
+mapfile -t ruby_profiles < <(python3 -c 'import json; d=json.load(open("bazel-bin/harness/datadog_ruby_compatibility.json")); print("\n".join("//corpus:ruby-sinatra-" + r["series"].replace(".", "-") + "-datadog-v2-43-0-v04" for r in d["supported"]))')
+profiles+=("${ruby_profiles[@]}")
 # DefaultInfo for each profile carries its manifest and validator runfiles.
 # Fetch the complete tree: the coverage gate hashes every scenario bytecode.
 downloaded_evidence_regex='.*(\.validators|test\.outputs)($|/.*)'

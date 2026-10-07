@@ -25,6 +25,46 @@ minor from Go 1.4 through 1.27 on Linux amd64, with configurable arm64. It retai
 Orchestrion and Alibaba automatic tracing and exposes replacement instrumentation
 through startup `LD_PRELOAD` or a controller attached to the running app's PID.
 
+The Ruby runtime matrix adds Sinatra on WEBrick for Ruby **2.5, 2.6, 2.7,
+3.0, 3.1, 3.2, 3.3, 3.4, and 4.0**, using the interpreter and application
+bundles from the pinned `rules_stests` matrix. Each runtime runs all 16
+RealWorld scenarios, the same 53 independent native SDK contracts, and the
+parallel isolation workload with Datadog 2.43.0 on v0.4. Together with the
+existing frameworks, this registers 16 profiles, 256 RealWorld scenario
+combinations, and 848 independent SDK contract tests.
+
+```sh
+bazel test --config=local //fixtures:datadog_ruby_matrix_suite
+bazel test --config=local //fixtures:datadog_ruby_external_features_suite
+bazel test --config=local //fixtures:datadog_ruby_parallel_suite
+bazel build --config=local //harness:datadog_ruby_compatibility
+```
+
+For retained Ruby-only evidence, run the matrix with
+`--nocache_test_results --test_env=TELEMETRY_TEST_REVISION=$(git rev-parse HEAD)`,
+then build `//harness:datadog_ruby_compatibility` and
+`//tools/datadog_coverage:datadog_coverage`. Pass `--ruby-matrix-only` to
+`tools/retain_datadog_evidence.py` with the revision, a new output directory,
+and the built gate executable.
+
+The compatibility manifest records every upstream runtime. Ruby 1.9.3 and
+2.0–2.4 are explicitly incompatible with Datadog 2.43.0's declared Ruby
+requirement (`>= 2.5.0, < 4.1`); they do not count as passing Datadog tests.
+The versioned payloads use the Ruby tracing transport and compile native
+MessagePack against each runtime's headers, without linking the executor's
+libc. Optional profiling, crashtracking, and AppSec extensions are outside
+this matrix. The build checks actual tracer loading, Ruby requirements,
+ABI identity, native MessagePack serialization, and the opt-in probes.
+Dependencies and source/native gem archives are locked by SHA-256.
+
+The nine added profiles validate native telemetry contracts and retain their
+captures and receipts. They have no reviewed exact shapes yet. Retention
+explicitly authorizes those profile IDs as contract evidence; the gate still
+requires complete proofs, intact captures and validator bytecode, matching
+revision and identities, and classified fields. Existing profiles continue
+to require their reviewed shapes. Reports label each scenario's validation
+mode so the two evidence scopes remain visible.
+
 The seven reviewed RealWorld profiles and their Scheme sources were moved
 without changing their contents. Datadog configuration and profile macros are
 exported from `//rules:defs.bzl`. Shared service rules are loaded from
@@ -86,7 +126,9 @@ receive no secret and use the GitHub disk and repository caches. Fresh native
 tests still execute with `--nocache_test_results` on both systems.
 The preliminary wildcard pass excludes the four suites that the evidence driver
 runs freshly afterward, so native tests execute once per required evidence run.
-The pinned `rules_stests` runtime has a small compatibility patch recognizing
+The pinned `rules_stests` sink has a compatibility patch recognizing the nine
+versioned Ruby application names as Rack workloads. Its runtime also has a
+small compatibility patch recognizing
 Django's proven startup bind-conflict message within its existing three-attempt
 port-allocation budget. Unknown startup failures remain immediate failures.
 Local execution eagerly materializes cached

@@ -15,3 +15,7 @@ exports_files(["security_extra_wheels.lock.json"])
 exports_files(["messaging_wheels.lock.json"])
 
 exports_files(["sca_wheels.lock.json"])
+
+exports_files(["datadog_ruby.bzl", "datadog_ruby.lock.json"])
+
+exports_files(["rules_stests_ruby_context.patch"])

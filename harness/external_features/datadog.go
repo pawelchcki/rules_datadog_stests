@@ -701,4 +701,6 @@ func ddFixtureDefects(app string) map[string]ddExpectedDefect {
 }
 
 // rubyApp reports whether app is traced by dd-trace-rb.
-func rubyApp(app string) bool { return app == "rails" || app == "falcon" }
+func rubyApp(app string) bool {
+	return app == "rails" || app == "falcon" || strings.HasPrefix(app, "ruby_")
+}

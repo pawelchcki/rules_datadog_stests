@@ -1,5 +1,35 @@
 # Datadog verification record
 
+## Ruby runtime expansion, 2026-10-07
+
+Local working-tree verification based on `dc3155f313e98d195d131a3bec4fd09e7dfde947`
+uses `rules_stests` at `402ce4e9eeb9dab79d20ad11b7967c2604ca39a2` and
+Datadog 2.43.0. Ruby 2.5, 2.6, 2.7, 3.0, 3.1, 3.2, 3.3, 3.4, and 4.0
+each run the shared Sinatra application with their pinned interpreter and
+an ABI-specific native MessagePack extension. The compatibility manifest
+also records Ruby 1.9.3 and 2.0–2.4 as incompatible with this tracer.
+
+| Check | Observed result |
+| --- | --- |
+| Fresh Ruby matrix and unit checks | **643/643 passed**: 144 RealWorld scenarios, 477 independent SDK contracts, 18 smoke/hygiene checks, and four unit targets. |
+| Fresh parallel isolation | **9/9 passed**, each with 32 workers and three repetitions; observed overlap was 31–32. Retained capture and ledger hashes were rechecked. |
+| Existing profiles and evidence-tool regressions | **277/277 passed**: 115 executed, 162 cached from the Ruby matrix run. This includes all 112 existing exact-shape scenarios, Ruby bootstrap mutations, and the coverage/report unit targets. |
+| Standalone consumer | `examples/plugin_agent` **telemetry API build passed** against the upgraded dependency. |
+| Retained RealWorld evidence | The gate revalidated **16 profiles and 256 scenarios**, including seven exact-shape profiles and nine explicitly authorized contract profiles. Both the Ruby-only and combined HTML reports passed receipt revalidation. |
+| Retained native SDK evidence | **477 independent receipts** passed capture, repeat, baseline, and artifact-hash revalidation. The Ruby shared-capability report verifies the existing **19/301** mapped capabilities. |
+
+The new Ruby profiles have no reviewed exact shapes; the existing profiles
+retain their exact-shape requirement. Optional profiling, crashtracking, and
+AppSec extensions are outside the added tracing matrix.
+
+Run logs are `/tmp/datadog-ruby-matrix-validation.log`,
+`/tmp/datadog-ruby-parallel-validation.log`,
+`/tmp/datadog-matrix-regressions.log`, and
+`/tmp/datadog-example-api-validation.log`. RealWorld manifests, validators,
+captures, receipts, and the combined HTML report are retained under
+`/tmp/datadog-expanded-evidence-20261007`; native SDK and parallel evidence
+are under `/tmp/datadog-ruby-native-evidence-20261007-retained`.
+
 ## Current SDK upgrade and shared-language verification
 
 The active SDKs are **Python 4.15.5, Ruby 2.43.0, and Go 2.10.1**. The seven profiles retain the 112-scenario exact-shape matrix. Python 4.15.5 became installable during verification on 2026-10-06; its PyPI distribution and official Linux OCI index were checked at 19:13 UTC. The source upgrade and payload publication are tracked in [issue #15](https://github.com/pawelchcki/rules_datadog_stests/issues/15). The authoritative payload identities remain in [bazel/oci_images.lock.bzl](../bazel/oci_images.lock.bzl).
@@ -12,7 +42,7 @@ The active SDKs are **Python 4.15.5, Ruby 2.43.0, and Go 2.10.1**. The seven pro
 
 The upgraded Ruby payload was published and anonymously pulled with its reviewed rootfs and source-tree identities. Its source tree is `719cdf96e8569b8c39c841f3b8c9cb3d55191673`. Falcon uses the shared `@rules_stests//harness:falcon_rootfs` with Ruby 2.43.0 injection; the older Falcon image below belongs to historical publication evidence.
 
-The current layout registers **371 independent Bazel service tests** (53 contracts × seven profiles), following [rules_stests #57](https://github.com/pawelchcki/rules_stests/pull/57). Each contract retains its own baseline and twice-repeated native captures/responses. The acceptance below was recorded before that layout change and identifies its tested revision explicitly.
+The seven framework profiles register **371 independent Bazel service tests** (53 contracts × seven profiles), following [rules_stests #57](https://github.com/pawelchcki/rules_stests/pull/57). The Ruby runtime expansion adds another 477 contracts across nine profiles. Each contract retains its own baseline and twice-repeated native captures/responses. The acceptance below was recorded before that layout change and identifies its tested revision explicitly.
 
 The following completed verification on 2026-10-06 used Python 4.15.4 and implementation commit `bf22a3af9960d7b547395ab3156e77bff0e07a8f`:
 
@@ -32,7 +62,7 @@ The original shape-review hashes remain unchanged in [datadog-shape-review-histo
 
 ## Reproduce the current evidence with the active locks
 
-The full driver runs the two exact-shape executions, their retention gates, report generation, the four-worker concurrent suite, the repeated shared external-feature suite and its per-language gate, and the complete broader capability suite with its 75% full-inventory gate. Capability fixtures run with four-worker concurrency on both local and remote executors. Use an empty image-override file to consume the published locks:
+The full driver runs two executions of the seven exact-shape and nine Ruby contract profiles, their retention gates, report generation, the four-worker concurrent suite, the repeated shared external-feature suite and its per-language gate, and the complete broader capability suite with its 75% full-inventory gate. Capability fixtures run with four-worker concurrency on both local and remote executors. Use an empty image-override file to consume the published locks:
 
 ```sh
 images=$(mktemp -d /tmp/datadog-images.XXXXXX)
@@ -66,7 +96,7 @@ The earlier PR integration run verified 154/301 features (51.2%) and passed 191 
 
 The capability suite uses Python tracer 4.14.0 and the digest-pinned Agent 7.83.1. Agent-backed profiles feed both native tracer wire versions into the real APM Agent; full-core variants additionally send runtime metrics through the real DogStatsD listener. SDK-focused configuration, security, and AMQP profiles use controlled intake/protocol peers, with those boundaries stated in their mappings. A loopback backend receives and independently decodes Agent trace protobufs, compressed statistics, and metric series/sketches. Signed Remote Config travels through the core Agent, trace Agent, and the running SDK; TLS verification remains enabled. The retained proxy captures, backend bodies, identities, configurations, and receipts are hash checked by the capability gate.
 
-The shared native intake fixes landed in [rules_stests PR #50](https://github.com/pawelchcki/rules_stests/pull/50). Both this module and the independent consumer pin `rules_stests` at `db94b7ae98d1c8765b2ec236f6732683bbbfb54d`, which includes those fixes. The shared decoder accepts identical repeated propagation strings in span metadata and binary security metastructs, with regression checks that retain rejection of conflicting duplicate keys and invalid binary lengths.
+The shared native intake fixes landed in [rules_stests PR #50](https://github.com/pawelchcki/rules_stests/pull/50). The historical acceptance pinned `rules_stests` at `db94b7ae98d1c8765b2ec236f6732683bbbfb54d`, which includes those fixes. Both this module and the independent consumer now pin `402ce4e9eeb9dab79d20ad11b7967c2604ca39a2`, adding the upstream Ruby runtime matrix. The shared decoder accepts identical repeated propagation strings in span metadata and binary security metastructs, with regression checks that retain rejection of conflicting duplicate keys and invalid binary lengths.
 
 Run `bazel test --config=local //fixtures:datadog_capability_suite` for the focused integration suite. The parity driver retains its raw outputs and gates the complete capability inventory at 75%. See [capability measurement](datadog-capabilities.md) for receipt generation and revalidation.
 

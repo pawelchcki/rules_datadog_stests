@@ -170,3 +170,5 @@ py_test(
         ":materialize_shared_app_lib",
     ],
 )
+
+py_binary(name = "build_datadog_ruby", srcs = ["build_datadog_ruby.py"])

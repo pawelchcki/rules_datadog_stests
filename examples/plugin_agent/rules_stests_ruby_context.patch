@@ -1,0 +1,12 @@
+diff --git a/harness/otel_sink/datadog.rs b/harness/otel_sink/datadog.rs
+--- a/harness/otel_sink/datadog.rs
++++ b/harness/otel_sink/datadog.rs
+@@ -1055,6 +1055,8 @@ fn validate_workload_context(records: &[Record], app: &str, scenario: &str) -> Result<(), String> {
+         "aiohttp" => "aiohttp.request",
+         "django" => "django.request",
+         "rails" | "falcon" => "rack.request",
++        "ruby_2_5" | "ruby_2_6" | "ruby_2_7" | "ruby_3_0" | "ruby_3_1"
++        | "ruby_3_2" | "ruby_3_3" | "ruby_3_4" | "ruby_4_0" => "rack.request",
+         "gin" => "http.request",
+         _ => return Err("unknown Datadog application context".into()),
+     };
