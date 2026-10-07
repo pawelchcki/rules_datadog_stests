@@ -33,9 +33,11 @@ evidence="${3:?usage: run_datadog_parity.sh IMAGE_DIRECTORY REVISION EVIDENCE_DI
 mkdir -p "$evidence"
 
 mapfile -t image_flags < "$images/bazel.flags"
-bazel_args=(--config="${DATADOG_BAZEL_CONFIG:-local}")
+# Native services share executor ports and intake resources. Use the locally
+# validated four-worker load for remote scenario runs as well as SDK probes.
+bazel_args=(--config="${DATADOG_BAZEL_CONFIG:-local}" --jobs=4)
 if [[ "${DATADOG_BAZEL_CONFIG:-local}" != buildbuddy ]]; then
-  bazel_args+=(--jobs=4 --local_test_jobs=4)
+  bazel_args+=(--local_test_jobs=4)
   test_download_outputs=all
 else
   bazel_args+=(--spawn_strategy=remote,local)
