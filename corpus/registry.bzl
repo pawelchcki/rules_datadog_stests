@@ -1,5 +1,7 @@
 """Datadog assertion libraries and reviewed profile registry."""
 
+load("@datadog_ruby_matrix_config//:versions.bzl", "DATADOG_RUBY_RUNTIMES")
+
 load("@rules_stests//corpus:registry.bzl", "REALWORLD_BASE_HURL_CASES")
 
 # Datadog has a separate wire feature catalog and proof runtime. The shared
@@ -79,6 +81,16 @@ DATADOG_PROFILES = {
     "python-aiohttp-datadog-v4-15-5-v04": struct(implementation = "python-v4.15.5", wire_version = "v0.4"),
     "python-django-datadog-v4-15-5-v04": struct(implementation = "python-v4.15.5", wire_version = "v0.4"),
 }
+
+# Versioned Sinatra fixtures have native contracts but no reviewed exact shapes.
+DATADOG_PROFILES.update({
+    "ruby-sinatra-" + runtime["series"].replace(".", "-") + "-datadog-v2-43-0-v04": struct(
+        implementation = "ruby-v2.43.0",
+        wire_version = "v0.4",
+        reviewed = False,
+    )
+    for runtime in DATADOG_RUBY_RUNTIMES
+})
 
 def declare_datadog_profiles(datadog_realworld_profile):
     """Declares Datadog's independent profiles and native wire assertions."""

@@ -168,3 +168,47 @@ func TestRetainedCompiledBytecodeBinding(t *testing.T) {
 		})
 	}
 }
+
+func TestContractProfilesRequireExplicitPolicyAndBoundEvidence(t *testing.T) {
+	revision, digest := strings.Repeat("a", 40), strings.Repeat("b", 64)
+	capture := []byte("capture")
+	plan := `{"proofs":[{"featureId":"feature","assertion":"assertion","basis":"observed"}]}`
+	artifact := compiledValidator{Path: "p.validators/tags.sbc", SourceSHA256: digest, CompilerSHA256: digest, BytecodeSHA256: digest}
+	m := manifest{CompiledValidators: map[string]compiledValidator{"tags": artifact}, Family: "datadog", WireVersion: "v0.4", Profile: "ruby-matrix", Application: "ruby_2_5", ProofPlan: plan, Scenarios: []string{"tags"}, ValidationPolicySHA256: digest, CandidateImplementationSHA256: digest}
+	r := receipt{Validator: &artifact, Family: "datadog", WireVersion: "v0.4", SchemaVersion: 2, Revision: revision, Profile: m.Profile, Scenario: "tags", ValidationMode: "contract", Outcome: "verified", ProofPlanSHA256: sum(plan), CaptureSHA256: sum(string(capture)), ValidationPolicySHA256: digest, CandidateImplementationSHA256: digest, Proofs: []receiptProof{{FeatureID: "feature", Assertion: "assertion", Basis: "observed", Result: "pass"}}, Coverage: coverage{SchemaVersion: 1, Application: m.Application, Scenario: "tags", IntegrationSpans: map[string]int{"http.server": 1, "database": 1}, FieldPolicies: map[string]int{"exact": 3, "normalized": 1, "runtime-validated": 2}, SpanOccurrences: 2, FieldOccurrences: 6}}
+	check := func(r receipt, allowed []string) error {
+		return validateProfiles(revision, []manifest{m}, []receipt{r}, [][]byte{capture}, allowed)
+	}
+	if check(r, nil) == nil || check(r, []string{"other"}) == nil {
+		t.Fatal("implicit contract downgrade accepted")
+	}
+	if err := check(r, []string{m.Profile}); err != nil {
+		t.Fatal(err)
+	}
+	for _, mutate := range []func(*receipt){
+		func(r *receipt) { r.ValidationMode = "exact" },
+		func(r *receipt) { r.ValidationMode = "candidate" },
+		func(r *receipt) { r.ScenarioShapeSHA256 = digest },
+		func(r *receipt) { r.Outcome = "xfail" },
+		func(r *receipt) { r.CaptureSHA256 = digest },
+		func(r *receipt) { r.Validator = nil },
+		func(r *receipt) { r.Proofs = nil },
+		func(r *receipt) { r.Coverage.UnclassifiedFields = 1 },
+	} {
+		changed := r
+		mutate(&changed)
+		if check(changed, []string{m.Profile}) == nil {
+			t.Fatal("mutated contract evidence accepted")
+		}
+	}
+	m.ScenarioShapes = map[string]string{"tags": ""}
+	claimedExact := r
+	claimedExact.ValidationMode, claimedExact.ScenarioShapeSHA256 = "exact", sum("")
+	if check(claimedExact, []string{m.Profile}) == nil {
+		t.Fatal("empty reviewed shape accepted")
+	}
+	m.ScenarioShapes = map[string]string{"tags": "reviewed shape"}
+	if check(r, []string{m.Profile}) == nil {
+		t.Fatal("reviewed shape downgraded to contract")
+	}
+}

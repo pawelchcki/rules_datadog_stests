@@ -15,6 +15,10 @@ def read_execution(directory, revision, gate):
     if not manifests:
         raise ValueError(f"{directory}: no profile manifests")
     command = [str(gate.resolve()), "--revision", revision]
+    contract_path = directory / "contract-profiles.json"
+    contract_profiles = json.loads(contract_path.read_text()) if contract_path.exists() else []
+    for profile in contract_profiles:
+        command += ["--contract-profile", profile]
     profiles = []
     for path in manifests:
         manifest = json.loads(path.read_text())
@@ -32,7 +36,8 @@ def read_execution(directory, revision, gate):
             scenarios.append(json.loads(receipt.read_text()))
         profiles.append({"profile": profile, "manifestSha256": hashlib.sha256(path.read_bytes()).hexdigest(),
                          "application": manifest["application"],
-                         "wireVersion": manifest["wireVersion"], "scenarios": scenarios})
+                         "wireVersion": manifest["wireVersion"], "scenarios": scenarios,
+                         "validationMode": scenarios[0]["validationMode"]})
     # A stored success log is not sufficient: the gate must inspect the current
     # captures, exact proof sets, revisions, and compiled bytecode again.
     subprocess.run(command, check=True, capture_output=True, text=True)
@@ -73,7 +78,7 @@ def render(report):
             proofs = "".join(f'<li>{esc(p["featureId"])}: {esc(p["assertion"])} <small>({esc(p["basis"])})</small></li>'
                              for p in receipt["proofs"])
             details.append(f'<details data-search="{esc(profile["profile"])} {esc(receipt["scenario"])} {esc(" ".join(sorted(scenario_features)))}">'
-                           f'<summary>{esc(profile["profile"])} / {esc(receipt["scenario"])} — verified</summary>'
+                           f'<summary>{esc(profile["profile"])} / {esc(receipt["scenario"])} — {esc(receipt["validationMode"])} verified</summary>'
                            f'<p>Capture SHA-256: <code>{esc(receipt["captureSha256"])}</code></p><ul>{proofs}</ul></details>')
         values = [profile["profile"], profile["application"], profile["wireVersion"], len(profile["scenarios"]),
                   len(features), span_count, policies["exact"], policies["normalized"], policies["runtime-validated"]]
@@ -94,7 +99,7 @@ details{{border-bottom:1px solid #8886;padding:.7rem 0}}summary{{cursor:pointer}
 <h1>Datadog tracing evidence</h1>
 <p><strong>{count} distinct scenarios verified across {len(latest)} profiles</strong> in {len(report["executions"])} retained executions.</p>
 <p>Revision: <code>{esc(report["revision"])}</code></p>
-<p>These results establish the selected exact-shape contracts and their authored assertions.
+<p>These results establish the authored assertions. Each scenario identifies contract validation or validation against a reviewed exact trace shape.
 They do not establish complete upstream parity. Unsupported external probes and products outside this tracing matrix do not count as verified capabilities.</p>
 <label for="filter">Filter by profile, scenario, or feature</label><br><input id="filter" type="search" placeholder="e.g. rails, propagation, sampling">
 <h2>Profile coverage</h2><p>Span and field counts below describe the last retained execution. Repeated executions do not multiply distinct scenario or feature counts. Each profile's feature count is independent.</p>
@@ -103,7 +108,7 @@ They do not establish complete upstream parity. Unsupported external probes and 
 <h2>Scenario evidence</h2>{''.join(details)}
 <h2>Verification boundary</h2><p>Every execution was rechecked by the Datadog coverage gate before rendering.
 The gate requires current-revision schema-v2 verified receipts, complete scenario coverage, passing proof sets,
-capture and shape digest bindings, matching compiled validators, and zero unclassified fields.
+capture digest bindings, reviewed shape bindings for exact validation, matching compiled validators, and zero unclassified fields.
 Full manifests, captures, validators, logs, and timing evidence are retained separately in the CI evidence archive.</p>
 </main><script id="evidence" type="application/json">{data}</script>
 <script>document.getElementById('filter').addEventListener('input',event=>{{const query=event.target.value.toLowerCase();document.querySelectorAll('[data-search]').forEach(row=>{{row.hidden=!row.dataset.search.toLowerCase().includes(query)}})}});</script></html>'''
