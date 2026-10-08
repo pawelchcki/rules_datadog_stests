@@ -45,7 +45,9 @@ jobs:
         run: tools/run_go_runtime_capabilities.sh "$RUNNER_TEMP/go-runtime-apps" "$RUNNER_TEMP/go-runtime-evidence"
       - name: Verify downstream capability API
         working-directory: examples/plugin_agent
-        run: bazel test --config="$DATADOG_BAZEL_CONFIG" --spawn_strategy=remote,local --jobs=4 --nocache_test_results --override_repository="go_runtime_apps=$RUNNER_TEMP/go-runtime-apps" //:go_runtime_controls
+        run: |
+          mapfile -t flags < "$RUNNER_TEMP/go-runtime-apps/bazel.flags"
+          bazel test --config="$DATADOG_BAZEL_CONFIG" --spawn_strategy=remote,local --jobs=4 --nocache_test_results "${flags[@]}" //:go_runtime_controls
       - name: Retain native captures and report
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2

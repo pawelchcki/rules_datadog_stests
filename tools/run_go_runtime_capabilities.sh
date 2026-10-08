@@ -8,11 +8,12 @@ mkdir -p "$apps" "$evidence"
 apps="$(realpath "$apps")"
 evidence="$(realpath "$evidence")"
 python3 tools/build_go_runtime_matrix.py --output "$apps" --arch "$arch"
+mapfile -t app_flags < "$apps/bazel.flags"
 flags=(--config="${DATADOG_BAZEL_CONFIG:-local}" --jobs=4
-  --override_repository="go_runtime_apps=$apps" --nocache_test_results)
+  "${app_flags[@]}" --nocache_test_results)
 if [[ "${DATADOG_BAZEL_CONFIG:-local}" == buildbuddy ]]; then
-  # Input materialization is local; compilation and native tests use the
-  # configured RBE pool. Download captures before retaining and gating them.
+  # Materialization, compilation and tests can all use the configured RBE pool.
+  # Download captures before retaining and gating them.
   flags+=(--spawn_strategy=remote,local '--remote_download_regex=.*test\.outputs($|/.*)')
 else
   flags+=(--local_test_jobs=4)

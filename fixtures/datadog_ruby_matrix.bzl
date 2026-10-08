@@ -44,6 +44,7 @@ def datadog_ruby_matrix_tests():
         )
         realworld_service_tests(
             name = app + "_datadog",
+            exec_properties = {"test.EstimatedCPU": "2"},
             service = ":" + app + "_datadog_service",
             telemetry_profile = "//corpus:" + config.profile + "v04",
             telemetry_sink = "@rules_stests//harness:telemetry_sink_service",

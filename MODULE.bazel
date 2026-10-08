@@ -1,6 +1,7 @@
 module(name = "rules_datadog_stests", version = "0.0.0")
 bazel_dep(name = "rules_stests", version = "0.0.0")
 bazel_dep(name = "rules_cc", version = "0.2.22")
+bazel_dep(name = "rules_rs", version = "0.0.108")
 bazel_dep(name = "rules_go", version = "0.63.0")
 bazel_dep(name = "gazelle", version = "0.51.3")
 bazel_dep(name = "rules_itest", version = "0.0.59")
@@ -10,6 +11,8 @@ bazel_dep(name = "rules_python", version = "1.8.0")
 bazel_dep(name = "platforms", version = "1.1.0")
 bazel_dep(name = "package_metadata", version = "0.0.7")
 bazel_dep(name = "aspect_bazel_lib", version = "2.21.1")
+# Only provenance regression tests need Git; consumers do not inherit this tool.
+bazel_dep(name = "git", version = "2.53.0.bcr.1", dev_dependency = True)
 # Pin the latest shared infrastructure, including the versioned Ruby runtime matrix.
 git_override(
     module_name = "rules_stests",
@@ -18,6 +21,10 @@ git_override(
     patches = ["//bazel:rules_stests_django_bind.patch", "//bazel:rules_stests_ruby_context.patch", "//bazel:rules_stests_probe_readiness.patch"],
     patch_strip = 1,
 )
+# Expand path-remapping placeholders in bootstrap response files too, so Rust
+# library metadata cannot capture the executor's working directory.
+rules_rust = use_extension("@rules_rs//rs:rules_rust.bzl", "rules_rust")
+rules_rust.patch(patches = ["//bazel:rules_rust_bootstrap_paths.patch"], strip = 1)
 images = use_extension("//bazel:oci_deps.bzl", "oci_deps")
 use_repo(images, "datadog_python", "datadog_python_linux_amd64", "datadog_ruby", "datadog_ruby_linux_amd64", "datadog_agent", "datadog_agent_linux_amd64", "gin_datadog_realworld", "gin_datadog_realworld_linux_amd64", "datadog_mariadb", "datadog_mariadb_linux_amd64")
 wheel_deps = use_extension("//bazel:wheel_deps.bzl", "wheel_deps")

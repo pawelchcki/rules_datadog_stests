@@ -14,7 +14,7 @@ def main(arguments):
     archives = []
     for filename in files:
         path = Path(filename)
-        if path.name == "source.gem":
+        if path.name == "specification.gz":
             archives.append(str(path.resolve()))
             continue
         relative = path.as_posix().split("/data/", 1)[1]

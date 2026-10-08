@@ -6,8 +6,10 @@ import tarfile
 import tempfile
 import unittest
 
+from hermetic_test_tools import HermeticGitTestCase
 
-class OriginalSnapshotTest(unittest.TestCase):
+
+class OriginalSnapshotTest(HermeticGitTestCase):
     def test_rejects_added_source_but_allows_bazel_links(self):
         script = Path(os.environ["TEST_SRCDIR"]) / os.environ["TEST_WORKSPACE"] / "tools/benchmark_datadog.py"
         with tempfile.TemporaryDirectory() as temporary:

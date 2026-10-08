@@ -132,8 +132,13 @@ archive checksums and complete shard manifests, and runs the original evidence
 gates on the combined captures before reporting success. This keeps the
 expanded suite within the per-workflow time limit without dropping tests.
 Native feature and shared SDK tests reserve two CPU cores per test action,
-with four cores for Rails boot. Native lab shards run two workers each to avoid
-starving app startup on the shared executors.
+with four cores for Rails boot. Scenario and stress tests carry the same CPU
+reservations. Native lab shards run four workers each; the scenario stage runs
+eight. Compilation uses a separate 32-action budget before fresh tests start,
+so cold builds do not inherit the smaller test budget. Stage archives retain
+elapsed times and worker budgets in `ci-timings/` for comparisons on the same
+executor fleet. The parent polls and downloads up to four stages concurrently,
+then merges evidence in a fixed order and rejects overlaps.
 The preliminary wildcard pass excludes the five suites that the evidence driver
 runs freshly afterward, so native tests execute once per required evidence run.
 The pinned `rules_stests` sink has a compatibility patch recognizing the nine
@@ -143,8 +148,36 @@ Django's proven startup bind-conflict message within its existing three-attempt
 port-allocation budget. Unknown startup failures remain immediate failures.
 Local execution eagerly materializes cached
 outputs so OCI directory symlink aliases remain intact; remote BuildBuddy
-execution retains minimal downloads with explicit evidence trees. A separate
-`source-checks` job validates GitHub Actions workflows and tracked Python, shell and JSON syntax. Run
+execution retains minimal downloads with explicit evidence trees and creates
+local runfiles trees only when a local action needs them. Archives normalize
+paths and metadata and store identical files as hardlinks, preserving every
+capture byte and evidence path. Ruby matrix payloads retain the verified gem
+specifications and glibc runtime libraries; native build sources, headers,
+documentation and musl libraries stay out of the deployed payloads.
+Evidence collection batches file copies to avoid starting a process for every
+capture; the complete archived proof remains byte-identical.
+
+Run `tools/check_determinism.sh` to build every target, including manual
+fixtures, twice with BuildBuddy's uncached determinism diagnostic. Set
+`DATADOG_BAZEL_CONFIG=buildbuddy` to use the configured RBE platform. The check
+compares build outputs; fresh runtime captures and receipts are checked by the
+existing evidence gates. Go and local OCI input materialization use declared,
+pinned tools and support sandboxed and remote execution.
+Provenance regressions use a pinned, development-only Git dependency and
+isolated configuration. The Rust bootstrap wrapper also expands remapping
+placeholders inside compiler response files, preventing executor paths in
+library metadata.
+
+Measured locally on the same 339-test shared SDK shard, fresh test execution
+fell from 593.0 seconds with two workers to 280.3 seconds with four (52.7%).
+The Ruby 3.3 runtime payload fell from 39,108,725 to 18,583,175 bytes (52.5%);
+all nine supported Ruby payloads pass their native tracing bootstrap checks.
+Archiving the same retained evidence fell from 7.55 to 3.43 seconds, with the
+compressed archive shrinking from 4,809,811 to 4,748,182 bytes. These component
+measurements do not establish a 50% reduction for the complete distributed CI
+run; retained per-stage timings make that comparison possible on the RBE fleet.
+
+A separate `source-checks` job validates GitHub Actions workflows and tracked Python, shell and JSON syntax. Run
 `python3 tools/check_sources.py` and
 `go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.12` locally for those checks.
 The runnerless CI tool kit GitHub App provides `codex/review-gate` without a

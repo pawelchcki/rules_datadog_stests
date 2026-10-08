@@ -1,6 +1,7 @@
 """Public Go runtime capability matrix with replaceable startup/attach instrumentation."""
 load("@rules_itest//:itest.bzl", "service_test")
 load("//harness/go_runtime:versions.bzl", "GO_RUNTIME_VERSIONS")
+load(":files.bzl", "copy_file")
 
 _PROBE = Label("//harness/go_runtime:probe")
 _SINK = Label("@rules_stests//harness:otel_sink_service")
@@ -42,21 +43,17 @@ def go_runtime_capability_tests(name, backend = "orchestrion", versions = GO_RUN
                 manifest = Label("@go_runtime_apps//:" + plain_stem + "/manifest.json"),
                 data = [],
             ))
-        # A local repository may live below /tmp, which Linux sandboxes hide.
-        # Materialize declared inputs as ordinary Bazel outputs before testing.
+        # Materialize declared inputs as ordinary outputs, including prepared
+        # repositories below /tmp. The pinned copy tool works in sandboxes/RBE.
         app_output = target + "_files/app"
         manifest_output = target + "_files/manifest.json"
         control_app = target + "_files/control-app"
         control_manifest = target + "_files/control-manifest.json"
-        native.genrule(
+        for index, (source, output) in enumerate([(application.app, app_output), (application.manifest, manifest_output), (control.app, control_app), (control.manifest, control_manifest)]):
+            copy_file(name = target + "_input_" + str(index), src = source, out = output, tags = tags)
+        native.filegroup(
             name = target + "_inputs",
-            srcs = depset([application.app, application.manifest, control.app, control.manifest]).to_list(),
-            outs = [app_output, manifest_output, control_app, control_manifest],
-            cmd = " && ".join([
-                "cp $(location {}) $(location :{})".format(source, output)
-                for source, output in [(application.app, app_output), (application.manifest, manifest_output), (control.app, control_app), (control.manifest, control_manifest)]
-            ]),
-            local = True,
+            srcs = [app_output, manifest_output, control_app, control_manifest],
             tags = tags,
         )
         args = [
