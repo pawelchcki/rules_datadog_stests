@@ -91,17 +91,18 @@ def markdown(report):
     return '\n'.join(lines) + '\n'
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', default=str(ROOT))
     parser.add_argument('--evidence', action='append', default=[])
     parser.add_argument('--evidence-dir', action='append', default=[])
     parser.add_argument('--output', required=True)
     parser.add_argument('--format', choices=('json', 'markdown'), default='json')
+    parser.add_argument('--markdown-output', type=Path, help='Also render Markdown from the same verified evidence')
     parser.add_argument('--require-complete-matrix', action='store_true', help='Require each registered case in both languages; accept manifest-backed xfails')
     parser.add_argument('--ci-profile', choices=PROFILES, default='full')
     parser.add_argument('--require-selected-matrix', action='store_true', help='Require every representative case in both languages with unchanged evidence validation')
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     root = Path(args.root)
     paths = [Path(p) for p in args.evidence]
     for directory in args.evidence_dir:
@@ -139,6 +140,8 @@ def main():
     report['ciProfile'] = args.ci_profile
     report['selectedCaseCount'] = len(expected)
     Path(args.output).write_text(markdown(report) if args.format == 'markdown' else json.dumps(report, indent=2) + '\n')
+    if args.markdown_output:
+        args.markdown_output.write_text(markdown(report))
     if problems:
         raise SystemExit('\n'.join(problems))
 

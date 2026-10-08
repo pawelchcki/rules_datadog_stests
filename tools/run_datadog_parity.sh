@@ -63,6 +63,26 @@ test_download_args=(
   "--remote_download_regex=$downloaded_evidence_regex"
 )
 
+retain_test_outputs() {
+  local destination="$1" target directory
+  shift
+  local -a outputs=() logs=()
+  mkdir -p "$destination"
+  for target in "$@"; do
+    directory="bazel-testlogs/fixtures/${target##*:}"
+    if [[ -d "$directory/test.outputs" ]]; then outputs+=("$directory/test.outputs"); fi
+    if [[ -f "$directory/test.log" ]]; then logs+=("$directory/test.log"); fi
+  done
+  # Batch across targets as well as files. A full feature/SDK stage otherwise
+  # starts a find and up to two cp processes for each independent test.
+  if (( ${#outputs[@]} )); then
+    find -L "${outputs[@]}" -type f -exec cp -L --no-preserve=mode --parents -t "$destination/" '{}' +
+  fi
+  if (( ${#logs[@]} )); then
+    cp -L --no-preserve=mode --parents -t "$destination/" "${logs[@]}"
+  fi
+}
+
 if [[ "$stage" == all || "$stage" == scenarios ]]; then
 profiles=(
   //corpus:python-aiohttp-datadog-v4-15-5-v04
@@ -144,14 +164,7 @@ bazel test "${bazel_args[@]}" "${test_download_args[@]}" \
   --jobs="$jobs" --nocache_test_results \
   "${image_flags[@]}" \
   "${feature_targets[@]}" || shared_test_status=$?
-mkdir -p "$evidence/features"
-for target in "${feature_targets[@]}"; do
-  directory="bazel-testlogs/fixtures/${target##*:}"
-  if [[ -d "$directory/test.outputs" ]]; then
-    find -L "$directory/test.outputs" -type f -exec cp -L --no-preserve=mode --parents -t "$evidence/features/" '{}' +
-  fi
-  if [[ -f "$directory/test.log" ]]; then cp -L --no-preserve=mode --parents "$directory/test.log" "$evidence/features/"; fi
-done
+retain_test_outputs "$evidence/features" "${feature_targets[@]}"
 if (( shared_test_status != 0 )); then
   exit "$shared_test_status"
 fi
@@ -178,9 +191,8 @@ shared_report=(
   "${shared_evidence[@]}"
 )
 python3 tools/datadog_capabilities.py "${shared_report[@]}" \
-  --output "$evidence/datadog-shared-capabilities-report.json"
-python3 tools/datadog_capabilities.py "${shared_report[@]}" \
-  --format markdown --output "$evidence/datadog-shared-capabilities-report.md" \
+  --output "$evidence/datadog-shared-capabilities-report.json" \
+  --markdown-output "$evidence/datadog-shared-capabilities-report.md" \
   --require-all-implemented \
   --require-percent "${DATADOG_SHARED_CAPABILITY_MIN_PERCENT:-0}"
 
@@ -196,32 +208,18 @@ shared_sdk_status=0
 bazel test "${bazel_args[@]}" "${test_download_args[@]}" \
   --jobs="$jobs" --nocache_test_results "${image_flags[@]}" \
   "${sdk_targets[@]}" || shared_sdk_status=$?
-mkdir -p "$evidence/shared-sdk"
-for target in "${sdk_targets[@]}"; do
-  directory="bazel-testlogs/fixtures/${target##*:}"
-  if [[ -d "$directory/test.outputs" ]]; then
-    find -L "$directory/test.outputs" -type f -exec cp -L --no-preserve=mode --parents -t "$evidence/shared-sdk/" '{}' +
-    cp -L --no-preserve=mode --parents "$directory/test.log" "$evidence/shared-sdk/"
-  fi
-done
+retain_test_outputs "$evidence/shared-sdk" "${sdk_targets[@]}"
 if (( shared_sdk_status != 0 )); then exit "$shared_sdk_status"; fi
 fi
 
 if [[ "$stage" == all || "$stage" == gate ]]; then
-for format in json markdown; do
-  suffix="$format"
-  if [[ "$format" == markdown ]]; then suffix=md; fi
-  python3 tools/datadog_shared_sdk_report.py \
-    --evidence-dir "$evidence/shared-sdk" --evidence-dir "$evidence/features" \
-    --ci-profile "$ci_profile" \
-    --format "$format" --output "$evidence/datadog-shared-sdk-report.$suffix"
-done
 sdk_matrix_gate=--require-complete-matrix
 if [[ "$ci_profile" == pr ]]; then sdk_matrix_gate=--require-selected-matrix; fi
 python3 tools/datadog_shared_sdk_report.py \
   --evidence-dir "$evidence/shared-sdk" --evidence-dir "$evidence/features" \
   --ci-profile "$ci_profile" \
-  --output "$evidence/datadog-shared-sdk-report.json" "$sdk_matrix_gate"
+  --output "$evidence/datadog-shared-sdk-report.json" \
+  --markdown-output "$evidence/datadog-shared-sdk-report.md" "$sdk_matrix_gate"
 
 fi
 
@@ -267,8 +265,7 @@ capability_report=(
   --scope all "${capability_evidence[@]}"
 )
 python3 tools/datadog_capabilities.py "${capability_report[@]}" \
-  --output "$evidence/datadog-capabilities-report.json"
-python3 tools/datadog_capabilities.py "${capability_report[@]}" \
-  --format markdown --output "$evidence/datadog-capabilities-report.md" \
+  --output "$evidence/datadog-capabilities-report.json" \
+  --markdown-output "$evidence/datadog-capabilities-report.md" \
   --require-percent "${DATADOG_CAPABILITY_MIN_PERCENT:-75}"
 fi

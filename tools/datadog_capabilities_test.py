@@ -5,7 +5,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from datadog_capabilities import REVISION, annotate_gap_issues, coverage, coverage_matrix, evidence_results, inventory, main, sha256, validate_mapping
+from datadog_capabilities import REVISION, annotate_gap_issues, coverage, coverage_matrix, evidence_results, inventory, main, markdown, sha256, validate_mapping
 
 
 class InventoryTest(unittest.TestCase):
@@ -129,11 +129,13 @@ class CoverageTest(unittest.TestCase):
             args = ["report", "--inventory", str(root / "inventory.json"),
                     "--mapping", str(root / "mapping.json"), "--require-language", "python",
                     "--require-independent-cases", "--require-all-implemented",
-                    "--output", str(root / "report.json")]
+                    "--output", str(root / "report.json"),
+                    "--markdown-output", str(root / "report.md")]
             self.assertEqual(0, main(args + receipts))
             report = json.loads((root / "report.json").read_text())
             self.assertTrue(report["requiredIndependentCases"])
             self.assertEqual(1, report["verifiedCapabilities"])
+            self.assertEqual(markdown(report), (root / "report.md").read_text())
             grouped = root / "grouped.json"
             for values in (rows, []):
                 grouped.write_text(json.dumps({"results": values}))
@@ -211,11 +213,13 @@ class CoverageTest(unittest.TestCase):
                            "--mapping", str(root / "mapping.json"), "--evidence", str(root / "results.json"),
                            "--require-language", "python", "--require-language", "ruby",
                            "--require-language", "go", "--require-percent", "100",
-                           "--output", str(root / "report.json")])
+                           "--output", str(root / "report.json"),
+                           "--markdown-output", str(root / "report.md")])
             self.assertEqual(1, status)
             report = json.loads((root / "report.json").read_text())
             self.assertEqual(["python", "ruby", "go"], report["requiredLanguages"])
             self.assertEqual(0, report["verifiedPercent"])
+            self.assertEqual(markdown(report), (root / "report.md").read_text())
 
     def test_every_required_case_must_pass_with_verified_capture(self):
         second = dict(self.result, name="case-b")

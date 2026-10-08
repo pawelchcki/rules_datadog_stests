@@ -438,6 +438,7 @@ def main(argv=None):
     report.add_argument("--local-root", type=Path)
     report.add_argument("--output", type=Path)
     report.add_argument("--format", choices=["json", "markdown"], default="json")
+    report.add_argument("--markdown-output", type=Path, help="Also render Markdown from the same verified evidence")
     report.add_argument("--require-percent", type=float)
     report.add_argument("--require-language", action="append", choices=["python", "ruby", "go"], default=[],
                         help="Require the same mapped assertions separately in each language; repeat for a matrix")
@@ -475,6 +476,8 @@ def main(argv=None):
         args.output.write_text(rendered)
     else:
         print(rendered, end="")
+    if args.markdown_output:
+        args.markdown_output.write_text(markdown(result))
     if args.require_all_implemented and (not result["implementedCapabilities"] or
             result["verifiedCapabilities"] != result["implementedCapabilities"]):
         print("Capability gate failed: not every implemented assertion has verified evidence")

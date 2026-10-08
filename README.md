@@ -150,8 +150,10 @@ profile-bound target manifests, and gates the combined captures. Main requires
 the complete SDK matrix; a PR manifest cannot satisfy that gate.
 Native feature and shared SDK tests reserve two CPU cores per test action,
 with four cores for Rails boot. Scenario and stress tests carry the same CPU
-reservations. Native lab shards run four workers each; the scenario stage and
-the single PR feature stage run eight. Compilation uses a separate 32-action budget before fresh tests start,
+reservations. Shared SDK shards run sixteen workers each; feature and capability
+shards run four, and the scenario stage and single PR feature stage run eight.
+Set `DATADOG_PARITY_JOBS` or `DATADOG_PARITY_BUILD_JOBS` to override the stage
+budgets for available fleet capacity. Compilation uses a separate 32-action budget before fresh tests start,
 so cold builds do not inherit the smaller test budget. Stage archives retain
 elapsed times and worker budgets in `ci-timings/` for comparisons on the same
 executor fleet. The parent polls and downloads up to four stages concurrently,
@@ -172,7 +174,9 @@ capture byte and evidence path. Ruby matrix payloads retain the verified gem
 specifications and glibc runtime libraries; native build sources, headers,
 documentation and musl libraries stay out of the deployed payloads.
 Evidence collection batches file copies to avoid starting a process for every
-capture; the complete archived proof remains byte-identical.
+capture or test; the complete archived proof remains byte-identical. JSON and
+Markdown reports share one evidence-validation pass and retain both formats
+before enforcing the existing gates.
 
 Run `tools/check_determinism.sh` to build every target, including manual
 fixtures, twice with BuildBuddy's uncached determinism diagnostic. Set
@@ -193,6 +197,15 @@ Archiving the same retained evidence fell from 7.55 to 3.43 seconds, with the
 compressed archive shrinking from 4,809,811 to 4,748,182 bytes. These component
 measurements do not establish a 50% reduction for the complete distributed CI
 run; retained per-stage timings make that comparison possible on the RBE fleet.
+
+On the loaded RBE fleet, a fixed sample of 66 fresh Go/Python SDK tests passed
+with both four and sixteen workers. Bazel's server-side elapsed time fell from
+355.8 to 133.7 seconds (62.4%); client lock waiting is excluded. Batched retention
+of 678 tests fell from 17.74 to 0.72 seconds, preserving all 9,496 file paths and
+hashes. The SDK report's median time fell from 8.91 to 2.73 seconds across three
+comparisons, with byte-identical JSON and Markdown and the complete-matrix gate
+passing. These are component measurements; see [recorded results](docs/runtime-performance.json)
+for the RBE invocations and measurement scope.
 
 A separate `source-checks` job validates GitHub Actions workflows and tracked Python, shell and JSON syntax. Run
 `python3 tools/check_sources.py` and

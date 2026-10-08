@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-08",
+  "baselineRevision": "56c3926b0194262c4cb98f4e130f427549936dc0",
+  "bazelVersion": "9.2.0",
+  "scope": "Component benchmarks on the existing, loaded fleet; not an end-to-end distributed CI comparison.",
+  "rbe": {
+    "config": "buildbuddy",
+    "pool": "linux-amd64-kvm",
+    "freshTests": true,
+    "selection": "Every third registry index in the representative PR SDK selection, in both Go and Python; fixtures prebuilt at jobs=32.",
+    "runs": [
+      {
+        "jobs": 4,
+        "wallSeconds": 355.776,
+        "passed": 66,
+        "testAttempts": 66,
+        "medianTestSeconds": 2.0095,
+        "invocationUrl": "https://pawel.buildbuddy.io/invocation/0b3668a3-a7c2-4385-8738-87087e443994"
+      },
+      {
+        "jobs": 16,
+        "wallSeconds": 133.694,
+        "passed": 66,
+        "testAttempts": 66,
+        "medianTestSeconds": 2.1475,
+        "invocationUrl": "https://pawel.buildbuddy.io/invocation/048ccb20-2d7f-437f-b293-ed618d74991c"
+      }
+    ],
+    "wallTimeReductionPercent": 62.4
+  },
+  "sdkReport": {
+    "receipts": 1526,
+    "baselineInvocations": 3,
+    "optimizedInvocations": 1,
+    "runs": [
+      {
+        "baselineSeconds": 9.022699085064232,
+        "optimizedSeconds": 2.731605237815529
+      },
+      {
+        "baselineSeconds": 6.376768247922882,
+        "optimizedSeconds": 1.6349928909912705
+      },
+      {
+        "baselineSeconds": 8.908227656967938,
+        "optimizedSeconds": 4.273786672856659
+      }
+    ],
+    "medianBaselineSeconds": 8.908227656967938,
+    "medianOptimizedSeconds": 2.731605237815529,
+    "byteIdenticalJsonAndMarkdown": true,
+    "completeMatrixGatePassed": true
+  },
+  "capabilityReports": [
+    {
+      "family": "features",
+      "receipts": 848,
+      "baselineSeconds": 1.305001642089337,
+      "optimizedSeconds": 0.3372279149480164
+    },
+    {
+      "family": "capabilities",
+      "receipts": 60,
+      "baselineSeconds": 2.901903163874522,
+      "optimizedSeconds": 0.41582674416713417
+    }
+  ],
+  "evidenceRetention": {
+    "runs": [
+      {
+        "variant": "old",
+        "seconds": 17.740003838203847,
+        "files": 9496,
+        "targets": 678
+      },
+      {
+        "variant": "new",
+        "seconds": 0.7190156951546669,
+        "files": 9496,
+        "targets": 678
+      }
+    ],
+    "identicalPathsAndSha256": true
+  }
+}
