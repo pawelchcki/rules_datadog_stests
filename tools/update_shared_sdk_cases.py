@@ -30,6 +30,11 @@ def version(value):
 
 
 def applies(condition, sdk_version):
+    condition = condition.strip()
+    # Upstream's inline declaration parser expands vX.Y.Z to >=X.Y.Z;
+    # unprefixed component versions use npm semver's exact-match semantics.
+    if condition.startswith("v"):
+        condition = ">=" + condition[1:]
     if " " in condition.strip():
         return all(applies(part, sdk_version) for part in condition.split())
     match = re.fullmatch(r"(>=|<=|>|<|==|=)?\s*(v?\d+\.\d+\.\d+(?:[a-zA-Z.+-].*)?)", condition)
@@ -40,12 +45,13 @@ def applies(condition, sdk_version):
     return {">=": actual >= required, "<=": actual <= required,
             ">": actual > required, "<": actual < required,
             "==": actual == required, "=": actual == required,
-            None: actual >= required}[operator]
+            None: actual == required}[operator]
 
 
 def declaration_reason(value, sdk_version):
-    if re.match(r"^v?\d+\.\d+\.\d+", value):
-        return None if applies(value.split()[0], sdk_version) else "missing_feature (requires " + value + ")"
+    if re.match(r"^(?:>=|<=|>|<|==|=)?v?\d+\.\d+\.\d+", value):
+        condition = value.split(" (", 1)[0]
+        return None if applies(condition, sdk_version) else "missing_feature (requires " + value + ")"
     return value
 
 

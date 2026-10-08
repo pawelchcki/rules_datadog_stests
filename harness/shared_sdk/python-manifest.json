@@ -1202,20 +1202,8 @@
       "reason": "missing_feature"
     },
     {
-      "selector": "tests/debugger/test_debugger_inproduct_enablement.py::Test_Debugger_InProduct_Enablement_Code_Origin_Default_On",
-      "reason": "flaky (APMRP-360)"
-    },
-    {
       "selector": "tests/debugger/test_debugger_inproduct_enablement.py::Test_Debugger_InProduct_Enablement_Exception_Replay::test_inproduct_enablement_exception_replay_apm_multiconfig",
       "reason": "missing_feature"
-    },
-    {
-      "selector": "tests/debugger/test_debugger_pii.py::Test_Debugger_PII_Redaction::test_pii_redaction_method_full",
-      "reason": "bug (DEBUG-3127)"
-    },
-    {
-      "selector": "tests/debugger/test_debugger_pii.py::Test_Debugger_PII_Redaction::test_pii_redaction_method_full",
-      "reason": "bug (DEBUG-3127)"
     },
     {
       "selector": "tests/debugger/test_debugger_pii.py::Test_Debugger_PII_Redaction_Excluded_Identifiers::test_pii_redaction_log_probe_sensitive_type",
@@ -1230,32 +1218,12 @@
       "reason": "irrelevant (Python emits evaluation errors as span tags, not error snapshots to the debugger endpoint)"
     },
     {
-      "selector": "tests/debugger/test_debugger_probe_status.py::Test_Debugger_Line_Probe_Statuses",
-      "reason": "bug (DEBUG-3127)"
-    },
-    {
-      "selector": "tests/debugger/test_debugger_probe_status.py::Test_Debugger_Line_Probe_Statuses",
-      "reason": "bug (DEBUG-3127)"
-    },
-    {
       "selector": "tests/debugger/test_debugger_probe_status.py::Test_Debugger_Line_Probe_Statuses::test_probe_status_log_line_with_different_casing",
       "reason": "bug (DEBUG-5106)"
     },
     {
-      "selector": "tests/debugger/test_debugger_probe_status.py::Test_Debugger_Method_Probe_Statuses",
-      "reason": "bug (DEBUG-3127)"
-    },
-    {
-      "selector": "tests/debugger/test_debugger_probe_status.py::Test_Debugger_Method_Probe_Statuses",
-      "reason": "bug (DEBUG-3127)"
-    },
-    {
       "selector": "tests/debugger/test_debugger_telemetry.py::Test_Debugger_Telemetry",
       "reason": null
-    },
-    {
-      "selector": "tests/docker_ssi/test_docker_ssi.py::TestDockerSSIFeatures::test_telemetry",
-      "reason": "bug (INPLAT-448)"
     },
     {
       "selector": "tests/docker_ssi/test_docker_ssi.py::TestDockerSSIFeatures::test_telemetry",
@@ -1308,10 +1276,6 @@
     {
       "selector": "tests/ffe/test_exposures_datadog_agent.py::Test_FFE_Exposure_Caching_Serial_Id_Disappears",
       "reason": "missing_feature (EX-3413)"
-    },
-    {
-      "selector": "tests/ffe/test_exposures_datadog_agent.py::Test_FFE_Exposure_DoLog_False::test_ffe_exposure_dolog_false",
-      "reason": "flaky (FFL-3293)"
     },
     {
       "selector": "tests/ffe/test_exposures_datadog_agent.py::Test_FFE_Exposure_Serial_Id",
@@ -1915,7 +1879,7 @@
     },
     {
       "selector": "tests/parametric/test_dynamic_configuration.py::TestDynamicConfigSamplingRules::test_trace_sampling_rules_with_tags",
-      "reason": ">=4.3.1"
+      "reason": null
     },
     {
       "selector": "tests/parametric/test_dynamic_configuration.py::TestDynamicConfigTracingEnabled",
@@ -1983,7 +1947,7 @@
     },
     {
       "selector": "tests/parametric/test_ffe/test_span_enrichment.py",
-      "reason": ">=4.9.0"
+      "reason": null
     },
     {
       "selector": "tests/parametric/test_ffe/test_span_enrichment.py::Test_Span_Enrichment_Child_Span_Propagation",
@@ -2167,7 +2131,7 @@
     },
     {
       "selector": "tests/parametric/test_otel_api_interoperability.py::Test_Otel_API_Interoperability",
-      "reason": ">=4.3.1"
+      "reason": null
     },
     {
       "selector": "tests/parametric/test_otel_api_interoperability.py::Test_Otel_API_Interoperability::test_concurrent_traces_in_order",
@@ -2299,7 +2263,7 @@
     },
     {
       "selector": "tests/parametric/test_otel_metrics.py::Test_Otel_Metrics_Api_MeterProvider::test_otel_get_meter_by_distinct_schema_url",
-      "reason": ">=4.3.1"
+      "reason": null
     },
     {
       "selector": "tests/parametric/test_otel_span_methods.py::Test_Otel_Span_Methods",
@@ -2439,7 +2403,7 @@
     },
     {
       "selector": "tests/parametric/test_span_events.py::Test_Span_Events",
-      "reason": ">=4.3.1"
+      "reason": null
     },
     {
       "selector": "tests/parametric/test_span_events.py::Test_Span_Events::test_span_with_event_v05",
@@ -2519,43 +2483,43 @@
     },
     {
       "selector": "tests/parametric/test_trace_filters.py::Test_Trace_Filters",
-      "reason": ">=4.12.2"
+      "reason": null
     },
     {
       "selector": "tests/parametric/test_trace_filters.py::Test_Trace_Filters::test_trace_filters_ignore_resources",
-      "reason": ">=4.15.3"
+      "reason": null
     },
     {
       "selector": "tests/parametric/test_trace_filters.py::Test_Trace_Filters::test_trace_filters_reject",
-      "reason": ">=4.15.3"
+      "reason": null
     },
     {
       "selector": "tests/parametric/test_trace_filters.py::Test_Trace_Filters::test_trace_filters_reject_no_value",
-      "reason": ">=4.15.3"
+      "reason": null
     },
     {
       "selector": "tests/parametric/test_trace_filters.py::Test_Trace_Filters::test_trace_filters_reject_regex",
-      "reason": ">=4.15.3"
+      "reason": null
     },
     {
       "selector": "tests/parametric/test_trace_filters.py::Test_Trace_Filters::test_trace_filters_require_missing",
-      "reason": ">=4.15.3"
+      "reason": null
     },
     {
       "selector": "tests/parametric/test_trace_filters.py::Test_Trace_Filters::test_trace_filters_require_regex_missing",
-      "reason": ">=4.15.3"
+      "reason": null
     },
     {
       "selector": "tests/parametric/test_trace_filters.py::Test_Trace_Filters::test_trace_filters_resource_normalization",
-      "reason": ">=4.15.3"
+      "reason": null
     },
     {
       "selector": "tests/parametric/test_trace_filters.py::Test_Trace_Filters::test_trace_filters_tag_normalization_env",
-      "reason": ">=4.15.3"
+      "reason": null
     },
     {
       "selector": "tests/parametric/test_trace_filters.py::Test_Trace_Filters::test_trace_filters_trim",
-      "reason": ">=4.15.3"
+      "reason": null
     },
     {
       "selector": "tests/parametric/test_trace_sampling.py::Test_Trace_Sampling_Basic",
@@ -2643,19 +2607,19 @@
     },
     {
       "selector": "tests/stats/test_stats.py::Test_Client_Stats_Future_Obfuscation_Version",
-      "reason": ">=4.11.0"
+      "reason": null
     },
     {
       "selector": "tests/stats/test_stats.py::Test_Client_Stats_Missing_Obfuscation_Version",
-      "reason": ">=4.11.0"
+      "reason": null
     },
     {
       "selector": "tests/stats/test_stats.py::Test_Client_Stats_Obfuscation_Version_Zero",
-      "reason": ">=4.11.0"
+      "reason": null
     },
     {
       "selector": "tests/stats/test_stats.py::Test_Client_Stats_With_Client_Obfuscation",
-      "reason": ">=4.11.0"
+      "reason": null
     },
     {
       "selector": "tests/stats/test_stats.py::Test_Stats_Service_Source",
@@ -2843,7 +2807,7 @@
     },
     {
       "selector": "tests/test_otel_http_semantics.py::Test_OtelSemantics_OTLP_Spans_Http_ErrorStatusConfiguration",
-      "reason": null
+      "reason": "missing_feature (requires 4.15.0-dev)"
     },
     {
       "selector": "tests/test_otel_http_semantics.py::Test_OtelSemantics_OTLP_Spans_Http_ErrorStatusConfiguration::test_client_error_statuses_config_excludes_500",
@@ -2855,7 +2819,7 @@
     },
     {
       "selector": "tests/test_otel_http_semantics.py::Test_OtelSemantics_OTLP_TraceMetrics",
-      "reason": null
+      "reason": "missing_feature (requires 4.15.0-dev)"
     },
     {
       "selector": "tests/test_otel_http_semantics.py::Test_OtelSemantics_OTLP_TraceMetrics::test_trace_metric_agrees_with_client_success",
@@ -2867,15 +2831,15 @@
     },
     {
       "selector": "tests/test_otel_http_semantics.py::Test_OtelSemantics_SamplingRules",
-      "reason": null
+      "reason": "missing_feature (requires 4.15.0-dev)"
     },
     {
       "selector": "tests/test_otel_http_semantics.py::Test_OtelSemantics_Spans_Http_Client",
-      "reason": null
+      "reason": "missing_feature (requires 4.15.0-dev)"
     },
     {
       "selector": "tests/test_otel_http_semantics.py::Test_OtelSemantics_Spans_Http_Server",
-      "reason": null
+      "reason": "missing_feature (requires 4.15.0-dev)"
     },
     {
       "selector": "tests/test_otel_http_semantics.py::Test_OtelSemantics_Spans_Http_Server::test_http_endpoint_retained_from_appsec",

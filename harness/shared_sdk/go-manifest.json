@@ -1963,7 +1963,7 @@
     },
     {
       "selector": "tests/parametric/test_ffe/test_span_enrichment.py",
-      "reason": ">=2.10.0"
+      "reason": null
     },
     {
       "selector": "tests/parametric/test_ffe/test_span_enrichment.py::Test_Span_Enrichment_Child_Span_Propagation",
@@ -2011,7 +2011,7 @@
     },
     {
       "selector": "tests/parametric/test_headers_baggage.py::Test_Headers_Baggage",
-      "reason": ">=2.5.0"
+      "reason": null
     },
     {
       "selector": "tests/parametric/test_headers_baggage.py::Test_Headers_Baggage::test_baggage_extract_header_D005",
@@ -2071,7 +2071,7 @@
     },
     {
       "selector": "tests/parametric/test_headers_baggage.py::Test_Headers_Baggage_Span_Tags",
-      "reason": ">=2.5.0"
+      "reason": null
     },
     {
       "selector": "tests/parametric/test_headers_baggage.py::Test_Headers_Baggage_Span_Tags::test_baggage_span_tags_all",
@@ -2139,7 +2139,7 @@
     },
     {
       "selector": "tests/parametric/test_otel_logs.py",
-      "reason": ">=2.5.0"
+      "reason": null
     },
     {
       "selector": "tests/parametric/test_otel_logs.py::Test_FR01_Enable_OTLP_Log_Collection::test_otlp_logs_enabled",
@@ -2335,7 +2335,7 @@
     },
     {
       "selector": "tests/parametric/test_sampling_span_tags.py::Test_Knuth_Sample_Rate",
-      "reason": ">=2.8.0"
+      "reason": null
     },
     {
       "selector": "tests/parametric/test_sampling_span_tags.py::Test_Sampling_Span_Tags::test_tags_appsec_enabled_sst011",
@@ -2423,7 +2423,7 @@
     },
     {
       "selector": "tests/parametric/test_telemetry.py::Test_TelemetryInstallSignature",
-      "reason": ">=2.5.0"
+      "reason": null
     },
     {
       "selector": "tests/parametric/test_telemetry.py::Test_TelemetryInstallSignature::test_telemetry_event_not_propagated",
@@ -2487,7 +2487,7 @@
     },
     {
       "selector": "tests/parametric/test_tracer.py::Test_TracerServiceNameSource::test_tracer_no_srv_src_when_service_not_manually_set",
-      "reason": ">=2.7.0-dev.1"
+      "reason": null
     },
     {
       "selector": "tests/parametric/test_tracer.py::Test_TracerServiceNameSource::test_tracer_srv_src_inherited_on_child_span",
@@ -2499,7 +2499,7 @@
     },
     {
       "selector": "tests/parametric/test_tracer_flare.py::TestTracerFlareV1",
-      "reason": ">=2.5.0"
+      "reason": null
     },
     {
       "selector": "tests/parametric/test_tracer_flare.py::TestTracerFlareV1::test_flare_log_level_order",
@@ -2903,7 +2903,7 @@
     },
     {
       "selector": "tests/test_telemetry.py::Test_ExtendedHeartbeat",
-      "reason": ">=2.8.0"
+      "reason": null
     },
     {
       "selector": "tests/test_telemetry.py::Test_Log_Generation",

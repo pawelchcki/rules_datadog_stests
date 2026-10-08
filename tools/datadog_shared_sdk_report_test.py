@@ -3,7 +3,7 @@ from pathlib import Path
 import unittest
 
 import datadog_shared_sdk_report as report
-from update_shared_sdk_cases import applies, resolve_manifest, mapping_for_registry
+from update_shared_sdk_cases import applies, declaration_reason, resolve_manifest, mapping_for_registry
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -17,6 +17,34 @@ class ManifestTests(unittest.TestCase):
         self.assertTrue(applies('v4.13.0rc1', '4.15.5'))
         with self.assertRaises(ValueError):
             applies('unsupported expression', '2.10.1')
+
+    def test_operator_prefixed_availability_cannot_mask_supported_failures(self):
+        for declaration in ('>=2.5.0', '>2.5.0', '<2.11.0', '<=2.10.1', '=2.10.1',
+                            '==2.10.1', '>=2.5.0 <2.11.0', 'v2.5.0 (available)'):
+            with self.subTest(declaration=declaration):
+                self.assertIsNone(declaration_reason(declaration, '2.10.1'))
+        for declaration in ('>=2.11.0', '<2.10.1', '>=2.5.0 <2.7.0-dev'):
+            with self.subTest(declaration=declaration):
+                self.assertTrue(declaration_reason(declaration, '2.10.1').startswith('missing_feature'))
+        self.assertEqual(declaration_reason('bug (SDK-1)', '2.10.1'), 'bug (SDK-1)')
+
+    def test_bare_component_versions_do_not_exclude_later_sdks(self):
+        for release in ('4.13.1', '4.14.1', '2.16.0', '2.16.1'):
+            with self.subTest(release=release):
+                self.assertTrue(applies(release, release))
+                self.assertFalse(applies(release, '4.15.5'))
+        self.assertTrue(applies('v4.13.1', '4.15.5'))
+        declarations, unresolved = resolve_manifest({'manifest': {
+            'tests/example.py': [
+                {'component_version': '4.13.1', 'declaration': 'flaky (SDK-1)'},
+                {'component_version': '4.15.5', 'declaration': 'bug (SDK-2)'},
+                {'component_version': '>=4.15.5', 'declaration': 'bug (SDK-3)'}],
+            'tests/baggage.py': '>=2.5.0'}}, '4.15.5')
+        self.assertEqual(declarations, [
+            {'selector': 'tests/example.py', 'reason': 'bug (SDK-2)'},
+            {'selector': 'tests/example.py', 'reason': 'bug (SDK-3)'},
+            {'selector': 'tests/baggage.py', 'reason': None}])
+        self.assertFalse(unresolved)
 
     def test_framework_conditions_do_not_become_global_exclusions(self):
         declarations, unresolved = resolve_manifest({'manifest': {
