@@ -150,8 +150,8 @@ profile-bound target manifests, and gates the combined captures. Main requires
 the complete SDK matrix; a PR manifest cannot satisfy that gate.
 Native feature and shared SDK tests reserve two CPU cores per test action,
 with four cores for Rails boot. Scenario and stress tests carry the same CPU
-reservations. Native lab shards run four workers each; the scenario stage runs
-eight. Compilation uses a separate 32-action budget before fresh tests start,
+reservations. Native lab shards run four workers each; the scenario stage and
+the single PR feature stage run eight. Compilation uses a separate 32-action budget before fresh tests start,
 so cold builds do not inherit the smaller test budget. Stage archives retain
 elapsed times and worker budgets in `ci-timings/` for comparisons on the same
 executor fleet. The parent polls and downloads up to four stages concurrently,

@@ -181,7 +181,7 @@ def stage(args):
                DATADOG_BAZEL_CONFIG="buildbuddy", DATADOG_CI_PROFILE=profile)
     # Test concurrency is bounded separately from compilation. RBE still
     # reserves each test's EstimatedCPU before scheduling it on an executor.
-    env["DATADOG_PARITY_JOBS"] = "8" if suite == "scenarios" else "4"
+    env["DATADOG_PARITY_JOBS"] = "8" if suite == "scenarios" or (profile == "pr" and suite == "features") else "4"
     env["DATADOG_PARITY_BUILD_JOBS"] = "32"
     evidence = Path(args.evidence)
     evidence.mkdir(parents=True, exist_ok=True)
