@@ -158,6 +158,8 @@ so cold builds do not inherit the smaller test budget. Stage archives retain
 elapsed times and worker budgets in `ci-timings/` for comparisons on the same
 executor fleet. The parent polls and downloads up to four stages concurrently,
 then merges evidence in a fixed order and rejects overlaps.
+The parent and representative PR runners allow 90 minutes on a loaded fleet;
+the parent reserves the last ten minutes for aggregation and strict reports.
 The preliminary wildcard pass excludes the five suites that the evidence driver
 runs freshly afterward, so native tests execute once per required evidence run.
 The pinned `rules_stests` sink has a compatibility patch recognizing the nine

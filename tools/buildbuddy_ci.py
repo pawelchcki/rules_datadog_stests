@@ -235,8 +235,9 @@ def aggregate(args):
     evidence.mkdir(parents=True, exist_ok=True)
     (evidence / "ci-invocations.json").write_text(json.dumps(children, indent=2) + "\n")
     print(json.dumps(children, indent=2), flush=True)
-    # Leave time for merging and strict reports before the runner's one-hour limit.
-    deadline = time.monotonic() + 50 * 60
+    # Leave ten minutes for merging and strict reports within the 90-minute
+    # parent limit. Fresh stages can exceed 50 minutes on a loaded RBE fleet.
+    deadline = time.monotonic() + 80 * 60
     remaining = dict(children)
     completed = {}
     while remaining:
