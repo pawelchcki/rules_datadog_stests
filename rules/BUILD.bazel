@@ -1,2 +1,2 @@
 package(default_visibility = ["//visibility:public"])
-exports_files(["defs.bzl", "profile.bzl", "injection.bzl", "go_runtime.bzl"])
+exports_files(["defs.bzl", "profile.bzl", "injection.bzl", "go_runtime.bzl", "files.bzl"])

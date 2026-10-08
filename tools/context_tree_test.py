@@ -8,12 +8,13 @@ import tempfile
 import unittest
 
 from context_tree import context_tree
+from hermetic_test_tools import HermeticGitTestCase
 from materialize_shared_app import materialize
 
 TOOLS = Path(__file__).parent
 
 
-class ContextTreeTest(unittest.TestCase):
+class ContextTreeTest(HermeticGitTestCase):
     def test_shared_changes_affect_tree_with_unchanged_overlay(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -71,7 +72,7 @@ class ContextTreeTest(unittest.TestCase):
             self.assertNotEqual(context_tree(root), original)
 
 
-class PublicationTest(unittest.TestCase):
+class PublicationTest(HermeticGitTestCase):
     def test_publication_uses_built_context_tree_and_rejects_missing_metadata(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

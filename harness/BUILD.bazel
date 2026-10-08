@@ -4,6 +4,7 @@ load("@rules_itest//:itest.bzl", "service_test")
 load("@rules_stests//rules:defs.bzl", "corpus_service", "oci_rootfs")
 load("@rules_stests//harness:scheme_bytecode.bzl", "scheme_bytecode_bundles")
 load("//corpus:registry.bzl", "DATADOG_CAPTURE_LIBRARIES", "datadog_library_args", "datadog_library_labels")
+load("//rules:files.bzl", "copy_file")
 package(default_visibility = ["//visibility:public"])
 oci_rootfs(
     name = "datadog_mariadb_rootfs",
@@ -89,9 +90,8 @@ go_test(
 
 datadog_ruby_payloads()
 
-genrule(
+copy_file(
     name = "datadog_ruby_compatibility",
-    srcs = ["@datadog_ruby_matrix_config//:compatibility.json"],
-    outs = ["datadog_ruby_compatibility.json"],
-    cmd = "cp $(location @datadog_ruby_matrix_config//:compatibility.json) $@",
+    src = "@datadog_ruby_matrix_config//:compatibility.json",
+    out = "datadog_ruby_compatibility.json",
 )

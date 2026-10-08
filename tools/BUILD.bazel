@@ -6,7 +6,7 @@ package(default_visibility = ["//visibility:public"])
 
 py_test(
     name = "buildbuddy_ci_test",
-    srcs = ["buildbuddy_ci.py", "buildbuddy_ci_test.py"],
+    srcs = ["archive_evidence.py", "buildbuddy_ci.py", "buildbuddy_ci_test.py"],
     main = "buildbuddy_ci_test.py",
     imports = ["."],
 )
@@ -28,9 +28,17 @@ py_test(
 py_test(
     name = "benchmark_datadog_test",
     srcs = ["benchmark_datadog_test.py"],
-    data = ["benchmark_datadog.py"],
+    data = ["benchmark_datadog.py", "@git//:git"],
+    env = {"GIT_TEST_BINARY": "$(rlocationpath @git//:git)"},
+    deps = [":hermetic_test_tools"],
 )
 
+py_library(
+    name = "hermetic_test_tools",
+    srcs = ["hermetic_test_tools.py"],
+    imports = ["."],
+    testonly = True,
+)
 
 py_library(
     name = "datadog_report_lib",
@@ -171,11 +179,16 @@ py_test(
         "publish_datadog_fixtures.sh",
         "update_oci_lock.py",
         "//bazel:oci_images.lock.bzl",
+        "@git//:git",
     ],
+    env = {"GIT_TEST_BINARY": "$(rlocationpath @git//:git)"},
     deps = [
         ":context_tree_lib",
+        ":hermetic_test_tools",
         ":materialize_shared_app_lib",
     ],
 )
 
 py_binary(name = "build_datadog_ruby", srcs = ["build_datadog_ruby.py"])
+
+py_binary(name = "materialize_oci_layout", srcs = ["materialize_oci_layout.py"])

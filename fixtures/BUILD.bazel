@@ -106,6 +106,7 @@ corpus_service(
 
 realworld_service_tests(
     name = "aiohttp_datadog",
+    exec_properties = {"test.EstimatedCPU": "2"},
     service = ":aiohttp_datadog_service",
     telemetry_profile = "//corpus:python-aiohttp-datadog-v4-15-5-v05",
     telemetry_sink = "@rules_stests//harness:telemetry_sink_service",
@@ -133,6 +134,7 @@ corpus_service(
 
 realworld_service_tests(
     name = "aiohttp_datadog_v04",
+    exec_properties = {"test.EstimatedCPU": "2"},
     service = ":aiohttp_datadog_v04_service",
     telemetry_profile = "//corpus:python-aiohttp-datadog-v4-15-5-v04",
     telemetry_sink = "@rules_stests//harness:telemetry_sink_service",
@@ -160,6 +162,7 @@ corpus_service(
 
 realworld_service_tests(
     name = "django_datadog",
+    exec_properties = {"test.EstimatedCPU": "2"},
     service = ":django_datadog_service",
     telemetry_profile = "//corpus:python-django-datadog-v4-15-5-v05",
     telemetry_sink = "@rules_stests//harness:telemetry_sink_service",
@@ -187,6 +190,7 @@ corpus_service(
 
 realworld_service_tests(
     name = "django_datadog_v04",
+    exec_properties = {"test.EstimatedCPU": "2"},
     service = ":django_datadog_v04_service",
     telemetry_profile = "//corpus:python-django-datadog-v4-15-5-v04",
     telemetry_sink = "@rules_stests//harness:telemetry_sink_service",
@@ -230,6 +234,7 @@ corpus_service(
 
 realworld_service_tests(
     name = "rails_datadog",
+    exec_properties = {"test.EstimatedCPU": "4"},
     service = ":rails_datadog_service",
     telemetry_profile = "//corpus:ruby-rails-datadog-v2-43-0-v04",
     telemetry_sink = "@rules_stests//harness:telemetry_sink_service",
@@ -260,6 +265,7 @@ corpus_service(
 
 realworld_service_tests(
     name = "falcon_datadog",
+    exec_properties = {"test.EstimatedCPU": "2"},
     service = ":falcon_datadog_service",
     telemetry_profile = "//corpus:ruby-falcon-datadog-v2-43-0-v04",
     telemetry_sink = "@rules_stests//harness:telemetry_sink_service",
@@ -287,6 +293,7 @@ corpus_service(
 
 realworld_service_tests(
     name = "gin_datadog",
+    exec_properties = {"test.EstimatedCPU": "2"},
     service = ":gin_datadog_service",
     telemetry_profile = "//corpus:go-gin-datadog-v2-10-1-v04",
     telemetry_sink = "@rules_stests//harness:telemetry_sink_service",

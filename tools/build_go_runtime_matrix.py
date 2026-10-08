@@ -187,7 +187,14 @@ def build(args):
         lines.append('exports_files('+repr(names)+')')
     (output/'BUILD.bazel').write_text('\n'.join(lines)+'\n')
     (output/'MODULE.bazel').write_text('module(name="go_runtime_apps")\n')
-    print('--override_repository=go_runtime_apps='+str(output), flush=True)
+    flags = ['--override_repository=go_runtime_apps='+str(output)]
+    # Local repository symlink targets inside /tmp need read-only visibility
+    # in Linux's private /tmp. Copy actions still declare app/manifest inputs.
+    for directory in sorted(output.glob('go1_*_*')):
+        if directory.is_dir() and directory.resolve().is_relative_to(Path('/tmp')):
+            flags.append('--sandbox_add_mount_pair='+str(directory.resolve()))
+    (output/'bazel.flags').write_text('\n'.join(flags)+'\n')
+    print('\n'.join(flags), flush=True)
 
 
 def main():

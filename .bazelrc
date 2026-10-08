@@ -1,5 +1,7 @@
 common --enable_bzlmod
 common --@@rules_python+//python/config_settings:bootstrap_impl=script
+build --nostamp
+build --incompatible_strict_action_env
 common:local --remote_executor= --remote_cache= --bes_backend=
 common:local --spawn_strategy=sandboxed,local
 # Lazy cached tree inputs can replace OCI directory aliases with partial directories.
@@ -21,6 +23,10 @@ common:buildbuddy --remote_cache=grpcs://remote.buildbuddy.io
 common:buildbuddy --remote_executor=grpcs://remote.buildbuddy.io
 common:buildbuddy --remote_timeout=10m
 common:buildbuddy --remote_download_outputs=minimal
+# Bazel 7+ minimal downloads no longer disable eager runfiles trees. Remote
+# actions materialize their runfiles on the executor; local actions build them
+# on demand. Avoid thousands of unused client-side trees in each CI shard.
+common:buildbuddy --nobuild_runfile_links
 common:buildbuddy --remote_local_fallback=false
 common:buildbuddy --remote_upload_local_results=false
 common:buildbuddy --spawn_strategy=remote

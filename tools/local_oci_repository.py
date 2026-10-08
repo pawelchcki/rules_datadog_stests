@@ -64,22 +64,14 @@ index["manifests"] = manifests
     'load(":layout.bzl", "layout")\n'
     f'layout(name = {json.dumps(args.repository)}, srcs = glob(["blobs/**", "index.json", "oci-layout"]), visibility = ["//visibility:public"])\n'
 )
-# Inputs participate in the action key. Local repository overrides can contain
-# absolute symlinks into /tmp, which Linux sandboxing hides; this copy action is
-# explicitly local. Extraction and application execution remain sandboxed.
-(args.directory / "layout.bzl").write_text('''def _impl(ctx):
-    output = ctx.actions.declare_directory("layout")
-    args = ctx.actions.args()
-    args.add(output.path)
-    args.add_all(ctx.files.srcs)
-    ctx.actions.run_shell(
-        inputs = ctx.files.srcs,
-        outputs = [output],
-        arguments = [args],
-        execution_requirements = {"local": "1", "no-sandbox": "1"},
-        command = 'out="$1"; shift; mkdir -p "$out/blobs/sha256"; for input in "$@"; do case "$input" in */blobs/sha256/*) cp "$input" "$out/blobs/sha256/" ;; */index.json|*/oci-layout) cp "$input" "$out/" ;; esac; done',
-    )
-    return [DefaultInfo(files = depset([output]))]
-layout = rule(implementation = _impl, attrs = {"srcs": attr.label_list(allow_files = True)})
-''')
+# Materialize declared inputs with the Bazel-managed Python tool. Local
+# overrides below /tmp work under the same sandbox/RBE contract as fetched OCI.
+(args.directory / "layout.bzl").write_text(
+    'load("@rules_datadog_stests//rules:files.bzl", "oci_layout")\n'
+    'layout = oci_layout\n'
+)
 print(f"--override_repository={args.repository}={args.directory.resolve()}")
+# Linux's private /tmp hides absolute local-repository symlink targets. Expose
+# this repository read-only; the action still declares each file it copies.
+if args.directory.resolve().is_relative_to(Path("/tmp")):
+    print(f"--sandbox_add_mount_pair={args.directory.resolve()}")

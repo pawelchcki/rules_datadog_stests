@@ -1,6 +1,7 @@
 # Build metadata with the target Ruby, then load the actual tracing stack.
 require File.join(ARGV.first, "paths.rb")
 require "rubygems/package"
+require "zlib"
 require "fileutils"
 require "json"
 require "rbconfig"
@@ -9,7 +10,9 @@ root = ARGV.shift
 msgpack = ARGV.shift
 while !ARGV.empty?
   archive = ARGV.shift
-  spec = Gem::Package.new(archive).spec
+  # Metadata comes from the checksum-verified gem repository. Avoid shipping
+  # each complete source archive into every runtime's assembly action.
+  spec = Zlib::GzipReader.open(archive) { |metadata| Gem::Specification.from_yaml(metadata.read) }
   abort("unsupported Ruby for #{spec.full_name}") unless spec.required_ruby_version.satisfied_by?(Gem::Version.new(RUBY_VERSION))
   source = File.join(root, "packages", spec.name.tr("-", "_"))
   destination = File.join(root, "gems", spec.full_name)

@@ -28,9 +28,16 @@ def _gem_impl(ctx):
     ctx.download("https://rubygems.org/downloads/" + filename + ".gem", sha256 = ctx.attr.sha256, output = "source.tar")
     ctx.extract("source.tar", output = "package")
     ctx.symlink("source.tar", "source.gem")
+    ctx.symlink("package/metadata.gz", "specification.gz")
     ctx.extract("package/data.tar.gz", output = "data")
     ctx.file("BUILD.bazel", """package(default_visibility = ["//visibility:public"])
-filegroup(name = "payload", srcs = glob(["data/**"]) + ["source.gem"])
+# Runtime payloads use the reviewed specification and importable libraries.
+# Native build sources remain available to the ABI-specific compile targets.
+filegroup(name = "payload", srcs = glob(
+    ["data/lib/**", "data/vendor/**", "data/LICENSE*", "data/COPYING*"],
+    exclude = ["data/lib/datadog/ruby_core_source/ruby-*/**", "data/vendor/**/x86_64-linux-musl/**", "data/vendor/**/include/**"],
+    allow_empty = True,
+) + ["specification.gz"])
 filegroup(name = "native_sources", srcs = glob(["data/ext/msgpack/*.c"], allow_empty = True))
 filegroup(name = "native_headers", srcs = glob(["data/ext/msgpack/*.h"], allow_empty = True))
 """)

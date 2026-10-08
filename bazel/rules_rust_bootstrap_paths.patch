@@ -1,0 +1,47 @@
+diff --git a/util/process_wrapper/private/bootstrap_process_wrapper.cc b/util/process_wrapper/private/bootstrap_process_wrapper.cc
+--- a/util/process_wrapper/private/bootstrap_process_wrapper.cc
++++ b/util/process_wrapper/private/bootstrap_process_wrapper.cc
+@@ -2,6 +2,7 @@
+ #include <cstdlib>
+ #include <cstdio>
+ #include <cstring>
++#include <fstream>
+ #include <string>
+ #include <vector>
+ 
+@@ -171,8 +172,33 @@
+   std::vector<std::string> command_args;
+   command_args.reserve(static_cast<size_t>(argc - first_arg_index));
+   for (int i = first_arg_index; i < argc; ++i) {
+-    command_args.push_back(
+-        replace_placeholders(argv[i], pwd, output_base, exec_root));
++    std::string arg = replace_placeholders(argv[i], pwd, output_base, exec_root);
++    if (i > first_arg_index && !arg.empty() && arg[0] == '@') {
++      // Bazel supplies multiline response files when bootstrapping Rust.
++      // rustc expands them after this wrapper runs; substitute paths here
++      // too, or remap flags remain literal and rlib metadata leaks the cwd.
++      std::ifstream input(arg.substr(1));
++      const std::string expanded_path = arg.substr(1) + ".bootstrap_expanded";
++      std::ofstream output(expanded_path);
++      if (!input || !output) {
++        std::fprintf(stderr, "bootstrap_process_wrapper: cannot open response file\n");
++        return 1;
++      }
++      std::string line;
++      while (std::getline(input, line)) {
++        if (!line.empty() && line.back() == '\r') {
++          line.pop_back();
++        }
++        output << replace_placeholders(line, pwd, output_base, exec_root) << '\n';
++      }
++      output.close();
++      if (input.bad() || !output) {
++        std::fprintf(stderr, "bootstrap_process_wrapper: cannot expand response file\n");
++        return 1;
++      }
++      arg = "@" + expanded_path;
++    }
++    command_args.push_back(arg);
+   }
+ 
+ #if defined(_WIN32)

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Fan out fresh RBE suites, then gate their complete, exact-head evidence."""
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 import hashlib
 import json
 import os
@@ -105,6 +106,21 @@ def extract_archive(path, destination):
     return roots[0]
 
 
+def download_stage(client, invocation, name, invocation_id, revision, expected, directory):
+    file = artifact(invocation)
+    url = ENDPOINT + "/file/download?" + urllib.parse.urlencode({
+        "bytestream_url": file["uri"], "invocation_id": invocation_id})
+    directory.mkdir()
+    archive = directory / "evidence.tar.gz"
+    with client.request(url) as source, archive.open("wb") as output:
+        shutil.copyfileobj(source, output)
+    verify_archive(archive, file["uri"])
+    root = extract_archive(archive, directory / "extracted")
+    manifest = json.loads((root / "ci-stage.json").read_text())
+    validate_manifest(manifest, name, revision, expected)
+    return name, root, manifest
+
+
 class BuildBuddy:
     def __init__(self):
         self.key = os.environ["BUILDBUDDY_API_KEY"]
@@ -140,19 +156,31 @@ def stage(args):
     selected = partition(targets(SUITES[suite]), shard) if suite in SUITES else []
     env = dict(os.environ, DATADOG_PARITY_STAGE=suite, DATADOG_PARITY_SHARD=shard,
                DATADOG_BAZEL_CONFIG="buildbuddy")
-    if suite != "scenarios":
-        env["DATADOG_PARITY_JOBS"] = "2"
+    # Test concurrency is bounded separately from compilation. RBE still
+    # reserves each test's EstimatedCPU before scheduling it on an executor.
+    env["DATADOG_PARITY_JOBS"] = "8" if suite == "scenarios" else "4"
+    env["DATADOG_PARITY_BUILD_JOBS"] = "32"
     evidence = Path(args.evidence)
     evidence.mkdir(parents=True, exist_ok=True)
     (evidence / "ci-stage.json").write_text(json.dumps({
         "schemaVersion": 1, "stage": args.name, "revision": args.revision,
         "suite": suite, "shard": shard, "targets": selected}, indent=2) + "\n")
-    if suite == "scenarios":
-        subprocess.run(["tools/run_datadog_preflight.sh"], env=env, check=True)
-        subprocess.run(["bazel", "build", "--config=buildbuddy", "--spawn_strategy=remote,local",
-                        "//:telemetry_api_check"], cwd="examples/plugin_agent", env=env, check=True)
-    subprocess.run(["tools/run_datadog_parity.sh", args.images, args.revision, args.evidence],
-                   env=env, check=True)
+    started = time.monotonic()
+    try:
+        if suite == "scenarios":
+            subprocess.run(["tools/run_datadog_preflight.sh"], env=env, check=True)
+            subprocess.run(["bazel", "build", "--config=buildbuddy", "--spawn_strategy=remote,local",
+                            "//:telemetry_api_check"], cwd="examples/plugin_agent", env=env, check=True)
+        subprocess.run(["tools/run_datadog_parity.sh", args.images, args.revision, args.evidence],
+                       env=env, check=True)
+    finally:
+        timings = evidence / "ci-timings"
+        timings.mkdir(exist_ok=True)
+        (timings / (args.name.replace("/", "-").replace(" ", "-") + ".json")).write_text(
+            json.dumps({"stage": args.name, "revision": args.revision,
+                        "elapsedSeconds": time.monotonic() - started,
+                        "testJobs": int(env["DATADOG_PARITY_JOBS"]),
+                        "buildJobs": int(env["DATADOG_PARITY_BUILD_JOBS"])}, indent=2) + "\n")
 
 
 def aggregate(args):
@@ -186,8 +214,11 @@ def aggregate(args):
     remaining = dict(children)
     completed = {}
     while remaining:
-        for name, invocation_id in list(remaining.items()):
-            invocation = client.invocation(invocation_id, allow_queued=True)
+        pending = list(remaining.items())
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            invocations = pool.map(lambda item: client.invocation(item[1], allow_queued=True), pending)
+            polled = list(zip(pending, invocations))
+        for (name, invocation_id), invocation in polled:
             if invocation.get("invocationStatus") == "COMPLETE_INVOCATION_STATUS":
                 completed[name] = invocation
                 del remaining[name]
@@ -200,20 +231,16 @@ def aggregate(args):
     inventories = {suite: targets(label) for suite, label in SUITES.items()}
     for name, invocation in completed.items():
         validate_invocation(invocation, name, args.revision, parent["pushedRepoUrl"])
-        file = artifact(invocation)
-        url = ENDPOINT + "/file/download?" + urllib.parse.urlencode({
-            "bytestream_url": file["uri"], "invocation_id": children[name]})
-        with tempfile.TemporaryDirectory(prefix="datadog-stage-") as temporary:
-            directory = Path(temporary)
-            archive = directory / "evidence.tar.gz"
-            with client.request(url) as source, archive.open("wb") as output:
-                shutil.copyfileobj(source, output)
-            verify_archive(archive, file["uri"])
-            root = extract_archive(archive, directory / "extracted")
+    # Bound downloads to four streams. Merge in registry order on one thread
+    # so overlap detection and complete-evidence gating remain deterministic.
+    with tempfile.TemporaryDirectory(prefix="datadog-stages-") as temporary, ThreadPoolExecutor(max_workers=4) as pool:
+        def download(name):
             suite, shard = STAGES[name]
             expected = partition(inventories[suite], shard) if suite in SUITES else []
-            manifest = json.loads((root / "ci-stage.json").read_text())
-            validate_manifest(manifest, name, args.revision, expected)
+            directory = Path(temporary) / name.replace("/", "-").replace(" ", "-")
+            return download_stage(client, completed[name], name, children[name], args.revision, expected, directory)
+
+        for name, root, manifest in pool.map(download, STAGES):
             stages = evidence / "stages"
             stages.mkdir(exist_ok=True)
             (stages / (name.replace("/", "-").replace(" ", "-") + ".json")).write_text(

@@ -8,19 +8,21 @@ archive_evidence() {
   artifacts="${BUILDBUDDY_ARTIFACTS_DIRECTORY:?BuildBuddy artifact directory is required}"
   mkdir -p "$evidence/logs" "$evidence/fixture-build-logs"
   if [[ "${DATADOG_PARITY_STAGE:-all}" == all && -d bazel-testlogs/fixtures ]]; then
-    find -L bazel-testlogs/fixtures -name test.log -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/logs/" \;
-    find -L bazel-testlogs/fixtures -path '*/test.outputs/*' -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/logs/" \;
+    find -L bazel-testlogs/fixtures -name test.log -type f -exec cp -L --no-preserve=mode --parents -t "$evidence/logs/" '{}' +
+    # Include outputs from failures too. The archiver stores identical captures
+    # once while preserving both the suite-specific and diagnostic paths.
+    find -L bazel-testlogs/fixtures -path '*/test.outputs/*' -type f -exec cp -L --no-preserve=mode --parents -t "$evidence/logs/" '{}' +
   fi
   for directory in bazel-testlogs/harness examples/plugin_agent/bazel-testlogs; do
     if [[ "${DATADOG_PARITY_STAGE:-all}" != all && "${DATADOG_PARITY_STAGE:-all}" != scenarios ]]; then continue; fi
     if [[ -d "$directory" ]]; then
-      find -L "$directory" -name test.log -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/logs/" \;
+      find -L "$directory" -name test.log -type f -exec cp -L --no-preserve=mode --parents -t "$evidence/logs/" '{}' +
     fi
   done
   if [[ -d "$images" ]]; then
-    find "$images" -maxdepth 1 -name '*.build.log' -type f -exec cp -a '{}' "$evidence/fixture-build-logs/" \;
+    find "$images" -maxdepth 1 -name '*.build.log' -type f -exec cp -a -t "$evidence/fixture-build-logs/" '{}' +
   fi
-  tar -C "$(dirname "$evidence")" -czf "$artifacts/datadog-evidence.tar.gz" "$(basename "$evidence")"
+  python3 tools/archive_evidence.py "$evidence" "$artifacts/datadog-evidence.tar.gz"
 }
 
 if [[ "${1:-}" == "--archive" ]]; then
@@ -36,15 +38,17 @@ stage="${DATADOG_PARITY_STAGE:-all}"
 case "$stage" in all|scenarios|features|shared-sdk|capabilities|gate) ;; *) echo "Unknown parity stage: $stage" >&2; exit 1 ;; esac
 
 mapfile -t image_flags < "$images/bazel.flags"
-# Native services share executor ports and intake resources. Sharded RBE CI
-# supplies a smaller worker budget than the four-worker local default.
+# Native services share executor ports and intake resources. Keep test worker
+# budgets separate from compilation so cold builds can use the RBE fleet.
 jobs="${DATADOG_PARITY_JOBS:-4}"
 bazel_args=(--config="${DATADOG_BAZEL_CONFIG:-local}" --jobs="$jobs")
+build_args=(--config="${DATADOG_BAZEL_CONFIG:-local}" --jobs="${DATADOG_PARITY_BUILD_JOBS:-$jobs}")
 if [[ "${DATADOG_BAZEL_CONFIG:-local}" != buildbuddy ]]; then
-  bazel_args+=(--local_test_jobs=4)
+  bazel_args+=(--local_test_jobs="$jobs")
   test_download_outputs=all
 else
   bazel_args+=(--spawn_strategy=remote,local)
+  build_args+=(--spawn_strategy=remote,local)
   test_download_outputs=minimal
 fi
 downloaded_evidence_regex='.*(\.validators|test\.outputs)($|/.*)'
@@ -66,14 +70,17 @@ profiles=(
   //corpus:ruby-falcon-datadog-v2-43-0-v04
   //corpus:go-gin-datadog-v2-10-1-v04
 )
-bazel build "${bazel_args[@]}" --remote_download_outputs=toplevel "${image_flags[@]}" //harness:datadog_ruby_compatibility
+bazel build "${build_args[@]}" --remote_download_outputs=toplevel "${image_flags[@]}" //harness:datadog_ruby_compatibility
 mapfile -t ruby_profiles < <(python3 -c 'import json; d=json.load(open("bazel-bin/harness/datadog_ruby_compatibility.json")); print("\n".join("//corpus:ruby-sinatra-" + r["series"].replace(".", "-") + "-datadog-v2-43-0-v04" for r in d["supported"]))')
 profiles+=("${ruby_profiles[@]}")
 # DefaultInfo for each profile carries its manifest and validator runfiles.
 # Fetch the complete tree: the coverage gate hashes every scenario bytecode.
-bazel build "${bazel_args[@]}" --remote_download_outputs=toplevel \
+bazel build "${build_args[@]}" --remote_download_outputs=toplevel \
   "--remote_download_regex=$downloaded_evidence_regex" \
   "${image_flags[@]}" //tools/datadog_coverage:datadog_coverage "${profiles[@]}"
+mapfile -t scenario_targets < <(bazel query 'tests(//fixtures:datadog_suite) union tests(//fixtures:datadog_parallel_suite)' --output=label)
+[[ ${#scenario_targets[@]} -gt 0 ]] || { echo 'No scenario targets selected' >&2; exit 1; }
+bazel build "${build_args[@]}" "${test_download_args[@]}" "${image_flags[@]}" "${scenario_targets[@]}"
 
 for execution in 1 2; do
   suite_test_status=0
@@ -87,8 +94,8 @@ for execution in 1 2; do
     # producing a gated execution receipt. These are diagnostics, not proof.
     failed_evidence="$evidence/execution-$execution-failed"
     mkdir -p "$failed_evidence"
-    find -L bazel-testlogs/fixtures -path '*datadog*hurl_test*/test.outputs/*' -type f -exec cp -L --no-preserve=mode --parents '{}' "$failed_evidence/" \;
-    find -L bazel-testlogs/fixtures -path '*datadog*hurl_test*/test.log' -type f -exec cp -L --no-preserve=mode --parents '{}' "$failed_evidence/" \;
+    find -L bazel-testlogs/fixtures -path '*datadog*hurl_test*/test.outputs/*' -type f -exec cp -L --no-preserve=mode --parents -t "$failed_evidence/" '{}' +
+    find -L bazel-testlogs/fixtures -path '*datadog*hurl_test*/test.log' -type f -exec cp -L --no-preserve=mode --parents -t "$failed_evidence/" '{}' +
     exit "$suite_test_status"
   fi
   tools/retain_datadog_evidence.py \
@@ -111,7 +118,7 @@ bazel test "${bazel_args[@]}" "${test_download_args[@]}" \
   --test_arg=--scenario-concurrency=4 \
   --test_arg=--scenario-repetitions=1
 mkdir -p "$evidence/parallel"
-find -L bazel-testlogs/fixtures -path '*/test.outputs/stress.*.json' -exec cp -L --no-preserve=mode --parents '{}' "$evidence/parallel/" \;
+find -L bazel-testlogs/fixtures -path '*/test.outputs/stress.*.json' -exec cp -L --no-preserve=mode --parents -t "$evidence/parallel/" '{}' +
 
 fi
 
@@ -121,6 +128,7 @@ if [[ "$stage" == all || "$stage" == features ]]; then
 # Bound native app startup to the same fleet concurrency as the SDK lab.
 mapfile -t feature_targets < <(python3 tools/buildbuddy_ci.py targets --suite //fixtures:datadog_external_features_suite --shard "${DATADOG_PARITY_SHARD:-0/1}")
 [[ ${#feature_targets[@]} -gt 0 ]] || { echo 'No native feature targets selected' >&2; exit 1; }
+bazel build "${build_args[@]}" "${test_download_args[@]}" "${image_flags[@]}" "${feature_targets[@]}"
 shared_test_status=0
 bazel test "${bazel_args[@]}" "${test_download_args[@]}" \
   --jobs="$jobs" --nocache_test_results \
@@ -130,7 +138,7 @@ mkdir -p "$evidence/features"
 for target in "${feature_targets[@]}"; do
   directory="bazel-testlogs/fixtures/${target##*:}"
   if [[ -d "$directory/test.outputs" ]]; then
-    find -L "$directory/test.outputs" -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/features/" \;
+    find -L "$directory/test.outputs" -type f -exec cp -L --no-preserve=mode --parents -t "$evidence/features/" '{}' +
   fi
   if [[ -f "$directory/test.log" ]]; then cp -L --no-preserve=mode --parents "$directory/test.log" "$evidence/features/"; fi
 done
@@ -173,6 +181,7 @@ if [[ "$stage" == all || "$stage" == shared-sdk ]]; then
 # upstream manifest exclusions are executed xfails, never capability passes.
 mapfile -t sdk_targets < <(python3 tools/buildbuddy_ci.py targets --suite //fixtures:datadog_shared_sdk_suite --shard "${DATADOG_PARITY_SHARD:-0/1}")
 [[ ${#sdk_targets[@]} -gt 0 ]] || { echo 'No shared SDK targets selected' >&2; exit 1; }
+bazel build "${build_args[@]}" "${test_download_args[@]}" "${image_flags[@]}" "${sdk_targets[@]}"
 shared_sdk_status=0
 bazel test "${bazel_args[@]}" "${test_download_args[@]}" \
   --jobs="$jobs" --nocache_test_results "${image_flags[@]}" \
@@ -181,7 +190,7 @@ mkdir -p "$evidence/shared-sdk"
 for target in "${sdk_targets[@]}"; do
   directory="bazel-testlogs/fixtures/${target##*:}"
   if [[ -d "$directory/test.outputs" ]]; then
-    find -L "$directory/test.outputs" -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/shared-sdk/" \;
+    find -L "$directory/test.outputs" -type f -exec cp -L --no-preserve=mode --parents -t "$evidence/shared-sdk/" '{}' +
     cp -L --no-preserve=mode --parents "$directory/test.log" "$evidence/shared-sdk/"
   fi
 done
@@ -206,6 +215,9 @@ if [[ "$stage" == all || "$stage" == capabilities ]]; then
 # Capability suites reuse existing Python frameworks and include the real Agent
 # and local backend. Retain every raw capture beside its receipt before gating.
 capability_test_status=0
+mapfile -t capability_targets < <(python3 tools/buildbuddy_ci.py targets --suite //fixtures:datadog_capability_suite)
+[[ ${#capability_targets[@]} -gt 0 ]] || { echo 'No capability targets selected' >&2; exit 1; }
+bazel build "${build_args[@]}" "${test_download_args[@]}" "${image_flags[@]}" "${capability_targets[@]}"
 # Native SDK/Agent fixtures share the executor fleet. Respect the stage
 # worker budget, including their application startup.
 bazel test "${bazel_args[@]}" "${test_download_args[@]}" \
@@ -217,7 +229,7 @@ mkdir -p "$evidence/capabilities"
 for family in lab upstream_lab agent security signals telemetry profiling llmobs openai otlp ffe remote_config debugger sdk_extra messaging anthropic genai graphql datasets dsm dbm otel_mysql; do
   for directory in bazel-testlogs/fixtures/datadog_"$family"*_test/test.outputs; do
     if [[ -d "$directory" ]]; then
-      find -L "$directory" -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/capabilities/" \;
+      find -L "$directory" -type f -exec cp -L --no-preserve=mode --parents -t "$evidence/capabilities/" '{}' +
     fi
   done
 done
