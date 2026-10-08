@@ -117,20 +117,37 @@ contains `bazel.flags`, which can be empty when using published fixtures.
 The driver also retains capability captures and requires at least 75% of the
 full feature inventory; `DATADOG_CAPABILITY_MIN_PERCENT` can override that threshold.
 
-Same-repository pull requests run the full assertion suite, external consumer
+Pull requests run a deterministic representative matrix, external consumer
 build and fresh gated evidence in BuildBuddy. Fork pull requests run these in
 GitHub Actions; BuildBuddy only reports the delegation status. Pushes to main
 run both systems. Actions use the BuildBuddy cache through the
 `BUILDBUDDY_API_KEY` repository secret, with remote uploads disabled. Forks
 receive no secret and use the GitHub disk and repository caches. Fresh native
 tests still execute with `--nocache_test_results` on both systems.
-The required BuildBuddy `Full test suite` starts twelve shorter workflows on
-the same commit: scenarios and stress checks, eight native feature shards,
-two shared SDK shards, and capability checks. All test actions use the configured
-self-hosted RBE platform. The parent requires every stage to pass, verifies
-archive checksums and complete shard manifests, and runs the original evidence
-gates on the combined captures before reporting success. This keeps the
-expanded suite within the per-workflow time limit without dropping tests.
+The required BuildBuddy `Full test suite` starts **four stages on PRs**:
+scenarios and stress checks across every framework and both intake formats,
+including Ruby **2.5, 3.3 and 4.0**; all native framework feature cases;
+the first and last pinned SDK case in each upstream or adapter class in both
+Go and Python (**97 cases per language**, covering all 51 classes); and all
+60 capability checks. Other versioned Ruby feature probes and SDK parameters
+run on main. The native Go workflow builds/tests **four of 24 versions** on
+PRs: oldest control 1.4, downstream legacy control 1.17, minimum instrumented
+version 1.25, and latest version 1.27, with all three backends.
+This selects **967 fresh test executions instead of 2,150** in the evidence
+driver (55% fewer), and **12 instead of 72** Go runtime/backend combinations.
+
+Pushes to **main run all variants**: twelve BuildBuddy stages with all nine
+Ruby runtimes, eight feature shards, two complete SDK shards, and capabilities;
+the Go workflow covers all 24 versions. Manual/local runs default to full.
+Set `DATADOG_CI_PROFILE=pr` to reproduce the representative selection locally.
+Reports identify representative PR coverage, keep missing cells unverified,
+and never claim the full SDK parameter matrix passed. Every selected scenario
+still runs twice, and capture/receipt validation, the shared-language gate,
+the 301-feature denominator and the 75% capability floor remain unchanged.
+All test actions use the configured self-hosted RBE platform. The parent requires
+every selected stage to pass, verifies archive checksums and exact-head,
+profile-bound target manifests, and gates the combined captures. Main requires
+the complete SDK matrix; a PR manifest cannot satisfy that gate.
 Native feature and shared SDK tests reserve two CPU cores per test action,
 with four cores for Rails boot. Scenario and stress tests carry the same CPU
 reservations. Native lab shards run four workers each; the scenario stage runs

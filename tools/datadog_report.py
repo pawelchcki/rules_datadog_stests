@@ -14,6 +14,13 @@ def read_execution(directory, revision, gate):
     manifests = sorted(directory.glob("*.profile.json"))
     if not manifests:
         raise ValueError(f"{directory}: no profile manifests")
+    scope_path = directory / "ci-profile.json"
+    if scope_path.exists():
+        scope = json.loads(scope_path.read_text())
+        if scope["ciProfile"] not in ("full", "pr"):
+            raise ValueError("invalid CI profile")
+        if sorted(json.loads(path.read_text())["profile"] for path in manifests) != scope["profiles"]:
+            raise ValueError("retained manifests do not match declared CI profile coverage")
     command = [str(gate.resolve()), "--revision", revision]
     contract_path = directory / "contract-profiles.json"
     contract_profiles = json.loads(contract_path.read_text()) if contract_path.exists() else []
@@ -49,6 +56,10 @@ def build_report(executions, revision, gate):
         raise ValueError("at least one retained execution is required")
     if len({directory.resolve() for directory in executions}) != len(executions):
         raise ValueError("executions must be separate retained directories")
+    scopes = [json.loads((directory / "ci-profile.json").read_text())["ciProfile"]
+              if (directory / "ci-profile.json").exists() else "full" for directory in executions]
+    if len(set(scopes)) != 1:
+        raise ValueError("retained executions have different CI profiles")
     runs = [read_execution(directory, revision, gate) for directory in executions]
     identities = [{(p["profile"], s["scenario"]) for p in run for s in p["scenarios"]} for run in runs]
     if any(identity != identities[0] for identity in identities[1:]):
@@ -58,7 +69,7 @@ def build_report(executions, revision, gate):
         raise ValueError("retained executions have different profile contracts")
     # Keep each run's occurrence counts separate; repeated executions do not
     # multiply the number of verified capabilities or distinct scenarios.
-    return {"revision": revision, "executions": runs}
+    return {"revision": revision, "executions": runs, "ciProfile": scopes[0]}
 
 
 def render(report):
@@ -85,6 +96,7 @@ def render(report):
         rows.append('<tr data-search="' + esc(" ".join(map(str, values)) + " " + " ".join(sorted(features))) + '">' +
                     "".join(f"<td>{esc(value)}</td>" for value in values) + "</tr>")
     count = sum(len(profile["scenarios"]) for profile in latest)
+    scope = "Representative PR matrix; the exhaustive variant matrix runs on main." if report.get("ciProfile") == "pr" else "Full variant matrix."
     data = json.dumps(report, separators=(",", ":")).replace("<", "\\u003c").replace("&", "\\u0026")
     return f'''<!doctype html>
 <html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -99,6 +111,7 @@ details{{border-bottom:1px solid #8886;padding:.7rem 0}}summary{{cursor:pointer}
 <h1>Datadog tracing evidence</h1>
 <p><strong>{count} distinct scenarios verified across {len(latest)} profiles</strong> in {len(report["executions"])} retained executions.</p>
 <p>Revision: <code>{esc(report["revision"])}</code></p>
+<p>{scope}</p>
 <p>These results establish the authored assertions. Each scenario identifies contract validation or validation against a reviewed exact trace shape.
 They do not establish complete upstream parity. Unsupported external probes and products outside this tracing matrix do not count as verified capabilities.</p>
 <label for="filter">Filter by profile, scenario, or feature</label><br><input id="filter" type="search" placeholder="e.g. rails, propagation, sampling">

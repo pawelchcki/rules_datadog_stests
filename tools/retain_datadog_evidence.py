@@ -7,11 +7,14 @@ from pathlib import Path
 import shutil
 import subprocess
 
+from ci_profile import PROFILES, ruby_runtimes
+
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--revision", required=True)
 parser.add_argument("--output", required=True, type=Path)
 parser.add_argument("--gate", required=True, type=Path)
 parser.add_argument("--ruby-matrix-only", action="store_true", help="retain only the versioned Ruby runtime suite")
+parser.add_argument("--ci-profile", choices=PROFILES, default="full")
 args = parser.parse_args()
 if args.output.exists():
     parser.error("output already exists; evidence must never overwrite an earlier run")
@@ -49,11 +52,13 @@ if args.ruby_matrix_only:
 # Derive the added runtimes from the built compatibility manifest, so a new
 # upstream runtime cannot be silently omitted from retained evidence.
 compatibility = json.loads(Path("bazel-bin/harness/datadog_ruby_compatibility.json").read_text())
-for runtime in compatibility["supported"]:
+selected_runtimes = ruby_runtimes(compatibility, args.ci_profile)
+for runtime in selected_runtimes:
     series = runtime["series"]
     profiles["ruby-sinatra-" + series.replace(".", "-") + "-datadog-v2-43-0-v04"] = "ruby_" + series.replace(".", "_") + "_datadog"
 command = [str(args.gate.resolve()), "--revision", args.revision]
-contract_profiles = ["ruby-sinatra-" + runtime["series"].replace(".", "-") + "-datadog-v2-43-0-v04" for runtime in compatibility["supported"]]
+contract_profiles = ["ruby-sinatra-" + runtime["series"].replace(".", "-") + "-datadog-v2-43-0-v04" for runtime in selected_runtimes]
+(args.output / "ci-profile.json").write_text(json.dumps({"ciProfile": args.ci_profile, "profiles": sorted(profiles)}) + "\n")
 (args.output / "contract-profiles.json").write_text(json.dumps(contract_profiles) + "\n")
 shutil.copyfile("bazel-bin/harness/datadog_ruby_compatibility.json", args.output / "ruby-compatibility.json")
 for profile in contract_profiles:

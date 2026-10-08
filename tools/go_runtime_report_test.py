@@ -9,6 +9,22 @@ from harness.go_runtime import probe
 
 
 class ReportTest(unittest.TestCase):
+    def test_representative_retention_excludes_stale_full_matrix_outputs(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for version in ('go1.17.13', 'go1.18.10'):
+                stem = version.replace('.', '_')
+                outputs = root/'logs/fixtures'/('go_runtime_plain_suite_' + stem + '_test')/'test.outputs'
+                outputs.mkdir(parents=True)
+                (outputs/'capture.json').write_text('[]')
+                app = root/'apps'/(stem + '_plain')
+                app.mkdir(parents=True)
+                (app/'manifest.json').write_text('{}')
+            retain(root/'logs', root/'apps', root/'evidence', versions=['go1.17.13'])
+            self.assertEqual(['go_runtime_plain_suite_go1_17_13_test'],
+                             [path.name for path in (root/'evidence/tests/fixtures').iterdir()])
+            self.assertEqual(['go1_17_13_plain'], [path.name for path in (root/'evidence/applications').iterdir()])
+
     def test_read_only_bazel_evidence_can_be_retained_twice(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
