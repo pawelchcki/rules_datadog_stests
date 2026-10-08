@@ -140,6 +140,8 @@ def stage(args):
     selected = partition(targets(SUITES[suite]), shard) if suite in SUITES else []
     env = dict(os.environ, DATADOG_PARITY_STAGE=suite, DATADOG_PARITY_SHARD=shard,
                DATADOG_BAZEL_CONFIG="buildbuddy")
+    if suite != "scenarios":
+        env["DATADOG_PARITY_JOBS"] = "2"
     evidence = Path(args.evidence)
     evidence.mkdir(parents=True, exist_ok=True)
     (evidence / "ci-stage.json").write_text(json.dumps({

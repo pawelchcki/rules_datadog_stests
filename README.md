@@ -131,6 +131,9 @@ self-hosted RBE platform. The parent requires every stage to pass, verifies
 archive checksums and complete shard manifests, and runs the original evidence
 gates on the combined captures before reporting success. This keeps the
 expanded suite within the per-workflow time limit without dropping tests.
+Native feature and shared SDK tests reserve two CPU cores per test action;
+native lab shards run two workers each to avoid starving app startup on the
+shared executors.
 The preliminary wildcard pass excludes the five suites that the evidence driver
 runs freshly afterward, so native tests execute once per required evidence run.
 The pinned `rules_stests` sink has a compatibility patch recognizing the nine

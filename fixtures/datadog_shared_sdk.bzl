@@ -25,6 +25,7 @@ def datadog_shared_sdk_tests():
             service_test(
                 name = name,
                 timeout = "long",
+                exec_properties = {"test.EstimatedCPU": "2"},
                 services = ["@rules_stests//harness:otel_sink_service"],
                 test = "//harness/shared_sdk:probe",
                 data = data + ["//harness/shared_sdk:cases.json", "//harness/upstream_lab:vendor/manifest.json"],

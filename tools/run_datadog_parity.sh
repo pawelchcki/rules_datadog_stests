@@ -36,9 +36,10 @@ stage="${DATADOG_PARITY_STAGE:-all}"
 case "$stage" in all|scenarios|features|shared-sdk|capabilities|gate) ;; *) echo "Unknown parity stage: $stage" >&2; exit 1 ;; esac
 
 mapfile -t image_flags < "$images/bazel.flags"
-# Native services share executor ports and intake resources. Use the locally
-# validated four-worker load for remote scenario runs as well as SDK probes.
-bazel_args=(--config="${DATADOG_BAZEL_CONFIG:-local}" --jobs=4)
+# Native services share executor ports and intake resources. Sharded RBE CI
+# supplies a smaller worker budget than the four-worker local default.
+jobs="${DATADOG_PARITY_JOBS:-4}"
+bazel_args=(--config="${DATADOG_BAZEL_CONFIG:-local}" --jobs="$jobs")
 if [[ "${DATADOG_BAZEL_CONFIG:-local}" != buildbuddy ]]; then
   bazel_args+=(--local_test_jobs=4)
   test_download_outputs=all
@@ -122,7 +123,7 @@ mapfile -t feature_targets < <(python3 tools/buildbuddy_ci.py targets --suite //
 [[ ${#feature_targets[@]} -gt 0 ]] || { echo 'No native feature targets selected' >&2; exit 1; }
 shared_test_status=0
 bazel test "${bazel_args[@]}" "${test_download_args[@]}" \
-  --jobs=4 --nocache_test_results \
+  --jobs="$jobs" --nocache_test_results \
   "${image_flags[@]}" \
   "${feature_targets[@]}" || shared_test_status=$?
 mkdir -p "$evidence/features"
@@ -174,7 +175,7 @@ mapfile -t sdk_targets < <(python3 tools/buildbuddy_ci.py targets --suite //fixt
 [[ ${#sdk_targets[@]} -gt 0 ]] || { echo 'No shared SDK targets selected' >&2; exit 1; }
 shared_sdk_status=0
 bazel test "${bazel_args[@]}" "${test_download_args[@]}" \
-  --jobs=4 --nocache_test_results "${image_flags[@]}" \
+  --jobs="$jobs" --nocache_test_results "${image_flags[@]}" \
   "${sdk_targets[@]}" || shared_sdk_status=$?
 mkdir -p "$evidence/shared-sdk"
 for target in "${sdk_targets[@]}"; do
@@ -205,10 +206,10 @@ if [[ "$stage" == all || "$stage" == capabilities ]]; then
 # Capability suites reuse existing Python frameworks and include the real Agent
 # and local backend. Retain every raw capture beside its receipt before gating.
 capability_test_status=0
-# Native SDK/Agent fixtures share the executor fleet. Bound their concurrency
-# to the four-worker load used for local acceptance, including startup timing.
+# Native SDK/Agent fixtures share the executor fleet. Respect the stage
+# worker budget, including their application startup.
 bazel test "${bazel_args[@]}" "${test_download_args[@]}" \
-  --jobs=4 \
+  --jobs="$jobs" \
   --nocache_test_results \
   "${image_flags[@]}" \
   //fixtures:datadog_capability_suite || capability_test_status=$?
