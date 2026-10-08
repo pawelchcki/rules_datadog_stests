@@ -124,7 +124,14 @@ run both systems. Actions use the BuildBuddy cache through the
 `BUILDBUDDY_API_KEY` repository secret, with remote uploads disabled. Forks
 receive no secret and use the GitHub disk and repository caches. Fresh native
 tests still execute with `--nocache_test_results` on both systems.
-The preliminary wildcard pass excludes the four suites that the evidence driver
+The required BuildBuddy `Full test suite` starts twelve shorter workflows on
+the same commit: scenarios and stress checks, eight native feature shards,
+two shared SDK shards, and capability checks. All test actions use the configured
+self-hosted RBE platform. The parent requires every stage to pass, verifies
+archive checksums and complete shard manifests, and runs the original evidence
+gates on the combined captures before reporting success. This keeps the
+expanded suite within the per-workflow time limit without dropping tests.
+The preliminary wildcard pass excludes the five suites that the evidence driver
 runs freshly afterward, so native tests execute once per required evidence run.
 The pinned `rules_stests` sink has a compatibility patch recognizing the nine
 versioned Ruby application names as Rack workloads. Its runtime also has a

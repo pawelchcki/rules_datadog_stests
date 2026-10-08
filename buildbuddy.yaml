@@ -1,53 +1,164 @@
+# Only the required parent is webhook-triggered. It starts every short stage
+# on the same commit and verifies their complete evidence before reporting green.
 actions:
   - name: Full test suite
     visibility: PUBLIC
     container_image: ubuntu-24.04
-    # Keep runner caches and installed tools across PR iterations.
+    # Bazel test actions use the configured self-hosted RBE execution platform.
     platform_properties:
       remote-snapshot-save-policy: always
       snapshot-read-policy: newest
     resource_requests:
-      # Bazel actions execute on the self-hosted RBE fleet. Fixtures are
-      # anonymously pulled from the digest-locked published packages.
       cpu: 4
       memory: 8GB
     triggers:
       push:
-        branches:
-          - main
+        branches: [main]
       pull_request:
-        branches:
-          - "*"
+        branches: ["*"]
     steps:
-      - run: |
-          set -euo pipefail
-          # ci_runner sets this from the pushed repository on every run. Keep
-          # the required status context, but delegate fork builds to Actions.
-          if [[ "$(git config --get extensions.partialClone || true)" == fork ]]; then
-            echo 'Fork PR: full tests and fresh evidence run in GitHub Actions.'
-            exit 0
-          fi
-          revision="$(git rev-parse HEAD)"
-          if [ "$(git show -s --format=%ce HEAD)" = "ci-runner@buildbuddy.io" ]; then
-            revision="$(git rev-parse HEAD^1)"
-          fi
-          git checkout --detach "$revision"
-          images="$(mktemp -d "${TMPDIR:-/tmp}/datadog-images.XXXXXX")"
-          evidence="$(mktemp -d "${TMPDIR:-/tmp}/datadog-evidence.XXXXXX")"
-          archive_evidence() {
-            status=$?
-            trap - EXIT
-            set +e
-            tools/run_datadog_parity.sh --archive "$images" "$evidence"
-            archive_status=$?
-            if (( status == 0 && archive_status != 0 )); then
-              exit "$archive_status"
-            fi
-            exit "$status"
-          }
-          trap archive_evidence EXIT
-          : > "$images/bazel.flags"
-          DATADOG_BAZEL_CONFIG=buildbuddy tools/run_datadog_preflight.sh
-          DATADOG_BAZEL_CONFIG=buildbuddy tools/run_datadog_parity.sh "$images" "$revision" "$evidence"
-          cp "$evidence/datadog-report.html" "$BUILDBUDDY_ARTIFACTS_DIRECTORY/datadog-report.html"
-          (cd examples/plugin_agent && bazel build //:telemetry_api_check)
+      - run: tools/run_buildbuddy_ci.sh aggregate
+  - name: Datadog scenarios
+    visibility: PUBLIC
+    container_image: ubuntu-24.04
+    # Bazel test actions use the configured self-hosted RBE execution platform.
+    platform_properties:
+      remote-snapshot-save-policy: always
+      snapshot-read-policy: newest
+    resource_requests:
+      cpu: 4
+      memory: 8GB
+    steps:
+      - run: tools/run_buildbuddy_ci.sh stage "Datadog scenarios"
+  - name: Datadog features 1/8
+    visibility: PUBLIC
+    container_image: ubuntu-24.04
+    # Bazel test actions use the configured self-hosted RBE execution platform.
+    platform_properties:
+      remote-snapshot-save-policy: always
+      snapshot-read-policy: newest
+    resource_requests:
+      cpu: 4
+      memory: 8GB
+    steps:
+      - run: tools/run_buildbuddy_ci.sh stage "Datadog features 1/8"
+  - name: Datadog features 2/8
+    visibility: PUBLIC
+    container_image: ubuntu-24.04
+    # Bazel test actions use the configured self-hosted RBE execution platform.
+    platform_properties:
+      remote-snapshot-save-policy: always
+      snapshot-read-policy: newest
+    resource_requests:
+      cpu: 4
+      memory: 8GB
+    steps:
+      - run: tools/run_buildbuddy_ci.sh stage "Datadog features 2/8"
+  - name: Datadog features 3/8
+    visibility: PUBLIC
+    container_image: ubuntu-24.04
+    # Bazel test actions use the configured self-hosted RBE execution platform.
+    platform_properties:
+      remote-snapshot-save-policy: always
+      snapshot-read-policy: newest
+    resource_requests:
+      cpu: 4
+      memory: 8GB
+    steps:
+      - run: tools/run_buildbuddy_ci.sh stage "Datadog features 3/8"
+  - name: Datadog features 4/8
+    visibility: PUBLIC
+    container_image: ubuntu-24.04
+    # Bazel test actions use the configured self-hosted RBE execution platform.
+    platform_properties:
+      remote-snapshot-save-policy: always
+      snapshot-read-policy: newest
+    resource_requests:
+      cpu: 4
+      memory: 8GB
+    steps:
+      - run: tools/run_buildbuddy_ci.sh stage "Datadog features 4/8"
+  - name: Datadog features 5/8
+    visibility: PUBLIC
+    container_image: ubuntu-24.04
+    # Bazel test actions use the configured self-hosted RBE execution platform.
+    platform_properties:
+      remote-snapshot-save-policy: always
+      snapshot-read-policy: newest
+    resource_requests:
+      cpu: 4
+      memory: 8GB
+    steps:
+      - run: tools/run_buildbuddy_ci.sh stage "Datadog features 5/8"
+  - name: Datadog features 6/8
+    visibility: PUBLIC
+    container_image: ubuntu-24.04
+    # Bazel test actions use the configured self-hosted RBE execution platform.
+    platform_properties:
+      remote-snapshot-save-policy: always
+      snapshot-read-policy: newest
+    resource_requests:
+      cpu: 4
+      memory: 8GB
+    steps:
+      - run: tools/run_buildbuddy_ci.sh stage "Datadog features 6/8"
+  - name: Datadog features 7/8
+    visibility: PUBLIC
+    container_image: ubuntu-24.04
+    # Bazel test actions use the configured self-hosted RBE execution platform.
+    platform_properties:
+      remote-snapshot-save-policy: always
+      snapshot-read-policy: newest
+    resource_requests:
+      cpu: 4
+      memory: 8GB
+    steps:
+      - run: tools/run_buildbuddy_ci.sh stage "Datadog features 7/8"
+  - name: Datadog features 8/8
+    visibility: PUBLIC
+    container_image: ubuntu-24.04
+    # Bazel test actions use the configured self-hosted RBE execution platform.
+    platform_properties:
+      remote-snapshot-save-policy: always
+      snapshot-read-policy: newest
+    resource_requests:
+      cpu: 4
+      memory: 8GB
+    steps:
+      - run: tools/run_buildbuddy_ci.sh stage "Datadog features 8/8"
+  - name: Datadog shared SDK 1/2
+    visibility: PUBLIC
+    container_image: ubuntu-24.04
+    # Bazel test actions use the configured self-hosted RBE execution platform.
+    platform_properties:
+      remote-snapshot-save-policy: always
+      snapshot-read-policy: newest
+    resource_requests:
+      cpu: 4
+      memory: 8GB
+    steps:
+      - run: tools/run_buildbuddy_ci.sh stage "Datadog shared SDK 1/2"
+  - name: Datadog shared SDK 2/2
+    visibility: PUBLIC
+    container_image: ubuntu-24.04
+    # Bazel test actions use the configured self-hosted RBE execution platform.
+    platform_properties:
+      remote-snapshot-save-policy: always
+      snapshot-read-policy: newest
+    resource_requests:
+      cpu: 4
+      memory: 8GB
+    steps:
+      - run: tools/run_buildbuddy_ci.sh stage "Datadog shared SDK 2/2"
+  - name: Datadog capabilities
+    visibility: PUBLIC
+    container_image: ubuntu-24.04
+    # Bazel test actions use the configured self-hosted RBE execution platform.
+    platform_properties:
+      remote-snapshot-save-policy: always
+      snapshot-read-policy: newest
+    resource_requests:
+      cpu: 4
+      memory: 8GB
+    steps:
+      - run: tools/run_buildbuddy_ci.sh stage "Datadog capabilities"

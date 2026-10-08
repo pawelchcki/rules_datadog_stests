@@ -4,6 +4,13 @@ load("//corpus:registry.bzl", "DATADOG_SHAPE_LIBRARIES", "datadog_library_args",
 
 package(default_visibility = ["//visibility:public"])
 
+py_test(
+    name = "buildbuddy_ci_test",
+    srcs = ["buildbuddy_ci.py", "buildbuddy_ci_test.py"],
+    main = "buildbuddy_ci_test.py",
+    imports = ["."],
+)
+
 py_binary(
     name = "go_runtime_report",
     srcs = ["go_runtime_report.py"],
