@@ -136,8 +136,8 @@ def datadog_external_feature_tests():
                 service_test(
                     name = case_name,
                     timeout = "long",
-                    # Native Ruby startup needs CPU headroom across RBE shards.
-                    exec_properties = {"test.EstimatedCPU": "2"},
+                    # Rails boot needs more CPU headroom than the smaller apps.
+                    exec_properties = {"test.EstimatedCPU": "4" if app == "rails" else "2"},
                     services = ["@rules_stests//harness:otel_sink_service"],
                     test = "//harness/external_features:probe",
                     data = case_data,
