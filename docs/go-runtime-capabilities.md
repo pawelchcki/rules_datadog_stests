@@ -68,6 +68,18 @@ Each repetition first runs a tracer-free control
 compiled with the same Go version. An exporter crash or missing native span
 fails the test.
 
+Trusted CI runs use the configured BuildBuddy RBE platform and its
+`linux-amd64-kvm` executor pool for the native matrix and downstream checks.
+The GitHub runner prepares pinned app binaries and materializes declared inputs;
+RBE runs the test processes. Native captures are downloaded before the evidence
+gate runs. Fork PRs run locally because remote credentials are unavailable.
+With BuildBuddy credentials in your Bazel configuration, select RBE explicitly:
+
+```sh
+DATADOG_BAZEL_CONFIG=buildbuddy tools/run_go_runtime_capabilities.sh \
+  /tmp/go-runtime-apps /tmp/go-runtime-evidence
+```
+
 To prepare or run subsets:
 
 ```sh

@@ -8,8 +8,15 @@ mkdir -p "$apps" "$evidence"
 apps="$(realpath "$apps")"
 evidence="$(realpath "$evidence")"
 python3 tools/build_go_runtime_matrix.py --output "$apps" --arch "$arch"
-flags=(--config="${DATADOG_BAZEL_CONFIG:-local}" --jobs=4 --local_test_jobs=4
+flags=(--config="${DATADOG_BAZEL_CONFIG:-local}" --jobs=4
   --override_repository="go_runtime_apps=$apps" --nocache_test_results)
+if [[ "${DATADOG_BAZEL_CONFIG:-local}" == buildbuddy ]]; then
+  # Input materialization is local; compilation and native tests use the
+  # configured RBE pool. Download captures before retaining and gating them.
+  flags+=(--spawn_strategy=remote,local '--remote_download_regex=.*test\.outputs($|/.*)')
+else
+  flags+=(--local_test_jobs=4)
+fi
 # The repository fixtures select amd64; a generated package reuses the same
 # public macro for native arm64 without changing the checked-in defaults.
 target=//fixtures:go_runtime_capability_suite
@@ -28,7 +35,9 @@ EOF
 fi
 result=0
 bazel test "${flags[@]}" "$target" || result=$?
-logs="$(bazel info "${flags[0]}" bazel-testlogs)"
+# The log directory does not depend on the execution platform. `bazel info`
+# cannot resolve the RBE platform's external label before package analysis.
+logs="$(bazel info bazel-testlogs)"
 python3 tools/retain_go_runtime_evidence.py --logs "$logs" --applications "$apps" \
   --output "$evidence" --package "$package"
 if (( result )); then exit "$result"; fi
