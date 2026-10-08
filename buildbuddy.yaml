@@ -1,8 +1,8 @@
-# Only the required parent is webhook-triggered. PRs run four representative
+# Only the required parent is webhook-triggered. PRs run five representative
 # stages; main runs all twelve exhaustive stages with full evidence gates.
 actions:
   - name: Full test suite
-    timeout: 90m
+    timeout: 60m
     visibility: PUBLIC
     container_image: ubuntu-24.04
     # Bazel test actions use the configured self-hosted RBE execution platform.
@@ -20,7 +20,7 @@ actions:
     steps:
       - run: tools/run_buildbuddy_ci.sh aggregate
   - name: Datadog PR scenarios
-    timeout: 90m
+    timeout: 60m
     visibility: PUBLIC
     container_image: ubuntu-24.04
     platform_properties:
@@ -31,8 +31,8 @@ actions:
       memory: 8GB
     steps:
       - run: tools/run_buildbuddy_ci.sh stage "Datadog PR scenarios"
-  - name: Datadog PR features
-    timeout: 90m
+  - name: Datadog PR features 1/2
+    timeout: 60m
     visibility: PUBLIC
     container_image: ubuntu-24.04
     platform_properties:
@@ -42,9 +42,21 @@ actions:
       cpu: 4
       memory: 8GB
     steps:
-      - run: tools/run_buildbuddy_ci.sh stage "Datadog PR features"
+      - run: tools/run_buildbuddy_ci.sh stage "Datadog PR features 1/2"
+  - name: Datadog PR features 2/2
+    timeout: 60m
+    visibility: PUBLIC
+    container_image: ubuntu-24.04
+    platform_properties:
+      remote-snapshot-save-policy: always
+      snapshot-read-policy: newest
+    resource_requests:
+      cpu: 4
+      memory: 8GB
+    steps:
+      - run: tools/run_buildbuddy_ci.sh stage "Datadog PR features 2/2"
   - name: Datadog PR shared-sdk
-    timeout: 90m
+    timeout: 60m
     visibility: PUBLIC
     container_image: ubuntu-24.04
     platform_properties:
@@ -56,7 +68,7 @@ actions:
     steps:
       - run: tools/run_buildbuddy_ci.sh stage "Datadog PR shared-sdk"
   - name: Datadog PR capabilities
-    timeout: 90m
+    timeout: 60m
     visibility: PUBLIC
     container_image: ubuntu-24.04
     platform_properties:

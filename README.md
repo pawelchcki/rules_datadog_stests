@@ -124,9 +124,9 @@ run both systems. Actions use the BuildBuddy cache through the
 `BUILDBUDDY_API_KEY` repository secret, with remote uploads disabled. Forks
 receive no secret and use the GitHub disk and repository caches. Fresh native
 tests still execute with `--nocache_test_results` on both systems.
-The required BuildBuddy `Full test suite` starts **four stages on PRs**:
+The required BuildBuddy `Full test suite` starts **five stages on PRs**:
 scenarios and stress checks across every framework and both intake formats,
-including Ruby **2.5, 3.3 and 4.0**; all native framework feature cases;
+including Ruby **2.5, 3.3 and 4.0**; two disjoint shards covering all native framework feature cases;
 the first and last pinned SDK case in each upstream or adapter class in both
 Go and Python (**97 cases per language**, covering all 51 classes); and all
 60 capability checks. Other versioned Ruby feature probes and SDK parameters
@@ -151,15 +151,16 @@ the complete SDK matrix; a PR manifest cannot satisfy that gate.
 Native feature and shared SDK tests reserve two CPU cores per test action,
 with four cores for Rails boot. Scenario and stress tests carry the same CPU
 reservations. Shared SDK shards run sixteen workers each; feature and capability
-shards run four, and the scenario stage and single PR feature stage run eight.
+shards run four, and the scenario stage and each PR feature shard run eight.
 Set `DATADOG_PARITY_JOBS` or `DATADOG_PARITY_BUILD_JOBS` to override the stage
 budgets for available fleet capacity. Compilation uses a separate 32-action budget before fresh tests start,
 so cold builds do not inherit the smaller test budget. Stage archives retain
 elapsed times and worker budgets in `ci-timings/` for comparisons on the same
 executor fleet. The parent polls and downloads up to four stages concurrently,
 then merges evidence in a fixed order and rejects overlaps.
-The parent and representative PR runners allow 90 minutes on a loaded fleet;
-the parent reserves the last ten minutes for aggregation and strict reports.
+The parent reserves the final ten minutes of BuildBuddy's one-hour runner
+budget for aggregation and strict reports. PR features use two concurrent
+shards so each runner has half the inventory while every selected case still runs.
 The preliminary wildcard pass excludes the five suites that the evidence driver
 runs freshly afterward, so native tests execute once per required evidence run.
 The pinned `rules_stests` sink has a compatibility patch recognizing the nine

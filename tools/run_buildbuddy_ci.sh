@@ -18,7 +18,7 @@ export DATADOG_PARITY_STAGE=gate
 if [[ "$1" == stage ]]; then
   case "$2" in
     'Datadog scenarios'|'Datadog PR scenarios') export DATADOG_PARITY_STAGE=scenarios ;;
-    'Datadog features '*|'Datadog PR features') export DATADOG_PARITY_STAGE=features ;;
+    'Datadog features '*|'Datadog PR features '*) export DATADOG_PARITY_STAGE=features ;;
     'Datadog shared SDK '*|'Datadog PR shared-sdk') export DATADOG_PARITY_STAGE=shared-sdk ;;
     'Datadog capabilities'|'Datadog PR capabilities') export DATADOG_PARITY_STAGE=capabilities ;;
     *) echo "Unknown CI stage: $2" >&2; exit 1 ;;

@@ -32,8 +32,13 @@ STAGES = {"Datadog scenarios": ("scenarios", "0/1")}
 STAGES.update({f"Datadog features {i + 1}/8": ("features", f"{i}/8") for i in range(8)})
 STAGES.update({f"Datadog shared SDK {i + 1}/2": ("shared-sdk", f"{i}/2") for i in range(2)})
 STAGES["Datadog capabilities"] = ("capabilities", "0/1")
-PR_STAGES = {f"Datadog PR {suite}": (suite, "0/1")
-             for suite in ("scenarios", "features", "shared-sdk", "capabilities")}
+PR_STAGES = {
+    "Datadog PR scenarios": ("scenarios", "0/1"),
+    "Datadog PR features 1/2": ("features", "0/2"),
+    "Datadog PR features 2/2": ("features", "1/2"),
+    "Datadog PR shared-sdk": ("shared-sdk", "0/1"),
+    "Datadog PR capabilities": ("capabilities", "0/1"),
+}
 
 
 def stages(profile):
@@ -235,9 +240,9 @@ def aggregate(args):
     evidence.mkdir(parents=True, exist_ok=True)
     (evidence / "ci-invocations.json").write_text(json.dumps(children, indent=2) + "\n")
     print(json.dumps(children, indent=2), flush=True)
-    # Leave ten minutes for merging and strict reports within the 90-minute
-    # parent limit. Fresh stages can exceed 50 minutes on a loaded RBE fleet.
-    deadline = time.monotonic() + 80 * 60
+    # Leave ten minutes for merging and strict reports within the free tier's
+    # one-hour runner limit, which cannot be extended by action configuration.
+    deadline = time.monotonic() + 50 * 60
     remaining = dict(children)
     completed = {}
     while remaining:

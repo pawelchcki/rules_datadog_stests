@@ -160,16 +160,37 @@ class BuildBuddyCITest(unittest.TestCase):
             self.assertIn(pin["minimumGoMinor"], [pinned[version]["minor"] for version in PR_GO_VERSIONS])
 
     def test_representative_manifest_cannot_satisfy_full_matrix_gate(self):
-        name = "Datadog PR features"
+        name = "Datadog PR features 1/2"
         manifest = {"schemaVersion": 2, "stage": name, "revision": "head",
-                    "suite": "features", "shard": "0/1", "targets": ["//fixtures:a"], "ciProfile": "pr"}
+                    "suite": "features", "shard": "0/2", "targets": ["//fixtures:a"], "ciProfile": "pr"}
         ci.validate_manifest(manifest, name, "head", manifest["targets"], "pr")
         with self.assertRaises(ValueError):
             ci.validate_manifest(dict(manifest, ciProfile="full"), name, "head", manifest["targets"], "pr")
         with self.assertRaises((KeyError, ValueError)):
             ci.validate_manifest(manifest, name, "head", manifest["targets"], "full")
-        self.assertEqual(4, len(ci.stages("pr")))
+        self.assertEqual(5, len(ci.stages("pr")))
         self.assertEqual(12, len(ci.stages("full")))
+
+    def test_pr_feature_stage_manifests_cover_odd_inventory_without_overlap(self):
+        labels = [f"//fixtures:case_{i}" for i in range(371)]
+        manifests = []
+        with tempfile.TemporaryDirectory() as temporary, \
+                patch.object(ci, "profile_targets", return_value=labels), \
+                patch.object(ci.subprocess, "run") as run, \
+                patch.dict(ci.os.environ, {}, clear=True):
+            for index, name in enumerate(("Datadog PR features 1/2", "Datadog PR features 2/2")):
+                evidence = Path(temporary) / str(index)
+                ci.stage(SimpleNamespace(name=name, revision="head", images="images", evidence=evidence))
+                manifest = ci.json.loads((evidence / "ci-stage.json").read_text())
+                ci.validate_manifest(manifest, name, "head", sorted(labels)[index::2], "pr")
+                env = run.call_args.kwargs["env"]
+                self.assertEqual("pr", env["DATADOG_CI_PROFILE"])
+                self.assertEqual(f"{index}/2", env["DATADOG_PARITY_SHARD"])
+                self.assertEqual("8", env["DATADOG_PARITY_JOBS"])
+                manifests.append(set(manifest["targets"]))
+        self.assertFalse(manifests[0] & manifests[1])
+        self.assertEqual(set(labels), manifests[0] | manifests[1])
+        self.assertEqual([186, 185], [len(targets) for targets in manifests])
 
     def test_failed_stage_retains_manifest_and_timing_with_bounded_test_budget(self):
         with tempfile.TemporaryDirectory() as directory:
