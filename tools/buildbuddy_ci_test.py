@@ -3,6 +3,7 @@ import hashlib
 import io
 import os
 from pathlib import Path
+import shutil
 from types import SimpleNamespace
 import subprocess
 import tarfile
@@ -17,6 +18,53 @@ from ci_profile import PR_GO_VERSIONS, PR_RUBY_SERIES, ruby_runtimes, sdk_cases,
 
 
 class BuildBuddyCITest(unittest.TestCase):
+    def test_failed_feature_stage_batches_complete_outputs_and_logs(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            scripts = root / 'tools'
+            scripts.mkdir()
+            for name in ('run_datadog_parity.sh', 'buildbuddy_ci.py', 'ci_profile.py'):
+                shutil.copyfile(Path(__file__).with_name(name), scripts / name)
+            binary = root / 'bin'
+            binary.mkdir()
+            bazel = binary / 'bazel'
+            bazel.write_text('#!/usr/bin/env bash\n'
+                             'case "$1" in\n'
+                             'query) printf "%s\\n" //fixtures:with_outputs //fixtures:log_only //fixtures:missing ;;\n'
+                             'test) exit 14 ;;\n'
+                             'esac\n')
+            bazel.chmod(0o755)
+            images = root / 'images'
+            images.mkdir()
+            (images / 'bazel.flags').write_text('')
+            outputs = root / 'bazel-testlogs/fixtures/with_outputs/test.outputs'
+            outputs.mkdir(parents=True)
+            (outputs / 'capture with spaces.json').write_bytes(b'native capture\n')
+            native = root / 'native'
+            native.mkdir()
+            (native / 'receipt.json').write_bytes(b'native receipt\n')
+            (outputs / 'linked').symlink_to(native, target_is_directory=True)
+            (outputs.parent / 'test.log').write_text('failed assertion\n')
+            log_only = root / 'bazel-testlogs/fixtures/log_only'
+            log_only.mkdir(parents=True)
+            (log_only / 'test.log').write_text('startup failure\n')
+            evidence = root / 'evidence'
+            run = subprocess.run(['bash', str(scripts / 'run_datadog_parity.sh'),
+                                  str(images), 'head', str(evidence)], cwd=root,
+                                 env=dict(os.environ, PATH=str(binary) + os.pathsep + os.environ['PATH'],
+                                          PYTHONPATH=str(scripts),
+                                          DATADOG_PARITY_STAGE='features', DATADOG_CI_PROFILE='full'),
+                                 capture_output=True, text=True)
+            self.assertEqual(14, run.returncode, run.stderr)
+            retained = evidence / 'features/bazel-testlogs/fixtures'
+            self.assertEqual(b'native capture\n',
+                             (retained / 'with_outputs/test.outputs/capture with spaces.json').read_bytes())
+            self.assertEqual(b'native receipt\n',
+                             (retained / 'with_outputs/test.outputs/linked/receipt.json').read_bytes())
+            self.assertFalse((retained / 'with_outputs/test.outputs/linked').is_symlink())
+            self.assertEqual('failed assertion\n', (retained / 'with_outputs/test.log').read_text())
+            self.assertEqual('startup failure\n', (retained / 'log_only/test.log').read_text())
+
     def test_aggregate_dispatch_and_gate_use_same_profile_with_each_inventory_queried_once(self):
         for profile, pr in (("pr", 20), ("full", 0)):
             with self.subTest(profile=profile), tempfile.TemporaryDirectory() as temporary:
@@ -112,16 +160,37 @@ class BuildBuddyCITest(unittest.TestCase):
             self.assertIn(pin["minimumGoMinor"], [pinned[version]["minor"] for version in PR_GO_VERSIONS])
 
     def test_representative_manifest_cannot_satisfy_full_matrix_gate(self):
-        name = "Datadog PR features"
+        name = "Datadog PR features 1/2"
         manifest = {"schemaVersion": 2, "stage": name, "revision": "head",
-                    "suite": "features", "shard": "0/1", "targets": ["//fixtures:a"], "ciProfile": "pr"}
+                    "suite": "features", "shard": "0/2", "targets": ["//fixtures:a"], "ciProfile": "pr"}
         ci.validate_manifest(manifest, name, "head", manifest["targets"], "pr")
         with self.assertRaises(ValueError):
             ci.validate_manifest(dict(manifest, ciProfile="full"), name, "head", manifest["targets"], "pr")
         with self.assertRaises((KeyError, ValueError)):
             ci.validate_manifest(manifest, name, "head", manifest["targets"], "full")
-        self.assertEqual(4, len(ci.stages("pr")))
+        self.assertEqual(5, len(ci.stages("pr")))
         self.assertEqual(12, len(ci.stages("full")))
+
+    def test_pr_feature_stage_manifests_cover_odd_inventory_without_overlap(self):
+        labels = [f"//fixtures:case_{i}" for i in range(371)]
+        manifests = []
+        with tempfile.TemporaryDirectory() as temporary, \
+                patch.object(ci, "profile_targets", return_value=labels), \
+                patch.object(ci.subprocess, "run") as run, \
+                patch.dict(ci.os.environ, {}, clear=True):
+            for index, name in enumerate(("Datadog PR features 1/2", "Datadog PR features 2/2")):
+                evidence = Path(temporary) / str(index)
+                ci.stage(SimpleNamespace(name=name, revision="head", images="images", evidence=evidence))
+                manifest = ci.json.loads((evidence / "ci-stage.json").read_text())
+                ci.validate_manifest(manifest, name, "head", sorted(labels)[index::2], "pr")
+                env = run.call_args.kwargs["env"]
+                self.assertEqual("pr", env["DATADOG_CI_PROFILE"])
+                self.assertEqual(f"{index}/2", env["DATADOG_PARITY_SHARD"])
+                self.assertEqual("8", env["DATADOG_PARITY_JOBS"])
+                manifests.append(set(manifest["targets"]))
+        self.assertFalse(manifests[0] & manifests[1])
+        self.assertEqual(set(labels), manifests[0] | manifests[1])
+        self.assertEqual([186, 185], [len(targets) for targets in manifests])
 
     def test_failed_stage_retains_manifest_and_timing_with_bounded_test_budget(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -139,6 +208,18 @@ class BuildBuddyCITest(unittest.TestCase):
             timing = ci.json.loads(next((Path(directory) / "ci-timings").glob("*.json")).read_text())
             self.assertEqual("head", timing["revision"])
             self.assertGreaterEqual(timing["elapsedSeconds"], 0)
+
+    def test_stage_respects_fleet_budget_overrides_and_records_actual_budgets(self):
+        with tempfile.TemporaryDirectory() as directory:
+            args = SimpleNamespace(name="Datadog PR shared-sdk", revision="head", images="images", evidence=directory)
+            with patch.dict(ci.os.environ, {"DATADOG_PARITY_JOBS": "6", "DATADOG_PARITY_BUILD_JOBS": "24"}), \
+                    patch.object(ci, "profile_targets", return_value=["//fixtures:case"]), \
+                    patch.object(ci.subprocess, "run") as run:
+                ci.stage(args)
+            self.assertEqual("6", run.call_args.kwargs["env"]["DATADOG_PARITY_JOBS"])
+            self.assertEqual("24", run.call_args.kwargs["env"]["DATADOG_PARITY_BUILD_JOBS"])
+            timing = ci.json.loads(next((Path(directory) / "ci-timings").glob("*.json")).read_text())
+            self.assertEqual((6, 24), (timing["testJobs"], timing["buildJobs"]))
 
     def test_archive_preserves_bytes_and_ignores_temporary_paths_and_metadata(self):
         with tempfile.TemporaryDirectory() as temporary:

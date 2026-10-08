@@ -32,8 +32,13 @@ STAGES = {"Datadog scenarios": ("scenarios", "0/1")}
 STAGES.update({f"Datadog features {i + 1}/8": ("features", f"{i}/8") for i in range(8)})
 STAGES.update({f"Datadog shared SDK {i + 1}/2": ("shared-sdk", f"{i}/2") for i in range(2)})
 STAGES["Datadog capabilities"] = ("capabilities", "0/1")
-PR_STAGES = {f"Datadog PR {suite}": (suite, "0/1")
-             for suite in ("scenarios", "features", "shared-sdk", "capabilities")}
+PR_STAGES = {
+    "Datadog PR scenarios": ("scenarios", "0/1"),
+    "Datadog PR features 1/2": ("features", "0/2"),
+    "Datadog PR features 2/2": ("features", "1/2"),
+    "Datadog PR shared-sdk": ("shared-sdk", "0/1"),
+    "Datadog PR capabilities": ("capabilities", "0/1"),
+}
 
 
 def stages(profile):
@@ -181,8 +186,10 @@ def stage(args):
                DATADOG_BAZEL_CONFIG="buildbuddy", DATADOG_CI_PROFILE=profile)
     # Test concurrency is bounded separately from compilation. RBE still
     # reserves each test's EstimatedCPU before scheduling it on an executor.
-    env["DATADOG_PARITY_JOBS"] = "8" if suite == "scenarios" or (profile == "pr" and suite == "features") else "4"
-    env["DATADOG_PARITY_BUILD_JOBS"] = "32"
+    test_jobs = "16" if suite == "shared-sdk" else (
+        "8" if suite == "scenarios" or (profile == "pr" and suite == "features") else "4")
+    env.setdefault("DATADOG_PARITY_JOBS", test_jobs)
+    env.setdefault("DATADOG_PARITY_BUILD_JOBS", "32")
     evidence = Path(args.evidence)
     evidence.mkdir(parents=True, exist_ok=True)
     (evidence / "ci-stage.json").write_text(json.dumps({
@@ -233,7 +240,8 @@ def aggregate(args):
     evidence.mkdir(parents=True, exist_ok=True)
     (evidence / "ci-invocations.json").write_text(json.dumps(children, indent=2) + "\n")
     print(json.dumps(children, indent=2), flush=True)
-    # Leave time for merging and strict reports before the runner's one-hour limit.
+    # Leave ten minutes for merging and strict reports within the free tier's
+    # one-hour runner limit, which cannot be extended by action configuration.
     deadline = time.monotonic() + 50 * 60
     remaining = dict(children)
     completed = {}

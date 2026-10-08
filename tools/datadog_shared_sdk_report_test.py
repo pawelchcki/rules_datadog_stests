@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
+import tempfile
 import unittest
+from unittest.mock import patch
 
 import datadog_shared_sdk_report as report
 from update_shared_sdk_cases import applies, declaration_reason, resolve_manifest, mapping_for_registry
@@ -9,6 +11,24 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class ManifestTests(unittest.TestCase):
+    def test_both_formats_retained_when_complete_matrix_gate_rejects_missing_evidence(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            # Rendering shares the validated report; requiring all cases must
+            # still reject an empty set and leave both diagnostic formats.
+            data = dict(ciProfile='full', selectedCaseCount=0)
+            with patch.object(report, 'load', return_value=[]), \
+                    patch.object(report, 'build_report', return_value=data), \
+                    patch.object(report, 'sdk_cases', return_value=[dict(name='required-case')]), \
+                    patch.object(report, 'markdown', return_value='missing evidence\n'):
+                with self.assertRaisesRegex(SystemExit, 'missing or unknown registered cases'):
+                    report.main(['--output', str(root/'report.json'),
+                                 '--markdown-output', str(root/'report.md'),
+                                 '--require-complete-matrix'])
+            self.assertEqual(json.loads((root/'report.json').read_text()),
+                             dict(ciProfile='full', selectedCaseCount=1))
+            self.assertEqual('missing evidence\n', (root/'report.md').read_text())
+
     def test_version_conditions_at_the_go_pin(self):
         self.assertTrue(applies('>=1.52.0 <2.7.0-dev', '2.6.0'))
         self.assertFalse(applies('>=1.52.0 <2.7.0-dev', '2.10.1'))

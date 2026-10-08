@@ -16,7 +16,7 @@ py_test(
     main = "buildbuddy_ci_test.py",
     imports = ["."],
     deps = [":ci_profile"],
-    data = ["//harness/shared_sdk:cases.json", "//harness/go_runtime:versions.lock.json"],
+    data = ["run_datadog_parity.sh", "//harness/shared_sdk:cases.json", "//harness/go_runtime:versions.lock.json"],
 )
 
 py_binary(
