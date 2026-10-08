@@ -5,11 +5,27 @@ from pathlib import Path
 import tarfile
 import tempfile
 import unittest
+from unittest.mock import patch
+import urllib.error
 
 import buildbuddy_ci as ci
 
 
 class BuildBuddyCITest(unittest.TestCase):
+    def test_only_queued_invocation_not_found_is_pending(self):
+        with patch.dict(ci.os.environ, {"BUILDBUDDY_API_KEY": "test-key"}):
+            client = ci.BuildBuddy()
+        pending = b"rpc error: code = NotFound desc = invocation not found\n"
+        for allow, code, body in ((True, 500, pending), (False, 500, pending),
+                                  (True, 403, b"Permission denied"), (True, 500, b"Internal error")):
+            error = urllib.error.HTTPError("https://pawel.buildbuddy.io", code, "error", {}, io.BytesIO(body))
+            with patch.object(client, "rpc", side_effect=error):
+                if allow and code == 500 and body == pending:
+                    self.assertEqual({}, client.invocation("queued", allow_queued=allow))
+                else:
+                    with self.assertRaises(urllib.error.HTTPError):
+                        client.invocation("queued", allow_queued=allow)
+
     def test_shards_are_disjoint_and_complete(self):
         labels = [f"//fixtures:test_{i}" for i in range(848)]
         shards = [ci.partition(labels, f"{i}/8") for i in range(8)]

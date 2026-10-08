@@ -12,6 +12,7 @@ import tarfile
 import tempfile
 import time
 import urllib.parse
+import urllib.error
 import urllib.request
 
 
@@ -121,8 +122,17 @@ class BuildBuddy:
         with self.request(f"{ENDPOINT}/rpc/BuildBuddyService/{method}", data) as response:
             return json.load(response)
 
-    def invocation(self, invocation_id):
-        return self.rpc("GetInvocation", {"lookup": {"invocationId": invocation_id}})["invocation"][0]
+    def invocation(self, invocation_id, *, allow_queued=False):
+        try:
+            return self.rpc("GetInvocation", {"lookup": {"invocationId": invocation_id}})["invocation"][0]
+        except urllib.error.HTTPError as error:
+            # ExecuteWorkflow returns IDs before queued runners publish their BEP.
+            # BuildBuddy's JSON RPC maps this specific gRPC NotFound to HTTP 500.
+            if (allow_queued and error.code == 500
+                    and error.read().decode().strip()
+                    == "rpc error: code = NotFound desc = invocation not found"):
+                return {}
+            raise
 
 
 def stage(args):
@@ -175,7 +185,7 @@ def aggregate(args):
     completed = {}
     while remaining:
         for name, invocation_id in list(remaining.items()):
-            invocation = client.invocation(invocation_id)
+            invocation = client.invocation(invocation_id, allow_queued=True)
             if invocation.get("invocationStatus") == "COMPLETE_INVOCATION_STATUS":
                 completed[name] = invocation
                 del remaining[name]
