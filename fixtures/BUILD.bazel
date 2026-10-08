@@ -4,6 +4,8 @@ load("@rules_stests//rules:defs.bzl", "corpus_service", "realworld_service_tests
 load("//rules:defs.bzl", "datadog_env", "datadog_python_injection", "datadog_ruby_injection")
 load(":external_features.bzl", "datadog_external_feature_tests", "datadog_parallel_tests")
 load(":datadog_lab.bzl", "datadog_lab_tests", "datadog_upstream_lab_tests")
+load(":datadog_shared_sdk.bzl", "datadog_shared_sdk_tests")
+load("//rules:go_runtime.bzl", "go_runtime_capability_tests")
 load(":datadog_agent.bzl", "datadog_agent_tests")
 load(":datadog_security.bzl", "datadog_security_tests")
 load(":datadog_telemetry.bzl", "datadog_telemetry_tests")
@@ -27,6 +29,15 @@ datadog_parallel_tests()
 datadog_ruby_matrix_tests()
 datadog_lab_tests()
 datadog_upstream_lab_tests()
+datadog_shared_sdk_tests()
+go_runtime_capability_tests(name = "go_runtime_plain_suite", backend = "plain", tags = ["manual"])
+go_runtime_capability_tests(name = "go_runtime_orchestrion_suite", backend = "orchestrion", tags = ["manual"])
+go_runtime_capability_tests(name = "go_runtime_alibaba_suite", backend = "alibaba", tags = ["manual"])
+test_suite(
+    name = "go_runtime_capability_suite",
+    tests = [":go_runtime_plain_suite", ":go_runtime_orchestrion_suite", ":go_runtime_alibaba_suite"],
+    tags = ["manual"],
+)
 datadog_agent_tests()
 datadog_security_tests()
 datadog_telemetry_tests()

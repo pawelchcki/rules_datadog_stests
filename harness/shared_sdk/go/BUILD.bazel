@@ -1,0 +1,17 @@
+load("@rules_go//go:def.bzl", "go_binary")
+
+package(default_visibility = ["//visibility:public"])
+exports_files(["go.mod", "go.sum"])
+
+go_binary(
+    name = "sdk",
+    srcs = ["main.go"],
+    deps = [
+        "@com_github_datadog_dd_trace_go_contrib_net_http_v2//:http",
+        "@com_github_datadog_dd_trace_go_v2//ddtrace/opentelemetry",
+        "@com_github_datadog_dd_trace_go_v2//ddtrace/tracer",
+        "@io_opentelemetry_go_otel//attribute",
+        "@io_opentelemetry_go_otel//codes",
+        "@io_opentelemetry_go_otel_trace//:trace",
+    ],
+)

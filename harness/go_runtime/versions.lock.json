@@ -1,0 +1,399 @@
+{
+  "schemaVersion": 1,
+  "platform": "linux",
+  "defaultArchitecture": "amd64",
+  "runtimes": [
+    {
+      "version": "go1.4.3",
+      "minor": 4,
+      "reason": "C runtime baseline; pre-register stack ABI; Go 1.2 pclntab",
+      "releaseNotes": "https://go.dev/doc/go1.4",
+      "toolchains": {
+        "amd64": {
+          "url": "https://go.dev/dl/go1.4.3.linux-amd64.tar.gz",
+          "sha256": "ce3140662f45356eb78bc16a88fc7cfb29fb00e18d7c632608245b789b2086d2"
+        }
+      }
+    },
+    {
+      "version": "go1.5.4",
+      "minor": 5,
+      "reason": "Runtime rewritten in Go; concurrent GC",
+      "releaseNotes": "https://go.dev/doc/go1.5",
+      "toolchains": {
+        "amd64": {
+          "url": "https://go.dev/dl/go1.5.4.linux-amd64.tar.gz",
+          "sha256": "a3358721210787dc1e06f5ea1460ae0564f22a0fbd91be9dcd947fb1d19b9560"
+        }
+      }
+    },
+    {
+      "version": "go1.6.4",
+      "minor": 6,
+      "reason": "Intervening runtime release; internal layouts are not a stable ABI",
+      "releaseNotes": "https://go.dev/doc/go1.6",
+      "toolchains": {
+        "amd64": {
+          "url": "https://go.dev/dl/go1.6.4.linux-amd64.tar.gz",
+          "sha256": "b58bf5cede40b21812dfa031258db18fc39746cc0972bc26dae0393acc377aaf"
+        }
+      }
+    },
+    {
+      "version": "go1.7.6",
+      "minor": 7,
+      "reason": "Frame pointers on amd64; request context propagation",
+      "releaseNotes": "https://go.dev/doc/go1.7",
+      "toolchains": {
+        "amd64": {
+          "url": "https://go.dev/dl/go1.7.6.linux-amd64.tar.gz",
+          "sha256": "ad5808bf42b014c22dd7646458f631385003049ded0bb6af2efc7f1f79fa29ea"
+        }
+      }
+    },
+    {
+      "version": "go1.8.7",
+      "minor": 8,
+      "reason": "Intervening runtime release; internal layouts are not a stable ABI",
+      "releaseNotes": "https://go.dev/doc/go1.8",
+      "toolchains": {
+        "amd64": {
+          "url": "https://go.dev/dl/go1.8.7.linux-amd64.tar.gz",
+          "sha256": "de32e8db3dc030e1448a6ca52d87a1e04ad31c6b212007616cfcc87beb0e4d60"
+        },
+        "arm64": {
+          "url": "https://go.dev/dl/go1.8.7.linux-arm64.tar.gz",
+          "sha256": "804c2e73eca5ce309f2947aaf437fce9f67463b4fb9484f47c95b632d4eeabf6"
+        }
+      }
+    },
+    {
+      "version": "go1.9.7",
+      "minor": 9,
+      "reason": "Intervening runtime release; internal layouts are not a stable ABI",
+      "releaseNotes": "https://go.dev/doc/go1.9",
+      "toolchains": {
+        "amd64": {
+          "url": "https://go.dev/dl/go1.9.7.linux-amd64.tar.gz",
+          "sha256": "88573008f4f6233b81f81d8ccf92234b4f67238df0f0ab173d75a302a1f3d6ee"
+        },
+        "arm64": {
+          "url": "https://go.dev/dl/go1.9.7.linux-arm64.tar.gz",
+          "sha256": "68f48c29f93e4c69bbbdb335f473d666b9f8791643f4003ef45283a968b41f86"
+        }
+      }
+    },
+    {
+      "version": "go1.10.8",
+      "minor": 10,
+      "reason": "Intervening runtime release; internal layouts are not a stable ABI",
+      "releaseNotes": "https://go.dev/doc/go1.10",
+      "toolchains": {
+        "amd64": {
+          "url": "https://go.dev/dl/go1.10.8.linux-amd64.tar.gz",
+          "sha256": "d8626fb6f9a3ab397d88c483b576be41fa81eefcec2fd18562c87626dbb3c39e"
+        },
+        "arm64": {
+          "url": "https://go.dev/dl/go1.10.8.linux-arm64.tar.gz",
+          "sha256": "0921a76e78022ec2ae217e85b04940e2e9912b4c3218d96a827deedb9abe1c7b"
+        }
+      }
+    },
+    {
+      "version": "go1.11.13",
+      "minor": 11,
+      "reason": "Intervening runtime release; internal layouts are not a stable ABI",
+      "releaseNotes": "https://go.dev/doc/go1.11",
+      "toolchains": {
+        "amd64": {
+          "url": "https://go.dev/dl/go1.11.13.linux-amd64.tar.gz",
+          "sha256": "50fe8e13592f8cf22304b9c4adfc11849a2c3d281b1d7e09c924ae24874c6daa"
+        },
+        "arm64": {
+          "url": "https://go.dev/dl/go1.11.13.linux-arm64.tar.gz",
+          "sha256": "e94329c97b38b5bffe9c18e84e9f521dc995e02df7696897a7626293da9ac593"
+        }
+      }
+    },
+    {
+      "version": "go1.12.17",
+      "minor": 12,
+      "reason": "Runtime map and allocation implementation changes",
+      "releaseNotes": "https://go.dev/doc/go1.12",
+      "toolchains": {
+        "amd64": {
+          "url": "https://go.dev/dl/go1.12.17.linux-amd64.tar.gz",
+          "sha256": "a53dd476129d496047487bfd53d021dd17e0c96895865a0e7d0469ce3db8c8d2"
+        },
+        "arm64": {
+          "url": "https://go.dev/dl/go1.12.17.linux-arm64.tar.gz",
+          "sha256": "9d0819cce1451abdb090071880fe8771f16a3bcee71d6f6906023d17799574e2"
+        }
+      }
+    },
+    {
+      "version": "go1.13.15",
+      "minor": 13,
+      "reason": "Intervening runtime release; internal layouts are not a stable ABI",
+      "releaseNotes": "https://go.dev/doc/go1.13",
+      "toolchains": {
+        "amd64": {
+          "url": "https://go.dev/dl/go1.13.15.linux-amd64.tar.gz",
+          "sha256": "01cc3ddf6273900eba3e2bf311238828b7168b822bb57a9ccab4d7aa2acd6028"
+        },
+        "arm64": {
+          "url": "https://go.dev/dl/go1.13.15.linux-arm64.tar.gz",
+          "sha256": "a5c59e3f0aeaf6e939790152a8bfabb91d70c9787afb7aee06aef9bd4411c551"
+        }
+      }
+    },
+    {
+      "version": "go1.14.15",
+      "minor": 14,
+      "reason": "Asynchronous goroutine preemption",
+      "releaseNotes": "https://go.dev/doc/go1.14",
+      "toolchains": {
+        "amd64": {
+          "url": "https://go.dev/dl/go1.14.15.linux-amd64.tar.gz",
+          "sha256": "c64a57b374a81f7cf1408d2c410a28c6f142414f1ffa9d1062de1d653b0ae0d6"
+        },
+        "arm64": {
+          "url": "https://go.dev/dl/go1.14.15.linux-arm64.tar.gz",
+          "sha256": "4d964166a189c22032521c63935437c304bb7f01673b196898cff525897a1c27"
+        }
+      }
+    },
+    {
+      "version": "go1.15.15",
+      "minor": 15,
+      "reason": "Intervening runtime release; internal layouts are not a stable ABI",
+      "releaseNotes": "https://go.dev/doc/go1.15",
+      "toolchains": {
+        "amd64": {
+          "url": "https://go.dev/dl/go1.15.15.linux-amd64.tar.gz",
+          "sha256": "0885cf046a9f099e260d98d9ec5d19ea9328f34c8dc4956e1d3cd87daaddb345"
+        },
+        "arm64": {
+          "url": "https://go.dev/dl/go1.15.15.linux-arm64.tar.gz",
+          "sha256": "714abb01af210473dd6af331094ad6847162eff81a7fc7241d24f5a85496c9fa"
+        }
+      }
+    },
+    {
+      "version": "go1.16.15",
+      "minor": 16,
+      "reason": "Go 1.16 pclntab layout",
+      "releaseNotes": "https://go.dev/doc/go1.16",
+      "toolchains": {
+        "amd64": {
+          "url": "https://go.dev/dl/go1.16.15.linux-amd64.tar.gz",
+          "sha256": "77c782a633186d78c384f972fb113a43c24be0234c42fef22c2d8c4c4c8e7475"
+        },
+        "arm64": {
+          "url": "https://go.dev/dl/go1.16.15.linux-arm64.tar.gz",
+          "sha256": "c2f27f0ce5620a9bc2ff3446165d1974ef94e9b885ec12dbfa3c07e0e198b7ce"
+        }
+      }
+    },
+    {
+      "version": "go1.17.13",
+      "minor": 17,
+      "reason": "Register-based calling convention on amd64",
+      "releaseNotes": "https://go.dev/doc/go1.17",
+      "toolchains": {
+        "amd64": {
+          "url": "https://go.dev/dl/go1.17.13.linux-amd64.tar.gz",
+          "sha256": "4cdd2bc664724dc7db94ad51b503512c5ae7220951cac568120f64f8e94399fc"
+        },
+        "arm64": {
+          "url": "https://go.dev/dl/go1.17.13.linux-arm64.tar.gz",
+          "sha256": "914daad3f011cc2014dea799bb7490442677e4ad6de0b2ac3ded6cee7e3f493d"
+        }
+      }
+    },
+    {
+      "version": "go1.18.10",
+      "minor": 18,
+      "reason": "Register ABI on arm64; generics; Go 1.18 pclntab layout",
+      "releaseNotes": "https://go.dev/doc/go1.18",
+      "toolchains": {
+        "amd64": {
+          "url": "https://go.dev/dl/go1.18.10.linux-amd64.tar.gz",
+          "sha256": "5e05400e4c79ef5394424c0eff5b9141cb782da25f64f79d54c98af0a37f8d49"
+        },
+        "arm64": {
+          "url": "https://go.dev/dl/go1.18.10.linux-arm64.tar.gz",
+          "sha256": "160497c583d4c7cbc1661230e68b758d01f741cf4bece67e48edc4fdd40ed92d"
+        }
+      }
+    },
+    {
+      "version": "go1.19.13",
+      "minor": 19,
+      "reason": "Intervening runtime release; internal layouts are not a stable ABI",
+      "releaseNotes": "https://go.dev/doc/go1.19",
+      "toolchains": {
+        "amd64": {
+          "url": "https://go.dev/dl/go1.19.13.linux-amd64.tar.gz",
+          "sha256": "4643d4c29c55f53fa0349367d7f1bb5ca554ea6ef528c146825b0f8464e2e668"
+        },
+        "arm64": {
+          "url": "https://go.dev/dl/go1.19.13.linux-arm64.tar.gz",
+          "sha256": "1142ada7bba786d299812b23edd446761a54efbbcde346c2f0bc69ca6a007b58"
+        }
+      }
+    },
+    {
+      "version": "go1.20.14",
+      "minor": 20,
+      "reason": "Go 1.20 pclntab layout",
+      "releaseNotes": "https://go.dev/doc/go1.20",
+      "toolchains": {
+        "amd64": {
+          "url": "https://go.dev/dl/go1.20.14.linux-amd64.tar.gz",
+          "sha256": "ff445e48af27f93f66bd949ae060d97991c83e11289009d311f25426258f9c44"
+        },
+        "arm64": {
+          "url": "https://go.dev/dl/go1.20.14.linux-arm64.tar.gz",
+          "sha256": "2096507509a98782850d1f0669786c09727053e9fe3c92b03c0d96f48700282b"
+        }
+      }
+    },
+    {
+      "version": "go1.21.13",
+      "minor": 21,
+      "reason": "Intervening runtime release; internal layouts are not a stable ABI",
+      "releaseNotes": "https://go.dev/doc/go1.21",
+      "toolchains": {
+        "amd64": {
+          "url": "https://go.dev/dl/go1.21.13.linux-amd64.tar.gz",
+          "sha256": "502fc16d5910562461e6a6631fb6377de2322aad7304bf2bcd23500ba9dab4a7"
+        },
+        "arm64": {
+          "url": "https://go.dev/dl/go1.21.13.linux-arm64.tar.gz",
+          "sha256": "2ca2d70dc9c84feef959eb31f2a5aac33eefd8c97fe48f1548886d737bffabd4"
+        }
+      }
+    },
+    {
+      "version": "go1.22.12",
+      "minor": 22,
+      "reason": "Loop variable lifetime changes",
+      "releaseNotes": "https://go.dev/doc/go1.22",
+      "toolchains": {
+        "amd64": {
+          "url": "https://go.dev/dl/go1.22.12.linux-amd64.tar.gz",
+          "sha256": "4fa4f869b0f7fc6bb1eb2660e74657fbf04cdd290b5aef905585c86051b34d43"
+        },
+        "arm64": {
+          "url": "https://go.dev/dl/go1.22.12.linux-arm64.tar.gz",
+          "sha256": "fd017e647ec28525e86ae8203236e0653242722a7436929b1f775744e26278e7"
+        }
+      }
+    },
+    {
+      "version": "go1.23.12",
+      "minor": 23,
+      "reason": "Range-over-function iterators",
+      "releaseNotes": "https://go.dev/doc/go1.23",
+      "toolchains": {
+        "amd64": {
+          "url": "https://go.dev/dl/go1.23.12.linux-amd64.tar.gz",
+          "sha256": "d3847fef834e9db11bf64e3fb34db9c04db14e068eeb064f49af747010454f90"
+        },
+        "arm64": {
+          "url": "https://go.dev/dl/go1.23.12.linux-arm64.tar.gz",
+          "sha256": "52ce172f96e21da53b1ae9079808560d49b02ac86cecfa457217597f9bc28ab3"
+        }
+      }
+    },
+    {
+      "version": "go1.24.13",
+      "minor": 24,
+      "reason": "Swiss Table maps and runtime map layout changes",
+      "releaseNotes": "https://go.dev/doc/go1.24",
+      "toolchains": {
+        "amd64": {
+          "url": "https://go.dev/dl/go1.24.13.linux-amd64.tar.gz",
+          "sha256": "1fc94b57134d51669c72173ad5d49fd62afb0f1db9bf3f798fd98ee423f8d730"
+        },
+        "arm64": {
+          "url": "https://go.dev/dl/go1.24.13.linux-arm64.tar.gz",
+          "sha256": "74d97be1cc3a474129590c67ebf748a96e72d9f3a2b6fef3ed3275de591d49b3"
+        }
+      }
+    },
+    {
+      "version": "go1.25.14",
+      "minor": 25,
+      "reason": "Green Tea collector experiment",
+      "releaseNotes": "https://go.dev/doc/go1.25",
+      "toolchains": {
+        "amd64": {
+          "url": "https://go.dev/dl/go1.25.14.linux-amd64.tar.gz",
+          "sha256": "a21ae5633a269bcd7e90cf767e48225633795e99d831742cbf3397064fee7712"
+        },
+        "arm64": {
+          "url": "https://go.dev/dl/go1.25.14.linux-arm64.tar.gz",
+          "sha256": "9bf234ea70ffec9347fdf6b22ce4add51717d3386a38a441e8c8743fceb5eaee"
+        }
+      }
+    },
+    {
+      "version": "go1.26.8",
+      "minor": 26,
+      "reason": "Green Tea collector enabled by default",
+      "releaseNotes": "https://go.dev/doc/go1.26",
+      "toolchains": {
+        "amd64": {
+          "url": "https://go.dev/dl/go1.26.8.linux-amd64.tar.gz",
+          "sha256": "d0f743b33e8d8945e6b1f432edd15785c70507121d6e2a723b21285eddf8b57b"
+        },
+        "arm64": {
+          "url": "https://go.dev/dl/go1.26.8.linux-arm64.tar.gz",
+          "sha256": "211ffced9dcb9633a55eac6364816ec0ddd951389a740e88fa8b3337971bdda0"
+        }
+      }
+    },
+    {
+      "version": "go1.27.1",
+      "minor": 27,
+      "reason": "Size-specialized runtime allocation entry points",
+      "releaseNotes": "https://go.dev/doc/go1.27",
+      "toolchains": {
+        "amd64": {
+          "url": "https://go.dev/dl/go1.27.1.linux-amd64.tar.gz",
+          "sha256": "63d339f0da5ab53635a56f2490a7984dfe12dfcff22ad749f63edaf590168445"
+        },
+        "arm64": {
+          "url": "https://go.dev/dl/go1.27.1.linux-arm64.tar.gz",
+          "sha256": "3450b45a3f9ee8568792736a5c5e70a1f2e9b36c35a8f74958c03e51d7d92bec"
+        }
+      }
+    }
+  ],
+  "instrumentation": {
+    "orchestrion": {
+      "version": "1.13.0",
+      "sdkVersion": "2.10.1",
+      "minimumGoMinor": 25,
+      "module": "github.com/DataDog/orchestrion",
+      "minimumSource": "https://github.com/DataDog/orchestrion/blob/v1.13.0/go.mod"
+    },
+    "alibaba": {
+      "version": "1.15.0",
+      "minimumGoMinor": 25,
+      "tool": {
+        "amd64": {
+          "url": "https://github.com/alibaba/loongsuite-go/releases/download/v1.15.0/otel-linux-amd64",
+          "sha256": "ef4d780d7d668e80535dbfa02ea0ddb259468e2a492c88a27c65940482d1d221"
+        },
+        "arm64": {
+          "url": "https://github.com/alibaba/loongsuite-go/releases/download/v1.15.0/otel-linux-arm64",
+          "sha256": "41a72e6dfbd5b83b8b05b110dc5dcdc738ad1be7f8e1daef8de49b2bd575ed4c"
+        }
+      },
+      "minimumSource": "https://github.com/alibaba/loongsuite-go/blob/v1.15.0/go.mod"
+    }
+  }
+}

@@ -1,0 +1,55 @@
+name: Go runtime capabilities
+on:
+  pull_request:
+    paths:
+      - 'harness/go_runtime/**'
+      - 'rules/go_runtime.bzl'
+      - 'rules/defs.bzl'
+      - 'bazel/go_runtime_deps.bzl'
+      - 'tools/*go_runtime*'
+      - 'MODULE.bazel*'
+      - 'fixtures/BUILD.bazel'
+      - 'examples/plugin_agent/**'
+      - '.github/workflows/go-runtime-capabilities.yml'
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: go-runtime-capabilities-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  linux-amd64:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      DATADOG_BAZEL_CONFIG: ${{ secrets.BUILDBUDDY_API_KEY != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && 'buildbuddy' || 'local' }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: bazel-contrib/setup-bazel@8cb04a772ab4c1eb984e9c1b493a182e96c5e425 # 0.19.0
+        with:
+          bazelisk-cache: true
+          repository-cache: true
+          disk-cache: true
+      - uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+        with:
+          path: ${{ runner.temp }}/go-runtime-apps/cache
+          key: go-runtime-amd64-${{ hashFiles('harness/go_runtime/versions.lock.json', 'harness/go_runtime/orchestrion/go.sum') }}
+      - name: Configure BuildBuddy RBE
+        if: env.DATADOG_BAZEL_CONFIG == 'buildbuddy'
+        uses: ./.github/actions/buildbuddy-cache
+        with:
+          api-key: ${{ secrets.BUILDBUDDY_API_KEY }}
+      - name: Run fresh native Go capability matrix
+        run: tools/run_go_runtime_capabilities.sh "$RUNNER_TEMP/go-runtime-apps" "$RUNNER_TEMP/go-runtime-evidence"
+      - name: Verify downstream capability API
+        working-directory: examples/plugin_agent
+        run: bazel test --config="$DATADOG_BAZEL_CONFIG" --spawn_strategy=remote,local --jobs=4 --nocache_test_results --override_repository="go_runtime_apps=$RUNNER_TEMP/go-runtime-apps" //:go_runtime_controls
+      - name: Retain native captures and report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: go-runtime-capabilities-amd64
+          path: ${{ runner.temp }}/go-runtime-evidence
+          if-no-files-found: ignore

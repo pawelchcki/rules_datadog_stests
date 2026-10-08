@@ -1,0 +1,27 @@
+"""Pinned runtime versions; metadata and checksums are in versions.lock.json."""
+GO_RUNTIME_VERSIONS = [
+    "go1.4.3",
+    "go1.5.4",
+    "go1.6.4",
+    "go1.7.6",
+    "go1.8.7",
+    "go1.9.7",
+    "go1.10.8",
+    "go1.11.13",
+    "go1.12.17",
+    "go1.13.15",
+    "go1.14.15",
+    "go1.15.15",
+    "go1.16.15",
+    "go1.17.13",
+    "go1.18.10",
+    "go1.19.13",
+    "go1.20.14",
+    "go1.21.13",
+    "go1.22.12",
+    "go1.23.12",
+    "go1.24.13",
+    "go1.25.14",
+    "go1.26.8",
+    "go1.27.1"
+]

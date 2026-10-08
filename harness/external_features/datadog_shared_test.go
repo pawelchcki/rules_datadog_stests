@@ -65,6 +65,43 @@ func TestBindConflictClassificationUsesBoundedRetry(t *testing.T) {
 	}
 }
 
+func TestReadinessProcRaceRetriesOnlyLoggedBindConflicts(t *testing.T) {
+	// A foreign listener can answer readiness just as our child exits. The
+	// subsequent /proc lookup fails before cmd.Wait's result is delivered.
+	for _, message := range []string{
+		"Address already in use - bind(2) for 127.0.0.1:41529 (Errno::EADDRINUSE)\n",
+		"SDK crashed during startup\n",
+		"",
+	} {
+		t.Run(message, func(t *testing.T) {
+			log, err := os.Create(filepath.Join(t.TempDir(), "app.log"))
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer log.Close()
+			if _, err := log.WriteString(message); err != nil {
+				t.Fatal(err)
+			}
+			cause := errors.New("read TCP socket table for process 2410865")
+			attempts := 0
+			data, err := retryPortConflicts(func() ([]byte, error) {
+				attempts++
+				if attempts == 1 {
+					return nil, classifyReadinessOwnershipError(cause, log)
+				}
+				return []byte("fresh owned capture"), nil
+			})
+			if message != "" && message != "SDK crashed during startup\n" {
+				if err != nil || attempts != 2 || string(data) != "fresh owned capture" {
+					t.Fatalf("bind race did not retry: attempts=%d data=%q err=%v", attempts, data, err)
+				}
+			} else if attempts != 1 || err != cause || data != nil {
+				t.Fatalf("unrelated ownership error was hidden: attempts=%d data=%q err=%v", attempts, data, err)
+			}
+		})
+	}
+}
+
 func TestIndependentBazelContractsMatchRunnerAndRejectUnknownCases(t *testing.T) {
 	root := filepath.Join(os.Getenv("TEST_SRCDIR"), os.Getenv("TEST_WORKSPACE"))
 	data, err := os.ReadFile(filepath.Join(root, "fixtures", "external_features.bzl"))

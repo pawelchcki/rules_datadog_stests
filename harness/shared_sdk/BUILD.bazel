@@ -1,0 +1,33 @@
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
+
+package(default_visibility = ["//visibility:public"])
+exports_files(["cases.json", "cases.bzl"])
+
+py_library(
+    name = "portable_cases",
+    srcs = ["portable_cases.py", "baggage_cases.py"],
+    imports = ["."],
+    deps = ["//harness/upstream_lab:runtime"],
+)
+
+py_binary(
+    name = "probe",
+    srcs = ["agent_proxy.py", "portable_cases.py", "probe.py", "sdk_expected_failures.py", "baggage_cases.py"],
+    main = "probe.py",
+    data = ["cases.json", "go-manifest.json", "python-manifest.json", "golang.yml", "//harness/upstream_lab:upstream_sources"],
+    deps = ["//harness/upstream_lab:runtime"],
+)
+
+py_test(
+    name = "probe_unit_test",
+    srcs = ["probe_test.py", "probe.py", "portable_cases.py", "agent_proxy.py", "sdk_expected_failures.py", "baggage_cases.py"],
+    main = "probe_test.py",
+    deps = ["//harness/upstream_lab:runtime"],
+)
+
+py_test(
+    name = "baggage_cases_test",
+    srcs = ["baggage_cases_test.py", "baggage_cases.py"],
+    main = "baggage_cases_test.py",
+    imports = ["."],
+)

@@ -1,0 +1,2413 @@
+[
+  {
+    "name": "shared-sdk-test-otel-resource-attributes-test-otel-resource-attributes-test-stable-values-0",
+    "method": "test_otel_resource_attributes.Test_OTEL_RESOURCE_ATTRIBUTES.test_stable_values[0]",
+    "features": [
+      "otel_resource_attributes"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-resource-attributes-test-otel-resource-attributes-test-stable-values-1",
+    "method": "test_otel_resource_attributes.Test_OTEL_RESOURCE_ATTRIBUTES.test_stable_values[1]",
+    "features": [
+      "otel_resource_attributes"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-resource-attributes-test-otel-resource-attributes-test-default-matches-specification-0",
+    "method": "test_otel_resource_attributes.Test_OTEL_RESOURCE_ATTRIBUTES.test_default_matches_specification[0]",
+    "features": [
+      "otel_resource_attributes"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-resource-attributes-test-otel-resource-attributes-test-default-matches-specification-1",
+    "method": "test_otel_resource_attributes.Test_OTEL_RESOURCE_ATTRIBUTES.test_default_matches_specification[1]",
+    "features": [
+      "otel_resource_attributes"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-resource-attributes-test-otel-resource-attributes-test-invalid-value-is-discarded-0",
+    "method": "test_otel_resource_attributes.Test_OTEL_RESOURCE_ATTRIBUTES.test_invalid_value_is_discarded[0]",
+    "features": [
+      "otel_resource_attributes"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-resource-attributes-test-otel-resource-attributes-test-reserved-attributes-are-mapped-0",
+    "method": "test_otel_resource_attributes.Test_OTEL_RESOURCE_ATTRIBUTES.test_reserved_attributes_are_mapped[0]",
+    "features": [
+      "otel_resource_attributes"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-sdk-disabled-test-otel-sdk-disabled-test-stable-true-0",
+    "method": "test_otel_sdk_disabled.Test_OTEL_SDK_DISABLED.test_stable_true[0]",
+    "features": [
+      "otel_sdk_disabled"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-sdk-disabled-test-otel-sdk-disabled-test-stable-false-0",
+    "method": "test_otel_sdk_disabled.Test_OTEL_SDK_DISABLED.test_stable_false[0]",
+    "features": [
+      "otel_sdk_disabled"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-sdk-disabled-test-otel-sdk-disabled-test-datadog-configuration-takes-precedence-0",
+    "method": "test_otel_sdk_disabled.Test_OTEL_SDK_DISABLED.test_datadog_configuration_takes_precedence[0]",
+    "features": [
+      "otel_sdk_disabled"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-service-name-test-otel-service-name-test-stable-values-0",
+    "method": "test_otel_service_name.Test_OTEL_SERVICE_NAME.test_stable_values[0]",
+    "features": [
+      "otel_service_name"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-service-name-test-otel-service-name-test-stable-values-1",
+    "method": "test_otel_service_name.Test_OTEL_SERVICE_NAME.test_stable_values[1]",
+    "features": [
+      "otel_service_name"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-service-name-test-otel-service-name-test-default-matches-specification-0",
+    "method": "test_otel_service_name.Test_OTEL_SERVICE_NAME.test_default_matches_specification[0]",
+    "features": [
+      "otel_service_name"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-service-name-test-otel-service-name-test-otel-service-name-takes-precedence-0",
+    "method": "test_otel_service_name.Test_OTEL_SERVICE_NAME.test_otel_service_name_takes_precedence[0]",
+    "features": [
+      "otel_service_name"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-service-name-test-otel-service-name-test-datadog-configuration-takes-precedence-0",
+    "method": "test_otel_service_name.Test_OTEL_SERVICE_NAME.test_datadog_configuration_takes_precedence[0]",
+    "features": [
+      "otel_service_name"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-traces-exporter-test-otel-traces-exporter-test-none-exporter-0",
+    "method": "test_otel_traces_exporter.Test_OTEL_TRACES_EXPORTER.test_none_exporter[0]",
+    "features": [
+      "otel_traces_exporter"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-traces-exporter-test-otel-traces-exporter-test-datadog-configuration-takes-precedence-0",
+    "method": "test_otel_traces_exporter.Test_OTEL_TRACES_EXPORTER.test_datadog_configuration_takes_precedence[0]",
+    "features": [
+      "otel_traces_exporter"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-traces-sampler-test-otel-traces-sampler-test-rate-values-0",
+    "method": "test_otel_traces_sampler.Test_OTEL_TRACES_SAMPLER.test_rate_values[0]",
+    "features": [
+      "otel_traces_sampler"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-traces-sampler-test-otel-traces-sampler-test-rate-values-1",
+    "method": "test_otel_traces_sampler.Test_OTEL_TRACES_SAMPLER.test_rate_values[1]",
+    "features": [
+      "otel_traces_sampler"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-traces-sampler-test-otel-traces-sampler-test-rate-values-2",
+    "method": "test_otel_traces_sampler.Test_OTEL_TRACES_SAMPLER.test_rate_values[2]",
+    "features": [
+      "otel_traces_sampler"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-traces-sampler-test-otel-traces-sampler-test-rate-values-3",
+    "method": "test_otel_traces_sampler.Test_OTEL_TRACES_SAMPLER.test_rate_values[3]",
+    "features": [
+      "otel_traces_sampler"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-traces-sampler-test-otel-traces-sampler-test-rate-values-4",
+    "method": "test_otel_traces_sampler.Test_OTEL_TRACES_SAMPLER.test_rate_values[4]",
+    "features": [
+      "otel_traces_sampler"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-traces-sampler-test-otel-traces-sampler-test-rate-values-5",
+    "method": "test_otel_traces_sampler.Test_OTEL_TRACES_SAMPLER.test_rate_values[5]",
+    "features": [
+      "otel_traces_sampler"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-traces-sampler-arg-test-otel-traces-sampler-arg-test-stable-values-0",
+    "method": "test_otel_traces_sampler_arg.Test_OTEL_TRACES_SAMPLER_ARG.test_stable_values[0]",
+    "features": [
+      "otel_traces_sampler_arg"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-traces-sampler-arg-test-otel-traces-sampler-arg-test-stable-values-1",
+    "method": "test_otel_traces_sampler_arg.Test_OTEL_TRACES_SAMPLER_ARG.test_stable_values[1]",
+    "features": [
+      "otel_traces_sampler_arg"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-traces-sampler-arg-test-otel-traces-sampler-arg-test-stable-values-2",
+    "method": "test_otel_traces_sampler_arg.Test_OTEL_TRACES_SAMPLER_ARG.test_stable_values[2]",
+    "features": [
+      "otel_traces_sampler_arg"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-traces-sampler-arg-test-otel-traces-sampler-arg-test-stable-values-3",
+    "method": "test_otel_traces_sampler_arg.Test_OTEL_TRACES_SAMPLER_ARG.test_stable_values[3]",
+    "features": [
+      "otel_traces_sampler_arg"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-traces-sampler-arg-test-otel-traces-sampler-arg-test-nonnumeric-is-ignored-0",
+    "method": "test_otel_traces_sampler_arg.Test_OTEL_TRACES_SAMPLER_ARG.test_nonnumeric_is_ignored[0]",
+    "features": [
+      "otel_traces_sampler_arg"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-traces-sampler-arg-test-otel-traces-sampler-arg-test-default-matches-specification-0",
+    "method": "test_otel_traces_sampler_arg.Test_OTEL_TRACES_SAMPLER_ARG.test_default_matches_specification[0]",
+    "features": [
+      "otel_traces_sampler_arg"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-traces-sampler-arg-test-otel-traces-sampler-arg-test-empty-is-treated-as-unset-0",
+    "method": "test_otel_traces_sampler_arg.Test_OTEL_TRACES_SAMPLER_ARG.test_empty_is_treated_as_unset[0]",
+    "features": [
+      "otel_traces_sampler_arg"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-128-bit-traceids-test-128-bit-traceids-test-datadog-128-bit-propagation-0",
+    "method": "test_128_bit_traceids.Test_128_Bit_Traceids.test_datadog_128_bit_propagation[0]",
+    "features": [
+      "trace_id_128_bit_generation_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-128-bit-traceids-test-128-bit-traceids-test-datadog-128-bit-propagation-tid-long-0",
+    "method": "test_128_bit_traceids.Test_128_Bit_Traceids.test_datadog_128_bit_propagation_tid_long[0]",
+    "features": [
+      "trace_id_128_bit_generation_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-128-bit-traceids-test-128-bit-traceids-test-datadog-128-bit-propagation-tid-short-0",
+    "method": "test_128_bit_traceids.Test_128_Bit_Traceids.test_datadog_128_bit_propagation_tid_short[0]",
+    "features": [
+      "trace_id_128_bit_generation_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-128-bit-traceids-test-128-bit-traceids-test-datadog-128-bit-propagation-tid-chars-0",
+    "method": "test_128_bit_traceids.Test_128_Bit_Traceids.test_datadog_128_bit_propagation_tid_chars[0]",
+    "features": [
+      "trace_id_128_bit_generation_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-128-bit-traceids-test-128-bit-traceids-test-datadog-128-bit-propagation-and-generation-0",
+    "method": "test_128_bit_traceids.Test_128_Bit_Traceids.test_datadog_128_bit_propagation_and_generation[0]",
+    "features": [
+      "trace_id_128_bit_generation_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-128-bit-traceids-test-128-bit-traceids-test-datadog-128-bit-generation-disabled-0",
+    "method": "test_128_bit_traceids.Test_128_Bit_Traceids.test_datadog_128_bit_generation_disabled[0]",
+    "features": [
+      "trace_id_128_bit_generation_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-128-bit-traceids-test-128-bit-traceids-test-datadog-128-bit-generation-enabled-0",
+    "method": "test_128_bit_traceids.Test_128_Bit_Traceids.test_datadog_128_bit_generation_enabled[0]",
+    "features": [
+      "trace_id_128_bit_generation_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-128-bit-traceids-test-128-bit-traceids-test-datadog-128-bit-generation-enabled-by-default-0",
+    "method": "test_128_bit_traceids.Test_128_Bit_Traceids.test_datadog_128_bit_generation_enabled_by_default[0]",
+    "features": [
+      "trace_id_128_bit_generation_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-128-bit-traceids-test-128-bit-traceids-test-b3multi-128-bit-propagation-0",
+    "method": "test_128_bit_traceids.Test_128_Bit_Traceids.test_b3multi_128_bit_propagation[0]",
+    "features": [
+      "trace_id_128_bit_generation_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-128-bit-traceids-test-128-bit-traceids-test-b3multi-128-bit-propagation-and-generation-0",
+    "method": "test_128_bit_traceids.Test_128_Bit_Traceids.test_b3multi_128_bit_propagation_and_generation[0]",
+    "features": [
+      "trace_id_128_bit_generation_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-128-bit-traceids-test-128-bit-traceids-test-b3multi-128-bit-generation-disabled-0",
+    "method": "test_128_bit_traceids.Test_128_Bit_Traceids.test_b3multi_128_bit_generation_disabled[0]",
+    "features": [
+      "trace_id_128_bit_generation_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-128-bit-traceids-test-128-bit-traceids-test-b3multi-128-bit-generation-enabled-0",
+    "method": "test_128_bit_traceids.Test_128_Bit_Traceids.test_b3multi_128_bit_generation_enabled[0]",
+    "features": [
+      "trace_id_128_bit_generation_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-128-bit-traceids-test-128-bit-traceids-test-w3c-128-bit-propagation-0",
+    "method": "test_128_bit_traceids.Test_128_Bit_Traceids.test_w3c_128_bit_propagation[0]",
+    "features": [
+      "trace_id_128_bit_generation_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-128-bit-traceids-test-128-bit-traceids-test-w3c-128-bit-propagation-tid-consistent-0",
+    "method": "test_128_bit_traceids.Test_128_Bit_Traceids.test_w3c_128_bit_propagation_tid_consistent[0]",
+    "features": [
+      "trace_id_128_bit_generation_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-128-bit-traceids-test-128-bit-traceids-test-w3c-128-bit-propagation-tid-in-chunk-root-0",
+    "method": "test_128_bit_traceids.Test_128_Bit_Traceids.test_w3c_128_bit_propagation_tid_in_chunk_root[0]",
+    "features": [
+      "trace_id_128_bit_generation_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-128-bit-traceids-test-128-bit-traceids-test-w3c-128-bit-propagation-tid-in-trace-chunk-0",
+    "method": "test_128_bit_traceids.Test_128_Bit_Traceids.test_w3c_128_bit_propagation_tid_in_trace_chunk[0]",
+    "features": [
+      "trace_id_128_bit_generation_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-128-bit-traceids-test-128-bit-traceids-test-w3c-128-bit-propagation-tid-inconsistent-0",
+    "method": "test_128_bit_traceids.Test_128_Bit_Traceids.test_w3c_128_bit_propagation_tid_inconsistent[0]",
+    "features": [
+      "trace_id_128_bit_generation_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-128-bit-traceids-test-128-bit-traceids-test-w3c-128-bit-propagation-tid-malformed-0",
+    "method": "test_128_bit_traceids.Test_128_Bit_Traceids.test_w3c_128_bit_propagation_tid_malformed[0]",
+    "features": [
+      "trace_id_128_bit_generation_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-128-bit-traceids-test-128-bit-traceids-test-w3c-128-bit-propagation-and-generation-0",
+    "method": "test_128_bit_traceids.Test_128_Bit_Traceids.test_w3c_128_bit_propagation_and_generation[0]",
+    "features": [
+      "trace_id_128_bit_generation_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-128-bit-traceids-test-128-bit-traceids-test-w3c-128-bit-generation-disabled-0",
+    "method": "test_128_bit_traceids.Test_128_Bit_Traceids.test_w3c_128_bit_generation_disabled[0]",
+    "features": [
+      "trace_id_128_bit_generation_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-128-bit-traceids-test-128-bit-traceids-test-w3c-128-bit-generation-enabled-0",
+    "method": "test_128_bit_traceids.Test_128_Bit_Traceids.test_w3c_128_bit_generation_enabled[0]",
+    "features": [
+      "trace_id_128_bit_generation_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-config-consistency-test-config-traceenabled-test-tracing-enabled-0",
+    "method": "test_config_consistency.Test_Config_TraceEnabled.test_tracing_enabled[0]",
+    "features": [
+      "trace_enablement"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-config-consistency-test-config-traceenabled-test-tracing-enabled-1",
+    "method": "test_config_consistency.Test_Config_TraceEnabled.test_tracing_enabled[1]",
+    "features": [
+      "trace_enablement"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-config-consistency-test-config-traceenabled-test-tracing-disabled-0",
+    "method": "test_config_consistency.Test_Config_TraceEnabled.test_tracing_disabled[0]",
+    "features": [
+      "trace_enablement"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-config-consistency-test-config-unifiedservicetagging-test-default-config-0",
+    "method": "test_config_consistency.Test_Config_UnifiedServiceTagging.test_default_config[0]",
+    "features": [
+      "unified_service_tagging"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-config-consistency-test-config-unifiedservicetagging-test-specific-version-0",
+    "method": "test_config_consistency.Test_Config_UnifiedServiceTagging.test_specific_version[0]",
+    "features": [
+      "unified_service_tagging"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-config-consistency-test-config-unifiedservicetagging-test-specific-env-0",
+    "method": "test_config_consistency.Test_Config_UnifiedServiceTagging.test_specific_env[0]",
+    "features": [
+      "unified_service_tagging"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-config-consistency-test-config-ratelimit-test-default-trace-rate-limit-0",
+    "method": "test_config_consistency.Test_Config_RateLimit.test_default_trace_rate_limit[0]",
+    "features": [
+      "trace_rate_limiting"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-config-consistency-test-config-ratelimit-test-setting-trace-rate-limit-strict-0",
+    "method": "test_config_consistency.Test_Config_RateLimit.test_setting_trace_rate_limit_strict[0]",
+    "features": [
+      "trace_rate_limiting"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-config-consistency-test-config-ratelimit-test-trace-rate-limit-without-trace-sample-rate-0",
+    "method": "test_config_consistency.Test_Config_RateLimit.test_trace_rate_limit_without_trace_sample_rate[0]",
+    "features": [
+      "trace_rate_limiting"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-config-consistency-test-config-ratelimit-test-setting-trace-rate-limit-0",
+    "method": "test_config_consistency.Test_Config_RateLimit.test_setting_trace_rate_limit[0]",
+    "features": [
+      "trace_rate_limiting"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-config-consistency-test-config-tags-test-comma-space-tag-separation-0",
+    "method": "test_config_consistency.Test_Config_Tags.test_comma_space_tag_separation[0]",
+    "features": [
+      "trace_global_tags"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-config-consistency-test-config-tags-test-comma-space-tag-separation-1",
+    "method": "test_config_consistency.Test_Config_Tags.test_comma_space_tag_separation[1]",
+    "features": [
+      "trace_global_tags"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-config-consistency-test-config-tags-test-comma-space-tag-separation-2",
+    "method": "test_config_consistency.Test_Config_Tags.test_comma_space_tag_separation[2]",
+    "features": [
+      "trace_global_tags"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-config-consistency-test-config-tags-test-comma-space-tag-separation-3",
+    "method": "test_config_consistency.Test_Config_Tags.test_comma_space_tag_separation[3]",
+    "features": [
+      "trace_global_tags"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-config-consistency-test-config-tags-test-comma-space-tag-separation-4",
+    "method": "test_config_consistency.Test_Config_Tags.test_comma_space_tag_separation[4]",
+    "features": [
+      "trace_global_tags"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-config-consistency-test-config-tags-test-comma-space-tag-separation-5",
+    "method": "test_config_consistency.Test_Config_Tags.test_comma_space_tag_separation[5]",
+    "features": [
+      "trace_global_tags"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-config-consistency-test-config-tags-test-comma-space-tag-separation-6",
+    "method": "test_config_consistency.Test_Config_Tags.test_comma_space_tag_separation[6]",
+    "features": [
+      "trace_global_tags"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-config-consistency-test-config-tags-test-comma-space-tag-separation-7",
+    "method": "test_config_consistency.Test_Config_Tags.test_comma_space_tag_separation[7]",
+    "features": [
+      "trace_global_tags"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-config-consistency-test-config-tags-test-comma-space-tag-separation-8",
+    "method": "test_config_consistency.Test_Config_Tags.test_comma_space_tag_separation[8]",
+    "features": [
+      "trace_global_tags"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-config-consistency-test-config-tags-test-comma-space-tag-separation-9",
+    "method": "test_config_consistency.Test_Config_Tags.test_comma_space_tag_separation[9]",
+    "features": [
+      "trace_global_tags"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-config-consistency-test-config-tags-test-comma-space-tag-separation-10",
+    "method": "test_config_consistency.Test_Config_Tags.test_comma_space_tag_separation[10]",
+    "features": [
+      "trace_global_tags"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-config-consistency-test-config-tags-test-comma-space-tag-separation-11",
+    "method": "test_config_consistency.Test_Config_Tags.test_comma_space_tag_separation[11]",
+    "features": [
+      "trace_global_tags"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-config-consistency-test-config-tags-test-dd-service-override-0",
+    "method": "test_config_consistency.Test_Config_Tags.test_dd_service_override[0]",
+    "features": [
+      "trace_global_tags"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-extract-behavior-test-extractbehavior-default-test-single-tracecontext-0",
+    "method": "test_extract_behavior.Test_ExtractBehavior_Default.test_single_tracecontext[0]",
+    "features": [
+      "context_propagation_extract_behavior"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-extract-behavior-test-extractbehavior-default-test-baggage-0",
+    "method": "test_extract_behavior.Test_ExtractBehavior_Default.test_baggage[0]",
+    "features": [
+      "context_propagation_extract_behavior"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-extract-behavior-test-extractbehavior-default-test-multiple-tracecontexts-0",
+    "method": "test_extract_behavior.Test_ExtractBehavior_Default.test_multiple_tracecontexts[0]",
+    "features": [
+      "context_propagation_extract_behavior"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-extract-behavior-test-extractbehavior-restart-test-single-tracecontext-0",
+    "method": "test_extract_behavior.Test_ExtractBehavior_Restart.test_single_tracecontext[0]",
+    "features": [
+      "context_propagation_extract_behavior"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-extract-behavior-test-extractbehavior-restart-test-multiple-tracecontexts-0",
+    "method": "test_extract_behavior.Test_ExtractBehavior_Restart.test_multiple_tracecontexts[0]",
+    "features": [
+      "context_propagation_extract_behavior"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-extract-behavior-test-extractbehavior-restart-test-multiple-tracecontexts-with-overrides-0",
+    "method": "test_extract_behavior.Test_ExtractBehavior_Restart.test_multiple_tracecontexts_with_overrides[0]",
+    "features": [
+      "context_propagation_extract_behavior"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-extract-behavior-test-extractbehavior-restart-test-baggage-0",
+    "method": "test_extract_behavior.Test_ExtractBehavior_Restart.test_baggage[0]",
+    "features": [
+      "context_propagation_extract_behavior"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-extract-behavior-test-extractbehavior-ignore-test-single-tracecontext-0",
+    "method": "test_extract_behavior.Test_ExtractBehavior_Ignore.test_single_tracecontext[0]",
+    "features": [
+      "context_propagation_extract_behavior"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-extract-behavior-test-extractbehavior-ignore-test-multiple-tracecontexts-0",
+    "method": "test_extract_behavior.Test_ExtractBehavior_Ignore.test_multiple_tracecontexts[0]",
+    "features": [
+      "context_propagation_extract_behavior"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-extract-behavior-test-extractbehavior-ignore-test-baggage-0",
+    "method": "test_extract_behavior.Test_ExtractBehavior_Ignore.test_baggage[0]",
+    "features": [
+      "context_propagation_extract_behavior"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-extract-behavior-test-extractbehavior-restart-with-extract-first-test-single-tracecontext-0",
+    "method": "test_extract_behavior.Test_ExtractBehavior_Restart_With_Extract_First.test_single_tracecontext[0]",
+    "features": [
+      "context_propagation_extract_behavior"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-extract-behavior-test-extractbehavior-restart-with-extract-first-test-multiple-tracecontexts-0",
+    "method": "test_extract_behavior.Test_ExtractBehavior_Restart_With_Extract_First.test_multiple_tracecontexts[0]",
+    "features": [
+      "context_propagation_extract_behavior"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-extract-behavior-test-extractbehavior-restart-with-extract-first-test-baggage-0",
+    "method": "test_extract_behavior.Test_ExtractBehavior_Restart_With_Extract_First.test_baggage[0]",
+    "features": [
+      "context_propagation_extract_behavior"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-b3-test-headers-b3-test-headers-b3-migrated-extract-valid-0",
+    "method": "test_headers_b3.Test_Headers_B3.test_headers_b3_migrated_extract_valid[0]",
+    "features": [
+      "b3_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-b3-test-headers-b3-test-headers-b3-migrated-extract-invalid-0",
+    "method": "test_headers_b3.Test_Headers_B3.test_headers_b3_migrated_extract_invalid[0]",
+    "features": [
+      "b3_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-b3-test-headers-b3-test-headers-b3-migrated-inject-valid-0",
+    "method": "test_headers_b3.Test_Headers_B3.test_headers_b3_migrated_inject_valid[0]",
+    "features": [
+      "b3_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-b3-test-headers-b3-test-headers-b3-migrated-propagate-valid-0",
+    "method": "test_headers_b3.Test_Headers_B3.test_headers_b3_migrated_propagate_valid[0]",
+    "features": [
+      "b3_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-b3-test-headers-b3-test-headers-b3-migrated-propagate-invalid-0",
+    "method": "test_headers_b3.Test_Headers_B3.test_headers_b3_migrated_propagate_invalid[0]",
+    "features": [
+      "b3_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-b3-test-headers-b3-test-headers-b3-migrated-single-key-propagate-valid-0",
+    "method": "test_headers_b3.Test_Headers_B3.test_headers_b3_migrated_single_key_propagate_valid[0]",
+    "features": [
+      "b3_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-b3multi-test-headers-b3multi-test-headers-b3multi-extract-valid-0",
+    "method": "test_headers_b3multi.Test_Headers_B3multi.test_headers_b3multi_extract_valid[0]",
+    "features": [
+      "b3multi_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-b3multi-test-headers-b3multi-test-headers-b3multi-extract-invalid-0",
+    "method": "test_headers_b3multi.Test_Headers_B3multi.test_headers_b3multi_extract_invalid[0]",
+    "features": [
+      "b3multi_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-b3multi-test-headers-b3multi-test-headers-b3multi-inject-valid-0",
+    "method": "test_headers_b3multi.Test_Headers_B3multi.test_headers_b3multi_inject_valid[0]",
+    "features": [
+      "b3multi_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-b3multi-test-headers-b3multi-test-headers-b3multi-propagate-valid-0",
+    "method": "test_headers_b3multi.Test_Headers_B3multi.test_headers_b3multi_propagate_valid[0]",
+    "features": [
+      "b3multi_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-b3multi-test-headers-b3multi-test-headers-b3multi-propagate-invalid-0",
+    "method": "test_headers_b3multi.Test_Headers_B3multi.test_headers_b3multi_propagate_invalid[0]",
+    "features": [
+      "b3multi_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-b3multi-test-headers-b3multi-test-headers-b3multi-single-key-propagate-valid-0",
+    "method": "test_headers_b3multi.Test_Headers_B3multi.test_headers_b3multi_single_key_propagate_valid[0]",
+    "features": [
+      "b3multi_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-b3multi-test-headers-b3multi-test-headers-b3multi-case-insensitive-propagate-valid-0",
+    "method": "test_headers_b3multi.Test_Headers_B3multi.test_headers_b3multi_case_insensitive_propagate_valid[0]",
+    "features": [
+      "b3multi_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-b3multi-test-headers-b3multi-test-headers-b3multi-case-insensitive-propagate-valid-1",
+    "method": "test_headers_b3multi.Test_Headers_B3multi.test_headers_b3multi_case_insensitive_propagate_valid[1]",
+    "features": [
+      "b3multi_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-baggage-test-headers-baggage-test-headers-baggage-default-d001-0",
+    "method": "test_headers_baggage.Test_Headers_Baggage.test_headers_baggage_default_D001[0]",
+    "features": [
+      "datadog_baggage_headers",
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-baggage-test-headers-baggage-test-headers-baggage-only-d002-0",
+    "method": "test_headers_baggage.Test_Headers_Baggage.test_headers_baggage_only_D002[0]",
+    "features": [
+      "datadog_baggage_headers",
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-baggage-test-headers-baggage-test-baggage-disable-settings-d003-0",
+    "method": "test_headers_baggage.Test_Headers_Baggage.test_baggage_disable_settings_D003[0]",
+    "features": [
+      "datadog_baggage_headers",
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-baggage-test-headers-baggage-test-baggage-inject-header-d004-0",
+    "method": "test_headers_baggage.Test_Headers_Baggage.test_baggage_inject_header_D004[0]",
+    "features": [
+      "datadog_baggage_headers",
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-baggage-test-headers-baggage-test-baggage-extract-header-d005-0",
+    "method": "test_headers_baggage.Test_Headers_Baggage.test_baggage_extract_header_D005[0]",
+    "features": [
+      "datadog_baggage_headers",
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-baggage-test-headers-baggage-test-baggage-set-d006-0",
+    "method": "test_headers_baggage.Test_Headers_Baggage.test_baggage_set_D006[0]",
+    "features": [
+      "datadog_baggage_headers",
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-baggage-test-headers-baggage-test-baggage-set-disabled-d007-0",
+    "method": "test_headers_baggage.Test_Headers_Baggage.test_baggage_set_disabled_D007[0]",
+    "features": [
+      "datadog_baggage_headers",
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-baggage-test-headers-baggage-test-baggage-get-d008-0",
+    "method": "test_headers_baggage.Test_Headers_Baggage.test_baggage_get_D008[0]",
+    "features": [
+      "datadog_baggage_headers",
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-baggage-test-headers-baggage-test-baggage-get-all-d009-0",
+    "method": "test_headers_baggage.Test_Headers_Baggage.test_baggage_get_all_D009[0]",
+    "features": [
+      "datadog_baggage_headers",
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-baggage-test-headers-baggage-test-baggage-malformed-headers-d012-0",
+    "method": "test_headers_baggage.Test_Headers_Baggage.test_baggage_malformed_headers_D012[0]",
+    "features": [
+      "datadog_baggage_headers",
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-baggage-test-headers-baggage-test-baggage-malformed-headers-d013-0",
+    "method": "test_headers_baggage.Test_Headers_Baggage.test_baggage_malformed_headers_D013[0]",
+    "features": [
+      "datadog_baggage_headers",
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-baggage-test-headers-baggage-test-baggage-malformed-headers-d014-0",
+    "method": "test_headers_baggage.Test_Headers_Baggage.test_baggage_malformed_headers_D014[0]",
+    "features": [
+      "datadog_baggage_headers",
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-baggage-test-headers-baggage-test-baggage-malformed-headers-d015-0",
+    "method": "test_headers_baggage.Test_Headers_Baggage.test_baggage_malformed_headers_D015[0]",
+    "features": [
+      "datadog_baggage_headers",
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-baggage-test-headers-baggage-test-baggageheader-maxitems-inject-d016-0",
+    "method": "test_headers_baggage.Test_Headers_Baggage.test_baggageheader_maxitems_inject_D016[0]",
+    "features": [
+      "datadog_baggage_headers",
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-baggage-test-headers-baggage-test-baggageheader-maxbytes-inject-d017-0",
+    "method": "baggage_cases.Test_BaggageLimits.test_maxbytes_inject[0]",
+    "features": [
+      "datadog_baggage_headers",
+      "datadog_headers_propagation"
+    ],
+    "adaptedFrom": "tests/parametric/test_headers_baggage.py::Test_Headers_Baggage::test_baggageheader_maxbytes_inject_D017"
+  },
+  {
+    "name": "shared-sdk-test-headers-baggage-test-headers-baggage-span-tags-test-baggage-span-tags-default-0",
+    "method": "test_headers_baggage.Test_Headers_Baggage_Span_Tags.test_baggage_span_tags_default[0]",
+    "features": [
+      "datadog_baggage_headers"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-baggage-test-headers-baggage-span-tags-test-baggage-span-tags-specific-keys-0",
+    "method": "test_headers_baggage.Test_Headers_Baggage_Span_Tags.test_baggage_span_tags_specific_keys[0]",
+    "features": [
+      "datadog_baggage_headers"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-baggage-test-headers-baggage-span-tags-test-baggage-span-tags-all-0",
+    "method": "test_headers_baggage.Test_Headers_Baggage_Span_Tags.test_baggage_span_tags_all[0]",
+    "features": [
+      "datadog_baggage_headers"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-baggage-test-headers-baggage-span-tags-test-baggage-span-tags-malformed-header-0",
+    "method": "test_headers_baggage.Test_Headers_Baggage_Span_Tags.test_baggage_span_tags_malformed_header[0]",
+    "features": [
+      "datadog_baggage_headers"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-baggage-test-headers-baggage-span-tags-test-baggage-span-tags-disabled-0",
+    "method": "test_headers_baggage.Test_Headers_Baggage_Span_Tags.test_baggage_span_tags_disabled[0]",
+    "features": [
+      "datadog_baggage_headers"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-baggage-test-headers-baggage-span-tags-test-baggage-span-tags-key-with-asterisk-0",
+    "method": "test_headers_baggage.Test_Headers_Baggage_Span_Tags.test_baggage_span_tags_key_with_asterisk[0]",
+    "features": [
+      "datadog_baggage_headers"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-baggage-test-headers-baggage-span-tags-test-baggage-span-tags-config-with-empty-keys-0",
+    "method": "test_headers_baggage.Test_Headers_Baggage_Span_Tags.test_baggage_span_tags_config_with_empty_keys[0]",
+    "features": [
+      "datadog_baggage_headers"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-datadog-test-headers-datadog-test-distributed-headers-extract-datadog-d001-0",
+    "method": "test_headers_datadog.Test_Headers_Datadog.test_distributed_headers_extract_datadog_D001[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-datadog-test-headers-datadog-test-distributed-headers-extract-datadog-invalid-d002-0",
+    "method": "test_headers_datadog.Test_Headers_Datadog.test_distributed_headers_extract_datadog_invalid_D002[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-datadog-test-headers-datadog-test-distributed-headers-inject-datadog-d003-0",
+    "method": "test_headers_datadog.Test_Headers_Datadog.test_distributed_headers_inject_datadog_D003[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-datadog-test-headers-datadog-test-distributed-headers-propagate-datadog-d004-0",
+    "method": "test_headers_datadog.Test_Headers_Datadog.test_distributed_headers_propagate_datadog_D004[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-datadog-test-headers-datadog-test-distributed-headers-extractandinject-datadog-invalid-d005-0",
+    "method": "test_headers_datadog.Test_Headers_Datadog.test_distributed_headers_extractandinject_datadog_invalid_D005[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-none-test-headers-none-test-headers-none-extract-0",
+    "method": "test_headers_none.Test_Headers_None.test_headers_none_extract[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-none-test-headers-none-test-headers-none-extract-with-other-propagators-0",
+    "method": "test_headers_none.Test_Headers_None.test_headers_none_extract_with_other_propagators[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-none-test-headers-none-test-headers-none-inject-0",
+    "method": "test_headers_none.Test_Headers_None.test_headers_none_inject[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-none-test-headers-none-test-headers-none-inject-with-other-propagators-0",
+    "method": "test_headers_none.Test_Headers_None.test_headers_none_inject_with_other_propagators[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-none-test-headers-none-test-headers-none-propagate-0",
+    "method": "test_headers_none.Test_Headers_None.test_headers_none_propagate[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-none-test-headers-none-test-headers-none-single-key-propagate-0",
+    "method": "test_headers_none.Test_Headers_None.test_headers_none_single_key_propagate[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-precedence-test-headers-precedence-test-headers-precedence-propagationstyle-datadog-0",
+    "method": "test_headers_precedence.Test_Headers_Precedence.test_headers_precedence_propagationstyle_datadog[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-precedence-test-headers-precedence-test-headers-precedence-propagationstyle-tracecontext-datadog-0",
+    "method": "test_headers_precedence.Test_Headers_Precedence.test_headers_precedence_propagationstyle_tracecontext_datadog[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-precedence-test-headers-precedence-test-headers-precedence-propagationstyle-tracecontext-0",
+    "method": "test_headers_precedence.Test_Headers_Precedence.test_headers_precedence_propagationstyle_tracecontext[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-precedence-test-headers-precedence-test-headers-precedence-propagationstyle-default-datadog-tracecontext-0",
+    "method": "test_headers_precedence.Test_Headers_Precedence.test_headers_precedence_propagationstyle_default_datadog_tracecontext[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-precedence-test-headers-precedence-test-headers-precedence-propagationstyle-datadog-tracecontext-0",
+    "method": "test_headers_precedence.Test_Headers_Precedence.test_headers_precedence_propagationstyle_datadog_tracecontext[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-precedence-test-headers-precedence-test-headers-precedence-propagationstyle-tracecontext-last-extract-first-false-correctly-propagates-tracestate-0",
+    "method": "test_headers_precedence.Test_Headers_Precedence.test_headers_precedence_propagationstyle_tracecontext_last_extract_first_false_correctly_propagates_tracestate[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-precedence-test-headers-precedence-test-headers-precedence-propagationstyle-tracecontext-last-extract-first-false-correctly-propagates-tracestate-1",
+    "method": "test_headers_precedence.Test_Headers_Precedence.test_headers_precedence_propagationstyle_tracecontext_last_extract_first_false_correctly_propagates_tracestate[1]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-precedence-test-headers-precedence-test-headers-precedence-propagationstyle-tracecontext-last-extract-first-true-correctly-propagates-tracestate-0",
+    "method": "test_headers_precedence.Test_Headers_Precedence.test_headers_precedence_propagationstyle_tracecontext_last_extract_first_true_correctly_propagates_tracestate[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-precedence-test-headers-precedence-test-headers-precedence-propagationstyle-tracecontext-first-extract-first-false-correctly-propagates-tracestate-0",
+    "method": "test_headers_precedence.Test_Headers_Precedence.test_headers_precedence_propagationstyle_tracecontext_first_extract_first_false_correctly_propagates_tracestate[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-precedence-test-headers-precedence-test-headers-precedence-propagationstyle-tracecontext-first-extract-first-false-correctly-propagates-tracestate-1",
+    "method": "test_headers_precedence.Test_Headers_Precedence.test_headers_precedence_propagationstyle_tracecontext_first_extract_first_false_correctly_propagates_tracestate[1]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-precedence-test-headers-precedence-test-headers-precedence-propagationstyle-tracecontext-first-extract-first-true-correctly-propagates-tracestate-0",
+    "method": "test_headers_precedence.Test_Headers_Precedence.test_headers_precedence_propagationstyle_tracecontext_first_extract_first_true_correctly_propagates_tracestate[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-both-traceparent-and-tracestate-missing-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_both_traceparent_and_tracestate_missing[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-single-key-traceparent-included-tracestate-missing-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_single_key_traceparent_included_tracestate_missing[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-traceparent-included-tracestate-missing-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_traceparent_included_tracestate_missing[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-traceparent-header-name-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_traceparent_header_name[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-traceparent-header-name-valid-casing-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_traceparent_header_name_valid_casing[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-traceparent-version-0x00-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_traceparent_version_0x00[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-traceparent-version-0xcc-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_traceparent_version_0xcc[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-traceparent-version-0xff-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_traceparent_version_0xff[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-traceparent-version-illegal-characters-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_traceparent_version_illegal_characters[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-traceparent-version-too-long-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_traceparent_version_too_long[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-traceparent-version-too-short-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_traceparent_version_too_short[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-traceparent-trace-id-all-zero-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_traceparent_trace_id_all_zero[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-traceparent-trace-id-illegal-characters-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_traceparent_trace_id_illegal_characters[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-traceparent-trace-id-too-long-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_traceparent_trace_id_too_long[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-traceparent-trace-id-too-short-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_traceparent_trace_id_too_short[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-traceparent-parent-id-all-zero-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_traceparent_parent_id_all_zero[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-traceparent-parent-id-illegal-characters-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_traceparent_parent_id_illegal_characters[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-traceparent-parent-id-too-long-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_traceparent_parent_id_too_long[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-traceparent-parent-id-too-short-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_traceparent_parent_id_too_short[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-traceparent-trace-flags-illegal-characters-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_traceparent_trace_flags_illegal_characters[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-traceparent-trace-flags-too-long-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_traceparent_trace_flags_too_long[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-traceparent-trace-flags-too-short-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_traceparent_trace_flags_too_short[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-traceparent-ows-handling-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_traceparent_ows_handling[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-tracestate-included-traceparent-missing-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_tracestate_included_traceparent_missing[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-tracestate-included-traceparent-included-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_tracestate_included_traceparent_included[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-tracestate-header-name-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_tracestate_header_name[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-tracestate-header-name-valid-casing-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_tracestate_header_name_valid_casing[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-tracestate-duplicated-keys-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_tracestate_duplicated_keys[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-tracestate-w3c-p-extract-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_tracestate_w3c_p_extract[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-tracestate-w3c-p-inject-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_tracestate_w3c_p_inject[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-tracestate-w3c-p-extract-and-inject-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_tracestate_w3c_p_extract_and_inject[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-tracestate-w3c-p-extract-datadog-w3c-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_tracestate_w3c_p_extract_datadog_w3c[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-tracestate-w3c-p-phase-3-extract-first-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_tracestate_w3c_p_phase_3_extract_first[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-tracestate-w3c-context-leak-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_tracestate_w3c_context_leak[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-tracestate-all-allowed-characters-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_tracestate_all_allowed_characters[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracecontext-test-headers-tracecontext-test-tracestate-ows-handling-0",
+    "method": "test_headers_tracecontext.Test_Headers_Tracecontext.test_tracestate_ows_handling[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracestate-dd-test-headers-tracestate-dd-test-headers-tracestate-dd-propagate-samplingpriority-0",
+    "method": "test_headers_tracestate_dd.Test_Headers_Tracestate_DD.test_headers_tracestate_dd_propagate_samplingpriority[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracestate-dd-test-headers-tracestate-dd-test-headers-tracestate-dd-propagate-origin-0",
+    "method": "test_headers_tracestate_dd.Test_Headers_Tracestate_DD.test_headers_tracestate_dd_propagate_origin[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracestate-dd-test-headers-tracestate-dd-test-headers-tracestate-dd-propagate-propagatedtags-0",
+    "method": "test_headers_tracestate_dd.Test_Headers_Tracestate_DD.test_headers_tracestate_dd_propagate_propagatedtags[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracestate-dd-test-headers-tracestate-dd-test-headers-tracestate-dd-keeps-32-or-fewer-list-members-0",
+    "method": "test_headers_tracestate_dd.Test_Headers_Tracestate_DD.test_headers_tracestate_dd_keeps_32_or_fewer_list_members[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracestate-dd-test-headers-tracestate-dd-test-headers-tracestate-dd-known-elements-not-duplicated-0",
+    "method": "test_headers_tracestate_dd.Test_Headers_Tracestate_DD.test_headers_tracestate_dd_known_elements_not_duplicated[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-headers-tracestate-dd-test-headers-tracestate-dd-test-headers-tracestate-ows-between-list-members-0",
+    "method": "test_headers_tracestate_dd.Test_Headers_Tracestate_DD.test_headers_tracestate_ows_between_list_members[0]",
+    "features": [
+      "datadog_headers_propagation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-span-methods-test-otel-span-methods-test-otel-start-span-0",
+    "method": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_start_span[0]",
+    "features": [
+      "open_tracing_api",
+      "otel_api"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-span-methods-test-otel-span-methods-test-otel-set-service-name-0",
+    "method": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_set_service_name[0]",
+    "features": [
+      "open_tracing_api",
+      "otel_api"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-span-methods-test-otel-span-methods-test-otel-set-attribute-remapping-httpresponsestatuscode-0",
+    "method": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_set_attribute_remapping_httpresponsestatuscode[0]",
+    "features": [
+      "open_tracing_api",
+      "otel_api"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-span-methods-test-otel-span-methods-test-otel-set-attribute-remapping-httpstatuscode-0",
+    "method": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_set_attribute_remapping_httpstatuscode[0]",
+    "features": [
+      "open_tracing_api",
+      "otel_api"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-span-methods-test-otel-span-methods-test-otel-span-is-recording-0",
+    "method": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_span_is_recording[0]",
+    "features": [
+      "open_tracing_api",
+      "otel_api"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-span-methods-test-otel-span-methods-test-otel-span-finished-end-options-0",
+    "method": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_span_finished_end_options[0]",
+    "features": [
+      "open_tracing_api",
+      "otel_api"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-span-methods-test-otel-span-methods-test-otel-span-end-0",
+    "method": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_span_end[0]",
+    "features": [
+      "open_tracing_api",
+      "otel_api"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-span-methods-test-otel-span-methods-test-otel-set-span-status-error-0",
+    "method": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_set_span_status_error[0]",
+    "features": [
+      "open_tracing_api",
+      "otel_api"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-span-methods-test-otel-span-methods-test-otel-get-span-context-0",
+    "method": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_get_span_context[0]",
+    "features": [
+      "open_tracing_api",
+      "otel_api"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-span-methods-test-otel-span-methods-test-otel-span-started-with-link-from-another-span-0",
+    "method": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_span_started_with_link_from_another_span[0]",
+    "features": [
+      "open_tracing_api",
+      "otel_api"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-span-methods-test-otel-span-methods-test-otel-span-link-attribute-handling-0",
+    "method": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_span_link_attribute_handling[0]",
+    "features": [
+      "open_tracing_api",
+      "otel_api"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-span-methods-test-otel-span-methods-test-otel-span-started-with-link-from-other-spans-0",
+    "method": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_span_started_with_link_from_other_spans[0]",
+    "features": [
+      "open_tracing_api",
+      "otel_api"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-span-methods-test-otel-span-methods-test-otel-add-event-meta-serialization-0",
+    "method": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_add_event_meta_serialization[0]",
+    "features": [
+      "open_tracing_api",
+      "otel_api"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-span-methods-test-otel-span-methods-test-otel-record-exception-does-not-set-error-0",
+    "method": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_record_exception_does_not_set_error[0]",
+    "features": [
+      "open_tracing_api",
+      "otel_api"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-span-methods-test-otel-span-methods-test-otel-record-exception-meta-serialization-0",
+    "method": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_record_exception_meta_serialization[0]",
+    "features": [
+      "open_tracing_api",
+      "otel_api"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-span-methods-test-otel-span-methods-test-otel-record-exception-attributes-serialization-0",
+    "method": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_record_exception_attributes_serialization[0]",
+    "features": [
+      "open_tracing_api",
+      "otel_api"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-span-methods-test-otel-span-methods-test-otel-record-exception-sets-all-error-tracking-tags-0",
+    "method": "test_otel_span_methods.Test_Otel_Span_Methods.test_otel_record_exception_sets_all_error_tracking_tags[0]",
+    "features": [
+      "open_tracing_api",
+      "otel_api"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-tracer-test-otel-tracer-test-otel-simple-trace-0",
+    "method": "test_otel_tracer.Test_Otel_Tracer.test_otel_simple_trace[0]",
+    "features": [
+      "open_tracing_api",
+      "otel_api"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-otel-tracer-test-otel-tracer-test-otel-force-flush-0",
+    "method": "test_otel_tracer.Test_Otel_Tracer.test_otel_force_flush[0]",
+    "features": [
+      "open_tracing_api",
+      "otel_api"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-partial-flushing-test-partial-flushing-test-partial-flushing-one-span-0",
+    "method": "test_partial_flushing.Test_Partial_Flushing.test_partial_flushing_one_span[0]",
+    "features": [
+      "partial_flush"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-partial-flushing-test-partial-flushing-test-partial-flushing-one-span-default-0",
+    "method": "test_partial_flushing.Test_Partial_Flushing.test_partial_flushing_one_span_default[0]",
+    "features": [
+      "partial_flush"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-partial-flushing-test-partial-flushing-test-partial-flushing-propagation-tags-0",
+    "method": "test_partial_flushing.Test_Partial_Flushing.test_partial_flushing_propagation_tags[0]",
+    "features": [
+      "partial_flush"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-partial-flushing-test-partial-flushing-test-partial-flushing-under-limit-one-payload-0",
+    "method": "test_partial_flushing.Test_Partial_Flushing.test_partial_flushing_under_limit_one_payload[0]",
+    "features": [
+      "partial_flush"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-partial-flushing-test-partial-flushing-test-partial-flushing-disabled-0",
+    "method": "test_partial_flushing.Test_Partial_Flushing.test_partial_flushing_disabled[0]",
+    "features": [
+      "partial_flush"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-sampling-delegation-test-decisionless-extraction-test-sampling-delegation-extract-neither-decision-nor-delegation-0",
+    "method": "test_sampling_delegation.Test_Decisionless_Extraction.test_sampling_delegation_extract_neither_decision_nor_delegation[0]",
+    "features": [
+      "decisionless_extraction"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-sampling-manual-test-manual-sampling-test-sampling-manual-keep-0",
+    "method": "test_sampling_manual.Test_Manual_Sampling.test_sampling_manual_keep[0]",
+    "features": [
+      "ensure_that_sampling_is_consistent_across_languages"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-sampling-span-tags-test-sampling-span-tags-test-tags-defaults-sst002-0",
+    "method": "test_sampling_span_tags.Test_Sampling_Span_Tags.test_tags_defaults_sst002[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-sampling-span-tags-test-sampling-span-tags-test-tags-defaults-rate-1-and-rule-0-sst006-0",
+    "method": "test_sampling_span_tags.Test_Sampling_Span_Tags.test_tags_defaults_rate_1_and_rule_0_sst006[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-sampling-span-tags-test-knuth-sample-rate-test-sampling-knuth-sample-rate-trace-sampling-rule-0",
+    "method": "test_sampling_span_tags.Test_Knuth_Sample_Rate.test_sampling_knuth_sample_rate_trace_sampling_rule[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-sampling-span-tags-test-knuth-sample-rate-test-sampling-knuth-sample-rate-trace-sampling-rule-1",
+    "method": "test_sampling_span_tags.Test_Knuth_Sample_Rate.test_sampling_knuth_sample_rate_trace_sampling_rule[1]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-sampling-span-tags-test-knuth-sample-rate-test-sampling-knuth-sample-rate-trace-sampling-rule-2",
+    "method": "test_sampling_span_tags.Test_Knuth_Sample_Rate.test_sampling_knuth_sample_rate_trace_sampling_rule[2]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-sampling-span-tags-test-knuth-sample-rate-test-sampling-knuth-sample-rate-trace-sampling-rule-3",
+    "method": "test_sampling_span_tags.Test_Knuth_Sample_Rate.test_sampling_knuth_sample_rate_trace_sampling_rule[3]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-sampling-span-tags-test-knuth-sample-rate-test-sampling-extract-knuth-sample-rate-distributed-tracing-datadog-0",
+    "method": "test_sampling_span_tags.Test_Knuth_Sample_Rate.test_sampling_extract_knuth_sample_rate_distributed_tracing_datadog[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-sampling-span-tags-test-knuth-sample-rate-test-sampling-extract-knuth-sample-rate-distributed-tracing-datadog-1",
+    "method": "test_sampling_span_tags.Test_Knuth_Sample_Rate.test_sampling_extract_knuth_sample_rate_distributed_tracing_datadog[1]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-sampling-span-tags-test-knuth-sample-rate-test-sampling-extract-knuth-sample-rate-distributed-tracing-tracecontext-0",
+    "method": "test_sampling_span_tags.Test_Knuth_Sample_Rate.test_sampling_extract_knuth_sample_rate_distributed_tracing_tracecontext[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-sampling-span-tags-test-knuth-sample-rate-test-sampling-knuth-sample-rate-not-set-for-default-0",
+    "method": "test_sampling_span_tags.Test_Knuth_Sample_Rate.test_sampling_knuth_sample_rate_not_set_for_default[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-span-events-test-span-events-test-span-with-event-v04-0",
+    "method": "test_span_events.Test_Span_Events.test_span_with_event_v04[0]",
+    "features": [
+      "span_events"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-span-events-test-span-events-test-span-with-invalid-event-attributes-0",
+    "method": "test_span_events.Test_Span_Events.test_span_with_invalid_event_attributes[0]",
+    "features": [
+      "span_events"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-span-links-test-span-links-test-span-started-with-link-v04-0",
+    "method": "test_span_links.Test_Span_Links.test_span_started_with_link_v04[0]",
+    "features": [
+      "span_links"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-span-links-test-span-links-test-span-link-from-distributed-datadog-headers-0",
+    "method": "test_span_links.Test_Span_Links.test_span_link_from_distributed_datadog_headers[0]",
+    "features": [
+      "span_links"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-span-links-test-span-links-test-span-link-from-distributed-w3c-headers-0",
+    "method": "test_span_links.Test_Span_Links.test_span_link_from_distributed_w3c_headers[0]",
+    "features": [
+      "span_links"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-span-links-test-span-links-test-span-with-attached-links-0",
+    "method": "test_span_links.Test_Span_Links.test_span_with_attached_links[0]",
+    "features": [
+      "span_links"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-span-sampling-test-span-sampling-test-single-rule-match-span-sampling-sss001-0",
+    "method": "test_span_sampling.Test_Span_Sampling.test_single_rule_match_span_sampling_sss001[0]",
+    "features": [
+      "single_span_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-span-sampling-test-span-sampling-test-special-glob-characters-span-sampling-sss002-0",
+    "method": "test_span_sampling.Test_Span_Sampling.test_special_glob_characters_span_sampling_sss002[0]",
+    "features": [
+      "single_span_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-span-sampling-test-span-sampling-test-single-rule-no-match-span-sampling-sss003-0",
+    "method": "test_span_sampling.Test_Span_Sampling.test_single_rule_no_match_span_sampling_sss003[0]",
+    "features": [
+      "single_span_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-span-sampling-test-span-sampling-test-single-rule-only-service-pattern-match-span-sampling-sss004-0",
+    "method": "test_span_sampling.Test_Span_Sampling.test_single_rule_only_service_pattern_match_span_sampling_sss004[0]",
+    "features": [
+      "single_span_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-span-sampling-test-span-sampling-test-single-rule-only-name-pattern-no-match-span-sampling-sss005-0",
+    "method": "test_span_sampling.Test_Span_Sampling.test_single_rule_only_name_pattern_no_match_span_sampling_sss005[0]",
+    "features": [
+      "single_span_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-span-sampling-test-span-sampling-test-multi-rule-keep-drop-span-sampling-sss006-0",
+    "method": "test_span_sampling.Test_Span_Sampling.test_multi_rule_keep_drop_span_sampling_sss006[0]",
+    "features": [
+      "single_span_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-span-sampling-test-span-sampling-test-multi-rule-drop-keep-span-sampling-sss007-0",
+    "method": "test_span_sampling.Test_Span_Sampling.test_multi_rule_drop_keep_span_sampling_sss007[0]",
+    "features": [
+      "single_span_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-span-sampling-test-span-sampling-test-single-rule-rate-limiter-span-sampling-sss008-0",
+    "method": "test_span_sampling.Test_Span_Sampling.test_single_rule_rate_limiter_span_sampling_sss008[0]",
+    "features": [
+      "single_span_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-span-sampling-test-span-sampling-test-sampling-rate-not-absolute-value-sss009-0",
+    "method": "test_span_sampling.Test_Span_Sampling.test_sampling_rate_not_absolute_value_sss009[0]",
+    "features": [
+      "single_span_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-span-sampling-test-span-sampling-test-single-rule-always-keep-span-sampling-sss011-0",
+    "method": "test_span_sampling.Test_Span_Sampling.test_single_rule_always_keep_span_sampling_sss011[0]",
+    "features": [
+      "single_span_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-span-sampling-test-span-sampling-test-single-rule-tracer-always-keep-span-sampling-sss012-0",
+    "method": "test_span_sampling.Test_Span_Sampling.test_single_rule_tracer_always_keep_span_sampling_sss012[0]",
+    "features": [
+      "single_span_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-span-sampling-test-span-sampling-test-multi-rule-independent-rate-limiters-sss013-0",
+    "method": "test_span_sampling.Test_Span_Sampling.test_multi_rule_independent_rate_limiters_sss013[0]",
+    "features": [
+      "single_span_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-span-sampling-test-span-sampling-test-root-span-selected-by-sss014-0",
+    "method": "test_span_sampling.Test_Span_Sampling.test_root_span_selected_by_sss014[0]",
+    "features": [
+      "single_span_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-span-sampling-test-span-sampling-test-child-span-selected-by-sss015-0",
+    "method": "test_span_sampling.Test_Span_Sampling.test_child_span_selected_by_sss015[0]",
+    "features": [
+      "single_span_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-span-sampling-test-span-sampling-test-single-rule-with-head-and-rule-trace-sampling-keep-019-0",
+    "method": "test_span_sampling.Test_Span_Sampling.test_single_rule_with_head_and_rule_trace_sampling_keep_019[0]",
+    "features": [
+      "single_span_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-span-sampling-test-span-sampling-test-single-rule-with-head-and-rule-trace-sampling-drop-020-0",
+    "method": "test_span_sampling.Test_Span_Sampling.test_single_rule_with_head_and_rule_trace_sampling_drop_020[0]",
+    "features": [
+      "single_span_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-basic-test-trace-sampled-by-trace-sampling-rule-exact-match-0",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Basic.test_trace_sampled_by_trace_sampling_rule_exact_match[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-basic-test-trace-sampled-by-trace-sampling-rule-exact-match-1",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Basic.test_trace_sampled_by_trace_sampling_rule_exact_match[1]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-basic-test-trace-sampled-by-trace-sampling-rule-exact-match-2",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Basic.test_trace_sampled_by_trace_sampling_rule_exact_match[2]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-basic-test-trace-dropped-by-trace-sampling-rule-0",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Basic.test_trace_dropped_by_trace_sampling_rule[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-basic-test-trace-kept-in-spite-trace-sampling-rule-0",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Basic.test_trace_kept_in_spite_trace_sampling_rule[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-globs-test-trace-sampled-by-trace-sampling-rule-glob-match-0",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Globs.test_trace_sampled_by_trace_sampling_rule_glob_match[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-globs-test-trace-sampled-by-trace-sampling-rule-glob-match-1",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Globs.test_trace_sampled_by_trace_sampling_rule_glob_match[1]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-globs-test-trace-sampled-by-trace-sampling-rule-glob-match-2",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Globs.test_trace_sampled_by_trace_sampling_rule_glob_match[2]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-globs-test-field-case-insensitivity-0",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Globs.test_field_case_insensitivity[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-globs-test-field-case-insensitivity-1",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Globs.test_field_case_insensitivity[1]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-globs-test-field-case-insensitivity-2",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Globs.test_field_case_insensitivity[2]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-globs-test-field-case-insensitivity-3",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Globs.test_field_case_insensitivity[3]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-globs-test-trace-dropped-by-trace-sampling-rule-0",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Globs.test_trace_dropped_by_trace_sampling_rule[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-globs-feb2024-revision-test-trace-sampled-by-trace-sampling-rule-insensitive-glob-match-0",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Globs_Feb2024_Revision.test_trace_sampled_by_trace_sampling_rule_insensitive_glob_match[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-globs-feb2024-revision-test-trace-sampled-by-trace-sampling-rule-insensitive-glob-match-1",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Globs_Feb2024_Revision.test_trace_sampled_by_trace_sampling_rule_insensitive_glob_match[1]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-globs-feb2024-revision-test-trace-sampled-by-trace-sampling-rule-insensitive-glob-match-2",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Globs_Feb2024_Revision.test_trace_sampled_by_trace_sampling_rule_insensitive_glob_match[2]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-resource-test-trace-sampled-by-trace-sampling-rule-exact-match-0",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Resource.test_trace_sampled_by_trace_sampling_rule_exact_match[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-resource-test-trace-sampled-by-trace-sampling-rule-exact-match-1",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Resource.test_trace_sampled_by_trace_sampling_rule_exact_match[1]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-resource-test-trace-sampled-by-trace-sampling-rule-exact-match-2",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Resource.test_trace_sampled_by_trace_sampling_rule_exact_match[2]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-resource-test-trace-sampled-by-trace-sampling-rule-exact-match-3",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Resource.test_trace_sampled_by_trace_sampling_rule_exact_match[3]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-resource-test-trace-dropped-by-trace-sampling-rule-0",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Resource.test_trace_dropped_by_trace_sampling_rule[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-test-trace-sampled-by-trace-sampling-rule-tags-0",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags.test_trace_sampled_by_trace_sampling_rule_tags[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-test-trace-sampled-by-trace-sampling-rule-tags-1",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags.test_trace_sampled_by_trace_sampling_rule_tags[1]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-test-trace-sampled-by-trace-sampling-rule-tags-2",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags.test_trace_sampled_by_trace_sampling_rule_tags[2]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-test-trace-sampled-by-trace-sampling-rule-tags-3",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags.test_trace_sampled_by_trace_sampling_rule_tags[3]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-test-trace-dropped-by-trace-sampling-rule-tags-0",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags.test_trace_dropped_by_trace_sampling_rule_tags[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-globs-same-casing-0",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_globs_same_casing[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-globs-same-casing-1",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_globs_same_casing[1]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-globs-same-casing-2",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_globs_same_casing[2]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-globs-same-casing-3",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_globs_same_casing[3]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-globs-same-casing-4",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_globs_same_casing[4]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-globs-same-casing-5",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_globs_same_casing[5]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-globs-same-casing-6",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_globs_same_casing[6]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-globs-different-casing-0",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_globs_different_casing[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-globs-different-casing-1",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_globs_different_casing[1]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-globs-different-casing-2",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_globs_different_casing[2]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-globs-different-casing-3",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_globs_different_casing[3]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-no-set-support-0",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_no_set_support[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-no-range-support-0",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_no_range_support[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-regex-special-chars-0",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_regex_special_chars[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-meta-existence-0",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_meta_existence[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-meta-existence-1",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_meta_existence[1]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-meta-existence-2",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_meta_existence[2]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-metric-existence-0",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_metric_existence[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-metric-existence-1",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_metric_existence[1]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-metric-existence-2",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_metric_existence[2]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-metric-existence-3",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_metric_existence[3]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-metric-existence-4",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_metric_existence[4]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-metric-existence-5",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_metric_existence[5]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-metric-existence-6",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_metric_existence[6]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-metric-existence-7",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_metric_existence[7]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-metric-existence-8",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_metric_existence[8]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-metric-existence-9",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_metric_existence[9]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-metric-existence-10",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_metric_existence[10]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-metric-existence-11",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_metric_existence[11]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-metric-existence-12",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_metric_existence[12]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-metric-existence-13",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_metric_existence[13]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-metric-existence-14",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_metric_existence[14]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-metric-matching-0",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_metric_matching[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-metric-matching-1",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_metric_matching[1]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-metric-matching-2",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_metric_matching[2]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-tags-feb2024-revision-test-metric-matching-3",
+    "method": "test_trace_sampling.Test_Trace_Sampling_Tags_Feb2024_Revision.test_metric_matching[3]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-with-w3c-test-trace-sampled-by-trace-sampling-rule-tags-0",
+    "method": "test_trace_sampling.Test_Trace_Sampling_With_W3C.test_trace_sampled_by_trace_sampling_rule_tags[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-trace-sampling-test-trace-sampling-with-w3c-test-distributed-headers-synthetics-sampling-decision-0",
+    "method": "test_trace_sampling.Test_Trace_Sampling_With_W3C.test_distributed_headers_synthetics_sampling_decision[0]",
+    "features": [
+      "trace_sampling"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-tracer-test-tracer-test-tracer-span-top-level-attributes-0",
+    "method": "test_tracer.Test_Tracer.test_tracer_span_top_level_attributes[0]",
+    "features": [
+      "trace_annotation"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-tracer-test-tracerscitagging-test-tracer-repository-url-environment-variable-0",
+    "method": "test_tracer.Test_TracerSCITagging.test_tracer_repository_url_environment_variable[0]",
+    "features": [
+      "embeded_git_reference"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-tracer-test-tracerscitagging-test-tracer-commit-sha-environment-variable-0",
+    "method": "test_tracer.Test_TracerSCITagging.test_tracer_commit_sha_environment_variable[0]",
+    "features": [
+      "embeded_git_reference"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-tracer-test-tracerscitagging-test-tracer-repository-url-strip-credentials-0",
+    "method": "test_tracer.Test_TracerSCITagging.test_tracer_repository_url_strip_credentials[0]",
+    "features": [
+      "embeded_git_reference"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-tracer-test-tracerscitagging-test-tracer-repository-url-strip-credentials-1",
+    "method": "test_tracer.Test_TracerSCITagging.test_tracer_repository_url_strip_credentials[1]",
+    "features": [
+      "embeded_git_reference"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-tracer-test-tracerscitagging-test-tracer-repository-url-strip-credentials-2",
+    "method": "test_tracer.Test_TracerSCITagging.test_tracer_repository_url_strip_credentials[2]",
+    "features": [
+      "embeded_git_reference"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-tracer-test-tracerscitagging-test-tracer-repository-url-strip-credentials-3",
+    "method": "test_tracer.Test_TracerSCITagging.test_tracer_repository_url_strip_credentials[3]",
+    "features": [
+      "embeded_git_reference"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-tracer-test-tracerscitagging-test-tracer-repository-url-strip-credentials-4",
+    "method": "test_tracer.Test_TracerSCITagging.test_tracer_repository_url_strip_credentials[4]",
+    "features": [
+      "embeded_git_reference"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-tracer-test-tracerscitagging-test-tracer-repository-url-strip-credentials-5",
+    "method": "test_tracer.Test_TracerSCITagging.test_tracer_repository_url_strip_credentials[5]",
+    "features": [
+      "embeded_git_reference"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-tracer-test-tracerscitagging-test-tracer-repository-url-strip-credentials-6",
+    "method": "test_tracer.Test_TracerSCITagging.test_tracer_repository_url_strip_credentials[6]",
+    "features": [
+      "embeded_git_reference"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-tracer-test-traceruniversalservicetagging-test-tracer-service-name-environment-variable-0",
+    "method": "test_tracer.Test_TracerUniversalServiceTagging.test_tracer_service_name_environment_variable[0]",
+    "features": [
+      "unified_service_tagging"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-tracer-test-traceruniversalservicetagging-test-tracer-env-environment-variable-0",
+    "method": "test_tracer.Test_TracerUniversalServiceTagging.test_tracer_env_environment_variable[0]",
+    "features": [
+      "unified_service_tagging"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-tracer-test-tracerservicenamesource-test-tracer-manual-service-name-sets-srv-src-0",
+    "method": "test_tracer.Test_TracerServiceNameSource.test_tracer_manual_service_name_sets_srv_src[0]",
+    "features": [
+      "service_override_source"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-tracer-test-tracerservicenamesource-test-tracer-no-srv-src-when-service-not-manually-set-0",
+    "method": "test_tracer.Test_TracerServiceNameSource.test_tracer_no_srv_src_when_service_not_manually_set[0]",
+    "features": [
+      "service_override_source"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-tracer-test-tracerservicenamesource-test-tracer-srv-src-inherited-on-child-span-0",
+    "method": "test_tracer.Test_TracerServiceNameSource.test_tracer_srv_src_inherited_on_child_span[0]",
+    "features": [
+      "service_override_source"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-tracer-test-tracerbaseservice-test-base-service-set-when-service-overridden-0",
+    "method": "test_tracer.Test_TracerBaseService.test_base_service_set_when_service_overridden[0]",
+    "features": [
+      "base_service"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-tracer-test-tracerbaseservice-test-base-service-absent-when-service-not-overridden-0",
+    "method": "test_tracer.Test_TracerBaseService.test_base_service_absent_when_service_not_overridden[0]",
+    "features": [
+      "base_service"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-tracer-test-processtags-servicename-test-process-tag-svc-user-0",
+    "method": "test_tracer.Test_ProcessTags_ServiceName.test_process_tag_svc_user[0]",
+    "features": [
+      "process_tags"
+    ]
+  },
+  {
+    "name": "shared-sdk-test-tracer-test-processtags-servicename-test-process-tag-svc-auto-0",
+    "method": "test_tracer.Test_ProcessTags_ServiceName.test_process_tag_svc_auto[0]",
+    "features": [
+      "process_tags"
+    ]
+  },
+  {
+    "name": "shared-sdk-mapped-services",
+    "method": "portable_cases.ServiceMapping.mapped_services[0]",
+    "features": [
+      "dd_service_mapping"
+    ]
+  },
+  {
+    "name": "shared-sdk-independent-client-status-ranges",
+    "method": "local_cases.Test_Lab_Http.test_independent_client_status_ranges[0]",
+    "features": [
+      "trace_http_client_error_statuses"
+    ]
+  },
+  {
+    "name": "shared-sdk-query-enabled",
+    "method": "portable_cases.HTTP.query_enabled[0]",
+    "features": [
+      "trace_http_client_tag_query_string"
+    ]
+  },
+  {
+    "name": "shared-sdk-query-disabled",
+    "method": "portable_cases.HTTP.query_disabled[0]",
+    "features": [
+      "trace_http_client_tag_query_string"
+    ]
+  },
+  {
+    "name": "shared-sdk-baggage-tags",
+    "method": "portable_cases.HTTP.baggage_tags[0]",
+    "features": [
+      "baggage_span_tags"
+    ]
+  },
+  {
+    "name": "shared-sdk-referrer-hostname",
+    "method": "local_cases.Test_Lab_Http.test_referrer_hostname[0]",
+    "features": [
+      "referrer_hostname"
+    ]
+  },
+  {
+    "name": "shared-sdk-matching-status-ranges",
+    "method": "portable_cases.HTTP.matching_status_ranges[0]",
+    "features": [
+      "trace_http_server_error_statuses",
+      "trace_http_client_error_statuses",
+      "integration_enablement"
+    ]
+  },
+  {
+    "name": "shared-sdk-custom-status-ranges",
+    "method": "local_cases.Test_Lab_Http.test_custom_status_ranges[0]",
+    "features": [
+      "trace_http_server_error_statuses",
+      "trace_http_client_error_statuses"
+    ]
+  },
+  {
+    "name": "shared-sdk-request-header-tags",
+    "method": "portable_cases.HTTP.request_header_tags[0]",
+    "features": [
+      "http_headers_as_tags_dd_trace_header_tags"
+    ]
+  },
+  {
+    "name": "shared-sdk-query-redaction-default",
+    "method": "local_cases.Test_Lab_Http.test_query_redaction_default[0]",
+    "features": [
+      "trace_query_string_obfuscation"
+    ]
+  },
+  {
+    "name": "shared-sdk-query-redaction-custom",
+    "method": "local_cases.Test_Lab_Http.test_query_redaction_custom[0]",
+    "features": [
+      "trace_query_string_obfuscation"
+    ]
+  },
+  {
+    "name": "shared-sdk-query-redaction-empty",
+    "method": "local_cases.Test_Lab_Http.test_query_redaction_empty[0]",
+    "features": [
+      "trace_query_string_obfuscation"
+    ]
+  }
+]

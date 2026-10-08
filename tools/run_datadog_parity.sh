@@ -7,11 +7,12 @@ archive_evidence() {
   evidence="$2"
   artifacts="${BUILDBUDDY_ARTIFACTS_DIRECTORY:?BuildBuddy artifact directory is required}"
   mkdir -p "$evidence/logs" "$evidence/fixture-build-logs"
-  if [[ -d bazel-testlogs/fixtures ]]; then
+  if [[ "${DATADOG_PARITY_STAGE:-all}" == all && -d bazel-testlogs/fixtures ]]; then
     find -L bazel-testlogs/fixtures -name test.log -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/logs/" \;
     find -L bazel-testlogs/fixtures -path '*/test.outputs/*' -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/logs/" \;
   fi
   for directory in bazel-testlogs/harness examples/plugin_agent/bazel-testlogs; do
+    if [[ "${DATADOG_PARITY_STAGE:-all}" != all && "${DATADOG_PARITY_STAGE:-all}" != scenarios ]]; then continue; fi
     if [[ -d "$directory" ]]; then
       find -L "$directory" -name test.log -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/logs/" \;
     fi
@@ -31,16 +32,31 @@ images="${1:?usage: run_datadog_parity.sh IMAGE_DIRECTORY REVISION EVIDENCE_DIRE
 revision="${2:?usage: run_datadog_parity.sh IMAGE_DIRECTORY REVISION EVIDENCE_DIRECTORY}"
 evidence="${3:?usage: run_datadog_parity.sh IMAGE_DIRECTORY REVISION EVIDENCE_DIRECTORY}"
 mkdir -p "$evidence"
+stage="${DATADOG_PARITY_STAGE:-all}"
+case "$stage" in all|scenarios|features|shared-sdk|capabilities|gate) ;; *) echo "Unknown parity stage: $stage" >&2; exit 1 ;; esac
 
 mapfile -t image_flags < "$images/bazel.flags"
-bazel_args=(--config="${DATADOG_BAZEL_CONFIG:-local}")
+# Native services share executor ports and intake resources. Sharded RBE CI
+# supplies a smaller worker budget than the four-worker local default.
+jobs="${DATADOG_PARITY_JOBS:-4}"
+bazel_args=(--config="${DATADOG_BAZEL_CONFIG:-local}" --jobs="$jobs")
 if [[ "${DATADOG_BAZEL_CONFIG:-local}" != buildbuddy ]]; then
-  bazel_args+=(--jobs=4 --local_test_jobs=4)
+  bazel_args+=(--local_test_jobs=4)
   test_download_outputs=all
 else
   bazel_args+=(--spawn_strategy=remote,local)
   test_download_outputs=minimal
 fi
+downloaded_evidence_regex='.*(\.validators|test\.outputs)($|/.*)'
+# Remote tests expose test.log under minimal downloading; the explicit regex
+# fetches the complete validator and undeclared-output trees used as evidence.
+# Local cached OCI inputs need eager materialization to preserve directory aliases.
+test_download_args=(
+  --remote_download_outputs="$test_download_outputs"
+  "--remote_download_regex=$downloaded_evidence_regex"
+)
+
+if [[ "$stage" == all || "$stage" == scenarios ]]; then
 profiles=(
   //corpus:python-aiohttp-datadog-v4-15-5-v04
   //corpus:python-aiohttp-datadog-v4-15-5-v05
@@ -55,18 +71,9 @@ mapfile -t ruby_profiles < <(python3 -c 'import json; d=json.load(open("bazel-bi
 profiles+=("${ruby_profiles[@]}")
 # DefaultInfo for each profile carries its manifest and validator runfiles.
 # Fetch the complete tree: the coverage gate hashes every scenario bytecode.
-downloaded_evidence_regex='.*(\.validators|test\.outputs)($|/.*)'
 bazel build "${bazel_args[@]}" --remote_download_outputs=toplevel \
   "--remote_download_regex=$downloaded_evidence_regex" \
   "${image_flags[@]}" //tools/datadog_coverage:datadog_coverage "${profiles[@]}"
-
-# Remote tests expose test.log under minimal downloading; the explicit regex
-# fetches the complete validator and undeclared-output trees used as evidence.
-# Local cached OCI inputs need eager materialization to preserve directory aliases.
-test_download_args=(
-  --remote_download_outputs="$test_download_outputs"
-  "--remote_download_regex=$downloaded_evidence_regex"
-)
 
 for execution in 1 2; do
   suite_test_status=0
@@ -106,20 +113,34 @@ bazel test "${bazel_args[@]}" "${test_download_args[@]}" \
 mkdir -p "$evidence/parallel"
 find -L bazel-testlogs/fixtures -path '*/test.outputs/stress.*.json' -exec cp -L --no-preserve=mode --parents '{}' "$evidence/parallel/" \;
 
+fi
+
+if [[ "$stage" == all || "$stage" == features ]]; then
 # This suite includes manual Rails and Gin feature probes, whose individual
 # tests are intentionally absent from the wildcard full-suite expansion.
+# Bound native app startup to the same fleet concurrency as the SDK lab.
+mapfile -t feature_targets < <(python3 tools/buildbuddy_ci.py targets --suite //fixtures:datadog_external_features_suite --shard "${DATADOG_PARITY_SHARD:-0/1}")
+[[ ${#feature_targets[@]} -gt 0 ]] || { echo 'No native feature targets selected' >&2; exit 1; }
 shared_test_status=0
 bazel test "${bazel_args[@]}" "${test_download_args[@]}" \
-  --nocache_test_results \
+  --jobs="$jobs" --nocache_test_results \
   "${image_flags[@]}" \
-  //fixtures:datadog_external_features_suite || shared_test_status=$?
+  "${feature_targets[@]}" || shared_test_status=$?
 mkdir -p "$evidence/features"
-find -L bazel-testlogs/fixtures -path '*datadog_external_features_v0?_*/test.outputs/*' -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/features/" \;
-find -L bazel-testlogs/fixtures -path '*datadog_external_features_v0?_*/test.log' -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/features/" \;
+for target in "${feature_targets[@]}"; do
+  directory="bazel-testlogs/fixtures/${target##*:}"
+  if [[ -d "$directory/test.outputs" ]]; then
+    find -L "$directory/test.outputs" -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/features/" \;
+  fi
+  if [[ -f "$directory/test.log" ]]; then cp -L --no-preserve=mode --parents "$directory/test.log" "$evidence/features/"; fi
+done
 if (( shared_test_status != 0 )); then
   exit "$shared_test_status"
 fi
 
+fi
+
+if [[ "$stage" == all || "$stage" == gate ]]; then
 # Shared assertions require independent evidence from all three SDK languages.
 # Keep the entire 301-feature denominator and publish every missing cell.
 shared_evidence=()
@@ -145,13 +166,50 @@ python3 tools/datadog_capabilities.py "${shared_report[@]}" \
   --require-all-implemented \
   --require-percent "${DATADOG_SHARED_CAPABILITY_MIN_PERCENT:-0}"
 
+fi
+
+if [[ "$stage" == all || "$stage" == shared-sdk ]]; then
+# The native SDK lab runs identical independent cases in Python and Go. Pinned
+# upstream manifest exclusions are executed xfails, never capability passes.
+mapfile -t sdk_targets < <(python3 tools/buildbuddy_ci.py targets --suite //fixtures:datadog_shared_sdk_suite --shard "${DATADOG_PARITY_SHARD:-0/1}")
+[[ ${#sdk_targets[@]} -gt 0 ]] || { echo 'No shared SDK targets selected' >&2; exit 1; }
+shared_sdk_status=0
+bazel test "${bazel_args[@]}" "${test_download_args[@]}" \
+  --jobs="$jobs" --nocache_test_results "${image_flags[@]}" \
+  "${sdk_targets[@]}" || shared_sdk_status=$?
+mkdir -p "$evidence/shared-sdk"
+for target in "${sdk_targets[@]}"; do
+  directory="bazel-testlogs/fixtures/${target##*:}"
+  if [[ -d "$directory/test.outputs" ]]; then
+    find -L "$directory/test.outputs" -type f -exec cp -L --no-preserve=mode --parents '{}' "$evidence/shared-sdk/" \;
+    cp -L --no-preserve=mode --parents "$directory/test.log" "$evidence/shared-sdk/"
+  fi
+done
+if (( shared_sdk_status != 0 )); then exit "$shared_sdk_status"; fi
+fi
+
+if [[ "$stage" == all || "$stage" == gate ]]; then
+for format in json markdown; do
+  suffix="$format"
+  if [[ "$format" == markdown ]]; then suffix=md; fi
+  python3 tools/datadog_shared_sdk_report.py \
+    --evidence-dir "$evidence/shared-sdk" --evidence-dir "$evidence/features" \
+    --format "$format" --output "$evidence/datadog-shared-sdk-report.$suffix"
+done
+python3 tools/datadog_shared_sdk_report.py \
+  --evidence-dir "$evidence/shared-sdk" --evidence-dir "$evidence/features" \
+  --output "$evidence/datadog-shared-sdk-report.json" --require-complete-matrix
+
+fi
+
+if [[ "$stage" == all || "$stage" == capabilities ]]; then
 # Capability suites reuse existing Python frameworks and include the real Agent
 # and local backend. Retain every raw capture beside its receipt before gating.
 capability_test_status=0
-# Native SDK/Agent fixtures share the executor fleet. Bound their concurrency
-# to the four-worker load used for local acceptance, including startup timing.
+# Native SDK/Agent fixtures share the executor fleet. Respect the stage
+# worker budget, including their application startup.
 bazel test "${bazel_args[@]}" "${test_download_args[@]}" \
-  --jobs=4 \
+  --jobs="$jobs" \
   --nocache_test_results \
   "${image_flags[@]}" \
   //fixtures:datadog_capability_suite || capability_test_status=$?
@@ -166,6 +224,9 @@ done
 if (( capability_test_status != 0 )); then
   exit "$capability_test_status"
 fi
+fi
+
+if [[ "$stage" == all || "$stage" == gate ]]; then
 capability_evidence=()
 while IFS= read -r -d '' receipt; do
   capability_evidence+=(--evidence "$receipt")
@@ -184,3 +245,4 @@ python3 tools/datadog_capabilities.py "${capability_report[@]}" \
 python3 tools/datadog_capabilities.py "${capability_report[@]}" \
   --format markdown --output "$evidence/datadog-capabilities-report.md" \
   --require-percent "${DATADOG_CAPABILITY_MIN_PERCENT:-75}"
+fi

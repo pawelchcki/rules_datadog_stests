@@ -1,0 +1,14 @@
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
+package(default_visibility = ["//visibility:public"])
+exports_files(["versions.bzl", "versions.lock.json"])
+
+py_library(name = "probe_lib", srcs = ["probe.py"], data = ["versions.lock.json"])
+py_binary(name = "probe", srcs = ["probe.py"], main = "probe.py", data = ["versions.lock.json"])
+
+py_test(
+    name = "probe_test",
+    srcs = ["probe.py", "probe_test.py"],
+    main = "probe_test.py",
+    imports = ["."],
+    data = ["versions.lock.json"],
+)

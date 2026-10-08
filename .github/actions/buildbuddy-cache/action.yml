@@ -1,8 +1,8 @@
 name: BuildBuddy cache
-description: Reuse the BuildBuddy cache for local Actions builds without uploading results
+description: Configure BuildBuddy cache and RBE credentials without uploading local results
 inputs:
   api-key:
-    description: BuildBuddy cache credential; unavailable on fork pull requests
+    description: BuildBuddy credential; unavailable on fork pull requests
     required: false
 runs:
   using: composite
@@ -23,4 +23,5 @@ runs:
         cat >> "$HOME/.bazelrc" <<EOF
         common:buildbuddy-cache --remote_cache=grpcs://remote.buildbuddy.io
         common:buildbuddy-cache --remote_header=x-buildbuddy-api-key=$BUILDBUDDY_CACHE_KEY
+        common:buildbuddy --remote_header=x-buildbuddy-api-key=$BUILDBUDDY_CACHE_KEY
         EOF

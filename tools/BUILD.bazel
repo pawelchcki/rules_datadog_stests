@@ -5,6 +5,27 @@ load("//corpus:registry.bzl", "DATADOG_SHAPE_LIBRARIES", "datadog_library_args",
 package(default_visibility = ["//visibility:public"])
 
 py_test(
+    name = "buildbuddy_ci_test",
+    srcs = ["buildbuddy_ci.py", "buildbuddy_ci_test.py"],
+    main = "buildbuddy_ci_test.py",
+    imports = ["."],
+)
+
+py_binary(
+    name = "go_runtime_report",
+    srcs = ["go_runtime_report.py"],
+    deps = ["//harness/go_runtime:probe_lib"],
+)
+
+py_test(
+    name = "go_runtime_report_test",
+    srcs = ["go_runtime_report.py", "go_runtime_report_test.py", "retain_go_runtime_evidence.py"],
+    main = "go_runtime_report_test.py",
+    imports = ["."],
+    deps = ["//harness/go_runtime:probe_lib"],
+)
+
+py_test(
     name = "benchmark_datadog_test",
     srcs = ["benchmark_datadog_test.py"],
     data = ["benchmark_datadog.py"],
@@ -110,6 +131,19 @@ py_test(
     name = "datadog_capabilities_test",
     srcs = ["datadog_capabilities_test.py"],
     deps = [":datadog_capabilities_lib"],
+)
+
+py_binary(
+    name = "datadog_shared_sdk_report",
+    srcs = ["datadog_shared_sdk_report.py"],
+    deps = [":datadog_capabilities_lib"],
+)
+
+py_test(
+    name = "datadog_shared_sdk_report_test",
+    srcs = ["datadog_shared_sdk_report_test.py", "datadog_shared_sdk_report.py", "update_shared_sdk_cases.py"],
+    data = ["//harness/shared_sdk:cases.json", "//harness/shared_sdk:cases.bzl", "//docs:datadog-shared-sdk-capabilities-mapping.json"],
+    deps = [":datadog_capabilities_lib", "//harness/upstream_lab:runtime", "//harness/shared_sdk:portable_cases"],
 )
 
 py_library(

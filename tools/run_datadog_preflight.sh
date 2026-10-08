@@ -17,4 +17,5 @@ bazel test "${flags[@]}" -- \
   -//fixtures:datadog_suite \
   -//fixtures:datadog_parallel_suite \
   -//fixtures:datadog_external_features_suite \
+  -//fixtures:datadog_shared_sdk_suite \
   -//fixtures:datadog_capability_suite

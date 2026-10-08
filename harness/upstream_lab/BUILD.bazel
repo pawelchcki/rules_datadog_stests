@@ -1,4 +1,4 @@
-load("@rules_python//python:defs.bzl", "py_binary", "py_test")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -7,6 +7,12 @@ exports_files(["vendor/manifest.json"])
 filegroup(
     name = "upstream_sources",
     srcs = glob(["vendor/**"]),
+)
+
+py_library(
+    name = "runtime",
+    srcs = ["adapter.py", "expected_failures.py", "local_cases.py", "probe.py"],
+    imports = ["."],
 )
 
 py_binary(
