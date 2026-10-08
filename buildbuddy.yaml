@@ -1,5 +1,5 @@
-# Only the required parent is webhook-triggered. It starts every short stage
-# on the same commit and verifies their complete evidence before reporting green.
+# Only the required parent is webhook-triggered. PRs run four representative
+# stages; main runs all twelve exhaustive stages with full evidence gates.
 actions:
   - name: Full test suite
     visibility: PUBLIC
@@ -18,6 +18,50 @@ actions:
         branches: ["*"]
     steps:
       - run: tools/run_buildbuddy_ci.sh aggregate
+  - name: Datadog PR scenarios
+    visibility: PUBLIC
+    container_image: ubuntu-24.04
+    platform_properties:
+      remote-snapshot-save-policy: always
+      snapshot-read-policy: newest
+    resource_requests:
+      cpu: 4
+      memory: 8GB
+    steps:
+      - run: tools/run_buildbuddy_ci.sh stage "Datadog PR scenarios"
+  - name: Datadog PR features
+    visibility: PUBLIC
+    container_image: ubuntu-24.04
+    platform_properties:
+      remote-snapshot-save-policy: always
+      snapshot-read-policy: newest
+    resource_requests:
+      cpu: 4
+      memory: 8GB
+    steps:
+      - run: tools/run_buildbuddy_ci.sh stage "Datadog PR features"
+  - name: Datadog PR shared-sdk
+    visibility: PUBLIC
+    container_image: ubuntu-24.04
+    platform_properties:
+      remote-snapshot-save-policy: always
+      snapshot-read-policy: newest
+    resource_requests:
+      cpu: 4
+      memory: 8GB
+    steps:
+      - run: tools/run_buildbuddy_ci.sh stage "Datadog PR shared-sdk"
+  - name: Datadog PR capabilities
+    visibility: PUBLIC
+    container_image: ubuntu-24.04
+    platform_properties:
+      remote-snapshot-save-policy: always
+      snapshot-read-policy: newest
+    resource_requests:
+      cpu: 4
+      memory: 8GB
+    steps:
+      - run: tools/run_buildbuddy_ci.sh stage "Datadog PR capabilities"
   - name: Datadog scenarios
     visibility: PUBLIC
     container_image: ubuntu-24.04

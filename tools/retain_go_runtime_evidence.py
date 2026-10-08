@@ -12,9 +12,11 @@ def writable_directories(root):
             path.chmod(path.stat().st_mode | 0o700)
 
 
-def retain(logs, applications, output, package='fixtures'):
+def retain(logs, applications, output, package='fixtures', versions=None):
     for source in (logs/package).glob('*/test.outputs'):
         if package == 'fixtures' and not source.parent.name.startswith('go_runtime_'):
+            continue
+        if versions and not any(source.parent.name.endswith('_' + version.replace('.', '_') + '_test') for version in versions):
             continue
         destination = output/'tests'/source.parent.relative_to(logs)
         if destination.exists():
@@ -31,6 +33,8 @@ def retain(logs, applications, output, package='fixtures'):
             if path.exists():
                 shutil.copy2(path, destination/name)
     for manifest in applications.glob('go1_*_*/manifest.json'):
+        if versions and not manifest.parent.name.startswith(tuple(version.replace('.', '_') + '_' for version in versions)):
+            continue
         destination = output/'applications'/manifest.parent.name
         destination.mkdir(parents=True, exist_ok=True)
         for name in ('app', 'manifest.json', 'build.log'):
@@ -46,8 +50,9 @@ def main():
     parser.add_argument('--applications', required=True, type=Path)
     parser.add_argument('--output', required=True, type=Path)
     parser.add_argument('--package', default='fixtures')
+    parser.add_argument('--version', action='append')
     args = parser.parse_args()
-    retain(args.logs, args.applications, args.output, args.package)
+    retain(args.logs, args.applications, args.output, args.package, args.version)
 
 
 if __name__ == '__main__':

@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 from datadog_capabilities import coverage_matrix, evidence_results
+from ci_profile import PROFILES, sdk_cases
 
 ROOT = Path(__file__).resolve().parents[1]
 LANGUAGES = ("go", "python")
@@ -77,6 +78,9 @@ def markdown(report):
              '`xfail` means executed assertions failed as expected; `manifest-excluded` is a declared upstream exclusion without a ported local workload. '
              '`existing-language-suite` identifies a Python implementation awaiting a shared adapter. None of these three statuses counts as a pass.', '',
              '| Language | Passed cases | Executed xfails | Failed cases |', '| --- | ---: | ---: | ---: |']
+    if report.get('ciProfile') == 'pr':
+        lines[2:2] = ['Representative PR selection: **' + str(report['selectedCaseCount']) +
+                      '** cases per language. The exhaustive parameter matrix runs on main; missing cases remain unverified.', '']
     for language, counts in report['caseOutcomes'].items():
         lines.append(f"| {language} | {counts.get('passed', 0)} | {counts.get('unsupported', 0)} | {counts.get('failed', 0)} |")
     lines += ['', '| Capability | Go | Python | Go manifest reason |', '| --- | --- | --- | --- |']
@@ -95,6 +99,8 @@ def main():
     parser.add_argument('--output', required=True)
     parser.add_argument('--format', choices=('json', 'markdown'), default='json')
     parser.add_argument('--require-complete-matrix', action='store_true', help='Require each registered case in both languages; accept manifest-backed xfails')
+    parser.add_argument('--ci-profile', choices=PROFILES, default='full')
+    parser.add_argument('--require-selected-matrix', action='store_true', help='Require every representative case in both languages with unchanged evidence validation')
     args = parser.parse_args()
     root = Path(args.root)
     paths = [Path(p) for p in args.evidence]
@@ -104,12 +110,14 @@ def main():
     results = list(evidence_results(sorted(set(paths))))
     registry = load(root/'harness/shared_sdk/cases.json')
     entries = {entry['name']: entry for entry in registry}
-    expected = set(entries)
+    if args.require_complete_matrix and args.ci_profile != 'full':
+        parser.error('--require-complete-matrix requires the full CI profile')
+    expected = {entry['name'] for entry in sdk_cases(registry, args.ci_profile)}
     problems = []
     for language in LANGUAGES:
         selected = [r for r in results if r.get('language') == language and r.get('application') == 'shared-sdk']
         names = {r['name'] for r in selected}
-        if args.require_complete_matrix and names != expected:
+        if (args.require_complete_matrix or args.require_selected_matrix) and names != expected:
             problems.append(language + ': missing or unknown registered cases')
         for row in selected:
             valid = row['_captureVerified'] and row['_repeatVerified'] and row['_baselineVerified'] and row.get('repetitions') == 2
@@ -128,6 +136,8 @@ def main():
                           load(root/'docs/datadog-shared-capabilities-mapping.json'),
                           load(root/'docs/datadog-capabilities-mapping.json'),
                           load(root/'harness/shared_sdk/go-manifest.json'), results, root)
+    report['ciProfile'] = args.ci_profile
+    report['selectedCaseCount'] = len(expected)
     Path(args.output).write_text(markdown(report) if args.format == 'markdown' else json.dumps(report, indent=2) + '\n')
     if problems:
         raise SystemExit('\n'.join(problems))

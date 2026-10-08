@@ -52,6 +52,21 @@ def fixture(directory):
 
 
 class ReportTest(unittest.TestCase):
+    def test_representative_report_rejects_missing_profiles_and_mixed_scope(self):
+        with tempfile.TemporaryDirectory() as root:
+            paths = [Path(root) / name for name in ["first", "second"]]
+            for path in paths:
+                fixture(path)
+                (path / "ci-profile.json").write_text(json.dumps({"ciProfile": "pr", "profiles": ["ruby-test"]}))
+            report = datadog_report.build_report(paths, REVISION, GATE)
+            self.assertIn("Representative PR matrix", datadog_report.render(report))
+            (paths[0] / "ci-profile.json").write_text(json.dumps({"ciProfile": "pr", "profiles": ["ruby-test", "missing"]}))
+            with self.assertRaisesRegex(ValueError, "declared CI profile coverage"):
+                datadog_report.build_report(paths, REVISION, GATE)
+            (paths[1] / "ci-profile.json").write_text(json.dumps({"ciProfile": "full", "profiles": ["ruby-test"]}))
+            with self.assertRaisesRegex(ValueError, "different CI profiles"):
+                datadog_report.build_report(paths, REVISION, GATE)
+
     def test_two_executions_render_distinct_counts_and_escape_content(self):
         with tempfile.TemporaryDirectory() as root:
             paths = [Path(root) / name for name in ["first", "second"]]

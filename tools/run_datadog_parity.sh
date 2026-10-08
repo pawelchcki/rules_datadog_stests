@@ -35,6 +35,9 @@ revision="${2:?usage: run_datadog_parity.sh IMAGE_DIRECTORY REVISION EVIDENCE_DI
 evidence="${3:?usage: run_datadog_parity.sh IMAGE_DIRECTORY REVISION EVIDENCE_DIRECTORY}"
 mkdir -p "$evidence"
 stage="${DATADOG_PARITY_STAGE:-all}"
+ci_profile="${DATADOG_CI_PROFILE:-full}"
+case "$ci_profile" in full|pr) ;; *) echo "Unknown CI profile: $ci_profile" >&2; exit 1 ;; esac
+export DATADOG_CI_PROFILE="$ci_profile"
 case "$stage" in all|scenarios|features|shared-sdk|capabilities|gate) ;; *) echo "Unknown parity stage: $stage" >&2; exit 1 ;; esac
 
 mapfile -t image_flags < "$images/bazel.flags"
@@ -71,16 +74,19 @@ profiles=(
   //corpus:go-gin-datadog-v2-10-1-v04
 )
 bazel build "${build_args[@]}" --remote_download_outputs=toplevel "${image_flags[@]}" //harness:datadog_ruby_compatibility
-mapfile -t ruby_profiles < <(python3 -c 'import json; d=json.load(open("bazel-bin/harness/datadog_ruby_compatibility.json")); print("\n".join("//corpus:ruby-sinatra-" + r["series"].replace(".", "-") + "-datadog-v2-43-0-v04" for r in d["supported"]))')
+mapfile -t ruby_profiles < <(python3 -c 'import json,os,sys; sys.path.insert(0,"tools"); from ci_profile import ruby_runtimes; d=json.load(open("bazel-bin/harness/datadog_ruby_compatibility.json")); print("\n".join("//corpus:ruby-sinatra-" + r["series"].replace(".", "-") + "-datadog-v2-43-0-v04" for r in ruby_runtimes(d,os.environ["DATADOG_CI_PROFILE"])))')
+[[ ${#ruby_profiles[@]} -gt 0 ]] || { echo 'No compatible Ruby profiles selected' >&2; exit 1; }
 profiles+=("${ruby_profiles[@]}")
 # DefaultInfo for each profile carries its manifest and validator runfiles.
 # Fetch the complete tree: the coverage gate hashes every scenario bytecode.
 bazel build "${build_args[@]}" --remote_download_outputs=toplevel \
   "--remote_download_regex=$downloaded_evidence_regex" \
   "${image_flags[@]}" //tools/datadog_coverage:datadog_coverage "${profiles[@]}"
-mapfile -t scenario_targets < <(bazel query 'tests(//fixtures:datadog_suite) union tests(//fixtures:datadog_parallel_suite)' --output=label)
+mapfile -t scenario_targets < <(python3 tools/buildbuddy_ci.py targets --suite //fixtures:datadog_suite)
+mapfile -t parallel_targets < <(python3 tools/buildbuddy_ci.py targets --suite //fixtures:datadog_parallel_suite)
 [[ ${#scenario_targets[@]} -gt 0 ]] || { echo 'No scenario targets selected' >&2; exit 1; }
-bazel build "${build_args[@]}" "${test_download_args[@]}" "${image_flags[@]}" "${scenario_targets[@]}"
+[[ ${#parallel_targets[@]} -gt 0 ]] || { echo 'No parallel targets selected' >&2; exit 1; }
+bazel build "${build_args[@]}" "${test_download_args[@]}" "${image_flags[@]}" "${scenario_targets[@]}" "${parallel_targets[@]}"
 
 for execution in 1 2; do
   suite_test_status=0
@@ -88,7 +94,7 @@ for execution in 1 2; do
     --nocache_test_results \
     --test_env="TELEMETRY_TEST_REVISION=$revision" \
     "${image_flags[@]}" \
-    //fixtures:datadog_suite || suite_test_status=$?
+    "${scenario_targets[@]}" || suite_test_status=$?
   if (( suite_test_status != 0 )); then
     # Retain native captures even when the initial workload suite fails before
     # producing a gated execution receipt. These are diagnostics, not proof.
@@ -100,6 +106,7 @@ for execution in 1 2; do
   fi
   tools/retain_datadog_evidence.py \
     --revision "$revision" \
+    --ci-profile "$ci_profile" \
     --output "$evidence/execution-$execution" \
     --gate bazel-bin/tools/datadog_coverage/datadog_coverage_/datadog_coverage
 done
@@ -114,11 +121,14 @@ python3 tools/datadog_report.py \
 bazel test "${bazel_args[@]}" "${test_download_args[@]}" \
   --nocache_test_results \
   "${image_flags[@]}" \
-  //fixtures:datadog_parallel_suite \
+  "${parallel_targets[@]}" \
   --test_arg=--scenario-concurrency=4 \
   --test_arg=--scenario-repetitions=1
 mkdir -p "$evidence/parallel"
-find -L bazel-testlogs/fixtures -path '*/test.outputs/stress.*.json' -exec cp -L --no-preserve=mode --parents -t "$evidence/parallel/" '{}' +
+for target in "${parallel_targets[@]}"; do
+  directory="bazel-testlogs/fixtures/${target##*:}/test.outputs"
+  find -L "$directory" -name 'stress.*.json' -type f -exec cp -L --no-preserve=mode --parents -t "$evidence/parallel/" '{}' +
+done
 
 fi
 
@@ -203,11 +213,15 @@ for format in json markdown; do
   if [[ "$format" == markdown ]]; then suffix=md; fi
   python3 tools/datadog_shared_sdk_report.py \
     --evidence-dir "$evidence/shared-sdk" --evidence-dir "$evidence/features" \
+    --ci-profile "$ci_profile" \
     --format "$format" --output "$evidence/datadog-shared-sdk-report.$suffix"
 done
+sdk_matrix_gate=--require-complete-matrix
+if [[ "$ci_profile" == pr ]]; then sdk_matrix_gate=--require-selected-matrix; fi
 python3 tools/datadog_shared_sdk_report.py \
   --evidence-dir "$evidence/shared-sdk" --evidence-dir "$evidence/features" \
-  --output "$evidence/datadog-shared-sdk-report.json" --require-complete-matrix
+  --ci-profile "$ci_profile" \
+  --output "$evidence/datadog-shared-sdk-report.json" "$sdk_matrix_gate"
 
 fi
 

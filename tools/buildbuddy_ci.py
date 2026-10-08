@@ -16,18 +16,40 @@ import urllib.parse
 import urllib.error
 import urllib.request
 
+from ci_profile import PROFILES, select_targets
+
 
 ENDPOINT = "https://pawel.buildbuddy.io"
 SUITES = {
+    "scenarios": "//fixtures:datadog_suite",
+    "parallel": "//fixtures:datadog_parallel_suite",
     "features": "//fixtures:datadog_external_features_suite",
     "shared-sdk": "//fixtures:datadog_shared_sdk_suite",
     "capabilities": "//fixtures:datadog_capability_suite",
 }
-# Every shard remains a fresh execution. No target or evidence gate is omitted.
+# Main retains every variant. PR stages cover the declared representative set.
 STAGES = {"Datadog scenarios": ("scenarios", "0/1")}
 STAGES.update({f"Datadog features {i + 1}/8": ("features", f"{i}/8") for i in range(8)})
 STAGES.update({f"Datadog shared SDK {i + 1}/2": ("shared-sdk", f"{i}/2") for i in range(2)})
 STAGES["Datadog capabilities"] = ("capabilities", "0/1")
+PR_STAGES = {f"Datadog PR {suite}": (suite, "0/1")
+             for suite in ("scenarios", "features", "shared-sdk", "capabilities")}
+
+
+def stages(profile):
+    return {"full": STAGES, "pr": PR_STAGES}[profile]
+
+
+def parent_profile(metadata):
+    match = re.search(r"--build_metadata=PULL_REQUEST_NUMBER=(\d+)", metadata)
+    number = int(match[1]) if match else 0
+    return ("pr" if number else "full"), number
+
+
+def profile_targets(suite, profile):
+    labels = targets(SUITES[suite])
+    registry = json.loads(Path("harness/shared_sdk/cases.json").read_text()) if suite == "shared-sdk" else None
+    return select_targets(labels, suite, profile, registry)
 
 
 def targets(suite):
@@ -49,10 +71,10 @@ def partition(labels, shard):
     return selected
 
 
-def validate_manifest(manifest, name, revision, expected):
-    stage, shard = STAGES[name]
-    if manifest != {"schemaVersion": 1, "stage": name, "revision": revision,
-                    "suite": stage, "shard": shard, "targets": expected}:
+def validate_manifest(manifest, name, revision, expected, profile="full"):
+    stage, shard = stages(profile)[name]
+    if manifest != {"schemaVersion": 2, "stage": name, "revision": revision,
+                    "suite": stage, "shard": shard, "targets": expected, "ciProfile": profile}:
         raise ValueError(f"Stale, incomplete or incorrect stage manifest: {name}")
 
 
@@ -106,7 +128,7 @@ def extract_archive(path, destination):
     return roots[0]
 
 
-def download_stage(client, invocation, name, invocation_id, revision, expected, directory):
+def download_stage(client, invocation, name, invocation_id, revision, expected, directory, profile="full"):
     file = artifact(invocation)
     url = ENDPOINT + "/file/download?" + urllib.parse.urlencode({
         "bytestream_url": file["uri"], "invocation_id": invocation_id})
@@ -117,7 +139,7 @@ def download_stage(client, invocation, name, invocation_id, revision, expected, 
     verify_archive(archive, file["uri"])
     root = extract_archive(archive, directory / "extracted")
     manifest = json.loads((root / "ci-stage.json").read_text())
-    validate_manifest(manifest, name, revision, expected)
+    validate_manifest(manifest, name, revision, expected, profile)
     return name, root, manifest
 
 
@@ -152,19 +174,20 @@ class BuildBuddy:
 
 
 def stage(args):
-    suite, shard = STAGES[args.name]
-    selected = partition(targets(SUITES[suite]), shard) if suite in SUITES else []
+    profile = "pr" if args.name in PR_STAGES else "full"
+    suite, shard = stages(profile)[args.name]
+    selected = partition(profile_targets(suite, profile), shard)
     env = dict(os.environ, DATADOG_PARITY_STAGE=suite, DATADOG_PARITY_SHARD=shard,
-               DATADOG_BAZEL_CONFIG="buildbuddy")
+               DATADOG_BAZEL_CONFIG="buildbuddy", DATADOG_CI_PROFILE=profile)
     # Test concurrency is bounded separately from compilation. RBE still
     # reserves each test's EstimatedCPU before scheduling it on an executor.
-    env["DATADOG_PARITY_JOBS"] = "8" if suite == "scenarios" else "4"
+    env["DATADOG_PARITY_JOBS"] = "8" if suite == "scenarios" or (profile == "pr" and suite == "features") else "4"
     env["DATADOG_PARITY_BUILD_JOBS"] = "32"
     evidence = Path(args.evidence)
     evidence.mkdir(parents=True, exist_ok=True)
     (evidence / "ci-stage.json").write_text(json.dumps({
-        "schemaVersion": 1, "stage": args.name, "revision": args.revision,
-        "suite": suite, "shard": shard, "targets": selected}, indent=2) + "\n")
+        "schemaVersion": 2, "stage": args.name, "revision": args.revision,
+        "suite": suite, "shard": shard, "targets": selected, "ciProfile": profile}, indent=2) + "\n")
     started = time.monotonic()
     try:
         if suite == "scenarios":
@@ -194,16 +217,17 @@ def aggregate(args):
         raise ValueError("Incorrect parent workflow revision or action")
     request = {k: parent[k] for k in ("workflowId", "pushedRepoUrl", "pushedBranch",
                                       "targetRepoUrl", "targetBranch")}
-    request.update(commitSha=args.revision, actionNames=list(STAGES), visibility="PUBLIC", async_=True)
+    profile, pr = parent_profile(rc.read_text())
+    selected_stages = stages(profile)
+    request.update(commitSha=args.revision, actionNames=list(selected_stages), visibility="PUBLIC", async_=True)
     request["async"] = request.pop("async_")
-    pr = re.search(r"--build_metadata=PULL_REQUEST_NUMBER=(\d+)", rc.read_text())
     if pr:
-        request["pullRequestNumber"] = int(pr[1])
+        request["pullRequestNumber"] = pr
     response = client.rpc("ExecuteWorkflow", request)
     statuses = response.get("actionStatuses", [])
     children = {s["actionName"]: s["invocationId"] for s in statuses
                 if not s.get("status", {}).get("code", 0) and s.get("invocationId")}
-    if set(children) != set(STAGES) or len(statuses) != len(STAGES):
+    if set(children) != set(selected_stages) or len(statuses) != len(selected_stages):
         raise ValueError("BuildBuddy did not start every required test stage")
     evidence = Path(args.evidence)
     evidence.mkdir(parents=True, exist_ok=True)
@@ -228,22 +252,23 @@ def aggregate(args):
                 raise TimeoutError(f"RBE stages did not finish: {list(remaining)}")
             print(f"Waiting for {len(remaining)} RBE stages", flush=True)
             time.sleep(30)
-    inventories = {suite: targets(label) for suite, label in SUITES.items()}
+    inventories = {suite: profile_targets(suite, profile)
+                   for suite in dict.fromkeys(suite for suite, _ in selected_stages.values())}
     for name, invocation in completed.items():
         validate_invocation(invocation, name, args.revision, parent["pushedRepoUrl"])
     # Bound downloads to four streams. Merge in registry order on one thread
     # so overlap detection and complete-evidence gating remain deterministic.
     with tempfile.TemporaryDirectory(prefix="datadog-stages-") as temporary, ThreadPoolExecutor(max_workers=4) as pool:
         def download(name):
-            suite, shard = STAGES[name]
-            expected = partition(inventories[suite], shard) if suite in SUITES else []
+            suite, shard = selected_stages[name]
+            expected = partition(inventories[suite], shard)
             directory = Path(temporary) / name.replace("/", "-").replace(" ", "-")
-            return download_stage(client, completed[name], name, children[name], args.revision, expected, directory)
+            return download_stage(client, completed[name], name, children[name], args.revision, expected, directory, profile)
 
-        for name, root, manifest in pool.map(download, STAGES):
-            stages = evidence / "stages"
-            stages.mkdir(exist_ok=True)
-            (stages / (name.replace("/", "-").replace(" ", "-") + ".json")).write_text(
+        for name, root, manifest in pool.map(download, selected_stages):
+            stage_manifests = evidence / "stages"
+            stage_manifests.mkdir(exist_ok=True)
+            (stage_manifests / (name.replace("/", "-").replace(" ", "-") + ".json")).write_text(
                 json.dumps(manifest, indent=2) + "\n")
             for path in root.iterdir():
                 if path.name == "ci-stage.json":
@@ -262,7 +287,7 @@ def aggregate(args):
                     if target.exists():
                         raise ValueError(f"Overlapping stage report: {target}")
                     shutil.copy2(path, target)
-    env = dict(os.environ, DATADOG_PARITY_STAGE="gate", DATADOG_BAZEL_CONFIG="buildbuddy")
+    env = dict(os.environ, DATADOG_PARITY_STAGE="gate", DATADOG_BAZEL_CONFIG="buildbuddy", DATADOG_CI_PROFILE=profile)
     subprocess.run(["tools/run_datadog_parity.sh", args.images, args.revision, args.evidence],
                    env=env, check=True)
     shutil.copy2(evidence / "datadog-report.html",
@@ -275,16 +300,18 @@ def main():
     select = sub.add_parser("targets")
     select.add_argument("--suite", required=True, choices=SUITES.values())
     select.add_argument("--shard", default="0/1")
+    select.add_argument("--ci-profile", choices=PROFILES, default=os.environ.get("DATADOG_CI_PROFILE", "full"))
     for command in ("stage", "aggregate"):
         action = sub.add_parser(command)
         action.add_argument("--revision", required=True)
         action.add_argument("--images", required=True)
         action.add_argument("--evidence", required=True)
         if command == "stage":
-            action.add_argument("--name", required=True, choices=STAGES)
+            action.add_argument("--name", required=True, choices=list(STAGES) + list(PR_STAGES))
     args = parser.parse_args()
     if args.command == "targets":
-        print("\n".join(partition(targets(args.suite), args.shard)))
+        suite = next(name for name, label in SUITES.items() if label == args.suite)
+        print("\n".join(partition(profile_targets(suite, args.ci_profile), args.shard)))
     elif args.command == "stage":
         stage(args)
     else:

@@ -8,14 +8,121 @@ import subprocess
 import tarfile
 import tempfile
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 import urllib.error
 
 import buildbuddy_ci as ci
 from archive_evidence import archive_evidence
+from ci_profile import PR_GO_VERSIONS, PR_RUBY_SERIES, ruby_runtimes, sdk_cases, select_targets
 
 
 class BuildBuddyCITest(unittest.TestCase):
+    def test_aggregate_dispatch_and_gate_use_same_profile_with_each_inventory_queried_once(self):
+        for profile, pr in (("pr", 20), ("full", 0)):
+            with self.subTest(profile=profile), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                (root / "buildbuddy.bazelrc").write_text(
+                    f"build --build_metadata=PARENT_INVOCATION_ID=parent --build_metadata=PULL_REQUEST_NUMBER={pr}")
+                configured = dict(workflowId="workflow", pushedRepoUrl="repo.git", pushedBranch="branch",
+                                  targetRepoUrl="repo.git", targetBranch="main", commitSha="head", actionName="Full test suite")
+                expected_stages = ci.stages(profile)
+                client = Mock()
+                client.rpc.return_value = {"actionStatuses": [{"actionName": name, "invocationId": name} for name in expected_stages]}
+
+                def invocation(name, **kwargs):
+                    action = configured if name == "parent" else dict(configured, actionName=name)
+                    return dict(success=True, commitSha="head", invocationStatus="COMPLETE_INVOCATION_STATUS",
+                                event=[{"buildEvent": {"workflowConfigured": action}}])
+
+                def download(client, invocation, name, invocation_id, revision, expected, directory, actual_profile):
+                    directory.mkdir()
+                    suite, shard = expected_stages[name]
+                    manifest = dict(schemaVersion=2, stage=name, revision=revision, suite=suite,
+                                    shard=shard, targets=expected, ciProfile=actual_profile)
+                    ci.validate_manifest(manifest, name, revision, expected, profile)
+                    return name, directory, manifest
+
+                evidence = root / "evidence"
+                def gate(command, *, env, check):
+                    self.assertEqual(profile, env["DATADOG_CI_PROFILE"])
+                    self.assertEqual("gate", env["DATADOG_PARITY_STAGE"])
+                    (evidence / "datadog-report.html").write_text("verified report")
+
+                client.invocation.side_effect = invocation
+                with patch.dict(ci.os.environ, {"BUILDBUDDY_CI_RUNNER_ROOT_DIR": str(root),
+                                               "BUILDBUDDY_ARTIFACTS_DIRECTORY": str(root)}), \
+                        patch.object(ci, "BuildBuddy", return_value=client), \
+                        patch.object(ci, "profile_targets", return_value=[f"//fixtures:case_{i}" for i in range(16)]) as inventory, \
+                        patch.object(ci, "download_stage", side_effect=download), \
+                        patch.object(ci.subprocess, "run", side_effect=gate):
+                    ci.aggregate(SimpleNamespace(revision="head", images="images", evidence=str(evidence)))
+                request = client.rpc.call_args.args[1]
+                self.assertEqual(list(expected_stages), request["actionNames"])
+                self.assertEqual(pr or None, request.get("pullRequestNumber"))
+                self.assertEqual(4, inventory.call_count)
+                self.assertEqual("verified report", (root / "datadog-report.html").read_text())
+
+    def test_push_and_manual_metadata_default_to_full_pr_metadata_selects_representatives(self):
+        for metadata in ("", "build --build_metadata=PULL_REQUEST_NUMBER=0"):
+            self.assertEqual(("full", 0), ci.parent_profile(metadata))
+        self.assertEqual(("pr", 20), ci.parent_profile("build --build_metadata=PULL_REQUEST_NUMBER=20"))
+
+    def test_pr_sdk_representatives_cover_each_class_in_both_languages(self):
+        root = Path(__file__).resolve().parents[1]
+        registry = ci.json.loads((root / "harness/shared_sdk/cases.json").read_text())
+        selected = sdk_cases(registry, "pr")
+        classes = lambda entries: {entry["method"].rsplit(".", 1)[0] for entry in entries}
+        self.assertEqual(classes(registry), classes(selected))
+        self.assertLess(len(selected), len(registry) // 2)
+        labels = [f"//fixtures:datadog_shared_sdk_{language}_{index}_test"
+                  for language in ("go", "python") for index in range(len(registry))]
+        representatives = select_targets(labels, "shared-sdk", "pr", registry)
+        self.assertEqual(len(selected) * 2, len(representatives))
+        for index, entry in enumerate(registry):
+            for language in ("go", "python"):
+                self.assertEqual(entry in selected, f"//fixtures:datadog_shared_sdk_{language}_{index}_test" in representatives)
+        self.assertEqual(registry, sdk_cases(registry, "full"))
+        with self.assertRaises(ValueError):
+            select_targets([], "shared-sdk", "pr", registry)
+
+    def test_pr_keeps_every_framework_and_intake_and_only_selected_ruby_variants(self):
+        base = ["//fixtures:aiohttp_datadog_v04_hurl_test_tags", "//fixtures:aiohttp_datadog_hurl_test_tags",
+                "//fixtures:django_datadog_hurl_test_tags", "//fixtures:rails_datadog_hurl_test_tags",
+                "//fixtures:falcon_datadog_hurl_test_tags", "//fixtures:gin_datadog_hurl_test_tags"]
+        ruby = [f"//fixtures:ruby_{series.replace('.', '_')}_datadog_hurl_test_tags"
+                for series in (*PR_RUBY_SERIES, "2.6", "3.4")]
+        self.assertEqual(base + ruby[:3], select_targets(base + ruby, "scenarios", "pr"))
+        self.assertEqual(base, select_targets(base + ruby, "features", "pr"))
+        for suite in ("scenarios", "parallel", "features", "capabilities"):
+            self.assertEqual(base + ruby, select_targets(base + ruby, suite, "full"))
+        compatible = {"supported": [{"series": series} for series in (*PR_RUBY_SERIES, "2.6")]}
+        self.assertEqual(list(PR_RUBY_SERIES), [runtime["series"] for runtime in ruby_runtimes(compatible, "pr")])
+        with self.assertRaises(ValueError):
+            ruby_runtimes({"supported": []}, "pr")
+
+    def test_pr_go_versions_cover_legacy_control_minimum_and_latest_instrumentation(self):
+        root = Path(__file__).resolve().parents[1]
+        lock = ci.json.loads((root / "harness/go_runtime/versions.lock.json").read_text())
+        pinned = {row["version"]: row for row in lock["runtimes"]}
+        self.assertLess(len(PR_GO_VERSIONS), len(pinned))
+        self.assertTrue(set(PR_GO_VERSIONS) <= pinned.keys())
+        self.assertIn(lock["runtimes"][0]["version"], PR_GO_VERSIONS)
+        self.assertIn(lock["runtimes"][-1]["version"], PR_GO_VERSIONS)
+        for pin in lock["instrumentation"].values():
+            self.assertIn(pin["minimumGoMinor"], [pinned[version]["minor"] for version in PR_GO_VERSIONS])
+
+    def test_representative_manifest_cannot_satisfy_full_matrix_gate(self):
+        name = "Datadog PR features"
+        manifest = {"schemaVersion": 2, "stage": name, "revision": "head",
+                    "suite": "features", "shard": "0/1", "targets": ["//fixtures:a"], "ciProfile": "pr"}
+        ci.validate_manifest(manifest, name, "head", manifest["targets"], "pr")
+        with self.assertRaises(ValueError):
+            ci.validate_manifest(dict(manifest, ciProfile="full"), name, "head", manifest["targets"], "pr")
+        with self.assertRaises((KeyError, ValueError)):
+            ci.validate_manifest(manifest, name, "head", manifest["targets"], "full")
+        self.assertEqual(4, len(ci.stages("pr")))
+        self.assertEqual(12, len(ci.stages("full")))
+
     def test_failed_stage_retains_manifest_and_timing_with_bounded_test_budget(self):
         with tempfile.TemporaryDirectory() as directory:
             args = SimpleNamespace(name="Datadog features 1/8", revision="head", images="images", evidence=directory)
@@ -82,8 +189,8 @@ class BuildBuddyCITest(unittest.TestCase):
 
     def test_manifest_rejects_missing_extra_or_stale_targets(self):
         expected = ["//fixtures:a", "//fixtures:c"]
-        manifest = {"schemaVersion": 1, "stage": "Datadog features 1/8", "revision": "head",
-                    "suite": "features", "shard": "0/8", "targets": expected}
+        manifest = {"schemaVersion": 2, "stage": "Datadog features 1/8", "revision": "head",
+                    "suite": "features", "shard": "0/8", "targets": expected, "ciProfile": "full"}
         ci.validate_manifest(manifest, manifest["stage"], "head", expected)
         for changes in ({"revision": "old"}, {"targets": expected[:1]},
                         {"targets": expected + ["//fixtures:b"]}, {"shard": "1/8"}):
@@ -121,8 +228,8 @@ class BuildBuddyCITest(unittest.TestCase):
             source.mkdir()
             name = "Datadog features 1/8"
             expected = ["//fixtures:a"]
-            manifest = {"schemaVersion": 1, "stage": name, "revision": "head",
-                        "suite": "features", "shard": "0/8", "targets": expected}
+            manifest = {"schemaVersion": 2, "stage": name, "revision": "head",
+                        "suite": "features", "shard": "0/8", "targets": expected, "ciProfile": "full"}
             (source / "ci-stage.json").write_text(ci.json.dumps(manifest))
             archive = root / "archive.tar.gz"
             archive_evidence(source, archive)
