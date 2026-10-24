@@ -12,6 +12,11 @@ def datadog_security_extra_tests():
         service_test(
             name = name,
             timeout = "long",
+            # Django initialization and native AppSec run beside the probe.
+            exec_properties = {
+                "test.EstimatedCPU": "2",
+                "test.EstimatedMemory": "1GB",
+            },
             services = [],
             test = "//harness/datadog_security_extra:probe",
             data = [app, rootfs, injection.rootfs, "@rules_stests//harness:app_launcher", "//harness/datadog_security_extra:sdk_overlay"] + ["//harness/datadog_security_extra:" + f for f in ["security_extra_views.py", "security_controls.py", "circular_a.py", "circular_b.py", "blocking-rules.json", "tagging-rules.json", "onboarding-responses.json", "onboarding-tagging-responses.json", "large-rules.json", "ato-sdk-rules.json", "rasp-ruleset.json"]],

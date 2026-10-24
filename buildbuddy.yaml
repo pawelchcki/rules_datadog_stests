@@ -2,10 +2,11 @@
 # stages; main runs all twelve exhaustive stages with full evidence gates.
 actions:
   - name: Full test suite
+    self_hosted: false
     timeout: 60m
     visibility: PUBLIC
     container_image: ubuntu-24.04
-    # Bazel test actions use the configured self-hosted RBE execution platform.
+    # Bazel test actions use this repository's managed RBE execution platform.
     platform_properties:
       remote-snapshot-save-policy: always
       snapshot-read-policy: newest
@@ -20,6 +21,7 @@ actions:
     steps:
       - run: tools/run_buildbuddy_ci.sh aggregate
   - name: Datadog PR scenarios
+    self_hosted: false
     timeout: 60m
     visibility: PUBLIC
     container_image: ubuntu-24.04
@@ -32,6 +34,7 @@ actions:
     steps:
       - run: tools/run_buildbuddy_ci.sh stage "Datadog PR scenarios"
   - name: Datadog PR features 1/2
+    self_hosted: false
     timeout: 60m
     visibility: PUBLIC
     container_image: ubuntu-24.04
@@ -44,6 +47,7 @@ actions:
     steps:
       - run: tools/run_buildbuddy_ci.sh stage "Datadog PR features 1/2"
   - name: Datadog PR features 2/2
+    self_hosted: false
     timeout: 60m
     visibility: PUBLIC
     container_image: ubuntu-24.04
@@ -56,6 +60,7 @@ actions:
     steps:
       - run: tools/run_buildbuddy_ci.sh stage "Datadog PR features 2/2"
   - name: Datadog PR shared-sdk
+    self_hosted: false
     timeout: 60m
     visibility: PUBLIC
     container_image: ubuntu-24.04
@@ -68,6 +73,7 @@ actions:
     steps:
       - run: tools/run_buildbuddy_ci.sh stage "Datadog PR shared-sdk"
   - name: Datadog PR capabilities
+    self_hosted: false
     timeout: 60m
     visibility: PUBLIC
     container_image: ubuntu-24.04
@@ -80,9 +86,10 @@ actions:
     steps:
       - run: tools/run_buildbuddy_ci.sh stage "Datadog PR capabilities"
   - name: Datadog scenarios
+    self_hosted: false
     visibility: PUBLIC
     container_image: ubuntu-24.04
-    # Bazel test actions use the configured self-hosted RBE execution platform.
+    # Bazel test actions use this repository's managed RBE execution platform.
     platform_properties:
       remote-snapshot-save-policy: always
       snapshot-read-policy: newest
@@ -92,9 +99,10 @@ actions:
     steps:
       - run: tools/run_buildbuddy_ci.sh stage "Datadog scenarios"
   - name: Datadog features 1/8
+    self_hosted: false
     visibility: PUBLIC
     container_image: ubuntu-24.04
-    # Bazel test actions use the configured self-hosted RBE execution platform.
+    # Bazel test actions use this repository's managed RBE execution platform.
     platform_properties:
       remote-snapshot-save-policy: always
       snapshot-read-policy: newest
@@ -104,9 +112,10 @@ actions:
     steps:
       - run: tools/run_buildbuddy_ci.sh stage "Datadog features 1/8"
   - name: Datadog features 2/8
+    self_hosted: false
     visibility: PUBLIC
     container_image: ubuntu-24.04
-    # Bazel test actions use the configured self-hosted RBE execution platform.
+    # Bazel test actions use this repository's managed RBE execution platform.
     platform_properties:
       remote-snapshot-save-policy: always
       snapshot-read-policy: newest
@@ -116,9 +125,10 @@ actions:
     steps:
       - run: tools/run_buildbuddy_ci.sh stage "Datadog features 2/8"
   - name: Datadog features 3/8
+    self_hosted: false
     visibility: PUBLIC
     container_image: ubuntu-24.04
-    # Bazel test actions use the configured self-hosted RBE execution platform.
+    # Bazel test actions use this repository's managed RBE execution platform.
     platform_properties:
       remote-snapshot-save-policy: always
       snapshot-read-policy: newest
@@ -128,9 +138,10 @@ actions:
     steps:
       - run: tools/run_buildbuddy_ci.sh stage "Datadog features 3/8"
   - name: Datadog features 4/8
+    self_hosted: false
     visibility: PUBLIC
     container_image: ubuntu-24.04
-    # Bazel test actions use the configured self-hosted RBE execution platform.
+    # Bazel test actions use this repository's managed RBE execution platform.
     platform_properties:
       remote-snapshot-save-policy: always
       snapshot-read-policy: newest
@@ -140,9 +151,10 @@ actions:
     steps:
       - run: tools/run_buildbuddy_ci.sh stage "Datadog features 4/8"
   - name: Datadog features 5/8
+    self_hosted: false
     visibility: PUBLIC
     container_image: ubuntu-24.04
-    # Bazel test actions use the configured self-hosted RBE execution platform.
+    # Bazel test actions use this repository's managed RBE execution platform.
     platform_properties:
       remote-snapshot-save-policy: always
       snapshot-read-policy: newest
@@ -152,9 +164,10 @@ actions:
     steps:
       - run: tools/run_buildbuddy_ci.sh stage "Datadog features 5/8"
   - name: Datadog features 6/8
+    self_hosted: false
     visibility: PUBLIC
     container_image: ubuntu-24.04
-    # Bazel test actions use the configured self-hosted RBE execution platform.
+    # Bazel test actions use this repository's managed RBE execution platform.
     platform_properties:
       remote-snapshot-save-policy: always
       snapshot-read-policy: newest
@@ -164,9 +177,10 @@ actions:
     steps:
       - run: tools/run_buildbuddy_ci.sh stage "Datadog features 6/8"
   - name: Datadog features 7/8
+    self_hosted: false
     visibility: PUBLIC
     container_image: ubuntu-24.04
-    # Bazel test actions use the configured self-hosted RBE execution platform.
+    # Bazel test actions use this repository's managed RBE execution platform.
     platform_properties:
       remote-snapshot-save-policy: always
       snapshot-read-policy: newest
@@ -176,9 +190,10 @@ actions:
     steps:
       - run: tools/run_buildbuddy_ci.sh stage "Datadog features 7/8"
   - name: Datadog features 8/8
+    self_hosted: false
     visibility: PUBLIC
     container_image: ubuntu-24.04
-    # Bazel test actions use the configured self-hosted RBE execution platform.
+    # Bazel test actions use this repository's managed RBE execution platform.
     platform_properties:
       remote-snapshot-save-policy: always
       snapshot-read-policy: newest
@@ -188,9 +203,10 @@ actions:
     steps:
       - run: tools/run_buildbuddy_ci.sh stage "Datadog features 8/8"
   - name: Datadog shared SDK 1/2
+    self_hosted: false
     visibility: PUBLIC
     container_image: ubuntu-24.04
-    # Bazel test actions use the configured self-hosted RBE execution platform.
+    # Bazel test actions use this repository's managed RBE execution platform.
     platform_properties:
       remote-snapshot-save-policy: always
       snapshot-read-policy: newest
@@ -200,9 +216,10 @@ actions:
     steps:
       - run: tools/run_buildbuddy_ci.sh stage "Datadog shared SDK 1/2"
   - name: Datadog shared SDK 2/2
+    self_hosted: false
     visibility: PUBLIC
     container_image: ubuntu-24.04
-    # Bazel test actions use the configured self-hosted RBE execution platform.
+    # Bazel test actions use this repository's managed RBE execution platform.
     platform_properties:
       remote-snapshot-save-policy: always
       snapshot-read-policy: newest
@@ -212,9 +229,10 @@ actions:
     steps:
       - run: tools/run_buildbuddy_ci.sh stage "Datadog shared SDK 2/2"
   - name: Datadog capabilities
+    self_hosted: false
     visibility: PUBLIC
     container_image: ubuntu-24.04
-    # Bazel test actions use the configured self-hosted RBE execution platform.
+    # Bazel test actions use this repository's managed RBE execution platform.
     platform_properties:
       remote-snapshot-save-policy: always
       snapshot-read-policy: newest

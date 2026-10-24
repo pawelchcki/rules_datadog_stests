@@ -137,7 +137,10 @@ def datadog_external_feature_tests():
                     name = case_name,
                     timeout = "long",
                     # Rails boot needs more CPU headroom than the smaller apps.
-                    exec_properties = {"test.EstimatedCPU": "4" if app == "rails" else "2"},
+                    exec_properties = {
+                        "test.EstimatedCPU": "4" if app == "rails" else "2",
+                        "test.EstimatedMemory": "1GB",
+                    },
                     services = ["@rules_stests//harness:otel_sink_service"],
                     test = "//harness/external_features:probe",
                     data = case_data,
@@ -189,7 +192,10 @@ def datadog_parallel_tests():
             )
             realworld_parallel_hurl_test(
                 name = name + "_test",
-                exec_properties = {"test.EstimatedCPU": "4" if app == "rails" else "2"},
+                exec_properties = {
+                    "test.EstimatedCPU": "4" if app == "rails" else "2",
+                    "test.EstimatedMemory": "1GB",
+                },
                 service = ":" + name + "_service",
                 profile = "//corpus:" + config.profile + suffix,
                 sink = sink,
