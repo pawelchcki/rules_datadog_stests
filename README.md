@@ -144,7 +144,9 @@ Reports identify representative PR coverage, keep missing cells unverified,
 and never claim the full SDK parameter matrix passed. Every selected scenario
 still runs twice, and capture/receipt validation, the shared-language gate,
 the 301-feature denominator and the 75% capability floor remain unchanged.
-All test actions use the configured self-hosted RBE platform. The parent requires
+All test actions use the repository's BuildBuddy-managed RBE platform, with
+`use-self-hosted-executors=false` and a digest-pinned Ubuntu 24.04 image. Custom
+runner pools are reserved for private repositories. The parent requires
 every selected stage to pass, verifies archive checksums and exact-head,
 profile-bound target manifests, and gates the combined captures. Main requires
 the complete SDK matrix; a PR manifest cannot satisfy that gate.
