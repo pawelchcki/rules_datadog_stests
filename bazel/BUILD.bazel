@@ -22,6 +22,7 @@ exports_files(["rules_stests_ruby_context.patch"])
 
 exports_files(["rules_stests_probe_readiness.patch"])
 exports_files(["rules_rust_bootstrap_paths.patch"])
+exports_files(["rules_stests_managed_timezone.patch"])
 
 # Keep public CI independent of the executor policy in the pinned rules_stests
 # dependency: that revision still selects a private runner pool.

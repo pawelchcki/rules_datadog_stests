@@ -6,6 +6,7 @@ from pathlib import Path
 import shutil
 from types import SimpleNamespace
 import subprocess
+import sys
 import tarfile
 import tempfile
 import unittest
@@ -27,6 +28,9 @@ class BuildBuddyCITest(unittest.TestCase):
                 shutil.copyfile(Path(__file__).with_name(name), scripts / name)
             binary = root / 'bin'
             binary.mkdir()
+            # The shell driver must use this test's hermetic interpreter;
+            # managed executor images need not install a host python3.
+            (binary / 'python3').symlink_to(Path(sys.executable).resolve())
             bazel = binary / 'bazel'
             bazel.write_text('#!/usr/bin/env bash\n'
                              'case "$1" in\n'
