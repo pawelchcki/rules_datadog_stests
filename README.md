@@ -91,6 +91,22 @@ unchanged historical context retains its reviewed tree identity. Falcon also use
 `@rules_stests//harness:falcon_rootfs`. Common application sources, launchers,
 runtimes, sink engine, and validator compiler remain in `rules_stests`.
 
+For a coordinated SDK update, `tools/build_datadog_fixtures.sh OUTPUT --candidate`
+builds local Ruby and Gin candidates from the current locked sources. Each build
+records the SDK actually loaded or compiled, and verifies all OCI blob sizes and
+hashes and the streamed rootfs hash. Only after both images pass does
+`OUTPUT/candidate.json` record their versions, manifest/rootfs digests and exact
+build-context Git trees. A changed source context, stale SDK, or Go module
+checksum mismatch rejects the candidate. Candidate images use separate local
+tags and bypass the reviewed fixture cache. No registry write, reviewed lock
+update, or Bazel override is produced by candidate preparation.
+
+The ordinary builder and publisher retain their reviewed payload requirements.
+Candidate preparation supplies evidence for reviewing new pins; it does not
+enroll the dependency-update schedule or complete coordinated Ruby/Python/Go
+lock/profile generation. Those remain prerequisites for the App-created update
+PRs tracked in [my-infra #114](https://github.com/pawelchcki/my-infra/issues/114).
+
 See [corpus documentation](corpus/datadog/README.md),
 [coverage](docs/datadog-coverage.md) and
 [verification](docs/datadog-verification.md).
