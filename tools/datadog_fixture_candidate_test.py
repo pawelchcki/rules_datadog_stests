@@ -14,10 +14,13 @@ import unittest
 from unittest.mock import patch
 
 from context_tree import context_tree
-from datadog_fixture_candidate import inspect_image, prepare
+from datadog_fixture_candidate import go_modules, inspect_image, prepare
 
 TOOLS = Path(__file__).parent
 CHECKSUM = "h1:" + "A" * 43 + "="
+MODULES = {"github.com/DataDog/dd-trace-go/v2": CHECKSUM,
+           **{"github.com/DataDog/dd-trace-go/contrib/" + name: "h1:" + "B" * 43 + "="
+              for name in ("database/sql/v2", "gin-gonic/gin/v2", "gorm.io/gorm.v1/v2", "net/http/v2")}}
 
 
 def digest(value):
@@ -34,15 +37,25 @@ def image(directory, fixture, version, *, compressed=True, identity=None, diff_i
         (blobs / result["digest"][7:]).write_bytes(value)
         return result
 
-    if identity is None:
-        identity = (json.dumps({"sdk": "datadog", "version": version}).encode() if fixture == "ruby"
-                    else f"/rootfs/opt/app/bin/realworld-gin-datadog: go1.25\n\tdep\tgithub.com/DataDog/dd-trace-go/v2\tv{version}\t{CHECKSUM}\n".encode())
+    if fixture == "ruby":
+        files = {f"datadog-ruby/specifications/datadog-{version}.gemspec": ("spec " + version).encode(),
+                 f"datadog-ruby/gems/datadog-{version}/lib/datadog/version.rb": ("version " + version).encode()}
+        record = {"sdk": "datadog", "version": version,
+                  "files": [{"path": name, "sha256": hashlib.sha256(data).hexdigest()} for name, data in files.items()]}
+        (directory.parent / "ruby.identity.json").write_bytes(identity if identity is not None else json.dumps(record).encode())
+    else:
+        binary = ("native-go-sdk-" + version).encode()
+        files = {"opt/app/bin/realworld-gin-datadog": binary}
+        info = ("/rootfs/opt/app/bin/realworld-gin-datadog: go1.25\n" + "".join(
+            f"\tdep\t{module}\tv{version}\t{checksum}\n" for module, checksum in MODULES.items())).encode()
+        (directory.parent / "gin.build-info.txt").write_bytes(identity if identity is not None else info)
+        (directory.parent / "gin.binary-sha256").write_text(hashlib.sha256(binary).hexdigest() + "  /rootfs/opt/app/bin/realworld-gin-datadog\n")
     contents = io.BytesIO()
     with tarfile.open(fileobj=contents, mode="w") as archive:
-        member = tarfile.TarInfo("datadog-ruby/sdk-version.json" if fixture == "ruby"
-                                 else "opt/app/datadog-build-info.txt")
-        member.size = len(identity)
-        archive.addfile(member, io.BytesIO(identity))
+        for name, data in files.items():
+            member = tarfile.TarInfo(name)
+            member.size = len(data)
+            archive.addfile(member, io.BytesIO(data))
     payload = contents.getvalue()
     layer = add(gzip.compress(payload, mtime=0) if compressed else payload,
                 "application/vnd.oci.image.layer.v1.tar" + ("+gzip" if compressed else ""))
@@ -61,8 +74,8 @@ def contexts(root):
     (ruby / "Gemfile").write_text('gem "datadog", "2.44.0"\n')
     (ruby / "Gemfile.lock").write_text("    datadog (2.44.0)\n")
     (gin / "datadog").mkdir(parents=True)
-    (gin / "datadog/go.mod").write_text("require (\n\tgithub.com/DataDog/dd-trace-go/v2 v2.11.0\n)\n")
-    (gin / "datadog/go.sum").write_text("github.com/DataDog/dd-trace-go/v2 v2.11.0 " + CHECKSUM + "\n")
+    (gin / "datadog/go.mod").write_text("require (\n" + "".join("\t" + module + " v2.11.0\n" for module in MODULES) + ")\n")
+    (gin / "datadog/go.sum").write_text("".join(module + " v2.11.0 " + checksum + "\n" for module, checksum in MODULES.items()))
     return {"ruby": ruby, "gin": gin}
 
 
@@ -96,20 +109,47 @@ class CandidateTest(unittest.TestCase):
             directory = self.root / fixture
             image(directory, fixture, old)
             with self.assertRaisesRegex(ValueError, "built (Ruby|Go) SDK differs"):
-                inspect_image(directory, fixture, new, CHECKSUM)
+                inspect_image(directory, fixture, new, MODULES)
 
     def test_compiled_go_checksum_must_match_locked_source(self):
         directory = self.root / "image"
         image(directory, "gin", "2.11.0")
         with self.assertRaisesRegex(ValueError, "built Go SDK differs"):
-            inspect_image(directory, "gin", "2.11.0", "h1:" + "B" * 43 + "=")
+            inspect_image(directory, "gin", "2.11.0", dict(MODULES, **{"github.com/DataDog/dd-trace-go/v2": "h1:" + "C" * 43 + "="}))
 
     def test_go_replacement_is_not_original_registry_module(self):
         directory = self.root / "image"
         identity = f"\tdep\tgithub.com/DataDog/dd-trace-go/v2\tv2.11.0\t{CHECKSUM}\n\t=>\t../replacement\n".encode()
         image(directory, "gin", "2.11.0", identity=identity)
         with self.assertRaisesRegex(ValueError, "built Go SDK differs"):
-            inspect_image(directory, "gin", "2.11.0", CHECKSUM)
+            inspect_image(directory, "gin", "2.11.0", MODULES)
+
+    def test_stale_locked_contrib_module_rejects_mixed_graph(self):
+        source = contexts(self.root / "contexts")["gin"]
+        path = source / "datadog/go.mod"
+        path.write_text(path.read_text().replace("contrib/gin-gonic/gin/v2 v2.11.0", "contrib/gin-gonic/gin/v2 v2.10.1"))
+        with self.assertRaisesRegex(ValueError, "tracer and contrib versions"):
+            go_modules(source, "2.11.0")
+
+    def test_every_compiled_contrib_version_and_checksum_is_checked(self):
+        directory = self.root / "image"
+        image(directory, "gin", "2.11.0")
+        path = directory.parent / "gin.build-info.txt"
+        original = path.read_bytes()
+        contrib = b"github.com/DataDog/dd-trace-go/contrib/gin-gonic/gin/v2"
+        for stale in (contrib + b"\tv2.10.1\t" + MODULES[contrib.decode()].encode(),
+                      contrib + b"\tv2.11.0\th1:" + b"C" * 43 + b"=",
+                      contrib + b"\tv2.11.0\t"):
+            path.write_bytes(original.replace(contrib + b"\tv2.11.0\t" + MODULES[contrib.decode()].encode(), stale))
+            with self.assertRaisesRegex(ValueError, "built Go SDK differs"):
+                inspect_image(directory, "gin", "2.11.0", MODULES)
+
+    def test_runtime_identity_is_bound_to_exported_payload_bytes(self):
+        directory = self.root / "image"
+        image(directory, "gin", "2.11.0")
+        (directory.parent / "gin.binary-sha256").write_text("a" * 64 + "  /rootfs/opt/app/bin/realworld-gin-datadog\n")
+        with self.assertRaisesRegex(ValueError, "identity differs from the final payload bytes"):
+            inspect_image(directory, "gin", "2.11.0", MODULES)
 
     def test_records_exact_contexts_only_after_both_verify(self):
         sources = contexts(self.root / "contexts")
@@ -134,10 +174,10 @@ class CandidateTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "uncompressed candidate payload"):
                 inspect_image(directory, "ruby", "2.44.0")
 
-    def test_oversized_identity_record_is_not_buffered(self):
+    def test_oversized_identity_evidence_is_not_buffered(self):
         directory = self.root / "image"
-        image(directory, "ruby", "2.44.0", identity=b"x" * (64 * 1024 + 1))
-        with self.assertRaisesRegex(ValueError, "invalid or duplicate SDK identity"):
+        image(directory, "ruby", "2.44.0", identity=b"x" * (1024 * 1024 + 1))
+        with self.assertRaisesRegex(ValueError, "SDK identity evidence exceeds"):
             inspect_image(directory, "ruby", "2.44.0")
 
     def test_failed_verification_removes_stale_complete_receipt(self):
@@ -175,11 +215,21 @@ class CandidateTest(unittest.TestCase):
         container.write_text("#!" + sys.executable + "\n" + '''
 import os, pathlib, shutil, sys
 args = sys.argv[1:]
+root = pathlib.Path(os.environ['FAKE_IMAGES'])
 if args[0] == 'build':
-    assert '--build-arg' in args and 'DATADOG_CANDIDATE=1' in args
+    assert '--build-arg' not in args
 elif args[0] == 'save':
     fixture = 'ruby' if 'ruby-candidate' in args[-1] else 'gin'
-    shutil.copytree(pathlib.Path(os.environ['FAKE_IMAGES']) / (fixture + '-image'), args[args.index('-o') + 1])
+    shutil.copytree(root / (fixture + '-image'), args[args.index('-o') + 1])
+elif args[0] == 'image':
+    print(('a' if 'ruby-candidate' in args[-1] else 'b') * 64)
+elif args[0] == 'run':
+    assert '--network=none' in args
+    entrypoint = args[args.index('--entrypoint') + 1]
+    builder_id = args[args.index('--entrypoint') + 2]
+    assert builder_id in ('a' * 64, 'b' * 64)
+    name = {'ruby':'ruby.identity.json', 'go':'gin.build-info.txt', 'sha256sum':'gin.binary-sha256'}[entrypoint]
+    sys.stdout.write((root / name).read_text())
 else:
     raise SystemExit('unexpected container operation')
 ''')

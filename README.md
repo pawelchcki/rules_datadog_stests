@@ -92,12 +92,15 @@ unchanged historical context retains its reviewed tree identity. Falcon also use
 runtimes, sink engine, and validator compiler remain in `rules_stests`.
 
 For a coordinated SDK update, `tools/build_datadog_fixtures.sh OUTPUT --candidate`
-builds local Ruby and Gin candidates from the current locked sources. Each build
-records the SDK actually loaded or compiled, and verifies all OCI blob sizes and
+builds local Ruby and Gin candidates from the current locked sources. The cached
+builder stage supplies SDK identity evidence outside the final payload, bound
+to its immutable image ID and the exported SDK files' hashes. Verification checks
+every locked and compiled Go tracer/contrib module, all OCI blob sizes and
 hashes and the streamed rootfs hash. Only after both images pass does
 `OUTPUT/candidate.json` record their versions, manifest/rootfs digests and exact
 build-context Git trees. A changed source context, stale SDK, or Go module
-checksum mismatch rejects the candidate. Candidate images use separate local
+checksum mismatch rejects the candidate. Candidate and ordinary builds produce
+the same rootfs bytes. Candidate images use separate local
 tags and bypass the reviewed fixture cache. No registry write, reviewed lock
 update, or Bazel override is produced by candidate preparation.
 

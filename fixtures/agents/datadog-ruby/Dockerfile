@@ -19,14 +19,6 @@ RUN bundle _4.0.3_ config set deployment true \
     && mkdir -p /rootfs/datadog-ruby \
     && cp -a /bundle/ruby/3.3.0/. /rootfs/datadog-ruby/
 RUN ruby -rjson -rrbconfig -e 'File.write("/rootfs/datadog-ruby/abi.json", JSON.generate(RbConfig::CONFIG.slice("ruby_version", "arch")))'
-# Candidate receipts establish which frozen bundle actually loaded. Keep the
-# reviewed build's rootfs bytes unchanged when this opt-in argument is absent.
-ARG DATADOG_CANDIDATE=0
-RUN if [ "$DATADOG_CANDIDATE" = 1 ]; then \
-      DD_TRACE_ENABLED=false DD_INSTRUMENTATION_TELEMETRY_ENABLED=false \
-      bundle _4.0.3_ exec ruby -rjson -rdatadog -e \
-      'File.write("/rootfs/datadog-ruby/sdk-version.json", JSON.generate(sdk: "datadog", version: Gem.loaded_specs.fetch("datadog").version.to_s))'; \
-    fi
 COPY activation.rb probes.rb /rootfs/datadog-ruby/
 # Two things here would otherwise defeat the reproducible-build check.
 #

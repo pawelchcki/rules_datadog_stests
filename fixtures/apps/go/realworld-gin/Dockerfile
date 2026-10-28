@@ -40,12 +40,6 @@ RUN go mod download \
         -ldflags "-s -w -buildid= -linkmode external -extldflags -static" \
         -o /rootfs/opt/app/bin/realworld-gin-datadog .
 
-ARG DATADOG_CANDIDATE=0
-RUN if [ "$DATADOG_CANDIDATE" = 1 ]; then \
-      go version -m /rootfs/opt/app/bin/realworld-gin-datadog \
-        > /rootfs/opt/app/datadog-build-info.txt; \
-    fi
-
 COPY LICENSE /rootfs/opt/app/licenses/application-LICENSE
 
 # The OpenTelemetry resource detectors look the running UID up in the password

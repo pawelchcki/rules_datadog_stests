@@ -135,11 +135,7 @@ for fixture in ruby gin; do
     printf 'Datadog fixture cache miss: %s; building reviewed payload\n' "$fixture"
   fi
 
-  candidate_build_args=()
-  if "$candidate"; then
-    candidate_build_args=(--build-arg DATADOG_CANDIDATE=1)
-  fi
-  if "$container_tool" build --timestamp 0 "${container_build_network_args[@]}" "${candidate_build_args[@]}" -t "$image" "$context" >> "$out/$fixture.build.log" 2>&1; then
+  if "$container_tool" build --timestamp 0 "${container_build_network_args[@]}" -t "$image" "$context" >> "$out/$fixture.build.log" 2>&1; then
     :
   else
     status=$?
@@ -148,6 +144,31 @@ for fixture in ruby gin; do
   fi
   "$container_tool" save --format oci-dir -o "$export_dir" "$image"
   if "$candidate"; then
+    # Inspect the cached builder stage without changing the final payload. Bind
+    # runtime observations to immutable builder/image bytes, never a mutable tag.
+    "$container_tool" build --target builder --timestamp 0 "${container_build_network_args[@]}" \
+      -t "$image-builder" "$context" >> "$out/$fixture.build.log" 2>&1
+    builder_id="$("$container_tool" image inspect --format '{{.Id}}' "$image-builder")"
+    if [[ ! "$builder_id" =~ ^(sha256:)?[0-9a-f]{64}$ ]]; then
+      printf 'candidate builder did not identify its immutable image\n' >&2
+      exit 1
+    fi
+    if [[ "$fixture" == ruby ]]; then
+      "$container_tool" run --rm --network=none --workdir /build \
+        --env DD_TRACE_ENABLED=false --env DD_INSTRUMENTATION_TELEMETRY_ENABLED=false \
+        --entrypoint ruby "$builder_id" -rjson -rdigest -rbundler/setup -rdatadog -e '
+          spec = Gem.loaded_specs.fetch("datadog")
+          paths = ["datadog-ruby/specifications/" + File.basename(spec.loaded_from),
+                   "datadog-ruby/gems/" + spec.full_name + "/lib/datadog/version.rb"]
+          files = paths.map { |path| {path: path, sha256: Digest::SHA256.file("/rootfs/" + path).hexdigest} }
+          puts JSON.generate(sdk: "datadog", version: spec.version.to_s, files: files)
+        ' > "$out/ruby.identity.json"
+    else
+      "$container_tool" run --rm --network=none --entrypoint go "$builder_id" \
+        version -m /rootfs/opt/app/bin/realworld-gin-datadog > "$out/gin.build-info.txt"
+      "$container_tool" run --rm --network=none --entrypoint sha256sum "$builder_id" \
+        /rootfs/opt/app/bin/realworld-gin-datadog > "$out/gin.binary-sha256"
+    fi
     test "$candidate_tree" = "$(python3 tools/context_tree.py "$context")"
     # No reviewed pin or Bazel override is emitted for an unreviewed build.
     continue

@@ -17,7 +17,6 @@ from context_tree import context_tree
 
 METADATA_LIMIT = 1024 * 1024
 LAYER_LIMIT = 4 * 1024 * 1024 * 1024
-IDENTITY_LIMIT = 64 * 1024
 VERSION = r"[0-9]+\.[0-9]+\.[0-9]+"
 DIGEST = r"sha256:[0-9a-f]{64}"
 
@@ -28,6 +27,14 @@ def document(path: Path):
     if len(value) > METADATA_LIMIT:
         raise ValueError("OCI metadata exceeds its bound")
     return json.loads(value)
+
+
+def evidence(path: Path) -> bytes:
+    with path.open("rb") as stream:
+        value = stream.read(METADATA_LIMIT + 1)
+    if len(value) > METADATA_LIMIT:
+        raise ValueError("SDK identity evidence exceeds its bound")
+    return value
 
 
 def blob(directory: Path, descriptor: dict, limit: int) -> Path:
@@ -89,7 +96,61 @@ def sdk_version(context: Path, fixture: str) -> str:
     return version
 
 
-def inspect_image(directory: Path, fixture: str, version: str, module_checksum: str = "") -> dict:
+def go_modules(context: Path, version: str) -> dict:
+    modules = {}
+    for module, selected in re.findall(
+            r"^[\t ]*(?:require[\t ]+)?(github\.com/DataDog/dd-trace-go/\S+)[\t ]+(v[^\s]+)",
+            (context / "datadog/go.mod").read_text(), re.M):
+        if selected != "v" + version or module in modules:
+            raise ValueError("Go tracer and contrib versions must match the requested SDK")
+        sums = re.findall(r"^" + re.escape(module + " " + selected) + r" (h1:[A-Za-z0-9+/]{43}=)$",
+                          (context / "datadog/go.sum").read_text(), re.M)
+        if len(sums) != 1:
+            raise ValueError("Go tracer or contrib lacks one exact source checksum")
+        modules[module] = sums[0]
+    if "github.com/DataDog/dd-trace-go/v2" not in modules:
+        raise ValueError("candidate Go graph lacks its core tracer")
+    return modules
+
+
+def identity_files(directory: Path, fixture: str, version: str, modules: dict) -> dict:
+    if fixture == "ruby":
+        identity = json.loads(evidence(directory.parent / "ruby.identity.json"))
+        if identity.get("sdk") != "datadog" or identity.get("version") != version:
+            raise ValueError("built Ruby SDK differs from the locked version")
+        paths = {f"datadog-ruby/specifications/datadog-{version}.gemspec",
+                 f"datadog-ruby/gems/datadog-{version}/lib/datadog/version.rb"}
+        files = identity.get("files", [])
+        if len(files) != 2 or {item.get("path") for item in files} != paths:
+            raise ValueError("invalid Ruby SDK identity files")
+        expected = {item["path"]: item.get("sha256", "") for item in files}
+    else:
+        info = evidence(directory.parent / "gin.build-info.txt")
+        compiled = {}
+        for line in info.splitlines():
+            fields = line.lstrip(b" \t").split(b"\t")
+            if len(fields) < 2 or fields[0] != b"dep" or not fields[1].startswith(b"github.com/DataDog/dd-trace-go/"):
+                continue
+            name = fields[1].decode()
+            if (len(fields) != 4 or name in compiled or fields[2] != ("v" + version).encode()
+                    or modules.get(name) != fields[3].decode()):
+                raise ValueError("built Go SDK differs from the locked source modules")
+            compiled[name] = fields[3].decode()
+        if "github.com/DataDog/dd-trace-go/v2" not in compiled or b"\t=>\t" in info:
+            raise ValueError("built Go SDK differs from the locked source modules")
+        checksum = evidence(directory.parent / "gin.binary-sha256")
+        match = re.fullmatch(rb"([0-9a-f]{64})  /rootfs/opt/app/bin/realworld-gin-datadog\n", checksum)
+        if not match:
+            raise ValueError("invalid compiled Go binary checksum")
+        expected = {"opt/app/bin/realworld-gin-datadog": match[1].decode()}
+    if any(not isinstance(value, str) or not re.fullmatch(r"[0-9a-f]{64}", value)
+           for value in expected.values()):
+        raise ValueError("invalid SDK identity file checksum")
+    return expected
+
+
+def inspect_image(directory: Path, fixture: str, version: str, modules: dict | None = None) -> dict:
+    expected = identity_files(directory, fixture, version, modules or {})
     index = document(directory / "index.json")
     if index.get("schemaVersion") != 2 or len(index.get("manifests", [])) != 1:
         raise ValueError("candidate must contain one image manifest")
@@ -116,32 +177,29 @@ def inspect_image(directory: Path, fixture: str, version: str, module_checksum: 
         opened = layer.open("rb")
     else:
         raise ValueError("unsupported candidate layer encoding")
-    identity_path = {"ruby": "datadog-ruby/sdk-version.json",
-                     "gin": "opt/app/datadog-build-info.txt"}[fixture]
-    identity = None
+    seen = set()
     with opened as stream:
         reader = HashedReader(stream)
         with tarfile.open(fileobj=reader, mode="r|") as archive:
             for member in archive:
                 name = member.name.removeprefix("./")
-                if name != identity_path:
+                if name not in expected:
                     continue
-                if identity is not None or not member.isfile() or member.size > IDENTITY_LIMIT:
-                    raise ValueError("invalid or duplicate SDK identity record")
-                identity = archive.extractfile(member).read(IDENTITY_LIMIT + 1)
+                if name in seen or not member.isfile():
+                    raise ValueError("invalid or duplicate SDK identity file")
+                seen.add(name)
+                checksum = hashlib.sha256()
+                with archive.extractfile(member) as source:
+                    while chunk := source.read(64 * 1024):
+                        checksum.update(chunk)
+                if checksum.hexdigest() != expected[name]:
+                    raise ValueError("SDK identity differs from the final payload bytes")
         while reader.read(64 * 1024):
             pass
         if "sha256:" + reader.hash.hexdigest() != diff_ids[0]:
             raise ValueError("candidate rootfs content mismatch")
-    if identity is None:
-        raise ValueError("candidate is missing its built SDK identity")
-    if fixture == "ruby":
-        if json.loads(identity) != {"sdk": "datadog", "version": version}:
-            raise ValueError("built Ruby SDK differs from the locked version")
-    elif len(re.findall(rb"^\s*dep\tgithub\.com/DataDog/dd-trace-go/v2\tv"
-                        + re.escape(version.encode()) + rb"\t" + re.escape(module_checksum.encode()) + rb"$",
-                        identity, re.M)) != 1 or b"\t=>\t" in identity:
-        raise ValueError("built Go SDK differs from the locked source module")
+    if seen != expected.keys():
+        raise ValueError("candidate is missing its built SDK identity files")
     return {"manifest": descriptor["digest"], "rootfs": diff_ids[0], "version": version}
 
 
@@ -152,12 +210,8 @@ def prepare(images: Path, contexts: dict[str, Path], trees: dict[str, str]) -> d
         if trees.get(fixture) != before:
             raise ValueError("candidate source differs from the built context")
         version = sdk_version(context, fixture)
-        module_checksum = ""
-        if fixture == "gin":
-            module_checksum = re.search(
-                r"^github\.com/DataDog/dd-trace-go/v2 v" + re.escape(version) + r" (h1:[A-Za-z0-9+/]{43}=)$",
-                (context / "datadog/go.sum").read_text(), re.M)[1]
-        image = inspect_image(images / fixture, fixture, version, module_checksum)
+        modules = go_modules(context, version) if fixture == "gin" else {}
+        image = inspect_image(images / fixture, fixture, version, modules)
         if before != context_tree(context):
             raise ValueError("candidate source context changed during verification")
         result["fixtures"][fixture] = dict(image, sourceTree=before)
