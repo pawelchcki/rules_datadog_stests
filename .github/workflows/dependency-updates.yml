@@ -1,0 +1,68 @@
+name: Coordinated SDK dependency producer
+run-name: 'runnerless-dependencies:${{ github.event.client_payload.job_id }}'
+
+on:
+  repository_dispatch:
+    types: [runnerless-dependency-update]
+
+# This is the existing package-writing authority used by fixture publication.
+# Runnerless dispatch itself uses the App's Contents write and Actions read.
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: runnerless-dependencies-${{ github.event.client_payload.job_id }}
+  cancel-in-progress: false
+
+jobs:
+  produce:
+    if: github.repository_id == '1402998689' && github.actor_id == '317265358' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.event.client_payload.base_sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify the App dispatch scope
+        env:
+          EXPECTED_BASE: ${{ github.event.client_payload.base_sha }}
+          EXPECTED_GROUP: ${{ github.event.client_payload.group }}
+          EXPECTED_REPOSITORY: ${{ github.event.client_payload.repository_id }}
+          EXPECTED_JOB: ${{ github.event.client_payload.job_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$EXPECTED_BASE" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$EXPECTED_JOB" =~ ^[0-9a-f]{64}$ ]]
+          [[ "$EXPECTED_GROUP" == datadog-sdks && "$EXPECTED_REPOSITORY" == "$GITHUB_REPOSITORY_ID" ]]
+          [[ "$EXPECTED_BASE" == "$GITHUB_SHA" && "$(git rev-parse HEAD)" == "$GITHUB_SHA" ]]
+      - uses: bazel-contrib/setup-bazel@8cb04a772ab4c1eb984e9c1b493a182e96c5e425 # 0.19.0
+      - name: Prepare the approved native producer
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y podman skopeo python3-yaml
+          tools/build_runnerless_dependency_producer.sh "$RUNNER_TEMP/dependency_update_run"
+      - name: Resolve, publish and verify one coordinated candidate
+        env:
+          DATADOG_REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DATADOG_REGISTRY_USER: ${{ github.actor }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$RUNNER_TEMP/dependency_update_run" \
+            --repo "$GITHUB_WORKSPACE" --base "$GITHUB_SHA" \
+            --repository-id "$GITHUB_REPOSITORY_ID" --group datadog-sdks \
+            --run-id "github-actions:$GITHUB_REPOSITORY_ID:$GITHUB_RUN_ID:1" \
+            --out "$RUNNER_TEMP/dependency-candidate"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: runnerless-dependency-update
+          path: ${{ runner.temp }}/dependency-candidate/
+          if-no-files-found: error
+          retention-days: 7
+          include-hidden-files: false

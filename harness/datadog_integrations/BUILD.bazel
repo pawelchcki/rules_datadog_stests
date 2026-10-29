@@ -37,7 +37,7 @@ py_library(
         "otel_mysql_probe.py",
     ],
     deps = [
-        "//harness/datadog_agent:agent_lib",
+        "//harness:sdk_versions", "//harness/datadog_agent:agent_lib",
         "//harness/datadog_backend:backend_lib",
         "//harness/datadog_llmobs:llmobs_lib",
         "//harness/datadog_telemetry:telemetry_lib",

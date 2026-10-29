@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import json
 import os
 from pathlib import Path
@@ -39,8 +40,24 @@ def payloads(path: Path) -> dict:
 
 
 def run(arguments, *, root: Path, capture=False):
-    # Registry credentials remain in the existing host's container auth.
-    result = subprocess.run([str(a) for a in arguments], cwd=root, check=True,
+    # Existing container keyring auth remains available to local hosts. Actions
+    # may instead supply their ephemeral scoped token entirely through memory.
+    argv=[str(a) for a in arguments]
+    environment=dict(os.environ)
+    token=environment.pop("DATADOG_REGISTRY_TOKEN", None)
+    environment.pop("GITHUB_TOKEN", None)
+    environment.pop("GH_TOKEN", None)
+    authentication=None
+    if token and argv[:2]==["skopeo","copy"] and argv[-1].startswith((
+            "docker://ghcr.io/pawelchcki/rules_stest_agents:",
+            "docker://ghcr.io/pawelchcki/rules_stest_apps:")):
+        username=environment.get("DATADOG_REGISTRY_USER", "")
+        if not re.fullmatch(r"[A-Za-z0-9_.\[\]-]{1,100}",username) or len(token)>4096 or any(c in token for c in "\r\n"):
+            raise ValueError("invalid registry host identity")
+        encoded=base64.b64encode((username+":"+token).encode()).decode()
+        authentication=json.dumps({"auths":{"ghcr.io":{"auth":encoded}}}).encode()
+        argv[2:2]=["--authfile","/dev/stdin"]
+    result = subprocess.run(argv, cwd=root, check=True, input=authentication,env=environment,
                             stdout=subprocess.PIPE if capture else subprocess.DEVNULL,
                             stderr=subprocess.DEVNULL)
     return result.stdout.decode().strip() if capture else None

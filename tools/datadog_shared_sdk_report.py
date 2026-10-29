@@ -4,11 +4,16 @@ import argparse
 from collections import Counter
 import json
 from pathlib import Path
-
-from datadog_capabilities import coverage_matrix, evidence_results
-from ci_profile import PROFILES, sdk_cases
+import sys
 
 ROOT = Path(__file__).resolve().parents[1]
+# The parity driver invokes this file directly, outside Bazel's Python launcher.
+sys.path.insert(0, str(ROOT / "harness"))
+
+from datadog_capabilities import coverage_matrix, evidence_results
+from sdk_versions import VERSIONS as SDK_VERSIONS
+from ci_profile import PROFILES, sdk_cases
+
 LANGUAGES = ("go", "python")
 
 
@@ -30,7 +35,7 @@ def manifest_exclusions(feature, manifest):
 def build_report(inventory, sdk_mapping, http_mapping, python_mapping, go_manifest, results, local_root):
     sdk = coverage_matrix(inventory, sdk_mapping, LANGUAGES, results=results, local_root=local_root)
     http = coverage_matrix(inventory, http_mapping, LANGUAGES, results=results, local_root=local_root)
-    assert go_manifest['revision'] == inventory['revision'] and go_manifest['sdkVersion'] == '2.10.1'
+    assert go_manifest['revision'] == inventory['revision'] and go_manifest['sdkVersion'] == SDK_VERSIONS['go']
     sdk_rows = {row['name']: row for row in sdk['capabilities']}
     http_rows = {row['name']: row for row in http['capabilities']}
     existing = {row['name']: row for row in python_mapping['capabilities']}
@@ -65,7 +70,7 @@ def build_report(inventory, sdk_mapping, http_mapping, python_mapping, go_manife
         rows.append(dict(name=name, id=feature['id'], commonAssertionScope=registry.get(name, {}).get('assertionScope'),
                          existingPythonChecks=existing.get(name, {}).get('checks', []),
                          upstreamGoExclusions=exclusions, languages=cells))
-    return dict(schemaVersion=1, upstreamRevision=inventory['revision'], sdkVersions={'go': '2.10.1', 'python': '4.15.5'},
+    return dict(schemaVersion=1, upstreamRevision=inventory['revision'], sdkVersions={language:SDK_VERSIONS[language] for language in LANGUAGES},
                 denominator=len(rows), fullUpstreamCaseParity=False, caseOutcomes=case_outcomes,
                 languageOutcomes={lang: dict(Counter(row['languages'][lang]['status'] for row in rows)) for lang in LANGUAGES},
                 sdkCoverage=sdk, httpCoverage=http, capabilities=rows)
@@ -73,7 +78,7 @@ def build_report(inventory, sdk_mapping, http_mapping, python_mapping, go_manife
 
 def markdown(report):
     lines = ['# Shared SDK capability coverage', '',
-             'Go SDK **2.10.1**, Python SDK **4.15.5**, native **v0.4**; upstream `' + report['upstreamRevision'] + '`.', '',
+             f"Go SDK **{report['sdkVersions']['go']}**, Python SDK **{report['sdkVersions']['python']}**, native **v0.4**; upstream `" + report['upstreamRevision'] + '`.', '',
              'All **' + str(report['denominator']) + '** inventory features remain visible. A pass verifies the declared local scope, not every upstream method. '
              '`xfail` means executed assertions failed as expected; `manifest-excluded` is a declared upstream exclusion without a ported local workload. '
              '`existing-language-suite` identifies a Python implementation awaiting a shared adapter. None of these three statuses counts as a pass.', '',
@@ -127,7 +132,7 @@ def main(argv=None):
             valid = valid and entry is not None and row.get('sourceMethod') == entry['method']
             valid = valid and entry is not None and row.get('adaptedFrom') == entry.get('adaptedFrom')
             valid = valid and entry is not None and row.get('capabilityNames') == entry['features']
-            valid = valid and row.get('sdkVersion') == {'go': '2.10.1', 'python': '4.15.5'}[language] and row.get('wire') == 'v0.4'
+            valid = valid and row.get('sdkVersion') == SDK_VERSIONS[language] and row.get('wire') == 'v0.4'
             if row.get('status') == 'unsupported':
                 valid = valid and bool(row.get('expectedFailures'))
             if not valid:

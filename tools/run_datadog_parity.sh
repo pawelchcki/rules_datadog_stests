@@ -84,19 +84,10 @@ retain_test_outputs() {
 }
 
 if [[ "$stage" == all || "$stage" == scenarios ]]; then
-profiles=(
-  //corpus:python-aiohttp-datadog-v4-15-5-v04
-  //corpus:python-aiohttp-datadog-v4-15-5-v05
-  //corpus:python-django-datadog-v4-15-5-v04
-  //corpus:python-django-datadog-v4-15-5-v05
-  //corpus:ruby-rails-datadog-v2-43-0-v04
-  //corpus:ruby-falcon-datadog-v2-43-0-v04
-  //corpus:go-gin-datadog-v2-10-1-v04
-)
 bazel build "${build_args[@]}" --remote_download_outputs=toplevel "${image_flags[@]}" //harness:datadog_ruby_compatibility
-mapfile -t ruby_profiles < <(python3 -c 'import json,os,sys; sys.path.insert(0,"tools"); from ci_profile import ruby_runtimes; d=json.load(open("bazel-bin/harness/datadog_ruby_compatibility.json")); print("\n".join("//corpus:ruby-sinatra-" + r["series"].replace(".", "-") + "-datadog-v2-43-0-v04" for r in ruby_runtimes(d,os.environ["DATADOG_CI_PROFILE"])))')
-[[ ${#ruby_profiles[@]} -gt 0 ]] || { echo 'No compatible Ruby profiles selected' >&2; exit 1; }
-profiles+=("${ruby_profiles[@]}")
+datadog_profile_labels="$(python3 tools/datadog_scenario_profiles.py --compatibility bazel-bin/harness/datadog_ruby_compatibility.json --ci-profile "$ci_profile")"
+[[ -n "$datadog_profile_labels" ]] || { echo 'No active scenario profiles selected' >&2; exit 1; }
+mapfile -t profiles <<< "$datadog_profile_labels"
 # DefaultInfo for each profile carries its manifest and validator runfiles.
 # Fetch the complete tree: the coverage gate hashes every scenario bytecode.
 bazel build "${build_args[@]}" --remote_download_outputs=toplevel \

@@ -2,10 +2,16 @@
 
 _MATRIX = Label("@rules_stests//fixtures/apps/ruby/realworld-sinatra:matrix.json")
 _LOCK = Label("//bazel:datadog_ruby.lock.json")
+_SDKS = Label("//bazel:datadog_sdk_versions.json")
+_PROFILES = Label("//corpus:datadog/sdk_profiles.json")
 
 def _config_impl(ctx):
     runtimes = json.decode(ctx.read(ctx.attr.matrix))["runtimes"]
     lock = json.decode(ctx.read(ctx.attr.lock))
+    sdks = json.decode(ctx.read(ctx.attr.sdks))
+    profiles = json.decode(ctx.read(ctx.attr.profiles))
+    if sorted(sdks.keys()) != ["go", "python", "ruby"] or sdks["ruby"] != lock["tracerVersion"]:
+        fail("SDK pins and the Ruby lock must agree")
     supported = []
     unsupported = []
     for runtime in runtimes:
@@ -13,14 +19,14 @@ def _config_impl(ctx):
         if version[:2] >= [2, 5] and version[:2] < [4, 1]:
             supported.append(runtime)
         else:
-            unsupported.append(dict(runtime, reason = "Datadog 2.43.0 requires Ruby >= 2.5.0, < 4.1."))
-    ctx.file("versions.bzl", "DATADOG_RUBY_RUNTIMES = " + repr(supported) + "\nDATADOG_RUBY_UNSUPPORTED = " + repr(unsupported) + "\nDATADOG_RUBY_GEMS = " + repr(lock["gems"]) + "\n")
+            unsupported.append(dict(runtime, reason = "Datadog " + lock["tracerVersion"] + " requires Ruby >= 2.5.0, < 4.1."))
+    ctx.file("versions.bzl", "DATADOG_RUBY_RUNTIMES = " + repr(supported) + "\nDATADOG_RUBY_UNSUPPORTED = " + repr(unsupported) + "\nDATADOG_RUBY_GEMS = " + repr(lock["gems"]) + "\nDATADOG_SDK_VERSIONS = " + repr(sdks) + "\nDATADOG_ADDED_PROFILES = " + repr(profiles) + "\n")
     ctx.file("compatibility.json", json.encode({"tracerVersion": lock["tracerVersion"], "rubyRequirement": lock["rubyRequirement"], "supported": supported, "unsupported": unsupported}))
     ctx.file("BUILD.bazel", 'exports_files(["versions.bzl", "compatibility.json"], visibility = ["//visibility:public"])\n')
 
 _config = repository_rule(
     implementation = _config_impl,
-    attrs = {"matrix": attr.label(allow_single_file = True), "lock": attr.label(allow_single_file = True)},
+    attrs = {"matrix": attr.label(allow_single_file = True), "lock": attr.label(allow_single_file = True), "sdks": attr.label(allow_single_file = True), "profiles": attr.label(allow_single_file = True)},
 )
 
 def _gem_impl(ctx):
@@ -49,7 +55,7 @@ _gem = repository_rule(
 
 def _extension_impl(ctx):
     lock = json.decode(ctx.read(_LOCK))
-    _config(name = "datadog_ruby_matrix_config", matrix = _MATRIX, lock = _LOCK)
+    _config(name = "datadog_ruby_matrix_config", matrix = _MATRIX, lock = _LOCK, sdks = _SDKS, profiles = _PROFILES)
     repositories = ["datadog_ruby_matrix_config"]
     for gem in lock["gems"]:
         name = "datadog_gem_" + gem["name"].replace("-", "_")

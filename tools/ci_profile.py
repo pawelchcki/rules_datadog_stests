@@ -1,8 +1,24 @@
 """Deterministic PR representatives; exhaustive variants remain the full default."""
 
+import json
+from pathlib import Path
+
 PROFILES = ("full", "pr")
 PR_RUBY_SERIES = ("2.5", "3.3", "4.0")
-PR_GO_VERSIONS = ("go1.4.3", "go1.17.13", "go1.25.14", "go1.27.1")
+def go_representatives(lock):
+    # Retain every existing control and add a newly required instrumentor
+    # minimum instead of silently losing the old compiler's coverage.
+    selected={"go1.4.3","go1.17.13","go1.25.14",lock["runtimes"][-1]["version"]}
+    for backend in lock["instrumentation"].values():
+        matches=[row["version"] for row in lock["runtimes"] if row["minor"]==backend["minimumGoMinor"]]
+        if len(matches)!=1:raise ValueError("instrumentor minimum lacks a pinned runtime")
+        selected.update(matches)
+    return tuple(row["version"] for row in lock["runtimes"] if row["version"] in selected)
+
+
+def pr_go_versions():
+    lock=Path(__file__).resolve().parents[1]/"harness/go_runtime/versions.lock.json"
+    return go_representatives(json.loads(lock.read_text()))
 
 
 def ruby_runtimes(compatibility, profile):

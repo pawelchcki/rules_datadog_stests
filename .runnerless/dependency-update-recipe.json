@@ -1,0 +1,26 @@
+{
+  "contract": "runnerless.dependency-update-recipe/v1",
+  "group": "datadog-sdks",
+  "sources": [
+    {
+      "name": "ruby",
+      "url": "https://rubygems.org/api/v1/versions/datadog/latest.json",
+      "kind": "json",
+      "pointer": "/version"
+    },
+    {
+      "name": "python",
+      "url": "https://api.github.com/repos/DataDog/dd-trace-py/releases/latest",
+      "kind": "json",
+      "pointer": "/tag_name"
+    },
+    {
+      "name": "go",
+      "url": "https://proxy.golang.org/github.com/%21data%21dog/dd-trace-go/v2/@latest",
+      "kind": "json",
+      "pointer": "/Version"
+    }
+  ],
+  "update": [["/usr/bin/python3", "tools/runnerless_update_datadog.py"]],
+  "verify": [["bash", "tools/verify_datadog_sdk_update.sh"]]
+}

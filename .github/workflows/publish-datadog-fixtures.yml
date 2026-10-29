@@ -35,6 +35,7 @@ jobs:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           fetch-depth: 0
+          persist-credentials: false
       - uses: bazel-contrib/setup-bazel@8cb04a772ab4c1eb984e9c1b493a182e96c5e425 # 0.19.0
       - name: Build and validate the reviewed payloads
         shell: bash
@@ -45,14 +46,11 @@ jobs:
           tools/build_datadog_fixtures.sh "$RUNNER_TEMP/datadog-images"
       - name: Publish and verify anonymous pulls
         env:
-          REGISTRY_AUTH_FILE: ${{ runner.temp }}/datadog-registry-auth.json
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DATADOG_REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DATADOG_REGISTRY_USER: ${{ github.actor }}
         shell: bash
         run: |
           set -euo pipefail
-          trap 'rm -f -- "$REGISTRY_AUTH_FILE"' EXIT
-          printf '%s' "$GH_TOKEN" | skopeo login --authfile "$REGISTRY_AUTH_FILE" \
-            --username "$GITHUB_ACTOR" --password-stdin ghcr.io
           tools/publish_datadog_fixtures.sh "$RUNNER_TEMP/datadog-images"
       - name: Propose the verified digest locks
         env:
@@ -77,5 +75,5 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add bazel/oci_images.lock.bzl
           git commit -m 'Lock published Datadog fixture payloads'
-          git push origin "HEAD:refs/heads/$branch"
+          git -c 'credential.helper=!gh auth git-credential' push origin "HEAD:refs/heads/$branch"
           gh pr create --base main --head "$branch" --title 'Publish Datadog fixture locks' --body-file "$body"

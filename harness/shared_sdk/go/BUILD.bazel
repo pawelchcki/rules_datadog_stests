@@ -10,6 +10,7 @@ go_binary(
         "@com_github_datadog_dd_trace_go_contrib_net_http_v2//:http",
         "@com_github_datadog_dd_trace_go_v2//ddtrace/opentelemetry",
         "@com_github_datadog_dd_trace_go_v2//ddtrace/tracer",
+        "@com_github_datadog_dd_trace_go_v2//instrumentation",
         "@io_opentelemetry_go_otel//attribute",
         "@io_opentelemetry_go_otel//codes",
         "@io_opentelemetry_go_otel_trace//:trace",

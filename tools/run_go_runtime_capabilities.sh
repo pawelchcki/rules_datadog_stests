@@ -8,7 +8,9 @@ ci_profile="${DATADOG_CI_PROFILE:-full}"
 case "$ci_profile" in full|pr) ;; *) echo "Unknown CI profile: $ci_profile" >&2; exit 1 ;; esac
 version_flags=()
 if [[ "$ci_profile" == pr ]]; then
-  mapfile -t versions < <(python3 -c 'import sys; sys.path.insert(0,"tools"); from ci_profile import PR_GO_VERSIONS; print("\n".join(PR_GO_VERSIONS))')
+  datadog_ci_versions="$(python3 -c 'import sys; sys.path.insert(0,"tools"); from ci_profile import pr_go_versions; print("\n".join(pr_go_versions()))')"
+  [[ -n "$datadog_ci_versions" ]]
+  mapfile -t versions <<< "$datadog_ci_versions"
   [[ ${#versions[@]} -gt 0 ]] || { echo 'No representative Go versions selected' >&2; exit 1; }
   for version in "${versions[@]}"; do version_flags+=(--version "$version"); done
 fi

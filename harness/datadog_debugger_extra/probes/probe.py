@@ -1,4 +1,5 @@
 """Signed RC enable/retain/disable controls through the actual pinned Agents."""
+from sdk_versions import VERSIONS as SDK_VERSIONS
 import gzip
 import io
 import json
@@ -149,7 +150,7 @@ def execute(args, out):
                     with process(launch_command(args, env, out), out / "app.log", clean) as sdk:
                         ready = wait_for(lambda: json.loads((out / "ready.json").read_text()) if (out / "ready.json").exists() else None, "SDK startup missing")
                         wait_for(lambda: any("APM_TRACING" in r["client"]["products"] for r in rc_requests(proxy, out / "tracer")), "SDK remote products not registered")
-                        assert ready["tracer_version"] == "4.15.5", ready
+                        assert ready["tracer_version"] == SDK_VERSIONS["python"], ready
                         results = [receipt(f, env, ready, "Signed RC through real core/trace Agents; enable, retained empty config, disable and native outputs", ["Other language and advanced upstream cases"], SOURCE_METADATA[f]["path"], SOURCE_METADATA[f]["sha256"]) for f in FEATURES]
                         # Validate the actual startup defaults while the backend
                         # still serves the empty stage. Later RC configuration

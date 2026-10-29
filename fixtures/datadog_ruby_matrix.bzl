@@ -1,3 +1,4 @@
+load("@datadog_ruby_matrix_config//:versions.bzl", "DATADOG_SDK_VERSIONS")
 """Datadog tracing on every compatible upstream Ruby runtime."""
 
 load("@datadog_ruby_matrix_config//:versions.bzl", "DATADOG_RUBY_RUNTIMES")
@@ -16,7 +17,7 @@ def ruby_matrix_fixture(app):
         command = ["bin/server", "--host", "127.0.0.1", "--port", "$${PORT}"],
         injection = datadog_ruby_injection(rootfs = "//harness:" + app + "_datadog_rootfs"),
         wires = ["v0.4"],
-        profile = "ruby-sinatra-" + app[5:].replace("_", "-") + "-datadog-v2-43-0-",
+        profile = "ruby-sinatra-" + app[5:].replace("_", "-") + "-datadog-v" + DATADOG_SDK_VERSIONS["ruby"].replace(".", "-") + "-",
     )
 
 def datadog_ruby_matrix_tests():

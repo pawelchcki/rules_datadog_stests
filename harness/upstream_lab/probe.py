@@ -13,6 +13,8 @@ import time
 import traceback
 from urllib.request import urlopen
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from sdk_versions import VERSIONS
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from adapter import AgentIntake, Library, load_cases
 from local_cases import cases as local_cases
@@ -102,7 +104,7 @@ def application(args, env, out, group):
                     assert proc.poll() is None, log_path.read_text(errors="replace")
                     assert time.monotonic() < deadline, "health readiness timeout"
                     time.sleep(0.05)
-            assert health["ready"] and health["ddtraceVersion"] == "4.15.5", health
+            assert health["ready"] and health["ddtraceVersion"] == VERSIONS["python"], health
             library = Library(url)
             library.sdk_version = health["ddtraceVersion"]
             library.log_path = log_path

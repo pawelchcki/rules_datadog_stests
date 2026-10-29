@@ -1,4 +1,5 @@
 """Assert real Datadog-configured OTLP metrics/logs and retain native evidence."""
+from sdk_versions import VERSIONS as SDK_VERSIONS
 import argparse
 import hashlib
 import json
@@ -41,7 +42,7 @@ def metrics(records):
 
 
 def check_pipeline(records, traces, identity):
-    assert identity["ddtraceVersion"] == "4.15.5"
+    assert identity["ddtraceVersion"] == SDK_VERSIONS["python"]
     assert identity["apiVersion"] == identity["exporterVersion"] == "1.44.0"
     assert identity["meterProvider"] == "MeterProvider" and identity["loggerProvider"] == "LoggerProvider"
     assert identity["metricFlush"] and identity["logFlush"]

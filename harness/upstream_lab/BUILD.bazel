@@ -13,6 +13,7 @@ py_library(
     name = "runtime",
     srcs = ["adapter.py", "expected_failures.py", "local_cases.py", "probe.py"],
     imports = ["."],
+    deps = ["//harness:sdk_versions"],
 )
 
 py_binary(
@@ -21,6 +22,7 @@ py_binary(
     data = ["exclusions.json", ":upstream_sources"],
     main = "probe.py",
     python_version = "PY3",
+    deps = ["//harness:sdk_versions"],
 )
 
 py_test(

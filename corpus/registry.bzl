@@ -1,6 +1,6 @@
 """Datadog assertion libraries and reviewed profile registry."""
 
-load("@datadog_ruby_matrix_config//:versions.bzl", "DATADOG_RUBY_RUNTIMES")
+load("@datadog_ruby_matrix_config//:versions.bzl", "DATADOG_RUBY_RUNTIMES", "DATADOG_ADDED_PROFILES")
 
 load("@rules_stests//corpus:registry.bzl", "REALWORLD_BASE_HURL_CASES")
 
@@ -92,17 +92,35 @@ DATADOG_PROFILES.update({
     for runtime in DATADOG_RUBY_RUNTIMES
 })
 
+# Additional versioned profiles retain historical definitions and may reuse
+# their reviewed expectations only through the explicit reference contract.
+DATADOG_PROFILES.update({
+    item["id"]: struct(
+        implementation = item["implementation"],
+        wire_version = item["wire"],
+        reviewed = item["reviewed"],
+        reference_profile = item.get("reference"),
+    )
+    for item in DATADOG_ADDED_PROFILES
+})
+
 def declare_datadog_profiles(datadog_realworld_profile):
     """Declares Datadog's independent profiles and native wire assertions."""
     for profile_id, declaration in DATADOG_PROFILES.items():
-        datadog_realworld_profile(
+        arguments = dict(
             name = profile_id,
             specification = "datadog/realworld/profile/{}.scm".format(profile_id),
             implementation_libraries = ["datadog/implementation/{}.scm".format(declaration.implementation)],
             runtime_libraries = [],
-            # Until its candidates are reviewed, a profile validates contracts only.
-            shape_root = "datadog/realworld/shape/{}".format(profile_id) if getattr(declaration, "reviewed", True) else None,
             signals = ["traces"],
-            scenarios = DATADOG_SCENARIOS,
             wire_version = declaration.wire_version,
         )
+        reference = getattr(declaration, "reference_profile", None)
+        if reference:
+            datadog_realworld_profile(reference_profile = ":" + reference, **arguments)
+        else:
+            datadog_realworld_profile(
+                shape_root = "datadog/realworld/shape/{}".format(profile_id) if getattr(declaration, "reviewed", True) else None,
+                scenarios = DATADOG_SCENARIOS,
+                **arguments
+            )

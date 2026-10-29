@@ -1,3 +1,4 @@
+load("@rules_python//python:defs.bzl", "py_library")
 load(":datadog_ruby_matrix.bzl", "datadog_ruby_payloads")
 load("@rules_go//go:def.bzl", "go_binary", "go_test")
 load("@rules_itest//:itest.bzl", "service_test")
@@ -5,6 +6,7 @@ load("@rules_stests//rules:defs.bzl", "corpus_service", "oci_rootfs")
 load("@rules_stests//harness:scheme_bytecode.bzl", "scheme_bytecode_bundles")
 load("//corpus:registry.bzl", "DATADOG_CAPTURE_LIBRARIES", "datadog_library_args", "datadog_library_labels")
 load("//rules:files.bzl", "copy_file")
+load("@datadog_ruby_matrix_config//:versions.bzl", "DATADOG_SDK_VERSIONS")
 package(default_visibility = ["//visibility:public"])
 oci_rootfs(
     name = "datadog_mariadb_rootfs",
@@ -84,7 +86,7 @@ go_test(
     srcs = ["ruby_bootstrap_test.go"],
     embed = ["@rules_stests//harness:app_launcher_lib"],
     data = ["@rules_stests//harness:rails_rootfs", ":datadog_ruby_rootfs"],
-    env = {"RAILS_ROOTFS": "$(rlocationpath @rules_stests//harness:rails_rootfs)", "DATADOG_RUBY_ROOTFS": "$(rlocationpath :datadog_ruby_rootfs)"},
+    env = {"RAILS_ROOTFS": "$(rlocationpath @rules_stests//harness:rails_rootfs)", "DATADOG_RUBY_ROOTFS": "$(rlocationpath :datadog_ruby_rootfs)", "DATADOG_RUBY_VERSION": DATADOG_SDK_VERSIONS["ruby"]},
     tags = ["manual"],
 )
 
@@ -95,3 +97,5 @@ copy_file(
     src = "@datadog_ruby_matrix_config//:compatibility.json",
     out = "datadog_ruby_compatibility.json",
 )
+
+py_library(name = "sdk_versions", srcs = ["sdk_versions.py"], imports = ["."], data = ["//bazel:datadog_sdk_versions.json"])

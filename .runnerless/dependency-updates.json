@@ -1,0 +1,47 @@
+{
+  "contract": "runnerless.dependency-updates/v1",
+  "enabled": false,
+  "groups": [{
+    "name": "datadog-sdks",
+    "enabled": true,
+    "producer": {
+      "provider": "github-actions",
+      "workflow": "dependency-updates.yml",
+      "actorId": 317265358,
+      "artifact": "runnerless-dependency-update"
+    },
+    "schedule": {"weekday": 1, "hourUtc": 8},
+    "allowedPaths": [
+      "bazel/datadog_sdk_versions.json",
+      "bazel/datadog_ruby.lock.json",
+      "bazel/datadog_fixture_payloads.json",
+      "bazel/oci_images.lock.bzl",
+      "MODULE.bazel.lock",
+      "fixtures/agents/datadog-ruby/Gemfile",
+      "fixtures/agents/datadog-ruby/Gemfile.lock",
+      "fixtures/agents/datadog-ruby/activation.rb",
+      "fixtures/agents/datadog-ruby/matrix_activation.rb",
+      "fixtures/agents/datadog-ruby/matrix_build.rb",
+      "fixtures/apps/go/realworld-gin/Dockerfile",
+      "fixtures/apps/go/realworld-gin/datadog/go.mod",
+      "fixtures/apps/go/realworld-gin/datadog/go.sum",
+      "harness/go_runtime/versions.lock.json",
+      "harness/go_runtime/orchestrion/go.mod",
+      "harness/go_runtime/orchestrion/go.sum",
+      "harness/shared_sdk/go/go.mod",
+      "harness/shared_sdk/go/go.sum",
+      "harness/shared_sdk/go-manifest.json",
+      "harness/shared_sdk/python-manifest.json",
+      "harness/shared_sdk/cases.json",
+      "harness/shared_sdk/cases.bzl",
+      "docs/datadog-shared-sdk-capabilities-mapping.json",
+      "corpus/datadog/sdk_profiles.json",
+      "corpus/datadog/implementation/**",
+      "corpus/datadog/realworld/profile/**"
+    ],
+    "releaseHosts": ["github.com", "rubygems.org", "pypi.org"],
+    "maxFiles": 64,
+    "maxFileBytes": 524288,
+    "maxTotalBytes": 2097152
+  }]
+}

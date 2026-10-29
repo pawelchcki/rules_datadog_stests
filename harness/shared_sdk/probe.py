@@ -12,6 +12,8 @@ import time
 import traceback
 from urllib.request import urlopen
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from sdk_versions import VERSIONS
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "upstream_lab"))
 sys.path.insert(1, str(Path(__file__).resolve().parent))
 from adapter import AgentIntake, Library, load_cases
@@ -23,7 +25,7 @@ from sdk_expected_failures import local_failure_reason
 from baggage_cases import adapt_case
 
 REVISION = "098fe0967c587db8a16b74a1e711777d0a9d5867"
-SDK_VERSIONS = {"python": "4.15.5", "go": "2.10.1"}
+SDK_VERSIONS = {language: VERSIONS[language] for language in ("python", "go")}
 
 
 def sha(data):

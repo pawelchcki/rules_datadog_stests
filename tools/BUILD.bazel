@@ -5,6 +5,31 @@ load("//corpus:registry.bzl", "DATADOG_SHAPE_LIBRARIES", "datadog_library_args",
 
 package(default_visibility = ["//visibility:public"])
 
+py_library(
+    name = "datadog_scenario_profiles_lib",
+    srcs = ["datadog_scenario_profiles.py"],
+    imports = ["."],
+    deps = [":ci_profile", "//harness:sdk_versions"],
+)
+py_binary(
+    name = "datadog_scenario_profiles_test_bin",
+    testonly = True,
+    srcs = ["datadog_scenario_profiles_test.py"],
+    main = "datadog_scenario_profiles_test.py",
+    deps = [":datadog_scenario_profiles_lib"],
+)
+service_test(name = "datadog_scenario_profiles_test", test = ":datadog_scenario_profiles_test_bin")
+
+py_binary(
+    name = "runnerless_update_datadog_test_bin",
+    testonly = True,
+    srcs = ["runnerless_update_datadog_test.py", "runnerless_update_datadog.py", "materialize_shared_app.py"],
+    main = "runnerless_update_datadog_test.py",
+    data = ["//corpus:datadog_versioned_sources", "//bazel:oci_images.lock.bzl", "//bazel:datadog_sdk_versions.json", "//corpus:datadog/sdk_profiles.json"],
+    imports = ["."],
+)
+service_test(name = "runnerless_update_datadog_test", test = ":runnerless_update_datadog_test_bin")
+
 py_binary(
     name = "datadog_fixture_publication_test_bin",
     testonly = True,
@@ -43,6 +68,7 @@ service_test(
 py_library(
     name = "ci_profile",
     srcs = ["ci_profile.py"],
+    data = ["//harness/go_runtime:versions.lock.json"],
     imports = ["."],
 )
 
@@ -190,7 +216,7 @@ py_test(
 py_binary(
     name = "datadog_shared_sdk_report",
     srcs = ["datadog_shared_sdk_report.py"],
-    deps = [":ci_profile", ":datadog_capabilities_lib"],
+    deps = [":ci_profile", ":datadog_capabilities_lib", "//harness:sdk_versions"],
 )
 
 py_test(

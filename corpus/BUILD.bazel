@@ -40,3 +40,6 @@ service_test(
     services = ["@rules_stests//harness:telemetry_sink_service"],
     test = ":datadog_conformance_probe",
 )
+
+
+filegroup(name = "datadog_versioned_sources", srcs = glob(["datadog/realworld/profile/*.scm", "datadog/implementation/*.scm"]))
