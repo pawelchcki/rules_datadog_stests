@@ -3,6 +3,13 @@
 # flags usable with `bazel --config=local`. Nothing is pushed to a registry.
 set -euo pipefail
 out="${1:?usage: build_datadog_fixtures.sh OUTPUT_DIRECTORY}"
+candidate=false
+if [[ "${2:-}" == --candidate && "$#" == 2 ]]; then
+  candidate=true
+elif [[ "$#" != 1 ]]; then
+  printf 'usage: build_datadog_fixtures.sh OUTPUT_DIRECTORY [--candidate]\n' >&2
+  exit 2
+fi
 mkdir -p "$out"
 out="$(realpath "$out")"
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -16,8 +23,13 @@ cd "$root"
 : > "$out/bazel.flags"
 # A failed rebuild must not retain provenance from a previous output.
 rm -f -- "$out/gin.source-tree"
+rm -f -- "$out/candidate.json"
 
 cache_root="${DATADOG_FIXTURE_CACHE:-}"
+# Candidates have not passed review; never mix them into the reviewed cache.
+if "$candidate"; then
+  cache_root=""
+fi
 if [[ -n "$cache_root" ]]; then
   mkdir -p "$cache_root"
   cache_root="$(realpath "$cache_root")"
@@ -76,6 +88,7 @@ for fixture in ruby gin; do
     repository=datadog_ruby_linux_amd64
     image=localhost/rules-stests-datadog-ruby:2.43.0
     rootfs_digest=sha256:3c02edad18444381e1a2965dcd71989603713de43beb7f4fc1dbcfb3b7af0794
+    ruby_context="$context"
   else
     overlay=fixtures/apps/go/realworld-gin
     mkdir -p "$out/contexts"
@@ -85,6 +98,13 @@ for fixture in ruby gin; do
     repository=gin_datadog_realworld_linux_amd64
     image=localhost/rules-stests-gin-datadog:2.10.1
     rootfs_digest=sha256:f2532c86ac33814c8ab87c3cc6b64d0d88ad9bdee043bc65982276adbf55e99b
+    gin_context="$context"
+  fi
+
+  if "$candidate"; then
+    candidate_tree="$(python3 tools/context_tree.py "$context")"
+    printf '%s\n' "$candidate_tree" > "$out/$fixture.source-tree"
+    image="localhost/rules-stests-$fixture-candidate:source-$candidate_tree"
   fi
 
   export_dir="$out/$fixture"
@@ -123,6 +143,36 @@ for fixture in ruby gin; do
     exit "$status"
   fi
   "$container_tool" save --format oci-dir -o "$export_dir" "$image"
+  if "$candidate"; then
+    # Inspect the cached builder stage without changing the final payload. Bind
+    # runtime observations to immutable builder/image bytes, never a mutable tag.
+    "$container_tool" build --target builder --timestamp 0 "${container_build_network_args[@]}" \
+      -t "$image-builder" "$context" >> "$out/$fixture.build.log" 2>&1
+    builder_id="$("$container_tool" image inspect --format '{{.Id}}' "$image-builder")"
+    if [[ ! "$builder_id" =~ ^(sha256:)?[0-9a-f]{64}$ ]]; then
+      printf 'candidate builder did not identify its immutable image\n' >&2
+      exit 1
+    fi
+    if [[ "$fixture" == ruby ]]; then
+      "$container_tool" run --rm --network=none --workdir /build \
+        --env DD_TRACE_ENABLED=false --env DD_INSTRUMENTATION_TELEMETRY_ENABLED=false \
+        --entrypoint ruby "$builder_id" -rjson -rdigest -rbundler/setup -rdatadog -e '
+          spec = Gem.loaded_specs.fetch("datadog")
+          paths = ["datadog-ruby/specifications/" + File.basename(spec.loaded_from),
+                   "datadog-ruby/gems/" + spec.full_name + "/lib/datadog/version.rb"]
+          files = paths.map { |path| {path: path, sha256: Digest::SHA256.file("/rootfs/" + path).hexdigest} }
+          puts JSON.generate(sdk: "datadog", version: spec.version.to_s, files: files)
+        ' > "$out/ruby.identity.json"
+    else
+      "$container_tool" run --rm --network=none --entrypoint go "$builder_id" \
+        version -m /rootfs/opt/app/bin/realworld-gin-datadog > "$out/gin.build-info.txt"
+      "$container_tool" run --rm --network=none --entrypoint sha256sum "$builder_id" \
+        /rootfs/opt/app/bin/realworld-gin-datadog > "$out/gin.binary-sha256"
+    fi
+    test "$candidate_tree" = "$(python3 tools/context_tree.py "$context")"
+    # No reviewed pin or Bazel override is emitted for an unreviewed build.
+    continue
+  fi
   flag="$(python3 tools/local_oci_repository.py \
     "$export_dir" "$repository" --rootfs-digest "$rootfs_digest")"
   if [[ -n "$cache_entry" ]]; then
@@ -146,3 +196,9 @@ for fixture in ruby gin; do
     printf '%s\n' "$source_tree" > "$out/gin.source-tree"
   fi
 done
+
+if "$candidate"; then
+  python3 tools/datadog_fixture_candidate.py --images "$out" \
+    --ruby-context "$ruby_context" --ruby-tree "$(cat "$out/ruby.source-tree")" \
+    --gin-context "$gin_context" --gin-tree "$(cat "$out/gin.source-tree")"
+fi

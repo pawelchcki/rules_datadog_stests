@@ -91,6 +91,25 @@ unchanged historical context retains its reviewed tree identity. Falcon also use
 `@rules_stests//harness:falcon_rootfs`. Common application sources, launchers,
 runtimes, sink engine, and validator compiler remain in `rules_stests`.
 
+For a coordinated SDK update, `tools/build_datadog_fixtures.sh OUTPUT --candidate`
+builds local Ruby and Gin candidates from the current locked sources. The cached
+builder stage supplies SDK identity evidence outside the final payload, bound
+to its immutable image ID and the exported SDK files' hashes. Verification checks
+every locked and compiled Go tracer/contrib module, all OCI blob sizes and
+hashes and the streamed rootfs hash. Only after both images pass does
+`OUTPUT/candidate.json` record their versions, manifest/rootfs digests and exact
+build-context Git trees. A changed source context, stale SDK, or Go module
+checksum mismatch rejects the candidate. Candidate and ordinary builds produce
+the same rootfs bytes. Candidate images use separate local
+tags and bypass the reviewed fixture cache. No registry write, reviewed lock
+update, or Bazel override is produced by candidate preparation.
+
+The ordinary builder and publisher retain their reviewed payload requirements.
+Candidate preparation supplies evidence for reviewing new pins; it does not
+enroll the dependency-update schedule or complete coordinated Ruby/Python/Go
+lock/profile generation. Those remain prerequisites for the App-created update
+PRs tracked in [my-infra #114](https://github.com/pawelchcki/my-infra/issues/114).
+
 See [corpus documentation](corpus/datadog/README.md),
 [coverage](docs/datadog-coverage.md) and
 [verification](docs/datadog-verification.md).
@@ -117,14 +136,13 @@ contains `bazel.flags`, which can be empty when using published fixtures.
 The driver also retains capability captures and requires at least 75% of the
 full feature inventory; `DATADOG_CAPABILITY_MIN_PERCENT` can override that threshold.
 
-Pull requests run a deterministic representative matrix, external consumer
-build and fresh gated evidence in BuildBuddy. Fork pull requests run these in
-GitHub Actions; BuildBuddy only reports the delegation status. Pushes to main
-run both systems. Actions use the BuildBuddy cache through the
+Every pull request runs a deterministic representative matrix, external consumer
+build and fresh gated evidence in the required GitHub Actions `assertions` job.
+Pushes to main run the exhaustive matrix. Actions use the optional BuildBuddy cache through the
 `BUILDBUDDY_API_KEY` repository secret, with remote uploads disabled. Forks
 receive no secret and use the GitHub disk and repository caches. Fresh native
-tests still execute with `--nocache_test_results` on both systems.
-The required BuildBuddy `Full test suite` starts **five stages on PRs**:
+tests still execute with `--nocache_test_results`.
+The optional BuildBuddy workflow splits the same PR evidence into **five stages**:
 scenarios and stress checks across every framework and both intake formats,
 including Ruby **2.5, 3.3 and 4.0**; two disjoint shards covering all native framework feature cases;
 the first and last pinned SDK case in each upstream or adapter class in both
@@ -136,7 +154,8 @@ version 1.25, and latest version 1.27, with all three backends.
 This selects **967 fresh test executions instead of 2,150** in the evidence
 driver (55% fewer), and **12 instead of 72** Go runtime/backend combinations.
 
-Pushes to **main run all variants**: twelve BuildBuddy stages with all nine
+Pushes to **main run all variants**. The optional BuildBuddy workflow splits
+these into twelve stages with all nine
 Ruby runtimes, eight feature shards, two complete SDK shards, and capabilities;
 the Go workflow covers all 24 versions. Manual/local runs default to full.
 Set `DATADOG_CI_PROFILE=pr` to reproduce the representative selection locally.
@@ -144,9 +163,11 @@ Reports identify representative PR coverage, keep missing cells unverified,
 and never claim the full SDK parameter matrix passed. Every selected scenario
 still runs twice, and capture/receipt validation, the shared-language gate,
 the 301-feature denominator and the 75% capability floor remain unchanged.
-All test actions use the repository's BuildBuddy-managed RBE platform, with
+The optional remote workflow uses the repository's BuildBuddy-managed RBE platform, with
 `use-self-hosted-executors=false` and a digest-pinned Ubuntu 24.04 image. Custom
-runner pools are reserved for private repositories. The parent requires
+runner pools are reserved for private repositories. GitHub Actions runs the
+same hermetic tests locally, with optional read-only remote cache access.
+The BuildBuddy parent requires
 every selected stage to pass, verifies archive checksums and exact-head,
 profile-bound target manifests, and gates the combined captures. Main requires
 the complete SDK matrix; a PR manifest cannot satisfy that gate.

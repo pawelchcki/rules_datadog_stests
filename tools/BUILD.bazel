@@ -1,8 +1,23 @@
 load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
 load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
+load("@rules_itest//:itest.bzl", "service_test")
 load("//corpus:registry.bzl", "DATADOG_SHAPE_LIBRARIES", "datadog_library_args", "datadog_library_labels")
 
 package(default_visibility = ["//visibility:public"])
+
+py_binary(
+    name = "datadog_fixture_candidate_test_bin",
+    testonly = True,
+    srcs = ["datadog_fixture_candidate_test.py", "datadog_fixture_candidate.py", "context_tree.py"],
+    main = "datadog_fixture_candidate_test.py",
+    data = ["build_datadog_fixtures.sh", "materialize_shared_app.py"],
+    imports = ["."],
+)
+
+service_test(
+    name = "datadog_fixture_candidate_test",
+    test = ":datadog_fixture_candidate_test_bin",
+)
 
 py_library(
     name = "ci_profile",

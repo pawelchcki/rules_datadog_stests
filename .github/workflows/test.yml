@@ -22,9 +22,7 @@ jobs:
       - name: Validate tracked Python, shell and JSON sources
         run: python3 tools/check_sources.py
   assertions:
-    # Same-repository PRs are tested by BuildBuddy's required Full test suite.
-    # Forks cannot access the trusted remote-execution credentials.
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
+    # Every PR runs the same protected assertions and fresh evidence gates.
     runs-on: ubuntu-24.04
     timeout-minutes: 90
     env:
