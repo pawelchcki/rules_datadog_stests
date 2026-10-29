@@ -248,7 +248,15 @@ def profiles(root, old, new):
             destination.write_text(text)
             reviewed='sinatra' not in profile
             item={'id':profile,'implementation':implementation,'wire':'v0.5' if profile.endswith('-v05') else 'v0.4','reviewed':reviewed}
-            if reviewed:item['reference']=source.stem
+            if reviewed:
+                shapes=root/'corpus/datadog/realworld/shape'/profile
+                if shapes.exists():
+                    baseline_shapes=shapes.with_name(source.stem)
+                    expected={path.name for path in baseline_shapes.glob('*.scm')}
+                    actual={path.name for path in shapes.iterdir()}
+                    if len(expected)!=16 or actual!=expected or any(not path.is_file() or path.is_symlink() for path in shapes.iterdir()):
+                        raise ValueError('versioned reviewed shapes must cover every baseline scenario')
+                else:item['reference']=source.stem
             if profile not in existing:catalog.append(item);existing.add(profile)
     write_json(root/PROFILE_LOCK,sorted(catalog,key=lambda item:item['id']))
 

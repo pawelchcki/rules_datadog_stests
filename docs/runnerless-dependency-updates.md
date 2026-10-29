@@ -17,13 +17,20 @@ upload and both anonymous pulls before enabling the top-level flag in a
 reviewed change. Live App PR creation, repeat reuse, normal protected CI and the
 weekly occurrence remain acceptance work; source tests do not establish them.
 
-The actual unpublished Ruby 2.47.0 preview also exposed a compatibility change:
-Rails and Falcon traces add `_dd.tracing.transport="ruby"`, which the existing reviewed
-scenario shapes reject. New versioned expectations require actual captures and
-review before that SDK can pass candidate verification. The updater preserves
-the old shapes and stops on this failure; it does not silently accept the tag
-or produce an accepted candidate. The Go 2.11.2 and Python 4.16.1 native SDK
-probes passed locally, which does not establish the complete upgraded matrix.
+The unpublished Ruby 2.47.0 preview exposed two additive native fields:
+Rack request spans carry `_dd.tracing.transport="ruby"`, and the first-finished
+span in each serialized chunk carries `_dd.sdk.otlp_export="false"`. All 32
+Rails/Falcon captures match their historical expectations after removing only
+those fields in a diagnostic comparison. The new versioned shapes retain both
+fields exactly; the production matcher and all 112 older shapes are unchanged.
+The [capture review record](datadog-ruby-2.47-shape-review.json) records the
+private source revisions, actual payload identity and per-scenario hashes.
+A separate fresh execution passed all 32 scenarios with exact receipts, and the
+existing independent gate verified both manifests, captures, field policies,
+proofs and compiled validators. These are local unpublished-payload results.
+These additional expectations do not advance the active SDK pins or publish
+fixtures. The Go 2.11.2 and Python 4.16.1 native SDK probes passed locally,
+which does not establish the complete upgraded matrix.
 
 The App loads the regular opt-in from the immutable default branch after
 verifying adoption in `test123`. The existing publishing bot identity is
@@ -64,10 +71,12 @@ minimum without a reviewed builder stops the producer.
    preserves manifest digests and requires both real anonymous pulls before
    installing the coordinated OCI and rootfs locks.
 5. Add versioned implementation/profile files and the append-only profile
-   catalog. Every historical definition remains intact. Reviewed profiles use
-   explicit references to their existing reviewed expectations; native tests
-   still have to pass those expectations with the new SDK. Sinatra's unreviewed
-   profiles continue to validate contracts and retain their existing scope.
+   catalog. Every historical definition remains intact. A complete, already
+   reviewed shape directory for the new version supplies its exact expectations.
+   A partial directory fails generation. Otherwise reviewed profiles explicitly
+   reference their baseline expectations, which the new SDK must still pass.
+   The producer never writes reviewed shapes; its allowlist excludes them.
+   Sinatra's unreviewed profiles keep their existing contract scope.
 6. Settle module metadata and emit the update receipt outside the checkout.
    The native host commits the final candidate, executes verification and
    refuses changed HEADs or dirty verification. Failed builds, failed pulls or

@@ -28,6 +28,9 @@ class UpdateTest(unittest.TestCase):
             for source in (SOURCE/'corpus/datadog/realworld/profile').glob(pattern):
                 target=self.root/'corpus/datadog/realworld/profile'/source.name
                 target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(source,target)
+                shape_source=SOURCE/'corpus/datadog/realworld/shape'/source.stem
+                if shape_source.exists():
+                    shutil.copytree(shape_source,self.root/'corpus/datadog/realworld/shape'/source.stem)
         for relative in [updater.OCI_LOCK,updater.SDK_LOCK,updater.PROFILE_LOCK]:
             (self.root/relative).parent.mkdir(parents=True,exist_ok=True)
             shutil.copyfile(SOURCE/relative,self.root/relative)
@@ -102,6 +105,31 @@ class UpdateTest(unittest.TestCase):
         before={p.relative_to(self.root):p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
         updater.profiles(self.root,self.old,self.new)
         self.assertEqual({p.relative_to(self.root):p.read_bytes() for p in self.root.rglob('*') if p.is_file()},before)
+
+    def test_pre_reviewed_versioned_shapes_replace_only_their_baseline_reference(self):
+        for framework in ['rails','falcon']:
+            profile=f'ruby-{framework}-datadog-v2-47-0-v04'
+            shutil.copytree(SOURCE/'corpus/datadog/realworld/shape'/profile,
+                self.root/'corpus/datadog/realworld/shape'/profile)
+        reviewed={p.relative_to(self.root):p.read_bytes() for p in self.root.rglob('*.scm')}
+        updater.profiles(self.root,self.old,self.new)
+        catalog=updater.document(self.root/updater.PROFILE_LOCK)
+        for item in catalog:
+            if item['id'].startswith(('ruby-rails-','ruby-falcon-')):
+                self.assertTrue(item['reviewed'])
+                self.assertNotIn('reference',item)
+            elif item['reviewed']:
+                self.assertIn('reference',item)
+        for relative,data in reviewed.items():self.assertEqual((self.root/relative).read_bytes(),data)
+
+    def test_partial_versioned_shapes_fail_instead_of_reusing_baseline_expectations(self):
+        profile='ruby-rails-datadog-v2-47-0-v04'
+        shapes=self.root/'corpus/datadog/realworld/shape'/profile
+        shutil.copytree(SOURCE/'corpus/datadog/realworld/shape'/profile,shapes)
+        (shapes/'unicode.scm').unlink()
+        with self.assertRaisesRegex(ValueError,'every baseline scenario'):
+            updater.profiles(self.root,self.old,self.new)
+        self.assertEqual(updater.document(self.root/updater.PROFILE_LOCK),[])
 
     def test_an_existing_versioned_profile_is_never_silently_overwritten(self):
         updater.profiles(self.root,self.old,self.new)
