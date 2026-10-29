@@ -25,7 +25,7 @@ py_binary(
     testonly = True,
     srcs = ["runnerless_update_datadog_test.py", "runnerless_update_datadog.py", "materialize_shared_app.py"],
     main = "runnerless_update_datadog_test.py",
-    data = ["//corpus:datadog_versioned_sources", "//bazel:oci_images.lock.bzl", "//bazel:datadog_sdk_versions.json", "//corpus:datadog/sdk_profiles.json"],
+    data = ["//corpus:datadog_reviewed_shapes", "//corpus:datadog_versioned_sources", "//bazel:oci_images.lock.bzl", "//bazel:datadog_sdk_versions.json", "//corpus:datadog/sdk_profiles.json"],
     imports = ["."],
 )
 service_test(name = "runnerless_update_datadog_test", test = ":runnerless_update_datadog_test_bin")

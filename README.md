@@ -120,6 +120,12 @@ producer checkout. A failed producer never emits a candidate. Registry authentic
 continues to come from the existing publication host. The default invocation
 publishes only reviewed payloads and cannot promote a new SDK version.
 
+Additional, inactive Ruby 2.47.0 Rails/Falcon expectations retain two new exact
+SDK fields. Their 32 native captures and unchanged historical comparison are
+recorded in the [versioned shape review](docs/datadog-ruby-2.47-shape-review.json).
+The active fixture pins remain unchanged; the updater selects these shapes only
+when proposing that SDK version.
+
 The [coordinated Runnerless updater](docs/runnerless-dependency-updates.md)
 resolves the Ruby/Python/Go release set, real Bundler and all three Go module
 graphs, verified native gems, OCI pins, manifests and new versioned profiles.

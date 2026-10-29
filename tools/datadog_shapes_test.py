@@ -121,11 +121,29 @@ def main() -> None:
             if '(span "custom.operation"' not in rendered or (status, output) != (200, "EQUAL"):
                 failures.append(f"generic rendering is not exact: {status} {output[:500]}")
 
+            # The new Ruby SDK fields stay exact: dropping them or changing
+            # their values must fail in the native matcher for both frameworks.
+            for framework in ['rails', 'falcon']:
+                profile = f'ruby-{framework}-datadog-v2-47-0-v04'
+                path = TESTDATA / profile / 'unicode.scm'
+                candidate = path.read_text()
+                rendered = datadog_shapes.render_file(profile, path.stem, candidate)
+                for key, value in [('_dd.tracing.transport', 'ruby'), ('_dd.sdk.otlp_export', 'false')]:
+                    tag = f'("{key}" "{value}")'
+                    for replacement, explanation in [
+                        (f'("{key}" "other")', f'tag {key} expected "{value}" but was "other"'),
+                        ('', f'missing tag {key} "{value}"'),
+                    ]:
+                        mutated = candidate.replace(tag, replacement, 1)
+                        status, output = sinks[0].evaluate(comparison(core, rendered, mutated))
+                        if mutated == candidate or status != 200 or explanation not in output:
+                            failures.append(f'{profile}: SDK tag mutation was not explained: {status} {output[:500]}')
+
             # Every reviewed shape evaluates within the VM's budgets; one
             # program per profile keeps the vocabulary compiled once.
             reviewed = sorted(Path(shapes).glob("*/*.scm"))
-            if len(reviewed) != 112:
-                failures.append(f"expected 112 reviewed shapes, found {len(reviewed)}")
+            if len(reviewed) != 144:
+                failures.append(f"expected 144 reviewed shapes, found {len(reviewed)}")
             profiles = sorted({path.parent for path in reviewed})
 
             def check_profile(index_and_directory: tuple[int, Path]) -> None:
