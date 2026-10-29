@@ -88,6 +88,57 @@ DATADOG_RUBY = struct(
     def lock_bytes(self):
         return {path: (self.repo / path).read_bytes() for path in (publication.OCI_LOCK, publication.PAYLOAD_LOCK)}
 
+    def test_real_child_stderr_and_stdin_never_escape_failure(self):
+        import secrets
+        token = secrets.token_urlsafe(24)
+        actual_subprocess = subprocess.run
+
+        def reject(arguments, **options):
+            # A real child echoes the entire in-memory auth document to its
+            # stderr, as an unsafe provider could. Neither it nor the child
+            # exception may become part of the public diagnostic.
+            return actual_subprocess(
+                [sys.executable, "-c", "import sys; sys.stderr.buffer.write(sys.stdin.buffer.read()); sys.exit(7)"],
+                **options)
+
+        with patch.dict(os.environ, {"DATADOG_REGISTRY_TOKEN": token, "DATADOG_REGISTRY_USER": "github-actions[bot]"}), \
+                patch.object(publication.subprocess, "run", side_effect=reject):
+            with self.assertRaises(publication.PublicationCommandError) as failure:
+                self.actual_run(["skopeo", "copy", "oci:/private/candidate", "docker://ghcr.io/pawelchcki/rules_stest_agents:source"], root=self.repo)
+        self.assertEqual(str(failure.exception), "Datadog fixture publication failed (ruby-registry-push; command-failed; exit 7); candidate not accepted")
+        self.assertIsNone(failure.exception.__context__)
+        self.assertTrue(token not in repr(vars(failure.exception)))
+        self.assertTrue(token not in str(failure.exception.args))
+
+    def test_registry_failures_use_fixed_categories_for_push_and_anonymous_pull(self):
+        cases = (
+            ("permission_denied: write_package", "registry-permission-denied"),
+            ("unauthorized", "registry-authentication-failed"),
+            ("unexpected end of JSON input", "invalid-json-input"),
+            ("manifest unknown", "registry-manifest-missing"),
+            ("connection refused", "registry-unreachable"),
+            ("unrecognized provider diagnostic", "command-failed"),
+        )
+        for message, category in cases:
+            for fixture, (_, repository, _, _) in publication.FIXTURES.items():
+                for operation in ("registry-push", "anonymous-pull"):
+                    args = (["skopeo", "copy", "oci:/private/candidate", "docker://" + repository + ":source"]
+                            if operation == "registry-push" else
+                            ["skopeo", "copy", "--src-no-creds", "docker://" + repository + "@sha256:" + "1" * 64, "oci:/private/pulled"])
+                    child_error = subprocess.CalledProcessError(1, args, stderr=message.encode())
+                    with patch.object(publication.subprocess, "run", side_effect=child_error):
+                        with self.assertRaises(publication.PublicationCommandError) as failure:
+                            self.actual_run(args, root=self.repo)
+                    self.assertEqual(str(failure.exception), f"Datadog fixture publication failed ({fixture}-{operation}; {category}; exit 1); candidate not accepted")
+                    self.assertIsNone(failure.exception.__context__)
+
+    def test_payload_failure_identifies_fixture_without_exposing_child_output(self):
+        child_error = subprocess.CalledProcessError(1, ["private-arguments"], stderr=b"private-provider-output")
+        with patch.object(publication.subprocess, "run", side_effect=child_error):
+            with self.assertRaises(publication.PublicationCommandError) as failure:
+                self.actual_run([sys.executable, self.repo / "tools/local_oci_repository.py", self.images / "gin", "gin_datadog_realworld"], root=self.repo)
+        self.assertEqual(str(failure.exception), "Datadog fixture publication failed (gin-payload-verification; command-failed; exit 1); candidate not accepted")
+
     def command(self, arguments, *, root, capture=False):
         args = [str(a) for a in arguments]
         if args[0] == "git":

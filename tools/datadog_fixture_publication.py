@@ -27,6 +27,45 @@ PAYLOAD_LOCK = Path("bazel/datadog_fixture_payloads.json")
 OCI_LOCK = Path("bazel/oci_images.lock.bzl")
 
 
+class PublicationCommandError(subprocess.SubprocessError):
+    """A fixed diagnostic which never retains child arguments or output."""
+
+
+def command_failure(argv: list[str], status: int, stderr: bytes) -> PublicationCommandError:
+    operation = "command"
+    reason = "command-failed"
+    if argv[:2] == ["skopeo", "copy"]:
+        operation = "registry-transfer"
+        for fixture, (_, repository, _, _) in FIXTURES.items():
+            if argv[-1].startswith("docker://" + repository + ":"):
+                operation = fixture + "-registry-push"
+            elif argv[-2].startswith("docker://" + repository + "@"):
+                operation = fixture + "-anonymous-pull"
+        # Inspect private bytes only to select a fixed category. Never include
+        # provider text, command arguments or credential material in an error.
+        diagnostic = stderr.lower()
+        categories = (
+            ("registry-permission-denied", (b"permission_denied:write_package", b"permission_denied: write_package", b"requested access to the resource is denied")),
+            ("registry-authentication-failed", (b"unauthorized", b"authentication required")),
+            ("invalid-json-input", (b"unexpected end of json input",)),
+            ("registry-manifest-missing", (b"manifest unknown",)),
+            ("registry-unreachable", (b"i/o timeout", b"context deadline exceeded", b"connection refused", b"tls handshake timeout", b"temporary failure in name resolution")),
+        )
+        for category, patterns in categories:
+            if any(pattern in diagnostic for pattern in patterns):
+                reason = category
+                break
+    elif len(argv) > 3 and argv[1].endswith("/tools/local_oci_repository.py"):
+        operation = "payload-verification"
+        for fixture, (_, _, name, _) in FIXTURES.items():
+            if argv[3] == name:
+                operation = fixture + "-payload-verification"
+    elif argv[:2] == ["git", "status"]:
+        operation = "source-status"
+    return PublicationCommandError(
+        f"Datadog fixture publication failed ({operation}; {reason}; exit {status}); candidate not accepted")
+
+
 def payloads(path: Path) -> dict:
     result = document(path)
     if not isinstance(result, dict) or set(result) != set(FIXTURES):
@@ -57,9 +96,17 @@ def run(arguments, *, root: Path, capture=False):
         encoded=base64.b64encode((username+":"+token).encode()).decode()
         authentication=json.dumps({"auths":{"ghcr.io":{"auth":encoded}}}).encode()
         argv[2:2]=["--authfile","/dev/stdin"]
-    result = subprocess.run(argv, cwd=root, check=True, input=authentication,env=environment,
-                            stdout=subprocess.PIPE if capture else subprocess.DEVNULL,
-                            stderr=subprocess.DEVNULL)
+    failure = None
+    try:
+        result = subprocess.run(argv, cwd=root, check=True, input=authentication,env=environment,
+                                stdout=subprocess.PIPE if capture else subprocess.DEVNULL,
+                                stderr=subprocess.PIPE)
+    except subprocess.CalledProcessError as error:
+        failure = command_failure(argv, error.returncode, error.stderr or b"")
+    # Raise outside the handler so the public error has no exception context
+    # containing the child's private stderr or authentication-bearing input.
+    if failure is not None:
+        raise failure
     return result.stdout.decode().strip() if capture else None
 
 
@@ -198,6 +245,8 @@ def main():
     args = parser.parse_args()
     try:
         publish(Path(__file__).resolve().parents[1], args.images, candidate=args.candidate)
+    except PublicationCommandError as error:
+        sys.exit(str(error))
     except (OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError):
         sys.exit("Datadog fixture publication failed; candidate not accepted")
 

@@ -17,6 +17,14 @@ upload and both anonymous pulls before enabling the top-level flag in a
 reviewed change. Live App PR creation, repeat reuse, normal protected CI and the
 weekly occurrence remain acceptance work; source tests do not establish them.
 
+Publisher child-command failures identify the fixture and operation, exit status
+and a fixed error category. Raw provider output and child exception context stay
+private, including when a child echoes its stdin authentication. An unrecognized
+failure reports `command-failed`; it does not establish an access denial. The
+2026-10-29 retry after package-access confirmation passed the reviewed-image build
+but failed publication with the previous generic diagnostic. That run does not
+establish that the updated package access is insufficient.
+
 The unpublished Ruby 2.47.0 preview exposed two additive native fields:
 Rack request spans carry `_dd.tracing.transport="ruby"`, and the first-finished
 span in each serialized chunk carries `_dd.sdk.otlp_export="false"`. All 32
