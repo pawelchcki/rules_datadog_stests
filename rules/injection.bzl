@@ -18,14 +18,15 @@ def datadog_python_injection(rootfs = Label("//harness:datadog_python_rootfs"), 
         require = [payload + "/sitecustomize.py", payload + "/ddtrace_pkgs"],
     )
 
-def datadog_ruby_injection(rootfs = Label("//harness:datadog_ruby_rootfs")):
-    """Activates a locked, ABI-matched Datadog payload before the Ruby application boots."""
+def datadog_ruby_injection(rootfs = Label("//harness:datadog_ruby_rootfs"), sinatra = False):
+    """Activates the ABI-matched payload; sinatra requires //harness:sinatra_startup.rb in data."""
     payload = "{instrumentation_rootfs}/datadog-ruby"
+    startup = " -r./$(rootpath {})".format(Label("//harness:sinatra_startup.rb")) if sinatra else ""
     return instrumentation_injection(
         rootfs = rootfs,
         env = {
             "RULES_STESTS_DATADOG_RUBY_ROOT": payload,
-            "RUBYOPT": "-r" + payload + "/activation.rb",
+            "RUBYOPT": "-r" + payload + "/activation.rb" + startup,
         },
         require = [payload + "/activation.rb", payload + "/abi.json", payload + "/specifications"],
     )

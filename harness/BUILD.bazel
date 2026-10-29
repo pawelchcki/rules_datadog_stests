@@ -8,6 +8,36 @@ load("//corpus:registry.bzl", "DATADOG_CAPTURE_LIBRARIES", "datadog_library_args
 load("//rules:files.bzl", "copy_file")
 load("@datadog_ruby_matrix_config//:versions.bzl", "DATADOG_SDK_VERSIONS")
 package(default_visibility = ["//visibility:public"])
+exports_files(["sinatra_startup.rb"])
+
+service_test(
+    name = "sinatra_startup_test",
+    test = "@rules_stests//harness:app_launcher",
+    args = [
+        "--runtime=ruby",
+        "--instance=sinatra-startup",
+        "--rootfs=$(rlocationpath @rules_stests//fixtures:ruby_3_1_rootfs)",
+        "--ruby-rootfs=$(rlocationpath @rules_stests//fixtures:ruby_3_1_runtime)",
+        "--instrumentation-rootfs=$(rlocationpath :ruby_3_1_datadog_rootfs)",
+        "--env=RUBYOPT=-r{instrumentation_rootfs}/datadog-ruby/activation.rb",
+        "--env=RULES_STESTS_DATADOG_RUBY_ROOT={instrumentation_rootfs}/datadog-ruby",
+        "--env=DD_TRACE_ENABLED=false",
+        "--env=DD_TRACE_STARTUP_LOGS=false",
+        "--env=DD_INSTRUMENTATION_TELEMETRY_ENABLED=false",
+        "--env=DD_REMOTE_CONFIGURATION_ENABLED=false",
+        "--",
+        "$(rlocationpath :sinatra_startup_test.rb)",
+        "$(rootpath :sinatra_startup.rb)",
+    ],
+    data = [
+        "@rules_stests//fixtures:ruby_3_1_rootfs",
+        "@rules_stests//fixtures:ruby_3_1_runtime",
+        ":ruby_3_1_datadog_rootfs",
+        "sinatra_startup_test.rb",
+        "sinatra_startup.rb",
+    ],
+)
+
 oci_rootfs(
     name = "datadog_mariadb_rootfs",
     image = "@datadog_mariadb_linux_amd64",
