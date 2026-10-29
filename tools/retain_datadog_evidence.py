@@ -7,7 +7,8 @@ from pathlib import Path
 import shutil
 import subprocess
 
-from ci_profile import PROFILES, ruby_runtimes
+from ci_profile import PROFILES
+from datadog_scenario_profiles import VERSIONS, active_profiles
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--revision", required=True)
@@ -37,27 +38,12 @@ def copy_into_read_only_tree(source: Path, directory: Path, name: str) -> None:
         os.chmod(directory, original_mode)
 
 
-profiles = {
-    "python-aiohttp-datadog-v4-15-5-v04": "aiohttp_datadog_v04",
-    "python-aiohttp-datadog-v4-15-5-v05": "aiohttp_datadog",
-    "python-django-datadog-v4-15-5-v04": "django_datadog_v04",
-    "python-django-datadog-v4-15-5-v05": "django_datadog",
-    "ruby-rails-datadog-v2-43-0-v04": "rails_datadog",
-    "ruby-falcon-datadog-v2-43-0-v04": "falcon_datadog",
-    "go-gin-datadog-v2-10-1-v04": "gin_datadog",
-}
-if args.ruby_matrix_only:
-    profiles = {}
-
 # Derive the added runtimes from the built compatibility manifest, so a new
 # upstream runtime cannot be silently omitted from retained evidence.
 compatibility = json.loads(Path("bazel-bin/harness/datadog_ruby_compatibility.json").read_text())
-selected_runtimes = ruby_runtimes(compatibility, args.ci_profile)
-for runtime in selected_runtimes:
-    series = runtime["series"]
-    profiles["ruby-sinatra-" + series.replace(".", "-") + "-datadog-v2-43-0-v04"] = "ruby_" + series.replace(".", "_") + "_datadog"
+profiles = active_profiles(VERSIONS, compatibility, args.ci_profile, ruby_matrix_only=args.ruby_matrix_only)
 command = [str(args.gate.resolve()), "--revision", args.revision]
-contract_profiles = ["ruby-sinatra-" + runtime["series"].replace(".", "-") + "-datadog-v2-43-0-v04" for runtime in selected_runtimes]
+contract_profiles = [profile for profile in profiles if profile.startswith("ruby-sinatra-")]
 (args.output / "ci-profile.json").write_text(json.dumps({"ciProfile": args.ci_profile, "profiles": sorted(profiles)}) + "\n")
 (args.output / "contract-profiles.json").write_text(json.dumps(contract_profiles) + "\n")
 shutil.copyfile("bazel-bin/harness/datadog_ruby_compatibility.json", args.output / "ruby-compatibility.json")

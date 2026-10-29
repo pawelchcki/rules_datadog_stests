@@ -5,6 +5,21 @@ load("//corpus:registry.bzl", "DATADOG_SHAPE_LIBRARIES", "datadog_library_args",
 
 package(default_visibility = ["//visibility:public"])
 
+py_library(
+    name = "datadog_scenario_profiles_lib",
+    srcs = ["datadog_scenario_profiles.py"],
+    imports = ["."],
+    deps = [":ci_profile", "//harness:sdk_versions"],
+)
+py_binary(
+    name = "datadog_scenario_profiles_test_bin",
+    testonly = True,
+    srcs = ["datadog_scenario_profiles_test.py"],
+    main = "datadog_scenario_profiles_test.py",
+    deps = [":datadog_scenario_profiles_lib"],
+)
+service_test(name = "datadog_scenario_profiles_test", test = ":datadog_scenario_profiles_test_bin")
+
 py_binary(
     name = "runnerless_update_datadog_test_bin",
     testonly = True,
