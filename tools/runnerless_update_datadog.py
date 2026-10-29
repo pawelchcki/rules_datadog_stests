@@ -290,10 +290,11 @@ def main():
         run([ROOT/'tools/build_datadog_fixtures.sh',images,'--candidate'])
         run([ROOT/'tools/publish_datadog_fixtures.sh',images,'--candidate'])
         profiles(ROOT,old,target)
-        run(['bazel','cquery','--config=local','//corpus:datadog_conformance_test',
+        verification_targets=['//corpus:datadog_conformance_test',
             '//harness:datadog_sink_test','//fixtures:datadog_suite',
             '//fixtures:datadog_shared_sdk_go_0_test','//fixtures:datadog_shared_sdk_python_0_test',
-            '//tools:runnerless_update_datadog_test','--output=label'])
+            '//tools:runnerless_update_datadog_test']
+        run(['bazel','cquery','--config=local','set('+' '.join(verification_targets)+')','--output=label'])
         run(['git','add','--all'])
         paths=changed_paths(ROOT,base)
         urls={language:f'https://github.com/DataDog/dd-trace-{suffix}/releases/tag/v{target[language]}'
