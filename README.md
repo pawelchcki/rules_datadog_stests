@@ -158,10 +158,10 @@ full feature inventory; `DATADOG_CAPABILITY_MIN_PERCENT` can override that thres
 
 Every pull request runs a deterministic representative matrix, external consumer
 build and fresh gated evidence in the required GitHub Actions `assertions` job.
-Pushes to main run the exhaustive matrix. Actions use the optional BuildBuddy cache through the
-`BUILDBUDDY_API_KEY` repository secret, with remote uploads disabled. Forks
-receive no secret and use the GitHub disk and repository caches. Fresh native
-tests still execute with `--nocache_test_results`.
+Pushes to main run the exhaustive matrix. Actions execute on GitHub-hosted
+runners and use their disk and repository caches. They require no BuildBuddy
+credential or repository enrollment. Fresh native tests still execute with
+`--nocache_test_results`.
 The optional BuildBuddy workflow splits the same PR evidence into **five stages**:
 scenarios and stress checks across every framework and both intake formats,
 including Ruby **2.5, 3.3 and 4.0**; two disjoint shards covering all native framework feature cases;

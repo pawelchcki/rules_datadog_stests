@@ -6,7 +6,7 @@ is ready for review independently of live enrollment. The top-level `enabled`
 flag in `.runnerless/dependency-updates.json` is **false**. No weekly job should
 be inferred from the presence of that file.
 
-The remaining activation prerequisite is GitHub Packages **Manage Actions
+One activation prerequisite is GitHub Packages **Manage Actions
 access → Write** for `pawelchcki/rules_datadog_stests` on the existing
 `rules_stest_agents` and `rules_stest_apps` packages. The previously observed
 publisher authenticated and received `packages: write`, but its first upload
@@ -16,6 +16,14 @@ PAT, identity, package or App permission is required. Verify a normal publisher
 upload and both anonymous pulls before enabling the top-level flag in a
 reviewed change. Live App PR creation, repeat reuse, normal protected CI and the
 weekly occurrence remain acceptance work; source tests do not establish them.
+
+The actual unpublished Ruby 2.47.0 preview also exposed a compatibility change:
+Rails and Falcon traces add `_dd.tracing.transport="ruby"`, which the existing reviewed
+scenario shapes reject. New versioned expectations require actual captures and
+review before that SDK can pass candidate verification. The updater preserves
+the old shapes and stops on this failure; it does not silently accept the tag
+or produce an accepted candidate. The Go 2.11.2 and Python 4.16.1 native SDK
+probes passed locally, which does not establish the complete upgraded matrix.
 
 The App loads the regular opt-in from the immutable default branch after
 verifying adoption in `test123`. The existing publishing bot identity is
