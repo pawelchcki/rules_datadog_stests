@@ -103,12 +103,46 @@ DATADOG_RUBY = struct(
 
         with patch.dict(os.environ, {"DATADOG_REGISTRY_TOKEN": token, "DATADOG_REGISTRY_USER": "github-actions[bot]"}), \
                 patch.object(publication.subprocess, "run", side_effect=reject):
-            with self.assertRaises(publication.PublicationCommandError) as failure:
+            try:
                 self.actual_run(["skopeo", "copy", "oci:/private/candidate", "docker://ghcr.io/pawelchcki/rules_stest_agents:source"], root=self.repo)
-        self.assertEqual(str(failure.exception), "Datadog fixture publication failed (ruby-registry-push; command-failed; exit 7); candidate not accepted")
-        self.assertIsNone(failure.exception.__context__)
-        self.assertTrue(token not in repr(vars(failure.exception)))
-        self.assertTrue(token not in str(failure.exception.args))
+            except publication.PublicationCommandError as failure:
+                self.assertEqual(str(failure), "Datadog fixture publication failed (ruby-registry-push; command-failed; exit 7); candidate not accepted")
+                self.assertIsNone(failure.__context__)
+                self.assertTrue(token not in repr(vars(failure)))
+                self.assertTrue(token not in str(failure.args))
+                import base64
+                encoded = base64.b64encode(("github-actions[bot]:" + token).encode()).decode()
+                frame = failure.__traceback__
+                while frame:
+                    if frame.tb_frame.f_code.co_filename == publication.__file__:
+                        self.assertTrue(all(token not in repr(value) and encoded not in repr(value)
+                                            for value in frame.tb_frame.f_locals.values()))
+                    frame = frame.tb_next
+            else:
+                self.fail("the rejecting child must fail publication")
+
+    def test_large_stderr_is_drained_with_a_fixed_memory_bound(self):
+        actual_subprocess = subprocess.run
+        retained = []
+        classify = publication.command_failure
+
+        def observe(argv, status, diagnostic):
+            retained.append(len(diagnostic))
+            return classify(argv, status, diagnostic)
+
+        for status in (0, 7):
+            def noisy(arguments, **options):
+                return actual_subprocess([sys.executable, "-c",
+                    "import sys; sys.stderr.buffer.write(b'permission_denied: write_package\\n'); "
+                    "sys.stderr.buffer.write(b'x'*(4*1024*1024)); sys.exit(" + str(status) + ")"], **options)
+            with patch.object(publication.subprocess, "run", side_effect=noisy), \
+                    patch.object(publication, "command_failure", side_effect=observe):
+                if status:
+                    with self.assertRaisesRegex(publication.PublicationCommandError, "ruby-registry-push; registry-permission-denied; exit 7"):
+                        self.actual_run(["skopeo", "copy", "oci:/private/candidate", "docker://ghcr.io/pawelchcki/rules_stest_agents:source"], root=self.repo)
+                else:
+                    self.actual_run(["skopeo", "copy", "oci:/private/candidate", "docker://ghcr.io/pawelchcki/rules_stest_agents:source"], root=self.repo)
+        self.assertEqual(retained, [publication.DIAGNOSTIC_LIMIT])
 
     def test_registry_failures_use_fixed_categories_for_push_and_anonymous_pull(self):
         cases = (
@@ -125,8 +159,10 @@ DATADOG_RUBY = struct(
                     args = (["skopeo", "copy", "oci:/private/candidate", "docker://" + repository + ":source"]
                             if operation == "registry-push" else
                             ["skopeo", "copy", "--src-no-creds", "docker://" + repository + "@sha256:" + "1" * 64, "oci:/private/pulled"])
-                    child_error = subprocess.CalledProcessError(1, args, stderr=message.encode())
-                    with patch.object(publication.subprocess, "run", side_effect=child_error):
+                    def reject(arguments, **options):
+                        options["stderr"].write(message.encode())
+                        raise subprocess.CalledProcessError(1, arguments)
+                    with patch.object(publication.subprocess, "run", side_effect=reject):
                         with self.assertRaises(publication.PublicationCommandError) as failure:
                             self.actual_run(args, root=self.repo)
                     self.assertEqual(str(failure.exception), f"Datadog fixture publication failed ({fixture}-{operation}; {category}; exit 1); candidate not accepted")

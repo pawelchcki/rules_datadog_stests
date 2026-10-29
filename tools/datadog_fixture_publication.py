@@ -13,6 +13,7 @@ import stat
 import subprocess
 import sys
 import tempfile
+import threading
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from context_tree import context_tree
@@ -25,10 +26,11 @@ FIXTURES = {
 }
 PAYLOAD_LOCK = Path("bazel/datadog_fixture_payloads.json")
 OCI_LOCK = Path("bazel/oci_images.lock.bzl")
+DIAGNOSTIC_LIMIT = 64 * 1024
 
 
 class PublicationCommandError(subprocess.SubprocessError):
-    """A fixed diagnostic which never retains child arguments or output."""
+    """A fixed diagnostic without provider text or credentials."""
 
 
 def command_failure(argv: list[str], status: int, stderr: bytes) -> PublicationCommandError:
@@ -78,7 +80,7 @@ def payloads(path: Path) -> dict:
     return result
 
 
-def run(arguments, *, root: Path, capture=False):
+def _run_private(arguments, *, root: Path, capture=False):
     # Existing container keyring auth remains available to local hosts. Actions
     # may instead supply their ephemeral scoped token entirely through memory.
     argv=[str(a) for a in arguments]
@@ -96,18 +98,39 @@ def run(arguments, *, root: Path, capture=False):
         encoded=base64.b64encode((username+":"+token).encode()).decode()
         authentication=json.dumps({"auths":{"ghcr.io":{"auth":encoded}}}).encode()
         argv[2:2]=["--authfile","/dev/stdin"]
-    failure = None
+    diagnostic = bytearray()
+    read_descriptor, write_descriptor = os.pipe()
+
+    def drain():
+        with os.fdopen(read_descriptor, "rb", buffering=0) as stream:
+            while chunk := stream.read(16 * 1024):
+                diagnostic.extend(chunk[:max(0, DIAGNOSTIC_LIMIT - len(diagnostic))])
+
+    reader = threading.Thread(target=drain)
+    reader.start()
+    status = 0
     try:
-        result = subprocess.run(argv, cwd=root, check=True, input=authentication,env=environment,
-                                stdout=subprocess.PIPE if capture else subprocess.DEVNULL,
-                                stderr=subprocess.PIPE)
-    except subprocess.CalledProcessError as error:
-        failure = command_failure(argv, error.returncode, error.stderr or b"")
-    # Raise outside the handler so the public error has no exception context
-    # containing the child's private stderr or authentication-bearing input.
+        with os.fdopen(write_descriptor, "wb", buffering=0) as private_stderr:
+            try:
+                result = subprocess.run(argv, cwd=root, check=True, input=authentication,env=environment,
+                                        stdout=subprocess.PIPE if capture else subprocess.DEVNULL,
+                                        stderr=private_stderr)
+            except subprocess.CalledProcessError as error:
+                status = error.returncode
+    finally:
+        reader.join()
+    if status:
+        return None, command_failure(argv, status, diagnostic)
+    return result.stdout.decode().strip() if capture else None, None
+
+
+def run(arguments, *, root: Path, capture=False):
+    # The credential-bearing frame and its child exception have returned before
+    # raising. A traceback of this public failure cannot retain their locals.
+    output, failure = _run_private(arguments, root=root, capture=capture)
     if failure is not None:
         raise failure
-    return result.stdout.decode().strip() if capture else None
+    return output
 
 
 def clean_contexts(root: Path) -> None:

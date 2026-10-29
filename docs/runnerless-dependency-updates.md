@@ -18,7 +18,9 @@ reviewed change. Live App PR creation, repeat reuse, normal protected CI and the
 weekly occurrence remain acceptance work; source tests do not establish them.
 
 Publisher child-command failures identify the fixture and operation, exit status
-and a fixed error category. Raw provider output and child exception context stay
+and a fixed error category. The publisher retains at most 64 KiB of stderr while
+draining the remainder, and raises only after its credential-bearing frame has
+returned. Raw provider output, child exception context and credential locals stay
 private, including when a child echoes its stdin authentication. An unrecognized
 failure reports `command-failed`; it does not establish an access denial. The
 2026-10-29 retry after package-access confirmation passed the reviewed-image build
