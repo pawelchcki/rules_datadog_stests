@@ -77,6 +77,8 @@ def run(arguments, *, root=ROOT, data=None, capture=False, limit=2*1024*1024, ti
     finally:
         if process.poll() is None:
             process.kill();process.wait()
+        for pipe in (process.stdin,process.stdout):
+            if pipe is not None:pipe.close()
 
 
 def current_versions(root):
