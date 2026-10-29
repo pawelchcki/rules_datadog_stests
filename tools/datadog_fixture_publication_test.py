@@ -65,6 +65,26 @@ DATADOG_RUBY = struct(
         self.actual_run = publication.run
         self.enterContext(patch.object(publication, "run", side_effect=self.command))
 
+    def test_ephemeral_registry_auth_uses_only_stdin_and_never_reaches_anonymous_reads(self):
+        import base64
+        import secrets
+        from types import SimpleNamespace
+        # Generated, non-credential bytes stay in memory; no literal token is
+        # stored in a fixture and failure assertions never render its value.
+        token=secrets.token_urlsafe(24)
+        with patch.dict(os.environ,{"DATADOG_REGISTRY_TOKEN":token,"DATADOG_REGISTRY_USER":"github-actions[bot]"}), \
+                patch.object(publication.subprocess,"run",return_value=SimpleNamespace(stdout=b"")) as command:
+            self.actual_run(["skopeo","copy","oci:/private/candidate","docker://ghcr.io/pawelchcki/rules_stest_agents:source"],root=self.repo)
+            args,options=command.call_args
+            self.assertTrue(all(token not in item for item in args[0]))
+            self.assertTrue("DATADOG_REGISTRY_TOKEN" not in options["env"])
+            self.assertIn("/dev/stdin",args[0])
+            encoded=json.loads(options["input"])["auths"]["ghcr.io"]["auth"]
+            self.assertTrue(base64.b64decode(encoded).decode()=="github-actions[bot]:"+token)
+            self.actual_run(["skopeo","copy","--src-no-creds","docker://ghcr.io/pawelchcki/rules_stest_agents@sha256:"+"1"*64,"oci:/private/pulled"],root=self.repo)
+            self.assertIsNone(command.call_args.kwargs["input"])
+            self.assertTrue("DATADOG_REGISTRY_TOKEN" not in command.call_args.kwargs["env"])
+
     def lock_bytes(self):
         return {path: (self.repo / path).read_bytes() for path in (publication.OCI_LOCK, publication.PAYLOAD_LOCK)}
 

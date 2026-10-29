@@ -1,3 +1,4 @@
+load("@datadog_ruby_matrix_config//:versions.bzl", "DATADOG_SDK_VERSIONS")
 """Native Datadog SDK experiments and concurrent RealWorld scenarios."""
 load(":datadog_ruby_matrix.bzl", "DATADOG_RUBY_APPS", "ruby_matrix_fixture")
 load("@rules_itest//:itest.bzl", "service_test")
@@ -92,7 +93,7 @@ def _datadog_fixture(app):
             command = ["bin/server", "--host", "127.0.0.1", "--port", "$${PORT}"],
             injection = datadog_ruby_injection(),
             wires = ["v0.4"],
-            profile = "ruby-falcon-datadog-v2-43-0-",
+            profile = "ruby-falcon-datadog-v" + DATADOG_SDK_VERSIONS["ruby"].replace(".", "-") + "-",
         )
     config = REALWORLD_APPS[app]
     return struct(
@@ -101,7 +102,7 @@ def _datadog_fixture(app):
         command = ["opt/app/bin/realworld-gin-datadog"] + config.command if app == "gin" else config.command,
         injection = datadog_ruby_injection() if app == "rails" else (None if app == "gin" else datadog_python_injection(aiohttp = app == "aiohttp")),
         wires = ["v0.4"] if app in ["rails", "gin"] else ["v0.4", "v0.5"],
-        profile = {"rails": "ruby-rails-datadog-v2-43-0-", "gin": "go-gin-datadog-v2-10-1-"}.get(app, "python-" + app + "-datadog-v4-15-5-"),
+        profile = {"rails": "ruby-rails-datadog-v" + DATADOG_SDK_VERSIONS["ruby"].replace(".", "-") + "-", "gin": "go-gin-datadog-v" + DATADOG_SDK_VERSIONS["go"].replace(".", "-") + "-"}.get(app, "python-" + app + "-datadog-v" + DATADOG_SDK_VERSIONS["python"].replace(".", "-") + "-"),
     )
 
 def datadog_external_feature_tests():

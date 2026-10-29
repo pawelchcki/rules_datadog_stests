@@ -1,0 +1,15 @@
+--- a/toolchain/zig_cc_toolchain.bzl
++++ b/toolchain/zig_cc_toolchain.bzl
+@@ -88,6 +88,12 @@
+                         flags = ["-fno-lto", "-fsanitize-undefined-strip-path-components=-1", "-fno-sanitize=undefined"],
+                     ),
+                 ],
++            ),
++            # Rust creates link variables without strip_debug_symbols. Enforce
++            # fastbuild's existing no-debug policy for linker-generated CRT DWARF.
++            flag_set(
++                actions = all_link_actions,
++                flag_groups = [flag_group(flags = ["-Wl,-S"])],
+             ),
+         ],
+     )

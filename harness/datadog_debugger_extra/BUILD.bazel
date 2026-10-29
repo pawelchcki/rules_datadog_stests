@@ -7,7 +7,7 @@ py_library(
     srcs = ["common.py"],
     data = ["localhost-test.crt", "localhost-test.key"],
     deps = [
-        "//harness/datadog_agent:agent_lib",
+        "//harness:sdk_versions", "//harness/datadog_agent:agent_lib",
         "//harness/datadog_backend:backend_lib",
         "//harness/datadog_telemetry:telemetry_lib",
         "//harness/datadog_debugger:debugger_lib",

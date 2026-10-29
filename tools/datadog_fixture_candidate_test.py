@@ -218,7 +218,7 @@ class CandidateTest(unittest.TestCase):
         binary.mkdir()
         (binary / "python3").symlink_to(sys.executable)
         container = binary / "container"
-        container.write_text("#!" + sys.executable + "\n" + '''
+        container.write_text("#!/usr/bin/env python3\n" + '''
 import os, pathlib, shutil, sys
 args = sys.argv[1:]
 root = pathlib.Path(os.environ['FAKE_IMAGES'])

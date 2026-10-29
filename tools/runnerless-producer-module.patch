@@ -1,0 +1,20 @@
+--- a/MODULE.bazel
++++ b/MODULE.bazel
+@@ -76,7 +76,7 @@
+ 
+ register_toolchains("@jq_toolchains//:all")
+ 
+-go_sdk = use_extension("@rules_go//go:extensions.bzl", "go_sdk")
++go_sdk = use_extension("@rules_go//go:extensions.bzl", "go_sdk", dev_dependency = True)
+ go_sdk.download(
+     name = "go_sdk",
+     goarch = "amd64",
+@@ -121,7 +121,7 @@
+     urls = ["https://github.com/opentofu/opentofu/releases/download/v1.12.5/tofu_1.12.5_linux_amd64.zip"],
+ )
+ 
+-node = use_extension("@rules_nodejs//nodejs:extensions.bzl", "node")
++node = use_extension("@rules_nodejs//nodejs:extensions.bzl", "node", dev_dependency = True)
+ node.toolchain(
+     name = "pinned_node",
+     node_repositories = {

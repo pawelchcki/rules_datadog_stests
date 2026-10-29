@@ -6,6 +6,7 @@ forwards to https://api.<evp dd_url> with Via / X-Datadog-Hostname / X-Datadog-A
 headers. These checks mirror Test_Dataset.test_dataset_create_delete while also verifying both
 wire boundaries.
 """
+from sdk_versions import VERSIONS as SDK_VERSIONS
 import re
 
 DATASET_NAME = "test-dataset-basic"
@@ -27,7 +28,7 @@ def check(identity, sdk_requests, backend_requests, relay_records, agent_version
     assert dataset["project_name"] == PROJECT_NAME, "upstream: dataset.get('project_name') == 'test-project'"
     assert identity["delete"]["success"] is True, "upstream: result.get('success') is True"
     assert identity["delete"]["dataset_id"] == dataset["dataset_id"], identity
-    assert identity["tracer_version"] == "4.15.5", identity
+    assert identity["tracer_version"] == SDK_VERSIONS["python"], identity
 
     # The SDK issued exactly the three pinned DNE calls, all through the agent EVP proxy path.
     projects, creates, deletes, other = [], [], [], []

@@ -11,6 +11,8 @@ import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "harness"))
+from sdk_versions import VERSIONS as SDK_VERSIONS
 sys.path.insert(0, str(ROOT / "harness/upstream_lab"))
 sys.path.insert(0, str(ROOT / "harness/shared_sdk"))
 from adapter import load_cases
@@ -18,7 +20,7 @@ from portable_cases import cases as portable_cases
 from baggage_cases import adapt_case
 
 REVISION = "098fe0967c587db8a16b74a1e711777d0a9d5867"
-VERSIONS = {"go": "2.10.1", "python": "4.15.5"}
+VERSIONS = {language: SDK_VERSIONS[language] for language in ("go", "python")}
 
 
 def version(value):
@@ -82,7 +84,7 @@ def mapping_for_registry(registry):
     for index, entry in enumerate(registry):
         for feature in entry['features']:
             groups[feature].append((index, entry))
-    scope = ("Common pinned upstream SDK methods plus named local supplements on native v0.4, Python 4.15.5 and Go 2.10.1. "
+    scope = (f"Common pinned upstream SDK methods plus named local supplements on native v0.4, Python {VERSIONS['python']} and Go {VERSIONS['go']}. "
              "Each independent case repeats in fresh processes with a separate healthy baseline and retained captures. "
              "Manifest-backed xfails remain unsupported runtime evidence; no full upstream or Ruby parity is claimed. "
              "HTTP header supplement proves server request tags only; matching status ranges use explicit configuration. "

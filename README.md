@@ -120,10 +120,15 @@ producer checkout. A failed producer never emits a candidate. Registry authentic
 continues to come from the existing publication host. The default invocation
 publishes only reviewed payloads and cannot promote a new SDK version.
 
-Candidate preparation and publication do not
-enroll the dependency-update schedule or complete coordinated Ruby/Python/Go
-lock/profile generation. Those remain prerequisites for the App-created update
-PRs tracked in [my-infra #114](https://github.com/pawelchcki/my-infra/issues/114).
+The [coordinated Runnerless updater](docs/runnerless-dependency-updates.md)
+resolves the Ruby/Python/Go release set, real Bundler and all three Go module
+graphs, verified native gems, OCI pins, manifests and new versioned profiles.
+The current pins live in `bazel/datadog_sdk_versions.json`; historical profiles
+and evidence remain intact. The requesting repository's recipe and Actions
+producer are committed here. Enrollment is explicitly inactive until this
+repository has verified Write access on both existing GHCR fixture packages.
+Live App-created PR acceptance remains tracked in
+[my-infra #114](https://github.com/pawelchcki/my-infra/issues/114).
 
 See [corpus documentation](corpus/datadog/README.md),
 [coverage](docs/datadog-coverage.md) and
@@ -163,9 +168,11 @@ including Ruby **2.5, 3.3 and 4.0**; two disjoint shards covering all native fra
 the first and last pinned SDK case in each upstream or adapter class in both
 Go and Python (**97 cases per language**, covering all 51 classes); and all
 60 capability checks. Other versioned Ruby feature probes and SDK parameters
-run on main. The native Go workflow builds/tests **four of 24 versions** on
-PRs: oldest control 1.4, downstream legacy control 1.17, minimum instrumented
-version 1.25, and latest version 1.27, with all three backends.
+run on main. The native Go workflow selects the oldest control 1.4, downstream legacy
+control 1.17, the existing 1.25 control, each instrumentor's current minimum,
+and the latest pinned runtime, with all three backends. The current pins
+select **four of 24 versions**; a newer SDK minimum adds its runtime while
+preserving the existing controls.
 This selects **967 fresh test executions instead of 2,150** in the evidence
 driver (55% fewer), and **12 instead of 72** Go runtime/backend combinations.
 

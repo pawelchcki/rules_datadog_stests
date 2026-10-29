@@ -23,6 +23,7 @@ import (
 	httptrace "github.com/DataDog/dd-trace-go/contrib/net/http/v2"
 	ddotel "github.com/DataDog/dd-trace-go/v2/ddtrace/opentelemetry"
 	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/DataDog/dd-trace-go/v2/instrumentation"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	oteltrace "go.opentelemetry.io/otel/trace"
@@ -587,7 +588,7 @@ func main() {
 	}), "shared-http", "GET /target/{status}"))
 	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprint(w, `{"ready":true,"ddtraceVersion":"2.10.1","language":"go"}`)
+		json.NewEncoder(w).Encode(map[string]any{"ready": true, "ddtraceVersion": strings.TrimPrefix(instrumentation.Version(), "v"), "language": "go"})
 	})
 	mux.HandleFunc("/sdk", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

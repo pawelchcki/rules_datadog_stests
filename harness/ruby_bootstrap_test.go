@@ -11,6 +11,10 @@ import (
 )
 
 func TestDatadogRubyBootstrap(t *testing.T) {
+	version := os.Getenv("DATADOG_RUBY_VERSION")
+	if version == "" {
+		t.Fatal("missing expected Ruby SDK version")
+	}
 	root, err := resolveDirectory(os.Getenv("RAILS_ROOTFS"))
 	if err != nil {
 		t.Fatal(err)
@@ -48,11 +52,11 @@ func TestDatadogRubyBootstrap(t *testing.T) {
 	t.Run("frozen-idempotent-early", func(t *testing.T) {
 		code := fmt.Sprintf(`raise "late activation" if Rails.application&.initialized?
 RulesStestsDatadog.activate!; RulesStestsDatadog.activate!
-raise "wrong tracer" unless Gem.loaded_specs.fetch("datadog").version.to_s == "2.43.0"
+raise "wrong tracer" unless Gem.loaded_specs.fetch("datadog").version.to_s == %q
 raise "duplicate load paths" unless $LOAD_PATH.uniq == $LOAD_PATH
 require %q
 raise "missing early Rack instrumentation" unless Rails.application.middleware.any? { |m| m.klass.name == "Datadog::Tracing::Contrib::Rack::TraceMiddleware" }
-puts "bootstrap verified"`, filepath.Join(app, "config/environment"))
+puts "bootstrap verified"`, version, filepath.Join(app, "config/environment"))
 		out, err := run(payload, code)
 		if err != nil || !strings.Contains(string(out), "bootstrap verified") {
 			t.Fatalf("%v: %s", err, out)
@@ -95,7 +99,7 @@ puts "bootstrap verified"`, filepath.Join(app, "config/environment"))
 				if err != nil {
 					return err
 				}
-				if !entry.IsDir() && strings.Contains(path, "/datadog-2.43.0/") && strings.HasSuffix(path, ".so") {
+				if !entry.IsDir() && strings.Contains(path, "/datadog-"+version+"/") && strings.HasSuffix(path, ".so") {
 					removed++
 					return os.Remove(path)
 				}

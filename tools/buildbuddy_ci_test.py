@@ -15,10 +15,24 @@ import urllib.error
 
 import buildbuddy_ci as ci
 from archive_evidence import archive_evidence
-from ci_profile import PR_GO_VERSIONS, PR_RUBY_SERIES, ruby_runtimes, sdk_cases, select_targets
+from ci_profile import pr_go_versions, PR_RUBY_SERIES, ruby_runtimes, sdk_cases, select_targets
 
+
+PR_GO_VERSIONS = pr_go_versions()
 
 class BuildBuddyCITest(unittest.TestCase):
+    def test_sdk_minimum_adds_a_runtime_without_removing_existing_controls(self):
+        from ci_profile import go_representatives
+        lock={"runtimes":[{"version":"go1.4.3","minor":4},{"version":"go1.17.13","minor":17},
+            {"version":"go1.25.14","minor":25},{"version":"go1.26.8","minor":26},{"version":"go1.27.1","minor":27}],
+            "instrumentation":{"orchestrion":{"minimumGoMinor":26},"alibaba":{"minimumGoMinor":25}}}
+        selected=go_representatives(lock)
+        self.assertEqual(len(selected),5)
+        self.assertTrue({"go1.4.3","go1.17.13","go1.25.14","go1.27.1"}<=set(selected))
+        self.assertIn("go1.26.8",selected)
+        lock["instrumentation"]["orchestrion"]["minimumGoMinor"]=28
+        with self.assertRaises(ValueError):go_representatives(lock)
+
     def test_failed_feature_stage_batches_complete_outputs_and_logs(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

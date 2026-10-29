@@ -101,3 +101,14 @@ http_file(
 
 ruby_datadog = use_extension("//bazel:datadog_ruby.bzl", "datadog_ruby")
 use_repo(ruby_datadog, "datadog_ruby_matrix_config", "datadog_gem_datadog", "datadog_gem_cgi", "datadog_gem_datadog_ruby_core_source", "datadog_gem_libdatadog", "datadog_gem_libddwaf", "datadog_gem_logger", "datadog_gem_msgpack", "datadog_gem_ffi")
+
+# SDK candidates may require Go 1.26. Keep the native harness compiler immutable,
+# independently of the shared infrastructure's older default.
+go_sdk = use_extension("@rules_go//go:extensions.bzl", "go_sdk")
+go_sdk.download(
+    version = "1.26.8",
+    sdks = {
+        "linux_amd64": ["go1.26.8.linux-amd64.tar.gz", "d0f743b33e8d8945e6b1f432edd15785c70507121d6e2a723b21285eddf8b57b"],
+        "linux_arm64": ["go1.26.8.linux-arm64.tar.gz", "211ffced9dcb9633a55eac6364816ec0ddd951389a740e88fa8b3337971bdda0"],
+    },
+)
