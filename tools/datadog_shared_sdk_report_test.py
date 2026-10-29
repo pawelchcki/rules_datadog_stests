@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 import tempfile
+import subprocess
+import sys
 import unittest
 from unittest.mock import patch
 
@@ -11,6 +13,13 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class ManifestTests(unittest.TestCase):
+    def test_standalone_parity_entrypoint_loads_the_same_declared_sdk_pins(self):
+        with tempfile.TemporaryDirectory() as directory:
+            result=subprocess.run([sys.executable,str(Path(report.__file__).resolve()),'--help'],
+                cwd=directory,capture_output=True,text=True)
+        self.assertEqual(result.returncode,0,result.stderr)
+        self.assertIn('--require-selected-matrix',result.stdout)
+
     def test_both_formats_retained_when_complete_matrix_gate_rejects_missing_evidence(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

@@ -4,12 +4,16 @@ import argparse
 from collections import Counter
 import json
 from pathlib import Path
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+# The parity driver invokes this file directly, outside Bazel's Python launcher.
+sys.path.insert(0, str(ROOT / "harness"))
 
 from datadog_capabilities import coverage_matrix, evidence_results
 from sdk_versions import VERSIONS as SDK_VERSIONS
 from ci_profile import PROFILES, sdk_cases
 
-ROOT = Path(__file__).resolve().parents[1]
 LANGUAGES = ("go", "python")
 
 
