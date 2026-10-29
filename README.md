@@ -50,6 +50,11 @@ and the built gate executable.
 The compatibility manifest records every upstream runtime. Ruby 1.9.3 and
 2.0–2.4 are explicitly incompatible with Datadog 2.43.0's declared Ruby
 requirement (`>= 2.5.0, < 4.1`); they do not count as passing Datadog tests.
+Sinatra fixtures build their middleware prototype before opening the server
+socket. This prevents overlapping startup health checks from rebuilding the
+stack without Datadog Rack tracing; request threads retain their existing
+concurrency. The original server entrypoint and arguments remain intact.
+
 The versioned payloads use the Ruby tracing transport and compile native
 MessagePack against each runtime's headers, without linking the executor's
 libc. Optional profiling, crashtracking, and AppSec extensions are outside

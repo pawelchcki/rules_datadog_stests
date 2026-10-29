@@ -90,8 +90,9 @@ def _datadog_fixture(app):
         return struct(
             rootfs = "@rules_stests//harness:falcon_rootfs",
             runtime = "ruby",
+            data = ["//harness:sinatra_startup.rb"],
             command = ["bin/server", "--host", "127.0.0.1", "--port", "$${PORT}"],
-            injection = datadog_ruby_injection(),
+            injection = datadog_ruby_injection(sinatra = True),
             wires = ["v0.4"],
             profile = "ruby-falcon-datadog-v" + DATADOG_SDK_VERSIONS["ruby"].replace(".", "-") + "-",
         )
@@ -113,7 +114,7 @@ def datadog_external_feature_tests():
     for app in _DATADOG_APPS:
         config = _datadog_fixture(app)
         args = ["--runtime=" + config.runtime, "--rootfs=$(rlocationpath {})".format(config.rootfs)]
-        data = [config.rootfs, "@rules_stests//harness:app_launcher"]
+        data = [config.rootfs, "@rules_stests//harness:app_launcher"] + getattr(config, "data", [])
         if getattr(config, "ruby_rootfs", None):
             args.append("--ruby-rootfs=$(rlocationpath {})".format(config.ruby_rootfs))
             data.append(config.ruby_rootfs)
@@ -177,6 +178,7 @@ def datadog_parallel_tests():
                 instance = app + "-datadog-stress",
                 command = config.command[0],
                 args = config.command[1:],
+                data = getattr(config, "data", []),
                 injection = config.injection,
                 env = datadog_env(service = app + "-datadog", wire_version = wire, sink = sink, extra = {
                     "RULES_STESTS_SQL_MARKERS": "true",

@@ -14,8 +14,9 @@ def ruby_matrix_fixture(app):
         rootfs = "@rules_stests//fixtures:" + app + "_rootfs",
         ruby_rootfs = "@rules_stests//fixtures:" + app + "_runtime",
         runtime = "ruby",
+        data = ["//harness:sinatra_startup.rb"],
         command = ["bin/server", "--host", "127.0.0.1", "--port", "$${PORT}"],
-        injection = datadog_ruby_injection(rootfs = "//harness:" + app + "_datadog_rootfs"),
+        injection = datadog_ruby_injection(rootfs = "//harness:" + app + "_datadog_rootfs", sinatra = True),
         wires = ["v0.4"],
         profile = "ruby-sinatra-" + app[5:].replace("_", "-") + "-datadog-v" + DATADOG_SDK_VERSIONS["ruby"].replace(".", "-") + "-",
     )
@@ -32,6 +33,7 @@ def datadog_ruby_matrix_tests():
             instance = app + "-datadog",
             command = config.command[0],
             args = config.command[1:],
+            data = config.data,
             injection = config.injection,
             env = datadog_env(service = app + "-datadog", wire_version = "v0.4", extra = {"LANG": "C.UTF-8"}),
             deps = ["@rules_stests//harness:telemetry_sink_service"],
