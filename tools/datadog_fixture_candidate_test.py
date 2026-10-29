@@ -27,6 +27,10 @@ def digest(value):
     return "sha256:" + hashlib.sha256(value).hexdigest()
 
 
+def activation(version):
+    return ('raise LoadError, "unexpected SDK" unless tracer.version.to_s == "' + version + '"\n').encode()
+
+
 def image(directory, fixture, version, *, compressed=True, identity=None, diff_id=None):
     directory.mkdir(parents=True, exist_ok=True)
     blobs = directory / "blobs/sha256"
@@ -42,6 +46,7 @@ def image(directory, fixture, version, *, compressed=True, identity=None, diff_i
                  f"datadog-ruby/gems/datadog-{version}/lib/datadog/version.rb": ("version " + version).encode()}
         record = {"sdk": "datadog", "version": version,
                   "files": [{"path": name, "sha256": hashlib.sha256(data).hexdigest()} for name, data in files.items()]}
+        files["datadog-ruby/activation.rb"] = activation(version)
         (directory.parent / "ruby.identity.json").write_bytes(identity if identity is not None else json.dumps(record).encode())
     else:
         binary = ("native-go-sdk-" + version).encode()
@@ -73,6 +78,7 @@ def contexts(root):
     ruby.mkdir(parents=True)
     (ruby / "Gemfile").write_text('gem "datadog", "2.44.0"\n')
     (ruby / "Gemfile.lock").write_text("    datadog (2.44.0)\n")
+    (ruby / "activation.rb").write_bytes(activation("2.44.0"))
     (gin / "datadog").mkdir(parents=True)
     (gin / "datadog/go.mod").write_text("require (\n" + "".join("\t" + module + " v2.11.0\n" for module in MODULES) + ")\n")
     (gin / "datadog/go.sum").write_text("".join(module + " v2.11.0 " + checksum + "\n" for module, checksum in MODULES.items()))

@@ -11,7 +11,7 @@ from unittest.mock import patch
 
 import datadog_fixture_publication as publication
 from datadog_fixture_candidate import prepare
-from datadog_fixture_candidate_test import contexts, image
+from datadog_fixture_candidate_test import activation, contexts, image
 from context_tree import context_tree
 
 TOOLS = Path(__file__).parent
@@ -59,7 +59,9 @@ DATADOG_RUBY = struct(
         self.fail_pull = None
         self.corrupt_pull = None
         self.after_pull = None
-        self.enterContext(patch.dict(os.environ, {"RULES_STESTS_SOURCE_ROOT": str(self.shared)}))
+        self.enterContext(patch.dict(os.environ, {}, clear=False))
+        os.environ.pop("RULES_STESTS_SOURCE_ROOT", None)
+        self.enterContext(patch.object(publication, "shared_files", return_value=[]))
         self.actual_run = publication.run
         self.enterContext(patch.object(publication, "run", side_effect=self.command))
 
@@ -202,6 +204,76 @@ DATADOG_RUBY = struct(
         with patch.object(publication, "run", return_value=" M Gemfile"):
             with self.assertRaisesRegex(ValueError, "committed source"):
                 publication.clean_contexts(self.repo)
+
+    def test_stale_activation_prevents_every_registry_write(self):
+        path = self.contexts["ruby"] / "activation.rb"
+        path.write_bytes(activation("2.43.0"))
+        with self.assertRaisesRegex(ValueError, "activation version differs"):
+            self.publish()
+        self.assertEqual(self.transfers, [])
+        self.assertEqual(self.lock_bytes(), self.original)
+
+    def test_activation_in_export_must_match_the_verified_source(self):
+        path = self.contexts["ruby"] / "activation.rb"
+        path.write_bytes(path.read_bytes() + b"# different bootstrap\n")
+        with self.assertRaisesRegex(ValueError, "SDK identity differs"):
+            self.publish()
+        self.assertEqual(self.transfers, [])
+
+    def test_development_shared_source_override_cannot_publish(self):
+        with patch.dict(os.environ, {"RULES_STESTS_SOURCE_ROOT": str(self.shared)}):
+            with self.assertRaisesRegex(ValueError, "development shared-source override"):
+                self.publish()
+        self.assertEqual(self.transfers, [])
+
+    def test_second_lock_replacement_failure_rolls_back_the_first(self):
+        actual = publication.os.replace
+        failed = False
+        def replace(source, target):
+            nonlocal failed
+            if Path(target) == self.repo / publication.PAYLOAD_LOCK and not failed:
+                failed = True
+                raise OSError("controlled replacement failure")
+            return actual(source, target)
+        with patch.object(publication.os, "replace", side_effect=replace):
+            with self.assertRaises(OSError):
+                self.publish()
+        self.assertTrue(failed)
+        self.assertEqual(self.lock_bytes(), self.original)
+        self.assertEqual(list((self.repo / "bazel").glob(".datadog-pins-*")), [])
+
+    def test_second_replacement_interrupt_rolls_back_the_first(self):
+        actual = publication.os.replace
+        interrupted = False
+        def replace(source, target):
+            nonlocal interrupted
+            if Path(target) == self.repo / publication.PAYLOAD_LOCK and not interrupted:
+                interrupted = True
+                raise KeyboardInterrupt()
+            return actual(source, target)
+        with patch.object(publication.os, "replace", side_effect=replace):
+            with self.assertRaises(KeyboardInterrupt):
+                self.publish()
+        self.assertEqual(self.lock_bytes(), self.original)
+
+    def test_staging_failure_changes_neither_original(self):
+        with patch.object(publication.os, "fsync", side_effect=OSError("controlled staging failure")):
+            with self.assertRaises(OSError):
+                self.publish()
+        self.assertEqual(self.lock_bytes(), self.original)
+
+    def test_failed_rollback_retains_original_copies_for_recovery(self):
+        actual = publication.os.replace
+        def replace(source, target):
+            if Path(target) == self.repo / publication.PAYLOAD_LOCK:
+                raise OSError("controlled persistent storage failure")
+            return actual(source, target)
+        with patch.object(publication.os, "replace", side_effect=replace):
+            with self.assertRaises(OSError):
+                self.publish()
+        staging, = (self.repo / "bazel").glob(".datadog-pins-*")
+        for index, path in enumerate(self.original):
+            self.assertEqual((staging / f"{index}.old").read_bytes(), self.original[path])
 
 
 if __name__ == "__main__":

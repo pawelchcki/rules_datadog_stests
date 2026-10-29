@@ -104,14 +104,19 @@ class PublicationTest(HermeticGitTestCase):
             shared = root / "shared/fixtures/apps/go/realworld-gin"
             shared.mkdir(parents=True)
             (shared / "main.go").write_text("shared application")
+            (root / "MODULE.bazel").write_text('module(name = "fixture")\n')
             env = {**os.environ, "PATH": str(binary) + os.pathsep + os.environ["PATH"], "GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_NOSYSTEM": "1"}
-            env["RULES_STESTS_SOURCE_ROOT"] = str(root / "shared")
+            env.pop("RULES_STESTS_SOURCE_ROOT", None)
             subprocess.run(["git", "init", "-q", root], check=True, env=env)
-            subprocess.run(["git", "add", "fixtures"], cwd=root, check=True, env=env)
+            subprocess.run(["git", "add", "fixtures", "MODULE.bazel"], cwd=root, check=True, env=env)
             subprocess.run(["git", "-c", "user.name=Test", "-c", "user.email=test@example.invalid", "commit", "-qm", "fixtures"], cwd=root, check=True, env=env)
             # The publisher CLI needs python3 even on an executor that only
             # provides Bazel's hermetic Python runtime.
             (binary / "python3").symlink_to(sys.executable)
+            bazel = binary / "bazel"
+            bazel.write_text("#!" + sys.executable + "\nimport sys\n" +
+                             f"print({str(shared / 'main.go')!r} if sys.argv[1] == 'cquery' else {str(root)!r})\n")
+            bazel.chmod(0o755)
             calls = root / "registry-calls"
             skopeo = binary / "skopeo"
             skopeo.write_text("#!/usr/bin/env python3\nimport pathlib,sys\n" + f"p=pathlib.Path({str(calls)!r});p.open('a').write(' '.join(sys.argv[1:])+'\\n')\n" + "if sys.argv[-1].startswith('oci:'): pathlib.Path(sys.argv[-1][4:]).mkdir(parents=True,exist_ok=True)\n")
@@ -135,6 +140,18 @@ class PublicationTest(HermeticGitTestCase):
             self.assertIn("gin-datadog-tree-" + tree, calls.read_text())
             self.assertIn("source-tree=" + tree, published.stdout)
             self.assertIn('tree = "' + tree + '"', (root / "bazel/oci_images.lock.bzl").read_text())
+            previous_calls = calls.read_text()
+            for selection in ("MODULE.bazel", "MODULE.bazel.lock", ".bazelrc", ".bazelversion"):
+                path = root / selection
+                original = path.read_bytes() if path.exists() else None
+                path.write_text("uncommitted dependency selection\n")
+                failed = subprocess.run(script, env=env, capture_output=True, text=True)
+                self.assertNotEqual(failed.returncode, 0)
+                self.assertEqual(calls.read_text(), previous_calls)
+                if original is None:
+                    path.unlink()
+                else:
+                    path.write_bytes(original)
 
 
 if __name__ == "__main__":

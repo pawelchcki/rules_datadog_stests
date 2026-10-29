@@ -149,8 +149,10 @@ def identity_files(directory: Path, fixture: str, version: str, modules: dict) -
     return expected
 
 
-def inspect_image(directory: Path, fixture: str, version: str, modules: dict | None = None) -> dict:
+def inspect_image(directory: Path, fixture: str, version: str, modules: dict | None = None,
+                  source_files: dict | None = None) -> dict:
     expected = identity_files(directory, fixture, version, modules or {})
+    expected.update(source_files or {})
     index = document(directory / "index.json")
     if index.get("schemaVersion") != 2 or len(index.get("manifests", [])) != 1:
         raise ValueError("candidate must contain one image manifest")
@@ -211,7 +213,14 @@ def prepare(images: Path, contexts: dict[str, Path], trees: dict[str, str]) -> d
             raise ValueError("candidate source differs from the built context")
         version = sdk_version(context, fixture)
         modules = go_modules(context, version) if fixture == "gin" else {}
-        image = inspect_image(images / fixture, fixture, version, modules)
+        source_files = {}
+        if fixture == "ruby":
+            activation = evidence(context / "activation.rb")
+            selected = re.findall(rb'unless tracer\.version\.to_s == "(' + VERSION.encode() + rb')"', activation)
+            if selected != [version.encode()]:
+                raise ValueError("Ruby activation version differs from the locked SDK")
+            source_files["datadog-ruby/activation.rb"] = hashlib.sha256(activation).hexdigest()
+        image = inspect_image(images / fixture, fixture, version, modules, source_files)
         if before != context_tree(context):
             raise ValueError("candidate source context changed during verification")
         result["fixtures"][fixture] = dict(image, sourceTree=before)

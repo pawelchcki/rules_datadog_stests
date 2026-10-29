@@ -4,8 +4,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 import re
+import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -44,9 +47,44 @@ def run(arguments, *, root: Path, capture=False):
 
 
 def clean_contexts(root: Path) -> None:
-    for context, *_ in FIXTURES.values():
+    if os.environ.get("RULES_STESTS_SOURCE_ROOT"):
+        raise ValueError("publication cannot use a development shared-source override")
+    selections = ["MODULE.bazel", "MODULE.bazel.lock", ".bazelrc", ".bazelversion"]
+    for context in [value[0] for value in FIXTURES.values()] + selections:
         if run(["git", "status", "--porcelain", "--untracked-files=all", "--", context], root=root, capture=True):
             raise ValueError("publication requires committed source contexts")
+
+
+def install_locks(root: Path, replacements: dict, originals: dict) -> None:
+    # Stage every new file and rollback copy before replacing any tracked file.
+    # Each rename is atomic. Catchable errors/interruptions restore originals;
+    # an uncatchable process kill leaves an unaccepted dirty producer checkout.
+    staging = Path(tempfile.mkdtemp(prefix=".datadog-pins-", dir=root / "bazel"))
+    installed = []
+    cleanup = True
+    try:
+        for index, (path, content) in enumerate(replacements.items()):
+            for suffix, value in (("new", content), ("old", originals[path])):
+                staged = staging / f"{index}.{suffix}"
+                with staged.open("wb") as stream:
+                    stream.write(value)
+                    stream.flush()
+                    os.fsync(stream.fileno())
+                staged.chmod(stat.S_IMODE((root / path).stat().st_mode))
+        for index, path in enumerate(replacements):
+            installed.append((index, path))
+            os.replace(staging / f"{index}.new", root / path)
+    except BaseException:
+        # If storage also refuses rollback, retain both original copies for
+        # recovery. Never report that candidate as accepted.
+        cleanup = False
+        for index, path in reversed(installed):
+            os.replace(staging / f"{index}.old", root / path)
+        cleanup = True
+        raise
+    finally:
+        if cleanup:
+            shutil.rmtree(staging)
 
 
 def update_lock(text: str, name: str, pin: dict) -> str:
@@ -74,8 +112,8 @@ def publish(root: Path, images: Path, *, candidate: bool) -> None:
     root, images = root.resolve(), images.resolve()
     clean_contexts(root)
     reviewed = payloads(root / PAYLOAD_LOCK)
-    original_oci = (root / OCI_LOCK).read_text()
-    original_payload = (root / PAYLOAD_LOCK).read_text()
+    originals = {path: (root / path).read_bytes() for path in (OCI_LOCK, PAYLOAD_LOCK)}
+    original_oci = originals[OCI_LOCK].decode()
     with tempfile.TemporaryDirectory(prefix="datadog-publication-") as scratch:
         scratch = Path(scratch)
         materialize(shared_files(root), root / APP, scratch / "gin")
@@ -123,15 +161,14 @@ def publish(root: Path, images: Path, *, candidate: bool) -> None:
         clean_contexts(root)
         if any(context_tree(context) != trees[key] for key, context in contexts.items()):
             raise ValueError("publication source changed during anonymous verification")
-        if (root / OCI_LOCK).read_text() != original_oci or (root / PAYLOAD_LOCK).read_text() != original_payload:
+        if any((root / path).read_bytes() != original for path, original in originals.items()):
             raise ValueError("publication locks changed concurrently")
-        # Both provider operations finish before installing either tracked lock.
-        # A failed/interrupted producer cannot emit a candidate from a dirty tree.
-        (root / OCI_LOCK).write_text(updated_oci)
+        replacements = {OCI_LOCK: updated_oci.encode()}
         if candidate:
             updated_payload = {key: {field: pin[field] for field in ("version", "rootfs")}
                                for key, pin in pins.items()}
-            (root / PAYLOAD_LOCK).write_text(json.dumps(updated_payload, indent=2) + "\n")
+            replacements[PAYLOAD_LOCK] = (json.dumps(updated_payload, indent=2) + "\n").encode()
+        install_locks(root, replacements, originals)
         for fixture, (_, repository, _, _) in FIXTURES.items():
             pin = pins[fixture]
             print(f"{fixture} {repository}@{pin['manifest']} source-tree={pin['sourceTree']}")
