@@ -13,6 +13,7 @@ import stat
 import subprocess
 import sys
 import tempfile
+import threading
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from context_tree import context_tree
@@ -25,6 +26,46 @@ FIXTURES = {
 }
 PAYLOAD_LOCK = Path("bazel/datadog_fixture_payloads.json")
 OCI_LOCK = Path("bazel/oci_images.lock.bzl")
+DIAGNOSTIC_LIMIT = 64 * 1024
+
+
+class PublicationCommandError(subprocess.SubprocessError):
+    """A fixed diagnostic without provider text or credentials."""
+
+
+def command_failure(argv: list[str], status: int, stderr: bytes) -> PublicationCommandError:
+    operation = "command"
+    reason = "command-failed"
+    if argv[:2] == ["skopeo", "copy"]:
+        operation = "registry-transfer"
+        for fixture, (_, repository, _, _) in FIXTURES.items():
+            if argv[-1].startswith("docker://" + repository + ":"):
+                operation = fixture + "-registry-push"
+            elif argv[-2].startswith("docker://" + repository + "@"):
+                operation = fixture + "-anonymous-pull"
+        # Inspect private bytes only to select a fixed category. Never include
+        # provider text, command arguments or credential material in an error.
+        diagnostic = stderr.lower()
+        categories = (
+            ("registry-permission-denied", (b"permission_denied:write_package", b"permission_denied: write_package", b"requested access to the resource is denied")),
+            ("registry-authentication-failed", (b"unauthorized", b"authentication required")),
+            ("invalid-json-input", (b"unexpected end of json input",)),
+            ("registry-manifest-missing", (b"manifest unknown",)),
+            ("registry-unreachable", (b"i/o timeout", b"context deadline exceeded", b"connection refused", b"tls handshake timeout", b"temporary failure in name resolution")),
+        )
+        for category, patterns in categories:
+            if any(pattern in diagnostic for pattern in patterns):
+                reason = category
+                break
+    elif len(argv) > 3 and argv[1].endswith("/tools/local_oci_repository.py"):
+        operation = "payload-verification"
+        for fixture, (_, _, name, _) in FIXTURES.items():
+            if argv[3] == name:
+                operation = fixture + "-payload-verification"
+    elif argv[:2] == ["git", "status"]:
+        operation = "source-status"
+    return PublicationCommandError(
+        f"Datadog fixture publication failed ({operation}; {reason}; exit {status}); candidate not accepted")
 
 
 def payloads(path: Path) -> dict:
@@ -39,7 +80,7 @@ def payloads(path: Path) -> dict:
     return result
 
 
-def run(arguments, *, root: Path, capture=False):
+def _run_private(arguments, *, root: Path, capture=False):
     # Existing container keyring auth remains available to local hosts. Actions
     # may instead supply their ephemeral scoped token entirely through memory.
     argv=[str(a) for a in arguments]
@@ -57,10 +98,39 @@ def run(arguments, *, root: Path, capture=False):
         encoded=base64.b64encode((username+":"+token).encode()).decode()
         authentication=json.dumps({"auths":{"ghcr.io":{"auth":encoded}}}).encode()
         argv[2:2]=["--authfile","/dev/stdin"]
-    result = subprocess.run(argv, cwd=root, check=True, input=authentication,env=environment,
-                            stdout=subprocess.PIPE if capture else subprocess.DEVNULL,
-                            stderr=subprocess.DEVNULL)
-    return result.stdout.decode().strip() if capture else None
+    diagnostic = bytearray()
+    read_descriptor, write_descriptor = os.pipe()
+
+    def drain():
+        with os.fdopen(read_descriptor, "rb", buffering=0) as stream:
+            while chunk := stream.read(16 * 1024):
+                diagnostic.extend(chunk[:max(0, DIAGNOSTIC_LIMIT - len(diagnostic))])
+
+    reader = threading.Thread(target=drain)
+    reader.start()
+    status = 0
+    try:
+        with os.fdopen(write_descriptor, "wb", buffering=0) as private_stderr:
+            try:
+                result = subprocess.run(argv, cwd=root, check=True, input=authentication,env=environment,
+                                        stdout=subprocess.PIPE if capture else subprocess.DEVNULL,
+                                        stderr=private_stderr)
+            except subprocess.CalledProcessError as error:
+                status = error.returncode
+    finally:
+        reader.join()
+    if status:
+        return None, command_failure(argv, status, diagnostic)
+    return result.stdout.decode().strip() if capture else None, None
+
+
+def run(arguments, *, root: Path, capture=False):
+    # The credential-bearing frame and its child exception have returned before
+    # raising. A traceback of this public failure cannot retain their locals.
+    output, failure = _run_private(arguments, root=root, capture=capture)
+    if failure is not None:
+        raise failure
+    return output
 
 
 def clean_contexts(root: Path) -> None:
@@ -198,6 +268,8 @@ def main():
     args = parser.parse_args()
     try:
         publish(Path(__file__).resolve().parents[1], args.images, candidate=args.candidate)
+    except PublicationCommandError as error:
+        sys.exit(str(error))
     except (OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError):
         sys.exit("Datadog fixture publication failed; candidate not accepted")
 

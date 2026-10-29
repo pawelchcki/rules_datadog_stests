@@ -88,6 +88,93 @@ DATADOG_RUBY = struct(
     def lock_bytes(self):
         return {path: (self.repo / path).read_bytes() for path in (publication.OCI_LOCK, publication.PAYLOAD_LOCK)}
 
+    def test_real_child_stderr_and_stdin_never_escape_failure(self):
+        import secrets
+        token = secrets.token_urlsafe(24)
+        actual_subprocess = subprocess.run
+
+        def reject(arguments, **options):
+            # A real child echoes the entire in-memory auth document to its
+            # stderr, as an unsafe provider could. Neither it nor the child
+            # exception may become part of the public diagnostic.
+            return actual_subprocess(
+                [sys.executable, "-c", "import sys; sys.stderr.buffer.write(sys.stdin.buffer.read()); sys.exit(7)"],
+                **options)
+
+        with patch.dict(os.environ, {"DATADOG_REGISTRY_TOKEN": token, "DATADOG_REGISTRY_USER": "github-actions[bot]"}), \
+                patch.object(publication.subprocess, "run", side_effect=reject):
+            try:
+                self.actual_run(["skopeo", "copy", "oci:/private/candidate", "docker://ghcr.io/pawelchcki/rules_stest_agents:source"], root=self.repo)
+            except publication.PublicationCommandError as failure:
+                self.assertEqual(str(failure), "Datadog fixture publication failed (ruby-registry-push; command-failed; exit 7); candidate not accepted")
+                self.assertIsNone(failure.__context__)
+                self.assertTrue(token not in repr(vars(failure)))
+                self.assertTrue(token not in str(failure.args))
+                import base64
+                encoded = base64.b64encode(("github-actions[bot]:" + token).encode()).decode()
+                frame = failure.__traceback__
+                while frame:
+                    if frame.tb_frame.f_code.co_filename == publication.__file__:
+                        self.assertTrue(all(token not in repr(value) and encoded not in repr(value)
+                                            for value in frame.tb_frame.f_locals.values()))
+                    frame = frame.tb_next
+            else:
+                self.fail("the rejecting child must fail publication")
+
+    def test_large_stderr_is_drained_with_a_fixed_memory_bound(self):
+        actual_subprocess = subprocess.run
+        retained = []
+        classify = publication.command_failure
+
+        def observe(argv, status, diagnostic):
+            retained.append(len(diagnostic))
+            return classify(argv, status, diagnostic)
+
+        for status in (0, 7):
+            def noisy(arguments, **options):
+                return actual_subprocess([sys.executable, "-c",
+                    "import sys; sys.stderr.buffer.write(b'permission_denied: write_package\\n'); "
+                    "sys.stderr.buffer.write(b'x'*(4*1024*1024)); sys.exit(" + str(status) + ")"], **options)
+            with patch.object(publication.subprocess, "run", side_effect=noisy), \
+                    patch.object(publication, "command_failure", side_effect=observe):
+                if status:
+                    with self.assertRaisesRegex(publication.PublicationCommandError, "ruby-registry-push; registry-permission-denied; exit 7"):
+                        self.actual_run(["skopeo", "copy", "oci:/private/candidate", "docker://ghcr.io/pawelchcki/rules_stest_agents:source"], root=self.repo)
+                else:
+                    self.actual_run(["skopeo", "copy", "oci:/private/candidate", "docker://ghcr.io/pawelchcki/rules_stest_agents:source"], root=self.repo)
+        self.assertEqual(retained, [publication.DIAGNOSTIC_LIMIT])
+
+    def test_registry_failures_use_fixed_categories_for_push_and_anonymous_pull(self):
+        cases = (
+            ("permission_denied: write_package", "registry-permission-denied"),
+            ("unauthorized", "registry-authentication-failed"),
+            ("unexpected end of JSON input", "invalid-json-input"),
+            ("manifest unknown", "registry-manifest-missing"),
+            ("connection refused", "registry-unreachable"),
+            ("unrecognized provider diagnostic", "command-failed"),
+        )
+        for message, category in cases:
+            for fixture, (_, repository, _, _) in publication.FIXTURES.items():
+                for operation in ("registry-push", "anonymous-pull"):
+                    args = (["skopeo", "copy", "oci:/private/candidate", "docker://" + repository + ":source"]
+                            if operation == "registry-push" else
+                            ["skopeo", "copy", "--src-no-creds", "docker://" + repository + "@sha256:" + "1" * 64, "oci:/private/pulled"])
+                    def reject(arguments, **options):
+                        options["stderr"].write(message.encode())
+                        raise subprocess.CalledProcessError(1, arguments)
+                    with patch.object(publication.subprocess, "run", side_effect=reject):
+                        with self.assertRaises(publication.PublicationCommandError) as failure:
+                            self.actual_run(args, root=self.repo)
+                    self.assertEqual(str(failure.exception), f"Datadog fixture publication failed ({fixture}-{operation}; {category}; exit 1); candidate not accepted")
+                    self.assertIsNone(failure.exception.__context__)
+
+    def test_payload_failure_identifies_fixture_without_exposing_child_output(self):
+        child_error = subprocess.CalledProcessError(1, ["private-arguments"], stderr=b"private-provider-output")
+        with patch.object(publication.subprocess, "run", side_effect=child_error):
+            with self.assertRaises(publication.PublicationCommandError) as failure:
+                self.actual_run([sys.executable, self.repo / "tools/local_oci_repository.py", self.images / "gin", "gin_datadog_realworld"], root=self.repo)
+        self.assertEqual(str(failure.exception), "Datadog fixture publication failed (gin-payload-verification; command-failed; exit 1); candidate not accepted")
+
     def command(self, arguments, *, root, capture=False):
         args = [str(a) for a in arguments]
         if args[0] == "git":
