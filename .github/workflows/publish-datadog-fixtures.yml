@@ -12,6 +12,9 @@ on:
       - tools/materialize_shared_app.py
       - MODULE.bazel
       - tools/publish_datadog_fixtures.sh
+      - tools/datadog_fixture_publication.py
+      - tools/datadog_fixture_candidate.py
+      - bazel/datadog_fixture_payloads.json
       - .github/workflows/publish-datadog-fixtures.yml
   workflow_dispatch:
 

@@ -79,11 +79,13 @@ class PublicationTest(HermeticGitTestCase):
             tools, images, binary = root / "tools", root / "images", root / "bin"
             for directory in [tools, images, binary, root / "bazel"]:
                 directory.mkdir()
-            for name in ["publish_datadog_fixtures.sh", "update_oci_lock.py"]:
+            for name in ["publish_datadog_fixtures.sh", "datadog_fixture_publication.py",
+                         "datadog_fixture_candidate.py", "context_tree.py", "materialize_shared_app.py"]:
                 shutil.copyfile(TOOLS / name, tools / name)
             (tools / "local_oci_repository.py").write_text("import pathlib,sys; pathlib.Path(sys.argv[1]).mkdir(parents=True,exist_ok=True)\n")
             source_lock = TOOLS.parent / "bazel/oci_images.lock.bzl"
             shutil.copyfile(source_lock, root / "bazel/oci_images.lock.bzl")
+            shutil.copyfile(TOOLS.parent / "bazel/datadog_fixture_payloads.json", root / "bazel/datadog_fixture_payloads.json")
             for fixture in ["ruby", "gin"]:
                 image = images / fixture
                 image.mkdir()
@@ -92,13 +94,29 @@ class PublicationTest(HermeticGitTestCase):
                 context = root / path
                 context.mkdir(parents=True)
                 (context / "Dockerfile").write_text("FROM scratch\n")
+            ruby = root / "fixtures/agents/datadog-ruby"
+            (ruby / "Gemfile").write_text('gem "datadog", "2.43.0"\n')
+            (ruby / "Gemfile.lock").write_text('    datadog (2.43.0)\n')
+            gin = root / "fixtures/apps/go/realworld-gin/datadog"
+            gin.mkdir()
+            (gin / "go.mod").write_text('require (\n github.com/DataDog/dd-trace-go/v2 v2.10.1\n)\n')
+            (gin / "go.sum").write_text('github.com/DataDog/dd-trace-go/v2 v2.10.1 h1:' + 'A' * 43 + '=\n')
+            shared = root / "shared/fixtures/apps/go/realworld-gin"
+            shared.mkdir(parents=True)
+            (shared / "main.go").write_text("shared application")
+            (root / "MODULE.bazel").write_text('module(name = "fixture")\n')
             env = {**os.environ, "PATH": str(binary) + os.pathsep + os.environ["PATH"], "GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_NOSYSTEM": "1"}
+            env.pop("RULES_STESTS_SOURCE_ROOT", None)
             subprocess.run(["git", "init", "-q", root], check=True, env=env)
-            subprocess.run(["git", "add", "fixtures"], cwd=root, check=True, env=env)
+            subprocess.run(["git", "add", "fixtures", "MODULE.bazel"], cwd=root, check=True, env=env)
             subprocess.run(["git", "-c", "user.name=Test", "-c", "user.email=test@example.invalid", "commit", "-qm", "fixtures"], cwd=root, check=True, env=env)
             # The publisher CLI needs python3 even on an executor that only
             # provides Bazel's hermetic Python runtime.
             (binary / "python3").symlink_to(sys.executable)
+            bazel = binary / "bazel"
+            bazel.write_text("#!" + sys.executable + "\nimport sys\n" +
+                             f"print({str(shared / 'main.go')!r} if sys.argv[1] == 'cquery' else {str(root)!r})\n")
+            bazel.chmod(0o755)
             calls = root / "registry-calls"
             skopeo = binary / "skopeo"
             skopeo.write_text("#!/usr/bin/env python3\nimport pathlib,sys\n" + f"p=pathlib.Path({str(calls)!r});p.open('a').write(' '.join(sys.argv[1:])+'\\n')\n" + "if sys.argv[-1].startswith('oci:'): pathlib.Path(sys.argv[-1][4:]).mkdir(parents=True,exist_ok=True)\n")
@@ -111,9 +129,8 @@ class PublicationTest(HermeticGitTestCase):
                 self.assertNotEqual(failed.returncode, 0)
                 self.assertFalse(calls.exists(), "invalid provenance reached a registry write")
             context = root / "composed"
-            context.mkdir()
+            shutil.copytree(root / "fixtures/apps/go/realworld-gin", context)
             (context / "main.go").write_text("shared application")
-            shutil.copyfile(root / "fixtures/apps/go/realworld-gin/Dockerfile", context / "Dockerfile")
             tree = context_tree(context)
             overlay_tree = subprocess.check_output(["git", "rev-parse", "HEAD:fixtures/apps/go/realworld-gin"], cwd=root, text=True, env=env).strip()
             self.assertNotEqual(tree, overlay_tree)
@@ -123,6 +140,18 @@ class PublicationTest(HermeticGitTestCase):
             self.assertIn("gin-datadog-tree-" + tree, calls.read_text())
             self.assertIn("source-tree=" + tree, published.stdout)
             self.assertIn('tree = "' + tree + '"', (root / "bazel/oci_images.lock.bzl").read_text())
+            previous_calls = calls.read_text()
+            for selection in ("MODULE.bazel", "MODULE.bazel.lock", ".bazelrc", ".bazelversion"):
+                path = root / selection
+                original = path.read_bytes() if path.exists() else None
+                path.write_text("uncommitted dependency selection\n")
+                failed = subprocess.run(script, env=env, capture_output=True, text=True)
+                self.assertNotEqual(failed.returncode, 0)
+                self.assertEqual(calls.read_text(), previous_calls)
+                if original is None:
+                    path.unlink()
+                else:
+                    path.write_bytes(original)
 
 
 if __name__ == "__main__":

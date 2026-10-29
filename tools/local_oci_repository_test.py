@@ -17,6 +17,27 @@ HELPER = Path(__file__).with_name("local_oci_repository.py")
 FIXTURE_BUILDER = Path(__file__).with_name("build_datadog_fixtures.sh")
 
 
+def reviewed_builder_inputs(root):
+    tools = root / "tools"
+    tools.mkdir(exist_ok=True)
+    for name in ("build_datadog_fixtures.sh", "datadog_fixture_publication.py",
+                 "datadog_fixture_candidate.py", "context_tree.py", "materialize_shared_app.py"):
+        shutil.copyfile(Path(__file__).with_name(name), tools / name)
+    (tools / "build_datadog_fixtures.sh").chmod(0o755)
+    (root / "bazel").mkdir(exist_ok=True)
+    (root / "bazel/datadog_fixture_payloads.json").write_text(json.dumps({
+        "ruby": {"version": "2.43.0", "rootfs": "sha256:" + "a" * 64},
+        "gin": {"version": "2.10.1", "rootfs": "sha256:" + "b" * 64}}))
+    ruby = root / "fixtures/agents/datadog-ruby"
+    ruby.mkdir(parents=True, exist_ok=True)
+    (ruby / "Gemfile").write_text('gem "datadog", "2.43.0"\n')
+    (ruby / "Gemfile.lock").write_text('    datadog (2.43.0)\n')
+    gin = root / "fixtures/apps/go/realworld-gin/datadog"
+    gin.mkdir(parents=True, exist_ok=True)
+    (gin / "go.mod").write_text('require (\n github.com/DataDog/dd-trace-go/v2 v2.10.1\n)\n')
+    (gin / "go.sum").write_text('github.com/DataDog/dd-trace-go/v2 v2.10.1 h1:' + 'A' * 43 + '=\n')
+
+
 def digest(data):
     return "sha256:" + hashlib.sha256(data).hexdigest()
 
@@ -103,9 +124,10 @@ class LocalOCIRepositoryTest(unittest.TestCase):
             container_tool = directory / "container-tool"
             container_tool.write_text("#!/usr/bin/env bash\nprintf 'nested container build unavailable: %s\\n' \"$*\" >&2\nexit 125\n")
             container_tool.chmod(0o755)
+            reviewed_builder_inputs(directory)
 
             result = subprocess.run(
-                [FIXTURE_BUILDER, directory / "output"],
+                [directory / "tools/build_datadog_fixtures.sh", directory / "output"],
                 capture_output=True,
                 check=False,
                 env={
@@ -147,6 +169,7 @@ print(f"--override_repository={sys.argv[2]}={directory.resolve()}")
             ):
                 context.mkdir(parents=True)
                 (context / "Dockerfile").write_text("FROM scratch\n")
+            reviewed_builder_inputs(root)
             shared = root / "shared" / "fixtures/apps/go/realworld-gin"
             shared.mkdir(parents=True)
             (shared / "main.go").write_text("shared application v1")

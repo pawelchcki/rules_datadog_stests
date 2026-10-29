@@ -104,8 +104,23 @@ the same rootfs bytes. Candidate images use separate local
 tags and bypass the reviewed fixture cache. No registry write, reviewed lock
 update, or Bazel override is produced by candidate preparation.
 
-The ordinary builder and publisher retain their reviewed payload requirements.
-Candidate preparation supplies evidence for reviewing new pins; it does not
+The ordinary builder and publisher read their reviewed SDK/rootfs requirements
+from `bazel/datadog_fixture_payloads.json`. After committing the new source
+contexts, `tools/publish_datadog_fixtures.sh OUTPUT --candidate` independently
+rechecks the candidate receipt against both actual SDK payloads and freshly
+composed sources, including the Ruby bootstrap's version check and exported
+bytes. Publication rejects development source overrides and uncommitted module
+or repository Bazel settings. Both images and proposed locks must validate before the first
+registry write. Publication preserves manifest digests, uses source-tree tags,
+and verifies anonymous pulls of both immutable images before changing either
+the OCI lock or the reviewed payload lock. Failed verification leaves the locks
+unchanged. Lock replacements are staged together and rolled back on catchable
+installation failures; an uncatchable process kill leaves an unaccepted dirty
+producer checkout. A failed producer never emits a candidate. Registry authentication
+continues to come from the existing publication host. The default invocation
+publishes only reviewed payloads and cannot promote a new SDK version.
+
+Candidate preparation and publication do not
 enroll the dependency-update schedule or complete coordinated Ruby/Python/Go
 lock/profile generation. Those remain prerequisites for the App-created update
 PRs tracked in [my-infra #114](https://github.com/pawelchcki/my-infra/issues/114).

@@ -1,4 +1,4 @@
-exports_files(["oci_deps.bzl", "oci_images.lock.bzl"])
+exports_files(["oci_deps.bzl", "oci_images.lock.bzl", "datadog_fixture_payloads.json"])
 exports_files(["go_runtime_deps.bzl"])
 exports_files(["rules_stests_django_bind.patch"])
 
