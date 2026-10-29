@@ -181,6 +181,8 @@ _SHAPE_VOCABULARY = ["@rules_stests//corpus:telemetry/contract-error.scm", "data
 py_test(
     name = "datadog_shapes_test",
     size = "medium",
+    # This test starts four native Scheme VMs; avoid other local work.
+    tags = ["exclusive-if-local"],
     srcs = ["datadog_shapes_test.py"],
     main = "datadog_shapes_test.py",
     args = [

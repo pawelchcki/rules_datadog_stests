@@ -4,7 +4,7 @@
   "sourceRevision": "6c307f014e751c429a1a2f6fea45ca925182290b",
   "rubyPayloadManifestSha256": "58d7ed942bb14c6605bba9281370448bb01afa490ff5bd63228628ddfb7a7639",
   "rubyPayloadRootfsSha256": "9112793764a29beef87c9201c26c46721af9506fff7af7f4ef14e6a95c8a0405",
-  "scope": "Native manual shape candidates; not passing exact-validation receipts or published fixtures.",
+  "scope": "Candidate hashes describe native manual shape captures. Separate verified capture and receipt hashes describe the subsequent exact-validation execution. Both use local unpublished payloads.",
   "observedChange": "Rack request spans add exact _dd.tracing.transport=ruby; first-finished chunk spans add exact _dd.sdk.otlp_export=false.",
   "scenarios": [
     {
