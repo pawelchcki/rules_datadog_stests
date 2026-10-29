@@ -6,6 +6,27 @@ load("//corpus:registry.bzl", "DATADOG_SHAPE_LIBRARIES", "datadog_library_args",
 package(default_visibility = ["//visibility:public"])
 
 py_binary(
+    name = "datadog_fixture_publication_test_bin",
+    testonly = True,
+    srcs = [
+        "datadog_fixture_publication_test.py",
+        "datadog_fixture_publication.py",
+        "datadog_fixture_candidate_test.py",
+        "datadog_fixture_candidate.py",
+        "context_tree.py",
+        "materialize_shared_app.py",
+    ],
+    main = "datadog_fixture_publication_test.py",
+    data = ["local_oci_repository.py"],
+    imports = ["."],
+)
+
+service_test(
+    name = "datadog_fixture_publication_test",
+    test = ":datadog_fixture_publication_test_bin",
+)
+
+py_binary(
     name = "datadog_fixture_candidate_test_bin",
     testonly = True,
     srcs = ["datadog_fixture_candidate_test.py", "datadog_fixture_candidate.py", "context_tree.py"],
@@ -90,6 +111,8 @@ py_test(
         "local_oci_repository.py",
         "materialize_shared_app.py",
         "context_tree.py",
+        "datadog_fixture_publication.py",
+        "datadog_fixture_candidate.py",
     ],
 )
 
@@ -200,8 +223,11 @@ py_test(
     srcs = ["context_tree_test.py"],
     data = [
         "publish_datadog_fixtures.sh",
+        "datadog_fixture_publication.py",
+        "datadog_fixture_candidate.py",
         "update_oci_lock.py",
         "//bazel:oci_images.lock.bzl",
+        "//bazel:datadog_fixture_payloads.json",
         "@git//:git",
     ],
     env = {"GIT_TEST_BINARY": "$(rlocationpath @git//:git)"},

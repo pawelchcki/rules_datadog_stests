@@ -79,6 +79,13 @@ class SharedAppTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "already exists"):
                 app.materialize([], output, output)
 
+    def test_bazel_observations_use_the_selected_repository(self):
+        with patch.dict(os.environ, {}, clear=True), patch.object(app.subprocess, "check_output") as command:
+            command.side_effect = ["external/rules_stests+/fixtures/apps/go/realworld-gin/hello.go\n", "/tmp/output-base\n"]
+            app.shared_files(Path("/tmp/selected-repository"))
+            self.assertEqual([call.kwargs["cwd"] for call in command.call_args_list],
+                             [Path("/tmp/selected-repository")] * 2)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,10 @@
+{
+  "ruby": {
+    "version": "2.43.0",
+    "rootfs": "sha256:3c02edad18444381e1a2965dcd71989603713de43beb7f4fc1dbcfb3b7af0794"
+  },
+  "gin": {
+    "version": "2.10.1",
+    "rootfs": "sha256:f2532c86ac33814c8ab87c3cc6b64d0d88ad9bdee043bc65982276adbf55e99b"
+  }
+}

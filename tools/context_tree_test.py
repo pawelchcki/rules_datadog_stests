@@ -79,11 +79,13 @@ class PublicationTest(HermeticGitTestCase):
             tools, images, binary = root / "tools", root / "images", root / "bin"
             for directory in [tools, images, binary, root / "bazel"]:
                 directory.mkdir()
-            for name in ["publish_datadog_fixtures.sh", "update_oci_lock.py"]:
+            for name in ["publish_datadog_fixtures.sh", "datadog_fixture_publication.py",
+                         "datadog_fixture_candidate.py", "context_tree.py", "materialize_shared_app.py"]:
                 shutil.copyfile(TOOLS / name, tools / name)
             (tools / "local_oci_repository.py").write_text("import pathlib,sys; pathlib.Path(sys.argv[1]).mkdir(parents=True,exist_ok=True)\n")
             source_lock = TOOLS.parent / "bazel/oci_images.lock.bzl"
             shutil.copyfile(source_lock, root / "bazel/oci_images.lock.bzl")
+            shutil.copyfile(TOOLS.parent / "bazel/datadog_fixture_payloads.json", root / "bazel/datadog_fixture_payloads.json")
             for fixture in ["ruby", "gin"]:
                 image = images / fixture
                 image.mkdir()
@@ -92,7 +94,18 @@ class PublicationTest(HermeticGitTestCase):
                 context = root / path
                 context.mkdir(parents=True)
                 (context / "Dockerfile").write_text("FROM scratch\n")
+            ruby = root / "fixtures/agents/datadog-ruby"
+            (ruby / "Gemfile").write_text('gem "datadog", "2.43.0"\n')
+            (ruby / "Gemfile.lock").write_text('    datadog (2.43.0)\n')
+            gin = root / "fixtures/apps/go/realworld-gin/datadog"
+            gin.mkdir()
+            (gin / "go.mod").write_text('require (\n github.com/DataDog/dd-trace-go/v2 v2.10.1\n)\n')
+            (gin / "go.sum").write_text('github.com/DataDog/dd-trace-go/v2 v2.10.1 h1:' + 'A' * 43 + '=\n')
+            shared = root / "shared/fixtures/apps/go/realworld-gin"
+            shared.mkdir(parents=True)
+            (shared / "main.go").write_text("shared application")
             env = {**os.environ, "PATH": str(binary) + os.pathsep + os.environ["PATH"], "GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_NOSYSTEM": "1"}
+            env["RULES_STESTS_SOURCE_ROOT"] = str(root / "shared")
             subprocess.run(["git", "init", "-q", root], check=True, env=env)
             subprocess.run(["git", "add", "fixtures"], cwd=root, check=True, env=env)
             subprocess.run(["git", "-c", "user.name=Test", "-c", "user.email=test@example.invalid", "commit", "-qm", "fixtures"], cwd=root, check=True, env=env)
@@ -111,9 +124,8 @@ class PublicationTest(HermeticGitTestCase):
                 self.assertNotEqual(failed.returncode, 0)
                 self.assertFalse(calls.exists(), "invalid provenance reached a registry write")
             context = root / "composed"
-            context.mkdir()
+            shutil.copytree(root / "fixtures/apps/go/realworld-gin", context)
             (context / "main.go").write_text("shared application")
-            shutil.copyfile(root / "fixtures/apps/go/realworld-gin/Dockerfile", context / "Dockerfile")
             tree = context_tree(context)
             overlay_tree = subprocess.check_output(["git", "rev-parse", "HEAD:fixtures/apps/go/realworld-gin"], cwd=root, text=True, env=env).strip()
             self.assertNotEqual(tree, overlay_tree)

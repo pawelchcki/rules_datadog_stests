@@ -86,8 +86,6 @@ for fixture in ruby gin; do
   if [[ "$fixture" == ruby ]]; then
     context=fixtures/agents/datadog-ruby
     repository=datadog_ruby_linux_amd64
-    image=localhost/rules-stests-datadog-ruby:2.43.0
-    rootfs_digest=sha256:3c02edad18444381e1a2965dcd71989603713de43beb7f4fc1dbcfb3b7af0794
     ruby_context="$context"
   else
     overlay=fixtures/apps/go/realworld-gin
@@ -96,8 +94,6 @@ for fixture in ruby gin; do
     python3 tools/materialize_shared_app.py --overlay "$overlay" --output "$context"
     source_tree="$(python3 tools/context_tree.py "$context")"
     repository=gin_datadog_realworld_linux_amd64
-    image=localhost/rules-stests-gin-datadog:2.10.1
-    rootfs_digest=sha256:f2532c86ac33814c8ab87c3cc6b64d0d88ad9bdee043bc65982276adbf55e99b
     gin_context="$context"
   fi
 
@@ -105,6 +101,25 @@ for fixture in ruby gin; do
     candidate_tree="$(python3 tools/context_tree.py "$context")"
     printf '%s\n' "$candidate_tree" > "$out/$fixture.source-tree"
     image="localhost/rules-stests-$fixture-candidate:source-$candidate_tree"
+  else
+    read -r sdk_version rootfs_digest < <(python3 - "$fixture" "$context" <<'PY'
+import sys
+from pathlib import Path
+sys.path.insert(0, "tools")
+from datadog_fixture_publication import payloads
+from datadog_fixture_candidate import sdk_version
+pin = payloads(Path("bazel/datadog_fixture_payloads.json"))[sys.argv[1]]
+if sdk_version(Path(sys.argv[2]), sys.argv[1]) != pin["version"]:
+    raise ValueError("source SDK version differs from reviewed payload pin")
+print(pin["version"], pin["rootfs"])
+PY
+)
+    test -n "$sdk_version" && test -n "$rootfs_digest"
+    if [[ "$fixture" == ruby ]]; then
+      image="localhost/rules-stests-datadog-ruby:$sdk_version"
+    else
+      image="localhost/rules-stests-gin-datadog:$sdk_version"
+    fi
   fi
 
   export_dir="$out/$fixture"
